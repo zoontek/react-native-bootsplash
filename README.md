@@ -2,18 +2,18 @@
 
 [![npm version](https://badge.fury.io/js/react-native-bootsplash.svg)](https://badge.fury.io/js/react-native-bootsplash) [![npm](https://img.shields.io/npm/dt/react-native-bootsplash.svg)](https://www.npmjs.org/package/react-native-bootsplash) ![Platform - Android and iOS](https://img.shields.io/badge/platform-Android%20%7C%20iOS-yellow.svg) ![MIT](https://img.shields.io/dub/l/vibe-d.svg) [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
-Show a bootsplash during app startup, hide it when you are ready. Hide it when you want.
+Show a bootsplash during app startup. Hide it when you are ready.
 
 <p>
-  <img height="520" src="docs/ios_demo.gif?raw=true" alt="iOS demo"></img>
-  <img width="300" src="docs/android_demo.gif?raw=true" alt="android demo"></img>
+  <img height="520" src="https://raw.githubusercontent.com/zoontek/react-native-bootsplash/HEAD/docs/ios_demo.gif?raw=true" alt="iOS demo"></img>
+  <img width="300" src="https://raw.githubusercontent.com/zoontek/react-native-bootsplash/HEAD/docs/android_demo.gif?raw=true" alt="android demo"></img>
 </p>
 
 ## Support
 
 | version | react-native version |
 | ------- | -------------------- |
-| 0.1.0+  | 0.60.0+              |
+| 0.1.1+  | 0.60.0+              |
 
 ## Setup
 
