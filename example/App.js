@@ -46,7 +46,7 @@ let App = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>react-native-bootsplash</Text>
+      <Text style={styles.text}>Hello, Dave.</Text>
 
       {bootSplashIsVisible && (
         <Animated.View
