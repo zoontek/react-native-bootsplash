@@ -1,0 +1,37 @@
+{
+  "name": "react-native-launch-screen",
+  "version": "0.1.0",
+  "license": "MIT",
+  "description": "Display a launch screen on your app starts. Hide it when you want.",
+  "author": "Mathieu Acthernoene <zoontek@gmail.com>",
+  "homepage": "https://github.com/zoontek/react-native-launch-screen",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zoontek/react-native-launch-screen.git"
+  },
+  "keywords": [
+    "react-native-launch-screen",
+    "react-native",
+    "launch-screen",
+    "splash-screen"
+  ],
+  "scripts": {
+    "precommit": "lint-staged",
+    "format": "prettier --write '**/*.{js,json,md}'"
+  },
+  "lint-staged": {
+    "**/*.{js,json,md}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "peerDependencies": {
+    "react-native": ">=0.60.0"
+  },
+  "devDependencies": {
+    "husky": "2.4.1",
+    "lint-staged": "8.2.1",
+    "prettier": "1.18.2"
+  }
+}

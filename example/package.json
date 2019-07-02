@@ -1,0 +1,22 @@
+{
+  "name": "RNLaunchScreenExample",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "clean:modules": "rm -rf node_modules/react-native-launch-screen/node_modules",
+    "clean:example": "rm -rf node_modules/react-native-launch-screen/example",
+    "clean": "yarn clean:modules && yarn clean:example",
+    "postinstall": "yarn clean",
+    "start": "yarn clean && react-native start"
+  },
+  "dependencies": {
+    "react": "16.8.6",
+    "react-native": "0.60.0-rc.3",
+    "react-native-launch-screen": "file:../"
+  },
+  "devDependencies": {
+    "@babel/core": "7.4.5",
+    "@babel/runtime": "7.4.5",
+    "metro-react-native-babel-preset": "0.54.1"
+  }
+}

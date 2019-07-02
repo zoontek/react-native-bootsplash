@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" android:opacity="opaque">
+  <!-- the background color. it can be a system color or a custom one defined in colors.xml -->
+  <item android:drawable="@color/main" />
+
+  <item android:gravity="center">
+    <!-- the react logo, centered horizontally and vertically -->
+    <bitmap android:src="@mipmap/react_logo" />
+  </item>
+</layer-list>
