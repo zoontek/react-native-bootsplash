@@ -1,8 +1,8 @@
-# 🚀 react-native-launch-screen
+# 🚀 react-native-bootsplash
 
-[![npm version](https://badge.fury.io/js/react-native-launch-screen.svg)](https://badge.fury.io/js/react-native-launch-screen) [![npm](https://img.shields.io/npm/dt/react-native-launch-screen.svg)](https://www.npmjs.org/package/react-native-launch-screen) ![Platform - Android and iOS](https://img.shields.io/badge/platform-Android%20%7C%20iOS-yellow.svg) ![MIT](https://img.shields.io/dub/l/vibe-d.svg) [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+[![npm version](https://badge.fury.io/js/react-native-bootsplash.svg)](https://badge.fury.io/js/react-native-bootsplash) [![npm](https://img.shields.io/npm/dt/react-native-bootsplash.svg)](https://www.npmjs.org/package/react-native-bootsplash) ![Platform - Android and iOS](https://img.shields.io/badge/platform-Android%20%7C%20iOS-yellow.svg) ![MIT](https://img.shields.io/dub/l/vibe-d.svg) [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
-Display a launch screen on your app starts. Hide it when you want.
+Display a bootsplash on your app starts. Hide it when you want.
 
 <p>
   <img height="520" src="docs/ios_demo.gif?raw=true" alt="iOS demo"></img>
@@ -18,9 +18,9 @@ Display a launch screen on your app starts. Hide it when you want.
 ## Setup
 
 ```bash
-$ npm install --save react-native-launch-screen
+$ npm install --save react-native-bootsplash
 # --- or ---
-$ yarn add react-native-launch-screen
+$ yarn add react-native-bootsplash
 ```
 
 ## Setup
@@ -36,7 +36,7 @@ Edit the `ios/YourProjectName/AppDelegate.m` file:
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 
-#import "RNLaunchScreen.h" // <- add the header import
+#import "RNBootSplash.h" // <- add the header import
 
 @implementation AppDelegate
 
@@ -45,14 +45,14 @@ Edit the `ios/YourProjectName/AppDelegate.m` file:
   // …
 
   [self.window makeKeyAndVisible];
-  [RNLaunchScreen show:@"LaunchScreen" inView:rootView]; // <- display the "LaunchScreen" xib view over our rootView
+  [RNBootSplash show:@"LaunchScreen" inView:rootView]; // <- display the "LaunchScreen" xib view over our rootView
   return YES;
 }
 ```
 
 #### Android
 
-1. Create a `launch_screen.xml` file in `android/app/src/main/res/drawable` (create the folder if necessary). You can customize this as you want.
+1. Create a `bootsplash.xml` file in `android/app/src/main/res/drawable` (create the folder if necessary). You can customize this as you want.
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -74,7 +74,7 @@ Edit the `ios/YourProjectName/AppDelegate.m` file:
 import android.os.Bundle; // <- add necessary import
 
 import com.facebook.react.ReactActivity;
-import com.zoontek.rnlaunchscreen.RNLaunchScreen; // <- add necessary import
+import com.zoontek.rnbootsplash.RNBootSplash; // <- add necessary import
 
 public class MainActivity extends ReactActivity {
 
@@ -83,7 +83,7 @@ public class MainActivity extends ReactActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    RNLaunchScreen.show(R.drawable.launch_screen, MainActivity.this); // <- display the "launch_screen" xml view over our MainActivity
+    RNBootSplash.show(R.drawable.bootsplash, MainActivity.this); // <- display the "bootsplash" xml view over our MainActivity
   }
 ```
 
@@ -100,10 +100,10 @@ As Android will not create our main activity before launching the app, we need t
   </style>
 
   <!-- Add the following lines -->
-  <!-- LaunchTheme should inherit from AppTheme -->
-  <style name="LaunchTheme" parent="AppTheme">
-    <!-- set launch_screen.xml as activity background -->
-    <item name="android:background">@drawable/launch_screen</item>
+  <!-- BootTheme should inherit from AppTheme -->
+  <style name="BootTheme" parent="AppTheme">
+    <!-- set bootsplash.xml as activity background -->
+    <item name="android:background">@drawable/bootsplash</item>
   </style>
 
 </resources>
@@ -113,7 +113,7 @@ As Android will not create our main activity before launching the app, we need t
 
 ```xml
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.rnlaunchscreenexample">
+  package="com.rnbootsplashexample">
 
   <!-- … -->
 
@@ -135,8 +135,8 @@ As Android will not create our main activity before launching the app, we need t
 
     <!-- add the following lines -->
     <activity
-      android:name="com.zoontek.rnlaunchscreen.RNLaunchScreenActivity"
-      android:theme="@style/LaunchTheme"> <!-- apply the theme you created at step 3. -->
+      android:name="com.zoontek.rnbootsplash.RNBootSplashActivity"
+      android:theme="@style/BootTheme"> <!-- apply the theme you created at step 3. -->
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
@@ -155,7 +155,7 @@ As Android will not create our main activity before launching the app, we need t
 ```js
 import React, { useEffect } from "react";
 import { Text } from "react-native";
-import RNLaunchScreen from "react-native-launch-screen";
+import RNBootSplash from "react-native-bootsplash";
 
 function App() {
   let init = async () => {
@@ -164,8 +164,8 @@ function App() {
 
   useEffect(() => {
     init().finally(() => {
-      // without fadeout: RNLaunchScreen.hide()
-      RNLaunchScreen.hide({ duration: 250 });
+      // without fadeout: RNBootSplash.hide()
+      RNBootSplash.hide({ duration: 250 });
     });
   }, []);
 
@@ -186,7 +186,7 @@ Add this line to your `ios/Podfile` file, then run `pod install`.
 ```bash
 target 'YourAwesomeProject' do
   # …
-  pod 'RNLaunchScreen', :path => '../node_modules/react-native-launch-screen'
+  pod 'RNBootSplash', :path => '../node_modules/react-native-bootsplash'
 end
 ```
 
@@ -195,8 +195,8 @@ end
 1. Add the following lines to `android/settings.gradle`:
 
 ```gradle
-include ':react-native-launch-screen'
-project(':react-native-launch-screen').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-launch-screen/android')
+include ':react-native-bootsplash'
+project(':react-native-bootsplash').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-bootsplash/android')
 ```
 
 2. Add the implementation line to the dependencies in `android/app/build.gradle`:
@@ -204,14 +204,14 @@ project(':react-native-launch-screen').projectDir = new File(rootProject.project
 ```gradle
 dependencies {
   // ...
-  implementation project(':react-native-launch-screen')
+  implementation project(':react-native-bootsplash')
 }
 ```
 
 3. Add the import and link the package in `MainApplication.java`:
 
 ```java
-import com.zoontek.rnlaunchscreen.RNLaunchScreenPackage; // <- add the RNLaunchScreenPackage import
+import com.zoontek.rnbootsplash.RNBootSplashPackage; // <- add the RNBootSplashPackage import
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -222,7 +222,7 @@ public class MainApplication extends Application implements ReactApplication {
     @SuppressWarnings("UnnecessaryLocalVariable")
     List<ReactPackage> packages = new PackageList(this).getPackages();
     // …
-    packages.add(new RNLaunchScreenPackage());
+    packages.add(new RNBootSplashPackage());
     return packages;
   }
 

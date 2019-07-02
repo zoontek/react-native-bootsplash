@@ -114,7 +114,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.rnlaunchscreenexample"
+        applicationId "com.rnbootsplashexample"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -164,7 +164,7 @@ android {
 }
 
 dependencies {
-    implementation project(':react-native-launch-screen')
+    implementation project(':react-native-bootsplash')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.facebook.react:react-native:+"  // From node_modules
 

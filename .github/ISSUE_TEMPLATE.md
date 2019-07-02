@@ -9,7 +9,7 @@ Your issue may be closed if it doesn't provide the informations required.
 
 ### 💻 My environment
 
-- react-native-launch-screen version:
+- react-native-bootsplash version:
 - react-native version:
 - Platform: ios / android / both
 - OS version: ?

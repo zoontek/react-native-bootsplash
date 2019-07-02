@@ -1,4 +1,4 @@
-package com.rnlaunchscreenexample;
+package com.rnbootsplashexample;
 
 import android.app.Application;
 

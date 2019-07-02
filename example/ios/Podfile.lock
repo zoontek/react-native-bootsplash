@@ -81,7 +81,7 @@ PODS:
   - React-RCTWebSocket (0.60.0-rc.3):
     - React-Core (= 0.60.0-rc.3)
     - React-fishhook (= 0.60.0-rc.3)
-  - RNLaunchScreen (0.1.0):
+  - RNBootSplash (0.1.0):
     - React
   - yoga (0.60.0-rc.3.React)
 
@@ -107,7 +107,7 @@ DEPENDENCIES:
   - React-RCTText (from `../node_modules/react-native/Libraries/Text`)
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - React-RCTWebSocket (from `../node_modules/react-native/Libraries/WebSocket`)
-  - RNLaunchScreen (from `/Users/zoontek/Projects/react-native-launch-screen/example/node_modules/react-native-launch-screen`)
+  - RNBootSplash (from `/Users/zoontek/Projects/react-native-bootsplash/example/node_modules/react-native-bootsplash`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -157,8 +157,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/Libraries/Vibration"
   React-RCTWebSocket:
     :path: "../node_modules/react-native/Libraries/WebSocket"
-  RNLaunchScreen:
-    :path: "/Users/zoontek/Projects/react-native-launch-screen/example/node_modules/react-native-launch-screen"
+  RNBootSplash:
+    :path: "/Users/zoontek/Projects/react-native-bootsplash/example/node_modules/react-native-bootsplash"
   yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -185,9 +185,9 @@ SPEC CHECKSUMS:
   React-RCTText: 01336645c594ee588f1062669db0cd03b90210c7
   React-RCTVibration: 9f1e51e8bda236fd1f3731dfcd2d9a56a2f1d2f0
   React-RCTWebSocket: 60bf0bda42593572fa713ec7331e6ddab1ef5c3e
-  RNLaunchScreen: 915138404d93f8ea2e16d95c7f2a7a5f13c21057
+  RNBootSplash: 2049eb360e3292aded40d73b4f79e786d53251d8
   yoga: a5405b41017fb27727de7a5ceab8bf55f98bbe2f
 
-PODFILE CHECKSUM: 58921d1164b10cbe5c33d4ce745d50233baa33e9
+PODFILE CHECKSUM: 4984bb00df59d7fc9ab84d2983d9dad08fc48152
 
 COCOAPODS: 1.7.2

@@ -10,22 +10,22 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		635D1A20B349529AE17F4BE8 /* libPods-RNLaunchScreenExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00030A577D68E40043D59AF8 /* libPods-RNLaunchScreenExample.a */; };
+		635D1A20B349529AE17F4BE8 /* libPods-RNBootSplashExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00030A577D68E40043D59AF8 /* libPods-RNBootSplashExample.a */; };
 		DDF11BDB22C6742900193EAB /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = DDF11BDA22C6742900193EAB /* LaunchScreen.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		00030A577D68E40043D59AF8 /* libPods-RNLaunchScreenExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RNLaunchScreenExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		00030A577D68E40043D59AF8 /* libPods-RNBootSplashExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RNBootSplashExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
-		07CBC76370AACA532E6EE43B /* Pods-RNLaunchScreenExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RNLaunchScreenExample.release.xcconfig"; path = "Target Support Files/Pods-RNLaunchScreenExample/Pods-RNLaunchScreenExample.release.xcconfig"; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* RNLaunchScreenExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RNLaunchScreenExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = RNLaunchScreenExample/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = RNLaunchScreenExample/AppDelegate.m; sourceTree = "<group>"; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = RNLaunchScreenExample/Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = RNLaunchScreenExample/Info.plist; sourceTree = "<group>"; };
-		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = RNLaunchScreenExample/main.m; sourceTree = "<group>"; };
-		88F5D4A5CC7433FAC5FA9F59 /* Pods-RNLaunchScreenExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RNLaunchScreenExample.debug.xcconfig"; path = "Target Support Files/Pods-RNLaunchScreenExample/Pods-RNLaunchScreenExample.debug.xcconfig"; sourceTree = "<group>"; };
-		DDF11BDA22C6742900193EAB /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = LaunchScreen.xib; path = RNLaunchScreenExample/LaunchScreen.xib; sourceTree = "<group>"; };
+		07CBC76370AACA532E6EE43B /* Pods-RNBootSplashExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RNBootSplashExample.release.xcconfig"; path = "Target Support Files/Pods-RNBootSplashExample/Pods-RNBootSplashExample.release.xcconfig"; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* RNBootSplashExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RNBootSplashExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = RNBootSplashExample/AppDelegate.h; sourceTree = "<group>"; };
+		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = RNBootSplashExample/AppDelegate.m; sourceTree = "<group>"; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = RNBootSplashExample/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = RNBootSplashExample/Info.plist; sourceTree = "<group>"; };
+		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = RNBootSplashExample/main.m; sourceTree = "<group>"; };
+		88F5D4A5CC7433FAC5FA9F59 /* Pods-RNBootSplashExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RNBootSplashExample.debug.xcconfig"; path = "Target Support Files/Pods-RNBootSplashExample/Pods-RNBootSplashExample.debug.xcconfig"; sourceTree = "<group>"; };
+		DDF11BDA22C6742900193EAB /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = LaunchScreen.xib; path = RNBootSplashExample/LaunchScreen.xib; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
@@ -35,14 +35,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				635D1A20B349529AE17F4BE8 /* libPods-RNLaunchScreenExample.a in Frameworks */,
+				635D1A20B349529AE17F4BE8 /* libPods-RNBootSplashExample.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		13B07FAE1A68108700A75B9A /* RNLaunchScreenExample */ = {
+		13B07FAE1A68108700A75B9A /* RNBootSplashExample */ = {
 			isa = PBXGroup;
 			children = (
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
@@ -53,7 +53,7 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
 			);
-			name = RNLaunchScreenExample;
+			name = RNBootSplashExample;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
@@ -61,7 +61,7 @@
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
-				00030A577D68E40043D59AF8 /* libPods-RNLaunchScreenExample.a */,
+				00030A577D68E40043D59AF8 /* libPods-RNBootSplashExample.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -69,8 +69,8 @@
 		48173613FF67F30925E3CEDE /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				88F5D4A5CC7433FAC5FA9F59 /* Pods-RNLaunchScreenExample.debug.xcconfig */,
-				07CBC76370AACA532E6EE43B /* Pods-RNLaunchScreenExample.release.xcconfig */,
+				88F5D4A5CC7433FAC5FA9F59 /* Pods-RNBootSplashExample.debug.xcconfig */,
+				07CBC76370AACA532E6EE43B /* Pods-RNBootSplashExample.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -78,7 +78,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				13B07FAE1A68108700A75B9A /* RNLaunchScreenExample */,
+				13B07FAE1A68108700A75B9A /* RNBootSplashExample */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				48173613FF67F30925E3CEDE /* Pods */,
@@ -91,7 +91,7 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* RNLaunchScreenExample.app */,
+				13B07F961A680F5B00A75B9A /* RNBootSplashExample.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -99,9 +99,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		13B07F861A680F5B00A75B9A /* RNLaunchScreenExample */ = {
+		13B07F861A680F5B00A75B9A /* RNBootSplashExample */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "RNLaunchScreenExample" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "RNBootSplashExample" */;
 			buildPhases = (
 				A3AC5F1B363945D451674C5C /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
@@ -114,9 +114,9 @@
 			);
 			dependencies = (
 			);
-			name = RNLaunchScreenExample;
-			productName = RNLaunchScreenExample;
-			productReference = 13B07F961A680F5B00A75B9A /* RNLaunchScreenExample.app */;
+			name = RNBootSplashExample;
+			productName = RNBootSplashExample;
+			productReference = 13B07F961A680F5B00A75B9A /* RNBootSplashExample.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -133,7 +133,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "RNLaunchScreenExample" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "RNBootSplashExample" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -146,7 +146,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* RNLaunchScreenExample */,
+				13B07F861A680F5B00A75B9A /* RNBootSplashExample */,
 			);
 		};
 /* End PBXProject section */
@@ -193,7 +193,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-RNLaunchScreenExample-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-RNBootSplashExample-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -236,41 +236,41 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 88F5D4A5CC7433FAC5FA9F59 /* Pods-RNLaunchScreenExample.debug.xcconfig */;
+			baseConfigurationReference = 88F5D4A5CC7433FAC5FA9F59 /* Pods-RNBootSplashExample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = 745449BDR9;
-				INFOPLIST_FILE = RNLaunchScreenExample/Info.plist;
+				INFOPLIST_FILE = RNBootSplashExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.zoontek.rnlaunchscreenexample;
-				PRODUCT_NAME = RNLaunchScreenExample;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zoontek.rnbootsplashexample;
+				PRODUCT_NAME = RNBootSplashExample;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 07CBC76370AACA532E6EE43B /* Pods-RNLaunchScreenExample.release.xcconfig */;
+			baseConfigurationReference = 07CBC76370AACA532E6EE43B /* Pods-RNBootSplashExample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 745449BDR9;
-				INFOPLIST_FILE = RNLaunchScreenExample/Info.plist;
+				INFOPLIST_FILE = RNBootSplashExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.zoontek.rnlaunchscreenexample;
-				PRODUCT_NAME = RNLaunchScreenExample;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zoontek.rnbootsplashexample;
+				PRODUCT_NAME = RNBootSplashExample;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
@@ -377,7 +377,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "RNLaunchScreenExample" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "RNBootSplashExample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -386,7 +386,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "RNLaunchScreenExample" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "RNBootSplashExample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,

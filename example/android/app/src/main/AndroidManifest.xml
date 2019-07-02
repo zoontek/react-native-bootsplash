@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.rnlaunchscreenexample">
+  package="com.rnbootsplashexample">
 
   <uses-permission android:name="android.permission.INTERNET" />
 
@@ -18,8 +18,8 @@
       android:windowSoftInputMode="adjustResize" />
 
     <activity
-      android:name="com.zoontek.rnlaunchscreen.RNLaunchScreenActivity"
-      android:theme="@style/LaunchTheme">
+      android:name="com.zoontek.rnbootsplash.RNBootSplashActivity"
+      android:theme="@style/BootTheme">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />

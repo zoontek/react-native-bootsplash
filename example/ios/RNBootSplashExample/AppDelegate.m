@@ -11,7 +11,7 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 
-#import "RNLaunchScreen.h"
+#import "RNBootSplash.h"
 
 @implementation AppDelegate
 
@@ -19,7 +19,7 @@
 {
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
-                                                   moduleName:@"RNLaunchScreenExample"
+                                                   moduleName:@"RNBootSplashExample"
                                             initialProperties:nil];
 
   rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
@@ -30,7 +30,7 @@
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
 
-  [RNLaunchScreen show:@"LaunchScreen" inView:rootView];
+  [RNBootSplash show:@"LaunchScreen" inView:rootView];
 
   return YES;
 }

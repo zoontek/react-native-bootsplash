@@ -1,4 +1,4 @@
-package com.zoontek.rnlaunchscreen;
+package com.zoontek.rnbootsplash;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -14,15 +14,15 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.UiThreadUtil;
 import com.facebook.react.module.annotations.ReactModule;
 
-@ReactModule(name = RNLaunchScreenModule.MODULE_NAME)
-public class RNLaunchScreenModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
+@ReactModule(name = RNBootSplashModule.MODULE_NAME)
+public class RNBootSplashModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
 
-  public static final String MODULE_NAME = "RNLaunchScreen";
+  public static final String MODULE_NAME = "RNBootSplash";
 
   private boolean hideHasRunOnce = false;
   private boolean hideOnAppResume = false;
 
-  public RNLaunchScreenModule(ReactApplicationContext reactContext) {
+  public RNBootSplashModule(ReactApplicationContext reactContext) {
     super(reactContext);
     reactContext.addLifecycleEventListener(this);
   }
@@ -57,7 +57,7 @@ public class RNLaunchScreenModule extends ReactContextBaseJavaModule implements 
       return;
     }
 
-    final LinearLayout layout = activity.findViewById(R.id.launch_screen_layout_id);
+    final LinearLayout layout = activity.findViewById(R.id.bootsplash_layout_id);
     if (layout == null) return;
 
     UiThreadUtil.runOnUiThread(new Runnable() {

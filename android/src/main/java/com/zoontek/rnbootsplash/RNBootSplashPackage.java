@@ -1,4 +1,4 @@
-package com.zoontek.rnlaunchscreen;
+package com.zoontek.rnbootsplash;
 
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.NativeModule;
@@ -9,11 +9,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class RNLaunchScreenPackage implements ReactPackage {
+public class RNBootSplashPackage implements ReactPackage {
 
   @Override
   public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
-    return Arrays.<NativeModule>asList(new RNLaunchScreenModule(reactContext));
+    return Arrays.<NativeModule>asList(new RNBootSplashModule(reactContext));
   }
 
   @Override

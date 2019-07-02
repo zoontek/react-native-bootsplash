@@ -1,11 +1,11 @@
-#import "RNLaunchScreen.h"
+#import "RNBootSplash.h"
 #import <React/RCTBridge.h>
 #import <UIKit/UIKit.h>
 
-static UIView* launchScreen = nil;
+static UIView* bootSplash = nil;
 static bool isFlaggedAsHidden = false;
 
-@implementation RNLaunchScreen
+@implementation RNBootSplash
 
 RCT_EXPORT_MODULE();
 
@@ -19,8 +19,8 @@ RCT_EXPORT_MODULE();
 
 + (void)show:(NSString * _Nonnull)name
       inView:(RCTRootView * _Nonnull)view {
-  if (launchScreen != nil) {
-    return NSLog(@"🚨 [RNLaunchScreen] show method is called more than once");
+  if (bootSplash != nil) {
+    return NSLog(@"🚨 [RNBootSplash] show method is called more than once");
   }
 
   @try {
@@ -32,17 +32,17 @@ RCT_EXPORT_MODULE();
                                                object:nil];
 
     xib.frame = [view bounds];
-    launchScreen = xib;
+    bootSplash = xib;
     [view addSubview:xib];
   }
   @catch (NSException *exception) {
-    NSLog(@"🚨 [RNLaunchScreen] File \"%@\" does not exists or is not copied in app bundle resources", name);
+    NSLog(@"🚨 [RNBootSplash] File \"%@\" does not exists or is not copied in app bundle resources", name);
   }
 }
 
 - (void)removeFromView {
-  [launchScreen removeFromSuperview];
-  launchScreen = nil;
+  [bootSplash removeFromSuperview];
+  bootSplash = nil;
 }
 
 - (void)handleJavaScriptDidFailToLoad:(NSNotification *)notification {
@@ -50,7 +50,7 @@ RCT_EXPORT_MODULE();
 }
 
 RCT_EXPORT_METHOD(hide:(float)duration) {
-  if (launchScreen == nil || isFlaggedAsHidden) return;
+  if (bootSplash == nil || isFlaggedAsHidden) return;
   isFlaggedAsHidden = true;
 
   float roundedDuration = lroundf(duration);
@@ -63,7 +63,7 @@ RCT_EXPORT_METHOD(hide:(float)duration) {
                         delay:0.0
                       options:UIViewAnimationOptionCurveEaseIn
                    animations:^{
-                     launchScreen.alpha = 0;
+                     bootSplash.alpha = 0;
                    }
                    completion:^(BOOL finished) {
                      [self removeFromView];

@@ -1,3 +1,3 @@
 <resources>
-    <item type="id" name="launch_screen_layout_id" />
+    <item type="id" name="bootsplash_layout_id" />
 </resources>

@@ -2,7 +2,7 @@ require 'json'
 package = JSON.parse(File.read('./package.json'))
 
 Pod::Spec.new do |s|
-  s.name                   = "RNLaunchScreen"
+  s.name                   = "RNBootSplash"
   s.dependency               "React"
 
   s.version                = package["version"]

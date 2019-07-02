@@ -1,9 +1,9 @@
-declare module "react-native-launch-screen" {
+declare module "react-native-bootsplash" {
   export type HideConfig = {
     duration?: number;
   };
-  let RNLaunchScreen: {
+  let RNBootSplash: {
     hide(config?: HideConfig): void;
   };
-  export default RNLaunchScreen;
+  export default RNBootSplash;
 }

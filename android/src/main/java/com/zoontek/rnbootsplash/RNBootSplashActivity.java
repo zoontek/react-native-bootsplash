@@ -1,11 +1,11 @@
-package com.zoontek.rnlaunchscreen;
+package com.zoontek.rnbootsplash;
 
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class RNLaunchScreenActivity extends AppCompatActivity {
+public class RNBootSplashActivity extends AppCompatActivity {
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {

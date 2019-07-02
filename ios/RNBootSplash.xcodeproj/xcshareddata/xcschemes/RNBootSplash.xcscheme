@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "58B511DA1A9E6C8500147676"
-               BuildableName = "libRNLaunchScreen.a"
-               BlueprintName = "RNLaunchScreen"
-               ReferencedContainer = "container:RNLaunchScreen.xcodeproj">
+               BuildableName = "libRNBootSplash.a"
+               BlueprintName = "RNBootSplash"
+               ReferencedContainer = "container:RNBootSplash.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -46,9 +46,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "58B511DA1A9E6C8500147676"
-            BuildableName = "libRNLaunchScreen.a"
-            BlueprintName = "RNLaunchScreen"
-            ReferencedContainer = "container:RNLaunchScreen.xcodeproj">
+            BuildableName = "libRNBootSplash.a"
+            BlueprintName = "RNBootSplash"
+            ReferencedContainer = "container:RNBootSplash.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -64,9 +64,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "58B511DA1A9E6C8500147676"
-            BuildableName = "libRNLaunchScreen.a"
-            BlueprintName = "RNLaunchScreen"
-            ReferencedContainer = "container:RNLaunchScreen.xcodeproj">
+            BuildableName = "libRNBootSplash.a"
+            BlueprintName = "RNBootSplash"
+            ReferencedContainer = "container:RNBootSplash.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

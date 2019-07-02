@@ -1,4 +1,4 @@
-package com.zoontek.rnlaunchscreen;
+package com.zoontek.rnbootsplash;
 
 import android.app.Activity;
 import android.content.Context;
@@ -7,7 +7,7 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 
-public class RNLaunchScreen {
+public class RNBootSplash {
 
   private static boolean showHasRunOnce = false;
 
@@ -23,7 +23,7 @@ public class RNLaunchScreen {
         View view = new View(context);
 
         view.setBackgroundResource(drawableResId);
-        layout.setId(R.id.launch_screen_layout_id);
+        layout.setId(R.id.bootsplash_layout_id);
         layout.setLayoutTransition(null);
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.addView(view, params);

@@ -1,20 +1,26 @@
 {
-  "name": "react-native-launch-screen",
+  "name": "react-native-bootsplash",
   "version": "0.1.0",
   "license": "MIT",
-  "description": "Display a launch screen on your app starts. Hide it when you want.",
+  "description": "Display a bootsplash on your app starts. Hide it when you want.",
   "author": "Mathieu Acthernoene <zoontek@gmail.com>",
-  "homepage": "https://github.com/zoontek/react-native-launch-screen",
+  "homepage": "https://github.com/zoontek/react-native-bootsplash",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/zoontek/react-native-launch-screen.git"
+    "url": "https://github.com/zoontek/react-native-bootsplash.git"
   },
   "keywords": [
-    "react-native-launch-screen",
+    "react-native-bootsplash",
     "react-native",
+    "boot-splash",
+    "bootsplash",
+    "boot-screen",
+    "bootscreen",
+    "splash-screen",
+    "splashscreen",
     "launch-screen",
-    "splash-screen"
+    "launchscreen"
   ],
   "scripts": {
     "precommit": "lint-staged",

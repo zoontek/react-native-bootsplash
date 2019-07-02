@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Animated, Dimensions, StyleSheet, Text, View } from "react-native";
-import LaunchScreen from "react-native-launch-screen";
+import BootSplash from "react-native-bootsplash";
 
 let reactLogo = require("./assets/react_logo.png");
 let windowHeight = Dimensions.get("window").height;
@@ -9,13 +9,13 @@ let fakeApiCallWithoutBadNetwork = ms =>
   new Promise(resolve => setTimeout(resolve, ms));
 
 let App = () => {
-  let [launchScreenIsVisible, setLaunchScreenIsVisible] = useState(true);
+  let [bootSplashIsVisible, setBootSplashIsVisible] = useState(true);
   let [reactLogoIsLoaded, setReactLogoIsLoaded] = useState(false);
   let opacity = useRef(new Animated.Value(1));
   let translateY = useRef(new Animated.Value(0));
 
   let init = async () => {
-    LaunchScreen.hide();
+    BootSplash.hide();
 
     // You can uncomment this line to add a delay on app startup
     // let data = await fakeApiCallWithoutBadNetwork(3000);
@@ -36,7 +36,7 @@ let App = () => {
       duration: 150,
       delay: 350,
     }).start(() => {
-      setLaunchScreenIsVisible(false);
+      setBootSplashIsVisible(false);
     });
   };
 
@@ -46,13 +46,13 @@ let App = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>react-native-launch-screen</Text>
+      <Text style={styles.text}>react-native-bootsplash</Text>
 
-      {launchScreenIsVisible && (
+      {bootSplashIsVisible && (
         <Animated.View
           style={[
             StyleSheet.absoluteFill,
-            styles.launch,
+            styles.bootsplash,
             { opacity: opacity.current },
           ]}
         >
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     color: "#333",
     textAlign: "center",
   },
-  launch: {
+  bootsplash: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
