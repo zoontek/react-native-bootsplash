@@ -15,7 +15,7 @@ Show a bootsplash during app startup. Hide it when you are ready.
 | ------- | -------------------- |
 | 0.1.1+  | 0.60.0+              |
 
-## Setup
+## Installation
 
 ```bash
 $ npm install --save react-native-bootsplash
