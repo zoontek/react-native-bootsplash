@@ -27,6 +27,8 @@ $ yarn add react-native-bootsplash
 
 #### iOS
 
+⚠️ Currently, only `.xib` are supported (no `.storyboard` or `.launchImages`).
+
 Edit the `ios/YourProjectName/AppDelegate.m` file:
 
 ```obj-c
