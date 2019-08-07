@@ -12,9 +12,16 @@ public class RNBootSplashActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
 
     try {
-      startActivity(new Intent(this, Class.forName(getApplicationContext()
-          .getPackageName() + ".MainActivity")));
+      Intent intent = new Intent(this, Class.forName(getApplicationContext()
+        .getPackageName() + ".MainActivity"));
 
+      // Pass along FCM messages/notifications etc.
+      Bundle extras = getIntent().getExtras();
+      if (extras != null) {
+          intent.putExtras(extras);
+      }
+      
+      startActivity(intent);
       finish();
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
