@@ -131,9 +131,10 @@ As Android will not create our main activity before launching the app, we need t
 
     <activity
       android:name=".MainActivity"
-      android:label="@string/app_name"
       android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
-      android:windowSoftInputMode="adjustResize">
+      android:label="@string/app_name"
+      android:windowSoftInputMode="adjustResize"
+      android:exported="true"><!-- add this line -->
       <!-- remove the intent-filter from MainActivity -->
     </activity>
 
