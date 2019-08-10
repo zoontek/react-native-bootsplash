@@ -2,7 +2,7 @@
 #import <React/RCTBridge.h>
 #import <UIKit/UIKit.h>
 
-static UIView* bootSplash = nil;
+static UIView* bootSplashView = nil;
 static bool isFlaggedAsHidden = false;
 
 @implementation RNBootSplash
@@ -17,32 +17,35 @@ RCT_EXPORT_MODULE();
   return dispatch_get_main_queue();
 }
 
-+ (void)show:(NSString * _Nonnull)name
-      inView:(RCTRootView * _Nonnull)view {
-  if (bootSplash != nil) {
++ (void)show:(NSString * _Nonnull)name inView:(RCTRootView * _Nonnull)view {
+  if (bootSplashView != nil) {
     return NSLog(@"🚨 [RNBootSplash] show method is called more than once");
   }
 
-  @try {
-    UIView *xib = [[[NSBundle mainBundle] loadNibNamed:name owner:self options:nil] firstObject];
+  NSArray *resources = [[NSBundle mainBundle] loadNibNamed:name owner:self options:nil];
+  UIView *xib = resources ? [resources firstObject] : nil;
 
+  if (xib != nil) {
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleJavaScriptDidFailToLoad:)
                                                  name:RCTJavaScriptDidFailToLoadNotification
                                                object:nil];
 
     xib.frame = [view bounds];
-    bootSplash = xib;
+    bootSplashView = xib;
     [view addSubview:xib];
-  }
-  @catch (NSException *exception) {
-    NSLog(@"🚨 [RNBootSplash] File \"%@\" does not exists or is not copied in app bundle resources", name);
+  } else {
+    NSLog(@"🚨 [RNBootSplash] File \"%@.xib\" does not exists or is not copied in app bundle resources", name);
   }
 }
 
 - (void)removeFromView {
-  [bootSplash removeFromSuperview];
-  bootSplash = nil;
+  [bootSplashView removeFromSuperview];
+  bootSplashView = nil;
+
+  [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                  name:RCTJavaScriptDidFailToLoadNotification
+                                                object:nil];
 }
 
 - (void)handleJavaScriptDidFailToLoad:(NSNotification *)notification {
@@ -50,9 +53,11 @@ RCT_EXPORT_MODULE();
 }
 
 RCT_EXPORT_METHOD(hide:(float)duration) {
-  if (bootSplash == nil || isFlaggedAsHidden) return;
-  isFlaggedAsHidden = true;
+  if (bootSplashView == nil || isFlaggedAsHidden) {
+    return;
+  }
 
+  isFlaggedAsHidden = true;
   float roundedDuration = lroundf(duration);
 
   if (roundedDuration <= 0) {
@@ -63,7 +68,7 @@ RCT_EXPORT_METHOD(hide:(float)duration) {
                         delay:0.0
                       options:UIViewAnimationOptionCurveEaseIn
                    animations:^{
-                     bootSplash.alpha = 0;
+                     bootSplashView.alpha = 0;
                    }
                    completion:^(BOOL finished) {
                      [self removeFromView];
