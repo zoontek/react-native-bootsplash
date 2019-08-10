@@ -18,9 +18,9 @@ public class RNBootSplashActivity extends AppCompatActivity {
       // Pass along FCM messages/notifications etc.
       Bundle extras = getIntent().getExtras();
       if (extras != null) {
-          intent.putExtras(extras);
+        intent.putExtras(extras);
       }
-      
+
       startActivity(intent);
       finish();
     } catch (ClassNotFoundException e) {
