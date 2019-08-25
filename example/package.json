@@ -11,12 +11,12 @@
   },
   "dependencies": {
     "react": "16.8.6",
-    "react-native": "0.60.0-rc.3",
+    "react-native": "0.60.5",
     "react-native-bootsplash": "file:../"
   },
   "devDependencies": {
-    "@babel/core": "7.4.5",
-    "@babel/runtime": "7.4.5",
-    "metro-react-native-babel-preset": "0.54.1"
+    "@babel/core": "7.5.5",
+    "@babel/runtime": "7.5.5",
+    "metro-react-native-babel-preset": "0.56.0"
   }
 }
