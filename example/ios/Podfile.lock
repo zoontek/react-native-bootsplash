@@ -79,7 +79,7 @@ PODS:
     - React-Core (= 0.60.5)
   - React-RCTWebSocket (0.60.5):
     - React-Core (= 0.60.5)
-  - RNBootSplash (0.1.1):
+  - RNBootSplash (1.0.0):
     - React
   - yoga (0.60.5.React)
 
@@ -179,7 +179,7 @@ SPEC CHECKSUMS:
   React-RCTText: b074d89033583d4f2eb5faf7ea2db3a13c7553a2
   React-RCTVibration: 2105b2e0e2b66a6408fc69a46c8a7fb5b2fdade0
   React-RCTWebSocket: cd932a16b7214898b6b7f788c8bddb3637246ac4
-  RNBootSplash: 44762f34e1f6608a2c54455e80b42088602ecf77
+  RNBootSplash: 67b98f49c7a2fbd3d9ee24a196ddf052feb22c33
   yoga: 312528f5bbbba37b4dcea5ef00e8b4033fdd9411
 
 PODFILE CHECKSUM: ae509c99cd9486ed1359ce350743db334be59f39
