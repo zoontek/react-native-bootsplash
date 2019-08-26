@@ -235,7 +235,7 @@ public class MainApplication extends Application implements ReactApplication {
 }
 ```
 
-## 🕵️‍♂️ Comparaison with [react-native-splash-screen](https://github.com/crazycodeboy/react-native-splash-screen)
+## 🕵️‍♂️ Comparison with [react-native-splash-screen](https://github.com/crazycodeboy/react-native-splash-screen)
 
 - If `react-native-splash-screen` encourages you to display an image over your application, `react-native-bootsplash` way-to-go is to design your launch screen using platforms tools ([Xcode layout editor](https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/) and [Android drawable resource](https://developer.android.com/guide/topics/resources/drawable-resource)).
 
