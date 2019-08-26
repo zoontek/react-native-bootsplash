@@ -13,7 +13,7 @@ Show a bootsplash during app startup. Hide it when you are ready.
 
 | version | react-native version |
 | ------- | -------------------- |
-| 0.1.1+  | 0.60.0+              |
+| 1.0.0+  | 0.60.0+              |
 
 For 0.59-, you should use [`jetify -r`](https://github.com/mikehardy/jetifier/blob/master/README.md#to-reverse-jetify--convert-node_modules-dependencies-to-support-libraries)
 
