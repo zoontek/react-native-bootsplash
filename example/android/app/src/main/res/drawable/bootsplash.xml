@@ -4,8 +4,10 @@
   <!-- the background color. it can be a system color or a custom one defined in colors.xml -->
   <item android:drawable="@color/main" />
 
-  <item android:gravity="center">
+  <item>
     <!-- the react logo, centered horizontally and vertically -->
-    <bitmap android:src="@mipmap/react_logo" />
+    <bitmap
+      android:src="@mipmap/react_logo"
+      android:gravity="center" />
   </item>
 </layer-list>

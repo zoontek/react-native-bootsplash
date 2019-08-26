@@ -65,9 +65,11 @@ Edit the `ios/YourProjectName/AppDelegate.m` file:
   <!-- the background color. it can be a system color or a custom one defined in colors.xml -->
   <item android:drawable="@android:color/white" />
 
-  <item android:gravity="center">
+  <item>
     <!-- the app logo, centered horizontally and vertically -->
-    <bitmap android:src="@mipmap/ic_launcher" />
+    <bitmap
+      android:src="@mipmap/ic_launcher"
+      android:gravity="center" />
   </item>
 </layer-list>
 ```
