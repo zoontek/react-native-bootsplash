@@ -17,6 +17,17 @@ RCT_EXPORT_MODULE();
   return dispatch_get_main_queue();
 }
 
+- (instancetype)init {
+  if (self = [super init]) {
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleJavaScriptDidFailToLoad:)
+                                                 name:RCTJavaScriptDidFailToLoadNotification
+                                               object:nil];
+  }
+
+  return self;
+}
+
 + (void)show:(NSString * _Nonnull)name inView:(RCTRootView * _Nonnull)view {
   if (bootSplashView != nil) {
     return NSLog(@"🚨 [RNBootSplash] show method is called more than once");
@@ -26,11 +37,6 @@ RCT_EXPORT_MODULE();
   UIView *xib = resources ? [resources firstObject] : nil;
 
   if (xib != nil) {
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(handleJavaScriptDidFailToLoad:)
-                                                 name:RCTJavaScriptDidFailToLoadNotification
-                                               object:nil];
-
     xib.frame = [view bounds];
     bootSplashView = xib;
     [view addSubview:xib];
@@ -40,8 +46,10 @@ RCT_EXPORT_MODULE();
 }
 
 - (void)removeFromView {
-  [bootSplashView removeFromSuperview];
-  bootSplashView = nil;
+  if (bootSplashView != nil) {
+    [bootSplashView removeFromSuperview];
+    bootSplashView = nil;
+  }
 
   [[NSNotificationCenter defaultCenter] removeObserver:self
                                                   name:RCTJavaScriptDidFailToLoadNotification
