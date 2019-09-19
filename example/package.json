@@ -8,7 +8,7 @@
     "postinstall": "yarn clean-modules && yarn pod-install",
     "pod-install": "cd ./ios && pod install && cd ..",
     "start": "react-native start",
-    "reinstall": "yarn clean && yarn install && yarn pod-install"
+    "reinstall": "yarn clean && yarn install"
   },
   "dependencies": {
     "react": "16.8.6",

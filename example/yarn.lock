@@ -3639,7 +3639,7 @@ react-is@^16.8.1, react-is@^16.8.4:
   integrity sha512-tJBzzzIgnnRfEm046qRcURvwQnZVXmuCbscxUO5RWrGTXpon2d4c8mI0D8WE6ydVIm29JiLB6+RslkIvym9Rjw==
 
 "react-native-bootsplash@file:..":
-  version "1.0.1"
+  version "1.0.3"
 
 react-native@0.60.5:
   version "0.60.5"
