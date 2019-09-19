@@ -7,5 +7,8 @@ indent_style = space
 insert_final_newline = true
 trim_trailing_whitespace = true
 
+[*.gradle]
+indent_size = 4
+
 [*.md]
 trim_trailing_whitespace = false
