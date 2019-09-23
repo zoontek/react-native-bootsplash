@@ -11,24 +11,34 @@ public class RNBootSplash {
 
   private static boolean showHasRunOnce = false;
 
-  public static void show(final int drawableResId, @NonNull final Activity activity) {
+  public static void show(final int resId, @NonNull final Activity activity) {
     if (showHasRunOnce) return;
 
     activity.runOnUiThread(new Runnable() {
       @Override
       public void run() {
-        Context context = activity.getApplicationContext();
-        LinearLayout layout = new LinearLayout(context);
-        LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        View view = new View(context);
+        String typeName = activity.getResources().getResourceTypeName(resId);
 
-        view.setBackgroundResource(drawableResId);
-        layout.setId(R.id.bootsplash_layout_id);
-        layout.setLayoutTransition(null);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.addView(view, params);
+        if (typeName.equals("layout")) {
+          LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+          View view = activity.getLayoutInflater().inflate(resId, null);
+          view.setId(R.id.bootsplash_layout_id);
+          activity.addContentView(view, params);
+        } else {
+          Context context = activity.getApplicationContext();
+          LinearLayout layout = new LinearLayout(context);
+          LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+          View view = new View(context);
 
-        activity.addContentView(layout, params);
+          view.setBackgroundResource(resId);
+          layout.setId(R.id.bootsplash_layout_id);
+          layout.setLayoutTransition(null);
+          layout.setOrientation(LinearLayout.VERTICAL);
+          layout.addView(view, params);
+
+          activity.addContentView(layout, params);
+        }
+        
         showHasRunOnce = true;
       }
     });
