@@ -57,7 +57,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
       return;
     }
 
-    final LinearLayout layout = activity.findViewById(R.id.bootsplash_layout_id);
+    final ViewGroup layout = activity.findViewById(R.id.bootsplash_layout_id);
     if (layout == null) return;
 
     UiThreadUtil.runOnUiThread(new Runnable() {
