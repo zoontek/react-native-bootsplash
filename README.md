@@ -54,6 +54,19 @@ Edit the `ios/YourProjectName/AppDelegate.m` file:
 }
 ```
 
+For wix/react-native-navigation
+```obj-c
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+  // …
+
+  [ReactNativeNavigation bootstrap:[self sourceURLForBridge: bridge] launchOptions:launchOptions];
+  
+  [RNBootSplash show:@"LaunchScreen"];
+  return YES;
+}
+```
+
 #### Android
 
 1. Create a `bootsplash.xml` file in `android/app/src/main/res/drawable` (create the folder if necessary). You can customize this as you want.
@@ -93,6 +106,24 @@ public class MainActivity extends ReactActivity {
   }
 ```
 
+For wix/react-native-navigation
+```java
+import android.os.Bundle;
+import androidx.annotation.Nullable;
+import com.reactnativenavigation.NavigationActivity;
+import com.zoontek.rnbootsplash.RNBootSplash;
+
+public class MainActivity extends NavigationActivity {
+
+    @Override
+    public void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+
+        RNBootSplash.showCustom(com.project.R.drawable.splashscreen, com.project.R.color.splashprimary,this);
+    }
+}
+```
+
 As Android will not create our main activity before launching the app, we need to display a different activity at start, then switch to our main one.
 
 3. Edit the `android/app/src/main/res/values/styles.xml` file:
@@ -113,6 +144,14 @@ As Android will not create our main activity before launching the app, we need t
   </style>
 
 </resources>
+```
+
+For wix/react-native-navigation (this is last step, SKIP 4 step!!!)
+
+Add to AppTheme:
+```xml
+        <item name="android:windowBackground">@drawable/bootsplash</item>
+        <item name="android:windowTranslucentStatus">true</item>
 ```
 
 4. Edit the `android/app/src/main/AndroidManifest.xml` file:
