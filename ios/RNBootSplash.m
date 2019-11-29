@@ -7,6 +7,8 @@ static bool isFlaggedAsHidden = false;
 
 @implementation RNBootSplash
 
+static UIWindow *_window = nil;
+
 RCT_EXPORT_MODULE();
 
 + (BOOL)requiresMainQueueSetup {
@@ -26,6 +28,18 @@ RCT_EXPORT_MODULE();
   }
 
   return self;
+}
+
++ (void)show:(NSString *)name {
+    UIViewController *rootViewController = [UIViewController new];
+
+    _window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    _window.backgroundColor = [UIColor clearColor];
+    _window.rootViewController = rootViewController;
+
+    [RNBootSplash show:name inView:rootViewController.view];
+
+    [_window makeKeyAndVisible];
 }
 
 + (void)show:(NSString * _Nonnull)name inView:(RCTRootView * _Nonnull)view {
@@ -50,10 +64,11 @@ RCT_EXPORT_MODULE();
     [bootSplashView removeFromSuperview];
     bootSplashView = nil;
   }
-
-  [[NSNotificationCenter defaultCenter] removeObserver:self
+    [[NSNotificationCenter defaultCenter] removeObserver:self
                                                   name:RCTJavaScriptDidFailToLoadNotification
                                                 object:nil];
+
+    [RNBootSplash receiveBootSplashNotification];
 }
 
 - (void)handleJavaScriptDidFailToLoad:(NSNotification *)notification {
@@ -81,6 +96,12 @@ RCT_EXPORT_METHOD(hide:(float)duration) {
                    completion:^(BOOL finished) {
                      [self removeFromView];
                    }];
+}
+
++ (void) receiveBootSplashNotification
+{
+    [UIApplication.sharedApplication.delegate.window makeKeyAndVisible];
+    _window = nil;
 }
 
 @end
