@@ -119,7 +119,7 @@ public class MainActivity extends NavigationActivity {
     public void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        RNBootSplash.showCustom(com.project.R.drawable.splashscreen, com.project.R.color.splashprimary,this);
+        RNBootSplash.showCustom(R.drawable.bootsplash, R.color.splashprimary, this);
     }
 }
 ```
