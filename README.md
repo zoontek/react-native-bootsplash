@@ -152,6 +152,7 @@ Add to AppTheme:
 ```xml
         <item name="android:windowBackground">@drawable/bootsplash</item>
         <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">false</item>
 ```
 
 4. Edit the `android/app/src/main/AndroidManifest.xml` file:

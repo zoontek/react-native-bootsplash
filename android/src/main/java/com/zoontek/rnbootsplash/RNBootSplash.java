@@ -52,11 +52,6 @@ public class RNBootSplash {
           layout.setOrientation(LinearLayout.VERTICAL);
           layout.addView(view, params);
 
-          int padding_in_dp = 48;
-          final float scale = activity.getResources().getDisplayMetrics().density;
-          int padding_in_px = (int) (padding_in_dp * scale + 0.5f);
-
-          layout.setPadding(0, padding_in_px, 0, 0);
           layout.setBackgroundColor(activity.getResources().getColor(colorResId));
 
           activity.addContentView(layout, params);
