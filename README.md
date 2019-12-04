@@ -25,6 +25,8 @@ $ npm install --save react-native-bootsplash
 $ yarn add react-native-bootsplash
 ```
 
+Don't forget going into the `ios` directory to execute a `pod install`.
+
 ## Setup
 
 #### iOS
