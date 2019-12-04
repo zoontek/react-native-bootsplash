@@ -9,6 +9,7 @@ const {
   projectDir: unsafeProjectDir,
   icon: unsafeIcon,
   iconName: unsafeIconName,
+  assetsPath: unsafeAssetsPath,
 } = argv;
 
 console.log(
@@ -32,10 +33,16 @@ const iconName =
     ? unsafeIconName
     : "react_logo";
 
+const assetsPath =
+  typeof unsafeAssetsPath === "string" && unsafeAssetsPath.length > 0
+    ? unsafeAssetsPath
+    : `assets`;
+
 const projectDir = resolve(unsafeProjectDir);
 const icon = resolve(unsafeIcon);
 
 const appJsonDir = `${projectDir}${sep}app.json`;
+const projectAssetsPath = resolve(`${projectDir}${sep}${assetsPath}`);
 
 // TODO: warn the user to commit before going ahead
 
@@ -91,11 +98,11 @@ const Contents = {
 
 const imageMap = [
   /* assets */
-  [`${projectDir}${sep}assets${sep}${iconName}.png`, [100, 100]],
-  [`${projectDir}${sep}assets${sep}${iconName}@1,5x.png`, [150, 150]],
-  [`${projectDir}${sep}assets${sep}${iconName}@2x.png`, [200, 200]],
-  [`${projectDir}${sep}assets${sep}${iconName}@3x.png`, [300, 300]],
-  [`${projectDir}${sep}assets${sep}${iconName}@4x.png`, [400, 400]],
+  [`${projectAssetsPath}${sep}${iconName}.png`, [100, 100]],
+  [`${projectAssetsPath}${sep}${iconName}@1,5x.png`, [150, 150]],
+  [`${projectAssetsPath}${sep}${iconName}@2x.png`, [200, 200]],
+  [`${projectAssetsPath}${sep}${iconName}@3x.png`, [300, 300]],
+  [`${projectAssetsPath}${sep}${iconName}@4x.png`, [400, 400]],
   /* android */
   [
     `${projectDir}${sep}android${sep}app${sep}src${sep}main${sep}res${sep}mipmap-hdpi${sep}${iconName}.png`,
