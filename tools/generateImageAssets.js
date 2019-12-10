@@ -31,7 +31,7 @@ const iconName =
   // XXX: Defaults to the name used in the example project.
   typeof unsafeIconName === "string" && unsafeIconName.length > 0
     ? unsafeIconName
-    : "react_logo";
+    : "bootsplash_logo";
 
 const assetsPath =
   typeof unsafeAssetsPath === "string" && unsafeAssetsPath.length > 0

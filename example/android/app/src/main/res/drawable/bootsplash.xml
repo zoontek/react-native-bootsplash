@@ -7,7 +7,7 @@
   <item>
     <!-- the react logo, centered horizontally and vertically -->
     <bitmap
-      android:src="@mipmap/react_logo"
+      android:src="@mipmap/bootsplash_logo"
       android:gravity="center" />
   </item>
 </layer-list>
