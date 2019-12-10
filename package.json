@@ -10,6 +10,9 @@
     "type": "git",
     "url": "https://github.com/zoontek/react-native-bootsplash.git"
   },
+  "bin": {
+    "generate-bootsplash-assets": "./scripts/generateBootsplashAssets.js"
+  },
   "keywords": [
     "react-native-bootsplash",
     "react-native",
