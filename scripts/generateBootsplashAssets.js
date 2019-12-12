@@ -63,11 +63,11 @@ if (typeof projectName !== "string" || projectName.length <= 0) {
 }
 
 // TODO: Should be able to define a custom asset name.
-const iosAssetsDir = `${projectDir}${sep}ios${sep}${projectName}${sep}Images.xcassets${sep}ReactLogo.imageset`;
+const iosAssetsDir = `${projectDir}${sep}ios${sep}${projectName}${sep}Images.xcassets${sep}BootsplashLogo.imageset`;
 
 if (!existsSync(iosAssetsDir)) {
   throw new Error(
-    `❌ Failed to resolve the Images.xcassets directory for the ReactLogo.imageset.`,
+    `❌ Failed to resolve the Images.xcassets directory for the BootsplashLogo.imageset.`,
   );
 }
 
