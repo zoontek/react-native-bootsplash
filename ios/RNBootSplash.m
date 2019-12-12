@@ -100,7 +100,6 @@ RCT_EXPORT_METHOD(hide:(float)duration) {
 
 + (void) receiveBootSplashNotification
 {
-    [UIApplication.sharedApplication.delegate.window makeKeyAndVisible];
     _window = nil;
 }
 
