@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Animated, Dimensions, StyleSheet, Text, View } from "react-native";
 import BootSplash from "react-native-bootsplash";
 
-let reactLogo = require("./assets/react_logo.png");
+let bootsplashLogo = require("./assets/bootsplash_logo.png");
 let windowHeight = Dimensions.get("window").height;
 
 let fakeApiCallWithoutBadNetwork = ms =>
@@ -10,7 +10,7 @@ let fakeApiCallWithoutBadNetwork = ms =>
 
 let App = () => {
   let [bootSplashIsVisible, setBootSplashIsVisible] = useState(true);
-  let [reactLogoIsLoaded, setReactLogoIsLoaded] = useState(false);
+  let [bootsplashLogoIsLoaded, setReactLogoIsLoaded] = useState(false);
   let opacity = useRef(new Animated.Value(1));
   let translateY = useRef(new Animated.Value(0));
 
@@ -41,8 +41,8 @@ let App = () => {
   };
 
   useEffect(() => {
-    reactLogoIsLoaded && init();
-  }, [reactLogoIsLoaded]);
+    bootsplashLogoIsLoaded && init();
+  }, [bootsplashLogoIsLoaded]);
 
   return (
     <View style={styles.container}>
@@ -57,7 +57,7 @@ let App = () => {
           ]}
         >
           <Animated.Image
-            source={reactLogo}
+            source={bootsplashLogo}
             fadeDuration={0}
             onLoadEnd={() => setReactLogoIsLoaded(true)}
             style={[
