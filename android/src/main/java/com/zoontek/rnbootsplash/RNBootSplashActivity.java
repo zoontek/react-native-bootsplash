@@ -2,8 +2,8 @@ package com.zoontek.rnbootsplash;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -25,9 +25,14 @@ public class RNBootSplashActivity extends AppCompatActivity {
     try {
       Intent intent = new Intent(this, getMainActivityClass());
       Bundle extras = getIntent().getExtras();
+      String action = getIntent().getAction();
 
       if (extras != null) {
         intent.putExtras(extras);
+      }
+      if (Intent.ACTION_VIEW.equals(action)) {
+        intent.setAction(action);
+        intent.setData(getIntent().getData());
       }
 
       startActivity(intent);
