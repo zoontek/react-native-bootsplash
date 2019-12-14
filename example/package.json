@@ -11,13 +11,13 @@
     "reinstall": "yarn clean && yarn install"
   },
   "dependencies": {
-    "react": "16.8.6",
-    "react-native": "0.60.5",
+    "react": "16.9.0",
+    "react-native": "0.61.5",
     "react-native-bootsplash": "file:../"
   },
   "devDependencies": {
-    "@babel/core": "7.6.0",
-    "@babel/runtime": "7.6.0",
-    "metro-react-native-babel-preset": "0.56.0"
+    "@babel/core": "7.7.5",
+    "@babel/runtime": "7.7.6",
+    "metro-react-native-babel-preset": "0.57.0"
   }
 }
