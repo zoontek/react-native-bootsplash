@@ -31,7 +31,7 @@ Don't forget going into the `ios` directory to execute a `pod install`.
 
 #### iOS
 
-⚠️ Currently, only `.xib` are supported (no `.storyboard` or `.launchImages`).
+_⚠️ Currently, only `.xib` are supported (no `.storyboard` or `.launchImages`)._
 
 Edit the `ios/YourProjectName/AppDelegate.m` file:
 
@@ -159,17 +159,11 @@ As Android will not create our main activity before launching the app, we need t
 
 ```
 
-## Deep Linking
+## Handle deep linking on Android
 
-#### iOS
+If you want to correctly use deep linking with this package, you should:
 
-It's automatic!
-
-#### Android
-
-If you want to use deep linking with this package, you should:
-
-1. Follow [this guide](https://developer.android.com/training/app-links/deep-linking).
+1. Be sure you follow [this guide](https://developer.android.com/training/app-links/deep-linking).
 
 2. Edit the `android/app/src/main/AndroidManifest.xml` file:
 
@@ -193,24 +187,23 @@ If you want to use deep linking with this package, you should:
       android:label="@string/app_name"
       android:windowSoftInputMode="adjustResize"
       android:exported="true"
-      android:launchMode="singleTask" /> <!-- add this line -->
+      android:launchMode="singleTask" /> <!-- set android:launchMode to "singleTask" -->
 
     <activity
       android:name="com.zoontek.rnbootsplash.RNBootSplashActivity"
       android:theme="@style/BootTheme"
-      android:launchMode="singleTask"> <!-- add this line -->
+      android:launchMode="singleTask"> <!-- set android:launchMode to "singleTask" -->
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
 
-      <!-- add the following lines -->
+      <!-- add your deep linking instructions inside the RNBootSplashActivity -->
       <intent-filter>
         <action android:name="android.intent.action.VIEW" />
-        <category android:name="android.intent.category.BROWSABLE" />
         <category android:name="android.intent.category.DEFAULT" />
-        <data android:scheme="YOUR APP scheme" /> <!-- edit this line -->
-
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="YOUR APP SCHEME" /> <!-- replace this with your custom scheme -->
       </intent-filter>
     </activity>
 
@@ -224,9 +217,9 @@ If you want to use deep linking with this package, you should:
 ## Usage
 
 ```js
-import React, { useEffect } from 'react';
-import { Text } from 'react-native';
-import RNBootSplash from 'react-native-bootsplash';
+import React, { useEffect } from "react";
+import { Text } from "react-native";
+import RNBootSplash from "react-native-bootsplash";
 
 function App() {
   let init = async () => {
@@ -248,7 +241,10 @@ function App() {
 
 ## 🆘 Manual linking
 
-Because this package targets React Native 0.60+, you will probably don't need to link it. Otherwise if you follow all the previous steps and it still doesn't work, try to link this library manually:
+Because this package targets React Native 0.60.0+, you will probably don't need to link it manually. Otherwise if it's not the case, follow this additional instructions:
+
+<details>
+  <summary><b>👀 See manual linking instructions</b></summary>
 
 #### iOS
 
@@ -300,6 +296,8 @@ public class MainApplication extends Application implements ReactApplication {
   // …
 }
 ```
+
+</details>
 
 ## 🕵️‍♂️ Comparison with [react-native-splash-screen](https://github.com/crazycodeboy/react-native-splash-screen)
 
