@@ -138,7 +138,7 @@ As Android will not create our main activity before launching the app, we need t
       android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
       android:label="@string/app_name"
       android:windowSoftInputMode="adjustResize"
-      android:exported="true"><!-- add this line -->
+      android:exported="true"> <!-- add this line -->
       <!-- remove the intent-filter from MainActivity -->
     </activity>
 
@@ -159,12 +159,74 @@ As Android will not create our main activity before launching the app, we need t
 
 ```
 
+#### Deep Linking
+
+If you want to use deep linking with this package, you should:
+
+1. Follow [this guide](https://reactnavigation.org/docs/en/deep-linking.html).
+
+2. Edit the `android/app/src/main/AndroidManifest.xml` file:
+
+```xml
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  package="com.rnbootsplashexample">
+
+  <!-- … -->
+
+  <application
+    android:name=".MainApplication"
+    android:label="@string/app_name"
+    android:icon="@mipmap/ic_launcher"
+    android:roundIcon="@mipmap/ic_launcher_round"
+    android:allowBackup="false"
+    android:theme="@style/AppTheme">
+
+    <activity
+      android:name=".MainActivity"
+      android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+      android:label="@string/app_name"
+      android:windowSoftInputMode="adjustResize"
+      android:exported="true"
+      android:launchMode="singleTask" /> <!-- add this line -->
+
+    <activity
+      android:name="com.zoontek.rnbootsplash.RNBootSplashActivity"
+      android:theme="@style/BootTheme"
+      android:launchMode="singleTask"> <!-- add this line -->
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+
+      <!-- add the following lines -->
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <data android:scheme="YOUR APP scheme" /> <!-- edit this line -->
+        <!-- example:
+        <data
+          android:scheme="https"
+          android:host="foo.com"
+        />
+        -->
+
+      </intent-filter>
+    </activity>
+
+    <!-- … -->
+  </application>
+
+</manifest>
+
+```
+
 ## Usage
 
 ```js
-import React, { useEffect } from "react";
-import { Text } from "react-native";
-import RNBootSplash from "react-native-bootsplash";
+import React, { useEffect } from 'react';
+import { Text } from 'react-native';
+import RNBootSplash from 'react-native-bootsplash';
 
 function App() {
   let init = async () => {
