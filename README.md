@@ -213,65 +213,10 @@ As Android will not create our main activity before launching the app, we need t
     </activity>
 
     <!-- … -->
+
   </application>
 
 </manifest>
-
-```
-
-## Handle deep linking on Android
-
-If you want to correctly use deep linking with this package, you should:
-
-1. Be sure you follow [this guide](https://developer.android.com/training/app-links/deep-linking).
-
-2. Edit the `android/app/src/main/AndroidManifest.xml` file:
-
-```xml
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.rnbootsplashexample">
-
-  <!-- … -->
-
-  <application
-    android:name=".MainApplication"
-    android:label="@string/app_name"
-    android:icon="@mipmap/ic_launcher"
-    android:roundIcon="@mipmap/ic_launcher_round"
-    android:allowBackup="false"
-    android:theme="@style/AppTheme">
-
-    <activity
-      android:name=".MainActivity"
-      android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
-      android:label="@string/app_name"
-      android:windowSoftInputMode="adjustResize"
-      android:exported="true"
-      android:launchMode="singleTask" /> <!-- set android:launchMode to "singleTask" -->
-
-    <activity
-      android:name="com.zoontek.rnbootsplash.RNBootSplashActivity"
-      android:theme="@style/BootTheme"
-      android:launchMode="singleTask"> <!-- set android:launchMode to "singleTask" -->
-      <intent-filter>
-        <action android:name="android.intent.action.MAIN" />
-        <category android:name="android.intent.category.LAUNCHER" />
-      </intent-filter>
-
-      <!-- add your deep linking instructions inside the RNBootSplashActivity -->
-      <intent-filter>
-        <action android:name="android.intent.action.VIEW" />
-        <category android:name="android.intent.category.DEFAULT" />
-        <category android:name="android.intent.category.BROWSABLE" />
-        <data android:scheme="YOUR APP SCHEME" /> <!-- replace this with your custom scheme -->
-      </intent-filter>
-    </activity>
-
-    <!-- … -->
-  </application>
-
-</manifest>
-
 ```
 
 ## Usage
@@ -298,6 +243,93 @@ function App() {
 ```
 
 **🤙 A more complex example is available in the [`/example` folder](example).**
+
+## Guides
+
+### Generate image assets
+
+You can automatically updates your project assets to use a consistent looking icon!
+
+![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/HEAD/scripts/screenshot.png?raw=true)
+
+```bash
+$ npx generate-bootsplash-assets
+# --- or ---
+$ yarn generate-bootsplash-assets
+```
+
+This will update the bootsplash icons of your React Native project.
+
+This tool currently relies on the naming conventions that are used in the `/example` project, and will therefore create the following files:
+
+```bash
+<path/to/project>/assets/bootsplash_logo.png
+<path/to/project>/assets/bootsplash_logo@1,5x.png
+<path/to/project>/assets/bootsplash_logo@2x.png
+<path/to/project>/assets/bootsplash_logo@3x.png
+<path/to/project>/assets/bootsplash_logo@4x.png
+
+<path/to/project>/android/app/src/main/res/mipmap-mdpi/bootsplash_logo.png
+<path/to/project>/android/app/src/main/res/mipmap-hdpi/bootsplash_logo.png
+<path/to/project>/android/app/src/main/res/mipmap-xhdpi/bootsplash_logo.png
+<path/to/project>/android/app/src/main/res/mipmap-xxhdpi/bootsplash_logo.png
+<path/to/project>/android/app/src/main/res/mipmap-xxxhdpi/bootsplash_logo.png
+
+<path/to/project>/ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo.png
+<path/to/project>/ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo@2x.png
+<path/to/project>/ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo@3x.png
+```
+
+### Handle deep linking (on Android)
+
+If you want to correctly handle [deep linking](https://developer.android.com/training/app-links/deep-linking) with this package, you should edit your `android/app/src/main/AndroidManifest.xml` file like this:
+
+```xml
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  package="com.rnbootsplashexample">
+
+  <!-- … -->
+
+  <application
+    android:name=".MainApplication"
+    android:label="@string/app_name"
+    android:icon="@mipmap/ic_launcher"
+    android:roundIcon="@mipmap/ic_launcher_round"
+    android:allowBackup="false"
+    android:theme="@style/AppTheme">
+
+    <activity
+      android:name=".MainActivity"
+      android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+      android:label="@string/app_name"
+      android:windowSoftInputMode="adjustResize"
+      android:exported="true"
+      android:launchMode="singleTask" /> <!-- set MainActivity android:launchMode to "singleTask" -->
+
+    <activity
+      android:name="com.zoontek.rnbootsplash.RNBootSplashActivity"
+      android:theme="@style/BootTheme"
+      android:launchMode="singleTask"> <!-- set RNBootSplashActivity android:launchMode to "singleTask" -->
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+
+      <!-- add your deep linking instructions inside the RNBootSplashActivity declaration -->
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="YOUR APP SCHEME" /> <!-- replace this with your custom scheme -->
+      </intent-filter>
+    </activity>
+
+    <!-- … -->
+
+  </application>
+
+</manifest>
+```
 
 ## 🕵️‍♂️ Comparison with [react-native-splash-screen](https://github.com/crazycodeboy/react-native-splash-screen)
 
