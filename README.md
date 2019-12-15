@@ -159,11 +159,17 @@ As Android will not create our main activity before launching the app, we need t
 
 ```
 
-#### Deep Linking
+## Deep Linking
+
+#### iOS
+
+It's automatic!
+
+#### Android
 
 If you want to use deep linking with this package, you should:
 
-1. Follow [this guide](https://reactnavigation.org/docs/en/deep-linking.html).
+1. Follow [this guide](https://developer.android.com/training/app-links/deep-linking).
 
 2. Edit the `android/app/src/main/AndroidManifest.xml` file:
 
@@ -204,12 +210,6 @@ If you want to use deep linking with this package, you should:
         <category android:name="android.intent.category.BROWSABLE" />
         <category android:name="android.intent.category.DEFAULT" />
         <data android:scheme="YOUR APP scheme" /> <!-- edit this line -->
-        <!-- example:
-        <data
-          android:scheme="https"
-          android:host="foo.com"
-        />
-        -->
 
       </intent-filter>
     </activity>
@@ -224,9 +224,9 @@ If you want to use deep linking with this package, you should:
 ## Usage
 
 ```js
-import React, { useEffect } from "react";
-import { Text } from "react-native";
-import RNBootSplash from "react-native-bootsplash";
+import React, { useEffect } from 'react';
+import { Text } from 'react-native';
+import RNBootSplash from 'react-native-bootsplash';
 
 function App() {
   let init = async () => {
