@@ -258,8 +258,6 @@ $ npx generate-bootsplash-assets
 $ yarn generate-bootsplash-assets
 ```
 
-This will update the bootsplash icons of your React Native project.
-
 This tool currently relies on the naming conventions that are used in the `/example` project, and will therefore create the following files:
 
 ```bash
