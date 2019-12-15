@@ -125,8 +125,7 @@ const questions = [
   {
     name: "iconWidth",
     type: "number",
-    message:
-      "The desired icon width (in dp - we recommand approximately ~100)?",
+    message: "The desired icon width (in dp - we recommand approximately ~100)",
     initial: 100,
     min: 1,
     max: 1000,
