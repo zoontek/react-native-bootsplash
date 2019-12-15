@@ -224,9 +224,9 @@ If you want to use deep linking with this package, you should:
 ## Usage
 
 ```js
-import React, { useEffect } from 'react';
-import { Text } from 'react-native';
-import RNBootSplash from 'react-native-bootsplash';
+import React, { useEffect } from "react";
+import { Text } from "react-native";
+import RNBootSplash from "react-native-bootsplash";
 
 function App() {
   let init = async () => {
