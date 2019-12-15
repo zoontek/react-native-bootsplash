@@ -34,7 +34,7 @@ Because this package targets React Native 0.60.0+, you will probably don't need 
 <details>
   <summary><b>👀 See manual linking instructions</b></summary>
 
-#### iOS
+### iOS
 
 Add this line to your `ios/Podfile` file, then run `pod install`.
 
@@ -45,7 +45,7 @@ target 'YourAwesomeProject' do
 end
 ```
 
-#### Android
+### Android
 
 1. Add the following lines to `android/settings.gradle`:
 
