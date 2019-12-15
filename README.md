@@ -282,7 +282,7 @@ This tool currently relies on the naming conventions that are used in the `/exam
 
 ### Handle deep linking (on Android)
 
-If you want to correctly handle [deep linking](https://developer.android.com/training/app-links/deep-linking) with this package, you should edit your `android/app/src/main/AndroidManifest.xml` file like this:
+If you want to correctly handle [deep linking](https://developer.android.com/training/app-links/deep-linking) with this package, you should edit the `android/app/src/main/AndroidManifest.xml` file like this:
 
 ```xml
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
