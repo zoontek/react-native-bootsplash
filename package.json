@@ -26,8 +26,12 @@
     "launchscreen"
   ],
   "scripts": {
-    "precommit": "lint-staged",
     "format": "prettier --write '**/*.{js,json,md}'"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   },
   "lint-staged": {
     "**/*.{js,json,md}": [
