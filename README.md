@@ -302,7 +302,7 @@ If you want to correctly handle [deep linking](https://developer.android.com/tra
       android:label="@string/app_name"
       android:windowSoftInputMode="adjustResize"
       android:exported="true"
-      android:launchMode="singleTask" /> <!-- set MainActivity android:launchMode to "singleTask" -->
+      android:launchMode="singleTask" /> <!-- set MainActivity android:launchMode to "singleTask" and add android:exported="true" -->
 
     <activity
       android:name="com.zoontek.rnbootsplash.RNBootSplashActivity"
