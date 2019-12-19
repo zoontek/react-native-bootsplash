@@ -42,11 +42,13 @@
   "peerDependencies": {
     "react-native": ">=0.60.0"
   },
+  "dependencies": {
+    "jimp": "0.9.3"
+  },
   "devDependencies": {
     "@babel/core": "7.7.5",
     "chalk": "3.0.0",
     "husky": "3.1.0",
-    "jimp": "0.9.3",
     "lint-staged": "9.5.0",
     "prettier": "1.19.1",
     "prompts": "2.3.0",
