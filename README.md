@@ -17,6 +17,8 @@ Show a bootsplash during app startup. Hide it when you are ready.
 
 For 0.59-, you should use [`jetify -r`](https://github.com/mikehardy/jetifier/blob/master/README.md#to-reverse-jetify--convert-node_modules-dependencies-to-support-libraries)
 
+_⚠️ This library does not support `react-native-navigation` and it's a non-goal for now._
+
 ## Installation
 
 ```bash
