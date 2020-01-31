@@ -220,57 +220,6 @@ This tool currently relies on the naming conventions that are used in the `/exam
 <path/to/project>/ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo@3x.png
 ```
 
-### Handle deep linking (on Android)
-
-If you want to correctly handle [deep linking](https://developer.android.com/training/app-links/deep-linking) with this package, you should edit the `android/app/src/main/AndroidManifest.xml` file like this:
-
-```xml
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.rnbootsplashexample">
-
-  <!-- … -->
-
-  <application
-    android:name=".MainApplication"
-    android:label="@string/app_name"
-    android:icon="@mipmap/ic_launcher"
-    android:roundIcon="@mipmap/ic_launcher_round"
-    android:allowBackup="false"
-    android:theme="@style/AppTheme">
-
-    <activity
-      android:name=".MainActivity"
-      android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
-      android:label="@string/app_name"
-      android:windowSoftInputMode="adjustResize"
-      android:exported="true"
-      android:launchMode="singleTask" /> <!-- set MainActivity android:launchMode to "singleTask" and add android:exported="true" -->
-
-    <activity
-      android:name="com.zoontek.rnbootsplash.RNBootSplashActivity"
-      android:theme="@style/BootTheme"
-      android:launchMode="singleTask"> <!-- set RNBootSplashActivity android:launchMode to "singleTask" -->
-      <intent-filter>
-        <action android:name="android.intent.action.MAIN" />
-        <category android:name="android.intent.category.LAUNCHER" />
-      </intent-filter>
-
-      <!-- add your deep linking instructions inside the RNBootSplashActivity declaration -->
-      <intent-filter>
-        <action android:name="android.intent.action.VIEW" />
-        <category android:name="android.intent.category.DEFAULT" />
-        <category android:name="android.intent.category.BROWSABLE" />
-        <data android:scheme="YOUR APP SCHEME" /> <!-- replace this with your custom scheme -->
-      </intent-filter>
-    </activity>
-
-    <!-- … -->
-
-  </application>
-
-</manifest>
-```
-
 ## 🕵️‍♂️ Comparison with [react-native-splash-screen](https://github.com/crazycodeboy/react-native-splash-screen)
 
 - If `react-native-splash-screen` encourages you to display an image over your application, `react-native-bootsplash` way-to-go is to design your launch screen using platforms tools ([Xcode layout editor](https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/) and [Android drawable resource](https://developer.android.com/guide/topics/resources/drawable-resource)).
