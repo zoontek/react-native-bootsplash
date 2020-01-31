@@ -3,9 +3,9 @@ package com.zoontek.rnbootsplash;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
-import android.widget.LinearLayout;
 
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -57,7 +57,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
       return;
     }
 
-    final LinearLayout layout = activity.findViewById(R.id.bootsplash_layout_id);
+    final View layout = activity.findViewById(R.id.bootsplash_layout_id);
     if (layout == null) return;
 
     UiThreadUtil.runOnUiThread(new Runnable() {
@@ -74,17 +74,17 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
         }
 
         layout
-            .animate()
-            .setDuration(roundedDuration)
-            .alpha(0.0f)
-            .setInterpolator(new AccelerateInterpolator())
-            .setListener(new AnimatorListenerAdapter() {
-              @Override
-              public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                parent.removeView(layout);
-              }
-            }).start();
+                .animate()
+                .setDuration(roundedDuration)
+                .alpha(0.0f)
+                .setInterpolator(new AccelerateInterpolator())
+                .setListener(new AnimatorListenerAdapter() {
+                  @Override
+                  public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    parent.removeView(layout);
+                  }
+                }).start();
       }
     });
   }

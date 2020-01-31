@@ -17,10 +17,10 @@ public class RNBootSplash {
     activity.runOnUiThread(new Runnable() {
       @Override
       public void run() {
-        LayoutInflater inflater = activity.getLayoutInflater();
-        View view = inflater.inflate(layoutId, null, false);
-        LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        View view = activity.getLayoutInflater().inflate(layoutId, null, false);
         view.setId(R.id.bootsplash_layout_id);
+
+        LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 
         activity.addContentView(view, params);
         showHasRunOnce = true;
