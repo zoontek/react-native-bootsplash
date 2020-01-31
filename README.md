@@ -122,7 +122,8 @@ Edit the `ios/YourProjectName/AppDelegate.m` file:
 
 1. Create a `bootsplash.xml` file in `android/app/src/main/res/layout` (create the folder if necessary). You can customize this as you want.
 
-```<?xml version="1.0" encoding="utf-8"?>
+```xml
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
@@ -130,6 +131,7 @@ Edit the `ios/YourProjectName/AppDelegate.m` file:
     android:gravity="center_vertical"
     android:background="@android:color/white"
     >
+    <!-- Change the background color of the splash screen with android:background. It can be a system color or a custom one defined in colors.xml -->
 
     <ImageView
         android:id="@+id/imageView"
