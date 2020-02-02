@@ -144,7 +144,22 @@ Edit the `ios/YourProjectName/AppDelegate.m` file:
 </LinearLayout>
 ```
 
-2. Edit the `android/app/src/main/java/com/yourprojectname/MainActivity.java` file:
+2. Edit the android/app/src/main/res/values/styles.xml file:
+
+```xml
+<resources>
+
+  <!-- Base application theme -->
+  <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+  
+    <!-- Add this line to avoid the delay between starting the app and loading the splash screen -->
+    <item name="android:windowDisablePreview">true</item>
+    
+  </style>
+</resources>
+```
+
+3. Edit the `android/app/src/main/java/com/yourprojectname/MainActivity.java` file:
 
 ```java
 import android.os.Bundle; // <- add necessary import
