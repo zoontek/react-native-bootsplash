@@ -19,7 +19,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
 
   public static final String MODULE_NAME = "RNBootSplash";
 
-  private boolean hideHasRunOnce = false;
+  private boolean hideHasRun = false;
   private boolean hideOnAppResume = false;
 
   public RNBootSplashModule(ReactApplicationContext reactContext) {
@@ -48,7 +48,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
 
   @ReactMethod
   public void hide(final Float duration) {
-    if (hideHasRunOnce) return;
+    if (hideHasRun) return;
 
     Activity activity = getReactApplicationContext().getCurrentActivity();
 
@@ -63,7 +63,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
     UiThreadUtil.runOnUiThread(new Runnable() {
       @Override
       public void run() {
-        hideHasRunOnce = true;
+        hideHasRun = true;
 
         final ViewGroup parent = (ViewGroup) layout.getParent();
         int roundedDuration = duration.intValue();
@@ -83,6 +83,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
               public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 parent.removeView(layout);
+                hideHasRun = false;
               }
             }).start();
       }

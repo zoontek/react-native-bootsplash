@@ -155,6 +155,12 @@ public class MainActivity extends ReactActivity {
     super.onCreate(savedInstanceState);
     RNBootSplash.show(R.drawable.bootsplash, MainActivity.this); // <- display the "bootsplash" xml view over our MainActivity
   }
+
+  @Override
+  protected void onResume() {
+    RNBootSplash.reset(); // <- reset to allow showing the bootsplash again if desired (not required)
+    super.onResume();
+  }
 ```
 
 As Android will not create our main activity before launching the app, we need to display a different activity at start, then switch to our main one.

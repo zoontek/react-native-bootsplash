@@ -9,10 +9,10 @@ import androidx.annotation.NonNull;
 
 public class RNBootSplash {
 
-  private static boolean showHasRunOnce = false;
+  private static boolean showHasRun = false;
 
   public static void show(final int drawableResId, @NonNull final Activity activity) {
-    if (showHasRunOnce) return;
+    if (showHasRun) return;
 
     activity.runOnUiThread(new Runnable() {
       @Override
@@ -29,8 +29,12 @@ public class RNBootSplash {
         layout.addView(view, params);
 
         activity.addContentView(layout, params);
-        showHasRunOnce = true;
+        showHasRun = true;
       }
     });
+  }
+
+  public static void reset() {
+    resetHasRun = false;
   }
 }
