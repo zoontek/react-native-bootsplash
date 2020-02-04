@@ -157,9 +157,10 @@ public class MainActivity extends ReactActivity {
   }
 
   @Override
-  protected void onResume() {
+  protected void onPause() {
     RNBootSplash.reset(); // <- reset to allow showing the bootsplash again if desired (not required)
-    super.onResume();
+    RNBootSplash.show(R.drawable.bootsplash, MainActivity.this); // <- show it again
+    super.onPause();
   }
 ```
 
