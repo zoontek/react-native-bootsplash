@@ -137,6 +137,7 @@ Edit the `ios/YourProjectName/AppDelegate.m` file:
   </item>
 </layer-list>
 ```
+If you imported your icon as an image asset into mipmap folder and if you run into error/ crash that says "android.content.res.Resources$NotFoundException: Drawable com.package:drawable/bootsplash" then you might need to use 'ic_launcher_foreground' for bitmap src instead of 'ic_launcher'
 
 2. Edit the `android/app/src/main/java/com/yourprojectname/MainActivity.java` file:
 
