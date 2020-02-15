@@ -132,7 +132,7 @@ Edit the `ios/YourProjectName/AppDelegate.m` file:
   <item>
     <!-- the app logo, centered horizontally and vertically -->
     <bitmap
-      android:src="@mipmap/ic_launcher"
+      android:src="@mipmap/bootsplash_logo"
       android:gravity="center" />
   </item>
 </layer-list>
