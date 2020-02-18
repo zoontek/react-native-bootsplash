@@ -130,7 +130,7 @@ Edit the `ios/YourProjectName/AppDelegate.m` file:
   <item android:drawable="@android:color/white" />
 
   <item>
-    <!-- the app logo, centered horizontally and vertically -->
+    <!-- your logo, centered horizontally and vertically -->
     <bitmap
       android:src="@mipmap/bootsplash_logo"
       android:gravity="center" />
