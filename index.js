@@ -3,7 +3,9 @@ const { RNBootSplash } = NativeModules;
 
 export default {
   hide(config = {}) {
-    const merged = { duration: 0, ...config };
-    RNBootSplash.hide(merged.duration);
+    RNBootSplash.hide({ duration: 0, ...config }.duration);
+  },
+  show(config = {}) {
+    RNBootSplash.show({ duration: 0, ...config }.duration);
   },
 };

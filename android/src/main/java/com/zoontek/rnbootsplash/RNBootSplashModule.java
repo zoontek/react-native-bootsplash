@@ -1,17 +1,11 @@
 package com.zoontek.rnbootsplash;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
-import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
-import android.widget.LinearLayout;
 
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.UiThreadUtil;
 import com.facebook.react.module.annotations.ReactModule;
 
 @ReactModule(name = RNBootSplashModule.MODULE_NAME)
@@ -19,8 +13,8 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
 
   public static final String MODULE_NAME = "RNBootSplash";
 
-  private boolean hideHasRunOnce = false;
-  private boolean hideOnAppResume = false;
+  private boolean mRunHideOnAppResume = false;
+  private boolean mRunShowOnAppResume = false;
 
   public RNBootSplashModule(ReactApplicationContext reactContext) {
     super(reactContext);
@@ -34,10 +28,15 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
 
   @Override
   public void onHostResume() {
-    if (hideOnAppResume) {
+    if (mRunHideOnAppResume) {
       hide(0.0f);
-      hideOnAppResume = false;
     }
+    if (mRunShowOnAppResume) {
+      show(0.0f);
+    }
+
+    mRunHideOnAppResume = false;
+    mRunShowOnAppResume = false;
   }
 
   @Override
@@ -47,45 +46,26 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
   public void onHostDestroy() {}
 
   @ReactMethod
-  public void hide(final Float duration) {
-    if (hideHasRunOnce) return;
-
-    Activity activity = getReactApplicationContext().getCurrentActivity();
+  public void show(final Float duration) {
+    final Activity activity = getReactApplicationContext().getCurrentActivity();
 
     if (activity == null) {
-      hideOnAppResume = true;
-      return;
+      mRunHideOnAppResume = false;
+      mRunShowOnAppResume = true;
+    } else {
+      RNBootSplash.show(activity, duration);
     }
+  }
 
-    final LinearLayout layout = activity.findViewById(R.id.bootsplash_layout_id);
-    if (layout == null) return;
+  @ReactMethod
+  public void hide(final Float duration) {
+    final Activity activity = getReactApplicationContext().getCurrentActivity();
 
-    UiThreadUtil.runOnUiThread(new Runnable() {
-      @Override
-      public void run() {
-        hideHasRunOnce = true;
-
-        final ViewGroup parent = (ViewGroup) layout.getParent();
-        int roundedDuration = duration.intValue();
-
-        if (roundedDuration <= 0) {
-          parent.removeView(layout);
-          return;
-        }
-
-        layout
-            .animate()
-            .setDuration(roundedDuration)
-            .alpha(0.0f)
-            .setInterpolator(new AccelerateInterpolator())
-            .setListener(new AnimatorListenerAdapter() {
-              @Override
-              public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                parent.removeView(layout);
-              }
-            }).start();
-      }
-    });
+    if (activity == null) {
+      mRunHideOnAppResume = true;
+      mRunShowOnAppResume = false;
+    } else {
+      RNBootSplash.hide(activity, duration);
+    }
   }
 }
