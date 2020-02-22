@@ -30,7 +30,7 @@
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
 
-  [RNBootSplash show:@"LaunchScreen" inView:rootView];
+  [RNBootSplash initWithStoryboard:@"LaunchScreen" viewController:rootViewController];
 
   return YES;
 }

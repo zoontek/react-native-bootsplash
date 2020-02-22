@@ -11,7 +11,7 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		635D1A20B349529AE17F4BE8 /* libPods-RNBootSplashExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00030A577D68E40043D59AF8 /* libPods-RNBootSplashExample.a */; };
-		DDF11BDB22C6742900193EAB /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = DDF11BDA22C6742900193EAB /* LaunchScreen.xib */; };
+		DD8CD0FF24019C27001B500B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DD8CD0FE24019C27001B500B /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,7 +25,7 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = RNBootSplashExample/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = RNBootSplashExample/main.m; sourceTree = "<group>"; };
 		88F5D4A5CC7433FAC5FA9F59 /* Pods-RNBootSplashExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RNBootSplashExample.debug.xcconfig"; path = "Target Support Files/Pods-RNBootSplashExample/Pods-RNBootSplashExample.debug.xcconfig"; sourceTree = "<group>"; };
-		DDF11BDA22C6742900193EAB /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = LaunchScreen.xib; path = RNBootSplashExample/LaunchScreen.xib; sourceTree = "<group>"; };
+		DD8CD0FE24019C27001B500B /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = RNBootSplashExample/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
@@ -45,10 +45,10 @@
 		13B07FAE1A68108700A75B9A /* RNBootSplashExample */ = {
 			isa = PBXGroup;
 			children = (
+				DD8CD0FE24019C27001B500B /* LaunchScreen.storyboard */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
-				DDF11BDA22C6742900193EAB /* LaunchScreen.xib */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
@@ -138,6 +138,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -156,8 +157,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DDF11BDB22C6742900193EAB /* LaunchScreen.xib in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				DD8CD0FF24019C27001B500B /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

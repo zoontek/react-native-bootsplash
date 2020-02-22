@@ -1,9 +1,9 @@
 #import "RNBootSplash.h"
 #import <React/RCTBridge.h>
-#import <UIKit/UIKit.h>
 
-static UIView* bootSplashView = nil;
-static bool isFlaggedAsHidden = false;
+static UIViewController* _splashViewController = nil;
+static UIViewController* _reactViewController = nil;
+static bool _isVisible = false;
 
 @implementation RNBootSplash
 
@@ -20,7 +20,7 @@ RCT_EXPORT_MODULE();
 - (instancetype)init {
   if (self = [super init]) {
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(handleJavaScriptDidFailToLoad:)
+                                             selector:@selector(onJavaScriptDidFailToLoad:)
                                                  name:RCTJavaScriptDidFailToLoadNotification
                                                object:nil];
   }
@@ -28,59 +28,95 @@ RCT_EXPORT_MODULE();
   return self;
 }
 
-+ (void)show:(NSString * _Nonnull)name inView:(RCTRootView * _Nonnull)view {
-  if (bootSplashView != nil) {
-    return NSLog(@"🚨 [RNBootSplash] show method is called more than once");
-  }
-
-  NSArray *resources = [[NSBundle mainBundle] loadNibNamed:name owner:self options:nil];
-  UIView *xib = resources ? [resources firstObject] : nil;
-
-  if (xib != nil) {
-    xib.frame = [view bounds];
-    bootSplashView = xib;
-    [view addSubview:xib];
-  } else {
-    NSLog(@"🚨 [RNBootSplash] File \"%@.xib\" does not exists or is not copied in app bundle resources", name);
-  }
+- (void)onJavaScriptDidFailToLoad:(NSNotification *)notification {
+  [self unlistenJavaScriptDidFailToLoad];
+  [self hideWithDuration:0];
 }
 
-- (void)removeFromView {
-  if (bootSplashView != nil) {
-    [bootSplashView removeFromSuperview];
-    bootSplashView = nil;
-  }
-
+- (void)unlistenJavaScriptDidFailToLoad {
   [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                  name:RCTJavaScriptDidFailToLoadNotification
-                                                object:nil];
+                                              name:RCTJavaScriptDidFailToLoadNotification
+                                            object:nil];
 }
 
-- (void)handleJavaScriptDidFailToLoad:(NSNotification *)notification {
-  [self removeFromView];
-}
-
-RCT_EXPORT_METHOD(hide:(float)duration) {
-  if (bootSplashView == nil || isFlaggedAsHidden) {
++ (void)initWithStoryboard:(NSString * _Nonnull)storyboardName
+            viewController:(UIViewController * _Nonnull)rootViewController {
+  if (_reactViewController != nil || _splashViewController != nil || _isVisible) {
     return;
   }
 
-  isFlaggedAsHidden = true;
-  float roundedDuration = lroundf(duration);
+  _reactViewController = rootViewController;
+  UIStoryboard *storyboard = [UIStoryboard storyboardWithName:storyboardName bundle:nil];
 
-  if (roundedDuration <= 0) {
-    return [self removeFromView];
+  if (storyboard != nil) {
+    _splashViewController = [storyboard instantiateInitialViewController];
+    [_splashViewController setModalPresentationStyle:UIModalPresentationFullScreen];
+    _isVisible = true;
+    [_reactViewController presentViewController:_splashViewController animated:false completion:nil];
+  }
+}
+
+- (void)showWithDuration:(float)duration {
+  if (_reactViewController == nil || _splashViewController == nil || _isVisible) {
+    return;
   }
 
-  [UIView animateWithDuration:roundedDuration / 1000
-                        delay:0.0
-                      options:UIViewAnimationOptionCurveEaseIn
-                   animations:^{
-                     bootSplashView.alpha = 0;
-                   }
-                   completion:^(BOOL finished) {
-                     [self removeFromView];
-                   }];
+  _isVisible = true;
+  UIWindow *reactWindow = [[_reactViewController view] window];
+
+  if (reactWindow != nil) {
+    float roundedDuration = lroundf(duration);
+
+    if (roundedDuration <= 0) {
+      [[reactWindow layer] removeAnimationForKey:kCATransition];
+    } else {
+      CATransition *transition = [CATransition animation];
+
+      transition.duration = roundedDuration / 1000;
+      transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
+      transition.type = kCATransitionFade;
+
+      [[reactWindow layer] addAnimation:transition forKey:kCATransition];
+    }
+  }
+
+  [_reactViewController presentViewController:_splashViewController animated:false completion:nil];
+}
+
+- (void)hideWithDuration:(float)duration {
+  if (_reactViewController == nil || _splashViewController == nil || !_isVisible) {
+    return;
+  }
+
+  _isVisible = false;
+  UIWindow *splashWindow = [[_splashViewController view] window];
+
+  if (splashWindow != nil) {
+    float roundedDuration = lroundf(duration);
+
+    if (roundedDuration <= 0) {
+      [[splashWindow layer] removeAnimationForKey:kCATransition];
+    } else {
+      CATransition *transition = [CATransition animation];
+
+      transition.duration = roundedDuration / 1000;
+      transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];
+      transition.type = kCATransitionFade;
+
+      [[splashWindow layer] addAnimation:transition forKey:kCATransition];
+    }
+  }
+
+  [_splashViewController dismissViewControllerAnimated:false completion:nil];
+}
+
+RCT_EXPORT_METHOD(show:(float)duration) {
+  [self showWithDuration:duration];
+}
+
+RCT_EXPORT_METHOD(hide:(float)duration) {
+  [self unlistenJavaScriptDidFailToLoad];
+  [self hideWithDuration:duration];
 }
 
 @end
