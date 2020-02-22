@@ -34,10 +34,7 @@
     }
   },
   "lint-staged": {
-    "**/*.{js,json,md}": [
-      "prettier --write",
-      "git add"
-    ]
+    "**/*.{js,json,md}": "prettier --write"
   },
   "peerDependencies": {
     "react-native": ">=0.60.0"
@@ -46,12 +43,12 @@
     "jimp": "0.9.3"
   },
   "devDependencies": {
-    "@babel/core": "7.7.5",
+    "@babel/core": "7.8.4",
     "chalk": "3.0.0",
-    "husky": "3.1.0",
-    "lint-staged": "9.5.0",
+    "husky": "4.2.3",
+    "lint-staged": "10.0.7",
     "prettier": "1.19.1",
-    "prompts": "2.3.0",
+    "prompts": "2.3.1",
     "react": "16.9.0",
     "react-native": "0.61.5"
   }
