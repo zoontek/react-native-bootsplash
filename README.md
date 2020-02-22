@@ -255,9 +255,9 @@ You can automatically updates your project assets to use a consistent looking ic
 ![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/HEAD/scripts/screenshot.png?raw=true)
 
 ```bash
-$ npx generate-bootsplash-assets
+$ npx generate-bootsplash
 # --- or ---
-$ yarn generate-bootsplash-assets
+$ yarn generate-bootsplash
 ```
 
 This tool currently relies on the naming conventions that are used in the `/example` project, and will therefore create the following files:
