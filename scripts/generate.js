@@ -321,7 +321,7 @@ async function generate({
     [path.join(assetsPath, logoFileName + "@4x.png"), [w4, h(w4)]],
   );
 
-  log("👍  Looking good! Generating images…");
+  log("👍  Looking good! Generating files…");
 
   await Promise.all(
     imageMap.map(([path, [width, height]]) =>
@@ -330,7 +330,7 @@ async function generate({
         .cover(width, height)
         .writeAsync(path)
         .then(() => {
-          log(`✨ ${path} (${width}x${height})`);
+          log(`✨ ${path} (${width}x${height})`, true);
         }),
     ),
   );
@@ -344,7 +344,7 @@ async function generate({
       "utf-8",
     );
 
-    log(`✨ ${storyboard}`);
+    log(`✨ ${storyboard}`, true);
   }
 
   if (fs.existsSync(androidResPath)) {
@@ -354,7 +354,7 @@ async function generate({
     const drawable = path.join(drawableDir, "bootsplash.xml");
     fs.writeFileSync(drawable, getDrawable(fullHexadecimal), "utf-8");
 
-    log(`✨ ${drawable}`);
+    log(`✨ ${drawable}`, true);
   }
 
   log(
