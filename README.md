@@ -107,6 +107,7 @@ This tool relies on the naming conventions that are used in the `/example` proje
 
 ```bash
 <PROJECT_ROOT>/android/app/src/main/res/drawable/bootsplash.xml
+<PROJECT_ROOT>/android/app/src/main/res/values/colors.xml (creation and edition)
 <PROJECT_ROOT>/android/app/src/main/res/mipmap-hdpi/bootsplash_logo.png
 <PROJECT_ROOT>/android/app/src/main/res/mipmap-mdpi/bootsplash_logo.png
 <PROJECT_ROOT>/android/app/src/main/res/mipmap-xhdpi/bootsplash_logo.png

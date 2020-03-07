@@ -12,6 +12,7 @@ let projectName;
 
 const logoFileName = "bootsplash_logo";
 const xcassetName = "BootsplashLogo";
+const androidColorRegex = /<color name="bootsplash_background">#\w+<\/color>/g;
 
 const initialProjectPath = path.join(
   ".",
@@ -101,10 +102,10 @@ const getStoryboard = ({
 </document>
 `;
 
-const getDrawable = hex => `<?xml version="1.0" encoding="utf-8"?>
+const drawableXml = `<?xml version="1.0" encoding="utf-8"?>
 
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android" android:opacity="opaque">
-    <item android:drawable="${hex}" />
+    <item android:drawable="@color/bootsplash_background" />
 
     <item>
         <bitmap android:src="@mipmap/${logoFileName}" android:gravity="center" />
@@ -330,7 +331,7 @@ async function generate({
         .cover(width, height)
         .writeAsync(path)
         .then(() => {
-          log(`✨ ${path} (${width}x${height})`, true);
+          log(`✨  ${path} (${width}x${height})`, true);
         }),
     ),
   );
@@ -344,17 +345,54 @@ async function generate({
       "utf-8",
     );
 
-    log(`✨ ${storyboard}`, true);
+    log(`✨  ${storyboard}`, true);
   }
 
   if (fs.existsSync(androidResPath)) {
     const drawableDir = path.join(androidResPath, "drawable");
     ensureDir(drawableDir);
-
     const drawable = path.join(drawableDir, "bootsplash.xml");
-    fs.writeFileSync(drawable, getDrawable(fullHexadecimal), "utf-8");
+    fs.writeFileSync(drawable, drawableXml, "utf-8");
 
-    log(`✨ ${drawable}`, true);
+    log(`✨  ${drawable}`, true);
+
+    const valuesDir = path.join(androidResPath, "values");
+    ensureDir(valuesDir);
+    const colors = path.join(valuesDir, "colors.xml");
+
+    if (fs.existsSync(colors)) {
+      const content = fs.readFileSync(colors, "utf-8");
+
+      if (content.match(androidColorRegex)) {
+        fs.writeFileSync(
+          colors,
+          content.replace(
+            androidColorRegex,
+            `<color name="bootsplash_background">${fullHexadecimal}</color>`,
+          ),
+          "utf-8",
+        );
+      } else {
+        fs.writeFileSync(
+          colors,
+          content.replace(
+            /<\/resources>/g,
+            `    <color name="bootsplash_background">${fullHexadecimal}</color>\n</resources>`,
+          ),
+          "utf-8",
+        );
+      }
+
+      log(`✏️   Editing ${colors}`, true);
+    } else {
+      fs.writeFileSync(
+        colors,
+        `<resources>\n    <color name="bootsplash_background">${fullHexadecimal}</color>\n</resources>\n`,
+        "utf-8",
+      );
+
+      log(`✨  ${colors}`, true);
+    }
   }
 
   log(
