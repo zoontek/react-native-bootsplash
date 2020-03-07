@@ -40,13 +40,13 @@
     "react-native": ">=0.60.0"
   },
   "dependencies": {
-    "jimp": "0.9.3"
+    "jimp": "0.9.5"
   },
   "devDependencies": {
-    "@babel/core": "7.8.4",
+    "@babel/core": "7.8.7",
     "chalk": "3.0.0",
     "husky": "4.2.3",
-    "lint-staged": "10.0.7",
+    "lint-staged": "10.0.8",
     "prettier": "1.19.1",
     "prompts": "2.3.1",
     "react": "16.9.0",
