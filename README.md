@@ -91,9 +91,42 @@ public class MainApplication extends Application implements ReactApplication {
 
 ## Setup
 
-#### iOS
+### Assets generation
 
-_⚠️ Currently, only `.xib` are supported (no `.storyboard` or `.launchImages`)._
+In order to speed up the setup, we provide a **CLI** to resize assets, create the Android Drawable XML file and the iOS Storyboard file automatically ✨.
+
+```bash
+$ npx generate-bootsplash
+# --- or ---
+$ yarn generate-bootsplash
+```
+
+![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/master/scripts/screenshot.png?raw=true)
+
+This tool relies on the naming conventions that are used in the `/example` project and will therefore create the following files:
+
+```bash
+<PROJECT_ROOT>/android/app/src/main/res/drawable/bootsplash.xml
+<PROJECT_ROOT>/android/app/src/main/res/mipmap-hdpi/bootsplash_logo.png
+<PROJECT_ROOT>/android/app/src/main/res/mipmap-mdpi/bootsplash_logo.png
+<PROJECT_ROOT>/android/app/src/main/res/mipmap-xhdpi/bootsplash_logo.png
+<PROJECT_ROOT>/android/app/src/main/res/mipmap-xxhdpi/bootsplash_logo.png
+<PROJECT_ROOT>/android/app/src/main/res/mipmap-xxxhdpi/bootsplash_logo.png
+<PROJECT_ROOT>/assets/bootsplash_logo.png
+<PROJECT_ROOT>/assets/bootsplash_logo@1,5x.png
+<PROJECT_ROOT>/assets/bootsplash_logo@2x.png
+<PROJECT_ROOT>/assets/bootsplash_logo@3x.png
+<PROJECT_ROOT>/assets/bootsplash_logo@4x.png
+
+<PROJECT_ROOT>/ios/RNBootSplashExample/Bootsplash.storyboard
+<PROJECT_ROOT>/ios/RNBootSplashExample/Images.xcassets/BootsplashLogo.imageset/bootsplash_logo.png
+<PROJECT_ROOT>/ios/RNBootSplashExample/Images.xcassets/BootsplashLogo.imageset/bootsplash_logo@2x.png
+<PROJECT_ROOT>/ios/RNBootSplashExample/Images.xcassets/BootsplashLogo.imageset/bootsplash_logo@3x.png
+```
+
+### iOS
+
+_⚠️ Only `.storyboard` are supported ([Apple will deprecate other methods in avril 2020](https://developer.apple.com/news/?id=01132020b))._
 
 Edit the `ios/YourProjectName/AppDelegate.m` file:
 
@@ -113,38 +146,20 @@ Edit the `ios/YourProjectName/AppDelegate.m` file:
   // …
 
   [self.window makeKeyAndVisible];
-  [RNBootSplash show:@"LaunchScreen" inView:rootView]; // <- display the "LaunchScreen" xib view over our rootView
+  [RNBootSplash initWithStoryboard:@"Bootsplash" viewController:rootViewController]; // <- display the generated Bootsplash.storyboard over our rootViewController
   return YES;
 }
 ```
 
-#### Android
+### Android
 
-1. Create a `bootsplash.xml` file in `android/app/src/main/res/drawable` (create the folder if necessary). You can customize this as you want.
-
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android" android:opacity="opaque">
-  <!-- the background color. it can be a system color or a custom one defined in colors.xml -->
-  <item android:drawable="@android:color/white" />
-
-  <item>
-    <!-- your logo, centered horizontally and vertically -->
-    <bitmap
-      android:src="@mipmap/bootsplash_logo"
-      android:gravity="center" />
-  </item>
-</layer-list>
-```
-
-2. Edit the `android/app/src/main/java/com/yourprojectname/MainActivity.java` file:
+1. Edit the `android/app/src/main/java/com/yourprojectname/MainActivity.java` file:
 
 ```java
-import android.os.Bundle; // <- add necessary import
+import android.os.Bundle; // <- add this necessary import
 
 import com.facebook.react.ReactActivity;
-import com.zoontek.rnbootsplash.RNBootSplash; // <- add necessary import
+import com.zoontek.rnbootsplash.RNBootSplash; // <- add this necessary import
 
 public class MainActivity extends ReactActivity {
 
@@ -153,7 +168,7 @@ public class MainActivity extends ReactActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    RNBootSplash.show(R.drawable.bootsplash, MainActivity.this); // <- display the "bootsplash" xml view over our MainActivity
+    RNBootSplash.init(R.drawable.bootsplash, MainActivity.this); // <- display the generated bootsplash.xml drawable over our MainActivity
   }
 ```
 
@@ -172,7 +187,7 @@ As Android will not create our main activity before launching the app, we need t
   <!-- Add the following lines -->
   <!-- BootTheme should inherit from AppTheme -->
   <style name="BootTheme" parent="AppTheme">
-    <!-- set bootsplash.xml as activity background -->
+    <!-- set the generated bootsplash.xml drawable as activity background -->
     <item name="android:background">@drawable/bootsplash</item>
   </style>
 
@@ -221,7 +236,45 @@ As Android will not create our main activity before launching the app, we need t
 </manifest>
 ```
 
-## Usage
+## API
+
+### hide()
+
+#### Method type
+
+```ts
+type hide = (config?: { duration?: number }) => void;
+```
+
+#### Usage
+
+```js
+import RNBootSplash from "react-native-bootsplash";
+
+RNBootSplash.hide(); // immediate
+RNBootSplash.hide({ duration: 250 }); // fade
+```
+
+---
+
+### show()
+
+#### Method type
+
+```ts
+type show = (config?: { duration?: number }) => void;
+```
+
+#### Usage
+
+```js
+import RNBootSplash from "react-native-bootsplash";
+
+RNBootSplash.show(); // immediate
+RNBootSplash.show({ duration: 250 }); // fade
+```
+
+## Real world example
 
 ```js
 import React, { useEffect } from "react";
@@ -235,7 +288,6 @@ function App() {
 
   useEffect(() => {
     init().finally(() => {
-      // without fadeout: RNBootSplash.hide()
       RNBootSplash.hide({ duration: 250 });
     });
   }, []);
@@ -247,38 +299,6 @@ function App() {
 **🤙 A more complex example is available in the [`/example` folder](example).**
 
 ## Guides
-
-### Generate image assets
-
-You can automatically updates your project assets to use a consistent looking icon!
-
-![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/HEAD/scripts/screenshot.png?raw=true)
-
-```bash
-$ npx generate-bootsplash
-# --- or ---
-$ yarn generate-bootsplash
-```
-
-This tool currently relies on the naming conventions that are used in the `/example` project, and will therefore create the following files:
-
-```bash
-<path/to/project>/assets/bootsplash_logo.png
-<path/to/project>/assets/bootsplash_logo@1,5x.png
-<path/to/project>/assets/bootsplash_logo@2x.png
-<path/to/project>/assets/bootsplash_logo@3x.png
-<path/to/project>/assets/bootsplash_logo@4x.png
-
-<path/to/project>/android/app/src/main/res/mipmap-mdpi/bootsplash_logo.png
-<path/to/project>/android/app/src/main/res/mipmap-hdpi/bootsplash_logo.png
-<path/to/project>/android/app/src/main/res/mipmap-xhdpi/bootsplash_logo.png
-<path/to/project>/android/app/src/main/res/mipmap-xxhdpi/bootsplash_logo.png
-<path/to/project>/android/app/src/main/res/mipmap-xxxhdpi/bootsplash_logo.png
-
-<path/to/project>/ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo.png
-<path/to/project>/ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo@2x.png
-<path/to/project>/ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo@3x.png
-```
 
 ### Handle deep linking (on Android)
 
