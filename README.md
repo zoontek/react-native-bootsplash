@@ -106,6 +106,12 @@ $ yarn generate-bootsplash
 This tool relies on the naming conventions that are used in the `/example` project and will therefore create the following files:
 
 ```bash
+<PROJECT_ROOT>/assets/bootsplash_logo.png
+<PROJECT_ROOT>/assets/bootsplash_logo@1,5x.png
+<PROJECT_ROOT>/assets/bootsplash_logo@2x.png
+<PROJECT_ROOT>/assets/bootsplash_logo@3x.png
+<PROJECT_ROOT>/assets/bootsplash_logo@4x.png
+
 <PROJECT_ROOT>/android/app/src/main/res/drawable/bootsplash.xml
 <PROJECT_ROOT>/android/app/src/main/res/values/colors.xml (creation and edition)
 <PROJECT_ROOT>/android/app/src/main/res/mipmap-hdpi/bootsplash_logo.png
@@ -113,11 +119,6 @@ This tool relies on the naming conventions that are used in the `/example` proje
 <PROJECT_ROOT>/android/app/src/main/res/mipmap-xhdpi/bootsplash_logo.png
 <PROJECT_ROOT>/android/app/src/main/res/mipmap-xxhdpi/bootsplash_logo.png
 <PROJECT_ROOT>/android/app/src/main/res/mipmap-xxxhdpi/bootsplash_logo.png
-<PROJECT_ROOT>/assets/bootsplash_logo.png
-<PROJECT_ROOT>/assets/bootsplash_logo@1,5x.png
-<PROJECT_ROOT>/assets/bootsplash_logo@2x.png
-<PROJECT_ROOT>/assets/bootsplash_logo@3x.png
-<PROJECT_ROOT>/assets/bootsplash_logo@4x.png
 
 <PROJECT_ROOT>/ios/RNBootSplashExample/Bootsplash.storyboard
 <PROJECT_ROOT>/ios/RNBootSplashExample/Images.xcassets/BootsplashLogo.imageset/bootsplash_logo.png
