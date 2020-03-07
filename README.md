@@ -153,9 +153,9 @@ Edit the `ios/YourProjectName/AppDelegate.m` file:
 
 Set the `Bootsplash.storyboard` as launch screen file:
 
-| Drag and drop the file                                                                                 | Create folder reference                                                                                | Set as Launch Screen File                                                                              |
-| ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
-| ![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/2.0.0/docs/xcode-1.png?raw=true) | ![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/2.0.0/docs/xcode-2.png?raw=true) | ![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/2.0.0/docs/xcode-3.png?raw=true) |
+| Drag and drop the file                                                                                  | Create folder reference                                                                                 | Set as Launch Screen File                                                                               |
+| ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| ![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/master/docs/xcode-1.png?raw=true) | ![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/master/docs/xcode-2.png?raw=true) | ![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/master/docs/xcode-3.png?raw=true) |
 
 ### Android
 
