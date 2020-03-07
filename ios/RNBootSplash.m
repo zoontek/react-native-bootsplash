@@ -1,9 +1,10 @@
 #import "RNBootSplash.h"
 #import <React/RCTBridge.h>
+#import <React/RCTUtils.h>
 
-static UIViewController* _splashViewController = nil;
-static UIViewController* _reactViewController = nil;
+static UIViewController *_splashViewController = nil;
 static bool _isVisible = false;
+static NSString *_transitionKey = @"BootSplashTransition";
 
 @implementation RNBootSplash
 
@@ -39,36 +40,34 @@ RCT_EXPORT_MODULE();
                                             object:nil];
 }
 
-+ (void)initWithStoryboard:(NSString * _Nonnull)storyboardName
-            viewController:(UIViewController * _Nonnull)rootViewController {
-  if (_reactViewController != nil || _splashViewController != nil || _isVisible) {
++ (void)initWithStoryboard:(NSString * _Nonnull)storyboardName {
+  if (_splashViewController != nil || _isVisible) {
     return;
   }
 
-  _reactViewController = rootViewController;
   UIStoryboard *storyboard = [UIStoryboard storyboardWithName:storyboardName bundle:nil];
 
   if (storyboard != nil) {
     _splashViewController = [storyboard instantiateInitialViewController];
     [_splashViewController setModalPresentationStyle:UIModalPresentationFullScreen];
     _isVisible = true;
-    [_reactViewController presentViewController:_splashViewController animated:false completion:nil];
+    [RCTPresentedViewController() presentViewController:_splashViewController animated:false completion:nil];
   }
 }
 
 - (void)showWithDuration:(float)duration {
-  if (_reactViewController == nil || _splashViewController == nil || _isVisible) {
+  if (_splashViewController == nil || _isVisible) {
     return;
   }
 
   _isVisible = true;
-  UIWindow *reactWindow = [[_reactViewController view] window];
+  UIWindow *presentedWindow = [[RCTPresentedViewController() view] window];
 
-  if (reactWindow != nil) {
+  if (presentedWindow != nil) {
     float roundedDuration = lroundf(duration);
 
     if (roundedDuration <= 0) {
-      [[reactWindow layer] removeAnimationForKey:kCATransition];
+      [[presentedWindow layer] removeAnimationForKey:_transitionKey];
     } else {
       CATransition *transition = [CATransition animation];
 
@@ -76,15 +75,15 @@ RCT_EXPORT_MODULE();
       transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
       transition.type = kCATransitionFade;
 
-      [[reactWindow layer] addAnimation:transition forKey:kCATransition];
+      [[presentedWindow layer] addAnimation:transition forKey:_transitionKey];
     }
   }
 
-  [_reactViewController presentViewController:_splashViewController animated:false completion:nil];
+  [RCTPresentedViewController() presentViewController:_splashViewController animated:false completion:nil];
 }
 
 - (void)hideWithDuration:(float)duration {
-  if (_reactViewController == nil || _splashViewController == nil || !_isVisible) {
+  if (_splashViewController == nil || !_isVisible) {
     return;
   }
 
@@ -95,7 +94,7 @@ RCT_EXPORT_MODULE();
     float roundedDuration = lroundf(duration);
 
     if (roundedDuration <= 0) {
-      [[splashWindow layer] removeAnimationForKey:kCATransition];
+      [[splashWindow layer] removeAnimationForKey:_transitionKey];
     } else {
       CATransition *transition = [CATransition animation];
 
@@ -103,7 +102,7 @@ RCT_EXPORT_MODULE();
       transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];
       transition.type = kCATransitionFade;
 
-      [[splashWindow layer] addAnimation:transition forKey:kCATransition];
+      [[splashWindow layer] addAnimation:transition forKey:_transitionKey];
     }
   }
 

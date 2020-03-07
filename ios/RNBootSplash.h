@@ -3,7 +3,6 @@
 
 @interface RNBootSplash : NSObject <RCTBridgeModule>
 
-+ (void)initWithStoryboard:(NSString * _Nonnull)storyboardName
-            viewController:(UIViewController * _Nonnull)rootViewController;
++ (void)initWithStoryboard:(NSString * _Nonnull)storyboardName;
 
 @end

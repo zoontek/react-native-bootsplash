@@ -148,7 +148,7 @@ Edit the `ios/YourProjectName/AppDelegate.m` file:
   // …
 
   [self.window makeKeyAndVisible];
-  [RNBootSplash initWithStoryboard:@"BootSplash" viewController:rootViewController]; // <- display the generated BootSplash.storyboard over our rootViewController
+  [RNBootSplash initWithStoryboard:@"BootSplash"]; // <- display the generated BootSplash.storyboard over our rootViewController
   return YES;
 }
 ```
