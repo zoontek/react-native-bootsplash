@@ -119,10 +119,10 @@ This tool relies on the naming conventions that are used in the `/example` proje
 <PROJECT_ROOT>/assets/bootsplash_logo@3x.png
 <PROJECT_ROOT>/assets/bootsplash_logo@4x.png
 
-<PROJECT_ROOT>/ios/RNBootSplashExample/Bootsplash.storyboard
-<PROJECT_ROOT>/ios/RNBootSplashExample/Images.xcassets/BootsplashLogo.imageset/bootsplash_logo.png
-<PROJECT_ROOT>/ios/RNBootSplashExample/Images.xcassets/BootsplashLogo.imageset/bootsplash_logo@2x.png
-<PROJECT_ROOT>/ios/RNBootSplashExample/Images.xcassets/BootsplashLogo.imageset/bootsplash_logo@3x.png
+<PROJECT_ROOT>/ios/RNBootSplashExample/BootSplash.storyboard
+<PROJECT_ROOT>/ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo.png
+<PROJECT_ROOT>/ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo@2x.png
+<PROJECT_ROOT>/ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo@3x.png
 ```
 
 ### iOS
@@ -147,12 +147,12 @@ Edit the `ios/YourProjectName/AppDelegate.m` file:
   // …
 
   [self.window makeKeyAndVisible];
-  [RNBootSplash initWithStoryboard:@"Bootsplash" viewController:rootViewController]; // <- display the generated Bootsplash.storyboard over our rootViewController
+  [RNBootSplash initWithStoryboard:@"BootSplash" viewController:rootViewController]; // <- display the generated BootSplash.storyboard over our rootViewController
   return YES;
 }
 ```
 
-Set the `Bootsplash.storyboard` as launch screen file:
+Set the `BootSplash.storyboard` as launch screen file:
 
 | Drag and drop the file                                                                                  | Create folder reference                                                                                 | Set as Launch Screen File                                                                               |
 | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |

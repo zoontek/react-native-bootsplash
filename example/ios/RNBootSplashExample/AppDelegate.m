@@ -30,7 +30,7 @@
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
 
-  [RNBootSplash initWithStoryboard:@"Bootsplash" viewController:rootViewController];
+  [RNBootSplash initWithStoryboard:@"BootSplash" viewController:rootViewController];
 
   return YES;
 }

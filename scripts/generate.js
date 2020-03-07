@@ -11,7 +11,7 @@ const prompts = require("prompts");
 let projectName;
 
 const logoFileName = "bootsplash_logo";
-const xcassetName = "BootsplashLogo";
+const xcassetName = "BootSplashLogo";
 const androidColorRegex = /<color name="bootsplash_background">#\w+<\/color>/g;
 
 const initialProjectPath = path.join(
@@ -296,7 +296,7 @@ async function generate({
   const iosImagesPath = path.join(iosProjectPath, "Images.xcassets");
 
   if (fs.existsSync(iosImagesPath)) {
-    const iosImageSetPath = path.join(iosImagesPath, "BootsplashLogo.imageset");
+    const iosImageSetPath = path.join(iosImagesPath, `${xcassetName}.imageset`);
     ensureDir(iosImageSetPath);
 
     fs.writeFileSync(
@@ -337,7 +337,7 @@ async function generate({
   );
 
   if (fs.existsSync(iosProjectPath)) {
-    const storyboard = path.join(iosProjectPath, "Bootsplash.storyboard");
+    const storyboard = path.join(iosProjectPath, `BootSplash.storyboard`);
 
     fs.writeFileSync(
       storyboard,
