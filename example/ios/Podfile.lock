@@ -217,7 +217,7 @@ PODS:
     - React-cxxreact (= 0.61.5)
     - React-jsi (= 0.61.5)
     - ReactCommon/jscallinvoker (= 0.61.5)
-  - RNBootSplash (1.2.1):
+  - RNBootSplash (2.0.0):
     - React
   - Yoga (1.14.0)
 
@@ -336,7 +336,7 @@ SPEC CHECKSUMS:
   React-RCTText: 9ccc88273e9a3aacff5094d2175a605efa854dbe
   React-RCTVibration: a49a1f42bf8f5acf1c3e297097517c6b3af377ad
   ReactCommon: 198c7c8d3591f975e5431bec1b0b3b581aa1c5dd
-  RNBootSplash: 823a7eacaf6aa6e4725bf8dee9f6eeb013b27bc9
+  RNBootSplash: 1158ee2b0aa8465c644c84018b96c05fd3537570
   Yoga: f2a7cd4280bfe2cca5a7aed98ba0eb3d1310f18b
 
 PODFILE CHECKSUM: fff494dbc913e46c257369def59d59cf335f2b27
