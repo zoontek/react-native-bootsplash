@@ -145,8 +145,15 @@ Edit the `ios/YourProjectName/AppDelegate.m` file:
 {
   // …
 
+  // To prevent a potential white flash, I highly recommand setting your bootsplash background color for the rootView
+  // You can find it in the generated BootSplash.storyboard file (search for backgroundColor)
+  rootView.backgroundColor = [[UIColor alloc] initWithRed:0.960784313725490 green:0.988235294117647f blue:1.0f alpha:1];
+
+  // …
+
   [self.window makeKeyAndVisible];
   [RNBootSplash initWithStoryboard:@"BootSplash"]; // <- display the generated BootSplash.storyboard over our rootViewController
+
   return YES;
 }
 ```
