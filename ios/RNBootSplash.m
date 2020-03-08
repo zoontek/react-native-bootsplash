@@ -50,7 +50,12 @@ RCT_EXPORT_MODULE();
 
   _storyboardName = storyboardName;
   _rootSubView = [[[UIStoryboard storyboardWithName:_storyboardName bundle:nil] instantiateInitialViewController] view];
-  [rootView addSubview:_rootSubView];
+
+  [UIView performWithoutAnimation:^{
+    _rootSubView.frame = rootView.bounds;
+    [rootView layoutIfNeeded];
+    [rootView addSubview:_rootSubView];
+  }];
 }
 
 + (void)initialShow {
@@ -125,8 +130,11 @@ RCT_EXPORT_METHOD(show:(float)duration) {
 
 RCT_EXPORT_METHOD(hide:(float)duration) {
   if (_rootSubView != nil) {
-    [_rootSubView removeFromSuperview];
-    _rootSubView = nil;
+    [UIView performWithoutAnimation:^{
+      [[_rootSubView superview] layoutIfNeeded];
+      [_rootSubView removeFromSuperview];
+      _rootSubView = nil;
+    }];
   }
 
   [self unlistenJavaScriptDidFailToLoad];
