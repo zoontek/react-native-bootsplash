@@ -13,33 +13,29 @@ static NSString *_transitionKey = @"BootSplashTransition";
 RCT_EXPORT_MODULE();
 
 + (BOOL)requiresMainQueueSetup {
-  return YES;
+  return NO;
 }
 
 - (dispatch_queue_t)methodQueue {
   return dispatch_get_main_queue();
 }
 
-- (instancetype)init {
-  if (self = [super init]) {
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(onJavaScriptDidFailToLoad:)
-                                                 name:RCTJavaScriptDidFailToLoadNotification
-                                               object:nil];
-  }
-
-  return self;
++ (void)listenJavaScriptDidFailToLoad {
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                                           selector:@selector(onJavaScriptDidFailToLoad:)
+                                               name:RCTJavaScriptDidFailToLoadNotification
+                                             object:nil];
 }
 
-- (void)onJavaScriptDidFailToLoad:(NSNotification *)notification {
-  [self unlistenJavaScriptDidFailToLoad];
-  [self hideWithDuration:0];
-}
-
-- (void)unlistenJavaScriptDidFailToLoad {
++ (void)unlistenJavaScriptDidFailToLoad {
   [[NSNotificationCenter defaultCenter] removeObserver:self
-                                              name:RCTJavaScriptDidFailToLoadNotification
-                                            object:nil];
+                                                  name:RCTJavaScriptDidFailToLoadNotification
+                                                object:nil];
+}
+
++ (void)onJavaScriptDidFailToLoad:(NSNotification *)notification {
+  [RNBootSplash unlistenJavaScriptDidFailToLoad];
+  [RNBootSplash hideWithDuration:0];
 }
 
 + (void)initWithStoryboard:(NSString * _Nonnull)storyboardName
@@ -50,6 +46,8 @@ RCT_EXPORT_MODULE();
 
   _storyboardName = storyboardName;
   _rootSubView = [[[UIStoryboard storyboardWithName:_storyboardName bundle:nil] instantiateInitialViewController] view];
+
+  [RNBootSplash listenJavaScriptDidFailToLoad];
 
   [UIView performWithoutAnimation:^{
     _rootSubView.frame = rootView.bounds;
@@ -70,7 +68,7 @@ RCT_EXPORT_MODULE();
   [RCTPresentedViewController() presentViewController:_splashViewController animated:false completion:nil];
 }
 
-- (void)showWithDuration:(float)duration {
++ (void)showWithDuration:(float)duration {
   if (_splashViewController == nil || _isVisible) {
     return;
   }
@@ -97,7 +95,7 @@ RCT_EXPORT_MODULE();
   [RCTPresentedViewController() presentViewController:_splashViewController animated:false completion:nil];
 }
 
-- (void)hideWithDuration:(float)duration {
++ (void)hideWithDuration:(float)duration {
   if (_splashViewController == nil || !_isVisible) {
     return;
   }
@@ -125,7 +123,7 @@ RCT_EXPORT_MODULE();
 }
 
 RCT_EXPORT_METHOD(show:(float)duration) {
-  [self showWithDuration:duration];
+  [RNBootSplash showWithDuration:duration];
 }
 
 RCT_EXPORT_METHOD(hide:(float)duration) {
@@ -137,8 +135,8 @@ RCT_EXPORT_METHOD(hide:(float)duration) {
     }];
   }
 
-  [self unlistenJavaScriptDidFailToLoad];
-  [self hideWithDuration:duration];
+  [RNBootSplash unlistenJavaScriptDidFailToLoad];
+  [RNBootSplash hideWithDuration:duration];
 }
 
 @end
