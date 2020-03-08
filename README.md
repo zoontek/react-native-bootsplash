@@ -144,15 +144,14 @@ Edit the `ios/YourProjectName/AppDelegate.m` file:
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   // …
+  rootViewController.view = rootView;
 
-  // To prevent a potential white flash, I highly recommand setting your bootsplash background color for the rootView
-  // You can find it in the generated BootSplash.storyboard file (search for backgroundColor)
-  rootView.backgroundColor = [[UIColor alloc] initWithRed:0.960784313725490 green:0.988235294117647f blue:1.0f alpha:1];
+  [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView]; // <- initialization using the storyboard file name
 
-  // …
-
+  self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
-  [RNBootSplash initWithStoryboard:@"BootSplash"]; // <- display the generated BootSplash.storyboard over our rootViewController
+
+  [RNBootSplash initialShow]; // <- show the bootsplash above React Native rootView
 
   return YES;
 }

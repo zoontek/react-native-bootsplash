@@ -3,7 +3,9 @@
 #import <React/RCTUtils.h>
 
 static UIViewController *_splashViewController = nil;
+static UIView *_rootSubView = nil;
 static bool _isVisible = false;
+static NSString *_storyboardName = nil;
 static NSString *_transitionKey = @"BootSplashTransition";
 
 @implementation RNBootSplash
@@ -40,19 +42,27 @@ RCT_EXPORT_MODULE();
                                             object:nil];
 }
 
-+ (void)initWithStoryboard:(NSString * _Nonnull)storyboardName {
++ (void)initWithStoryboard:(NSString * _Nonnull)storyboardName
+                  rootView:(RCTRootView * _Nonnull)rootView {
+  if (_rootSubView != nil || _splashViewController != nil || _isVisible) {
+    return;
+  }
+
+  _storyboardName = storyboardName;
+  _rootSubView = [[[UIStoryboard storyboardWithName:_storyboardName bundle:nil] instantiateInitialViewController] view];
+  [rootView addSubview:_rootSubView];
+}
+
++ (void)initialShow {
   if (_splashViewController != nil || _isVisible) {
     return;
   }
 
-  UIStoryboard *storyboard = [UIStoryboard storyboardWithName:storyboardName bundle:nil];
+  _isVisible = true;
 
-  if (storyboard != nil) {
-    _splashViewController = [storyboard instantiateInitialViewController];
-    [_splashViewController setModalPresentationStyle:UIModalPresentationFullScreen];
-    _isVisible = true;
-    [RCTPresentedViewController() presentViewController:_splashViewController animated:false completion:nil];
-  }
+  _splashViewController = [[UIStoryboard storyboardWithName:_storyboardName bundle:nil] instantiateInitialViewController];
+  [_splashViewController setModalPresentationStyle:UIModalPresentationFullScreen];
+  [RCTPresentedViewController() presentViewController:_splashViewController animated:false completion:nil];
 }
 
 - (void)showWithDuration:(float)duration {
@@ -114,6 +124,11 @@ RCT_EXPORT_METHOD(show:(float)duration) {
 }
 
 RCT_EXPORT_METHOD(hide:(float)duration) {
+  if (_rootSubView != nil) {
+    [_rootSubView removeFromSuperview];
+    _rootSubView = nil;
+  }
+
   [self unlistenJavaScriptDidFailToLoad];
   [self hideWithDuration:duration];
 }
