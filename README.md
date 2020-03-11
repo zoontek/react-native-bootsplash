@@ -126,7 +126,7 @@ This tool relies on the naming conventions that are used in the `/example` proje
 
 ### iOS
 
-_⚠️ Only `.storyboard` are supported ([Apple will deprecate other methods in avril 2020](https://developer.apple.com/news/?id=01132020b))._
+_⚠️ Only `.storyboard` are supported ([Apple will deprecate other methods in April 2020](https://developer.apple.com/news/?id=01132020b))._
 
 Edit the `ios/YourProjectName/AppDelegate.m` file:
 
