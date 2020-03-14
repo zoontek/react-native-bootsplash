@@ -2,8 +2,8 @@
 #import <React/RCTBridge.h>
 #import <React/RCTUtils.h>
 
-static UIViewController *_viewController = nil;
-static UIView *_rootSubView = nil;
+static UIViewController *_splashViewController = nil;
+static RCTRootView *_rootView = nil;
 static bool _visible = false;
 static NSString *_storyboardName = nil;
 static NSString *_transitionKey = @"BootSplashTransition";
@@ -12,83 +12,64 @@ static NSString *_transitionKey = @"BootSplashTransition";
 
 RCT_EXPORT_MODULE();
 
++ (BOOL)requiresMainQueueSetup {
+  return YES;
+}
+
 - (dispatch_queue_t)methodQueue {
   return dispatch_get_main_queue();
 }
 
-+ (void)unlistenDidFailToLoad {
-  [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                  name:RCTJavaScriptDidFailToLoadNotification
-                                                object:nil];
-}
-
-+ (void)removeRootSubView {
-  if (_rootSubView == nil) {
-    return;
-  }
-
-  [UIView performWithoutAnimation:^{
-    [[_rootSubView superview] layoutIfNeeded];
-    [_rootSubView removeFromSuperview];
-    _rootSubView = nil;
-  }];
-}
-
-+ (void)onJavaScriptDidFailToLoad:(NSNotification *)notification {
-  [RNBootSplash unlistenDidFailToLoad];
-  [RNBootSplash removeRootSubView];
-  [RNBootSplash hideWithDuration:0];
-}
-
 + (void)initWithStoryboard:(NSString * _Nonnull)storyboardName
                   rootView:(RCTRootView * _Nonnull)rootView {
-  if (_rootSubView != nil || _viewController != nil || _visible) {
-    return;
-  }
-
-  _rootSubView = [[[UIStoryboard storyboardWithName:storyboardName bundle:nil] instantiateInitialViewController] view];
   _storyboardName = storyboardName;
+  _rootView = rootView;
+
+  UIStoryboard *storyboard = [UIStoryboard storyboardWithName:_storyboardName bundle:nil];
+  UIView *loadingView = [[storyboard instantiateInitialViewController] view];
+
+  [rootView setLoadingView:loadingView];
+  rootView.loadingViewFadeDuration = 0;
+
+  _splashViewController = [storyboard instantiateInitialViewController];
+  [_splashViewController setModalPresentationStyle:UIModalPresentationOverFullScreen];
 
   [[NSNotificationCenter defaultCenter] addObserver:self
-                                          selector:@selector(onJavaScriptDidFailToLoad:)
-                                              name:RCTJavaScriptDidFailToLoadNotification
-                                            object:nil];
+                                          selector:@selector(onJavaScriptDidLoad:)
+                                              name:RCTJavaScriptDidLoadNotification
+                                            object:[rootView bridge]];
+}
 
-  [UIView performWithoutAnimation:^{
-    CGRect frame = rootView.frame;
-    frame.origin = CGPointMake(0, 0);
-    _rootSubView.frame = frame;
++ (void)onJavaScriptDidLoad:(NSNotification *)notification {
+  _visible = true;
 
-    [rootView layoutIfNeeded];
-    [rootView addSubview:_rootSubView];
-  }];
+  [RCTPresentedViewController() presentViewController:_splashViewController animated:false completion:nil];
+
+  [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                  name:RCTJavaScriptDidLoadNotification
+                                                object:[_rootView bridge]];
 }
 
 + (void)initialShow {
-  if (_viewController != nil || _visible) {
-    return;
-  }
-
-  _visible = true;
-
-  _viewController = [[UIStoryboard storyboardWithName:_storyboardName bundle:nil] instantiateInitialViewController];
-  [_viewController setModalPresentationStyle:UIModalPresentationFullScreen];
-  [RCTPresentedViewController() presentViewController:_viewController animated:false completion:nil];
+  NSLog(@"🚨 [RNBootSplash initialShow] This method as been deprecated and will be removed in a future version. You can safely delete the call.");
 }
 
-+ (void)showWithDuration:(float)duration {
-  if (_viewController == nil || _visible) {
+RCT_EXPORT_METHOD(show:(float)duration) {
+  if (_splashViewController == nil || _visible) {
     return;
   }
 
   _visible = true;
 
-  UIWindow *window = [[RCTPresentedViewController() view] window];
+  UIViewController *_presentedViewController = RCTPresentedViewController();
+  UIWindow *window = [[_presentedViewController view] window];
 
   if (window != nil) {
     float roundedDuration = lroundf(duration);
 
-    if (roundedDuration > 0) {
+    if (roundedDuration <= 0) {
+     [[window layer] removeAnimationForKey:_transitionKey];
+    } else {
       CATransition *transition = [CATransition animation];
 
       transition.duration = roundedDuration / 1000;
@@ -96,27 +77,27 @@ RCT_EXPORT_MODULE();
       transition.type = kCATransitionFade;
 
       [[window layer] addAnimation:transition forKey:_transitionKey];
-    } else {
-      [[window layer] removeAnimationForKey:_transitionKey];
     }
   }
 
-  [RCTPresentedViewController() presentViewController:_viewController animated:false completion:nil];
+  [_presentedViewController presentViewController:_splashViewController animated:false completion:nil];
 }
 
-+ (void)hideWithDuration:(float)duration {
-  if (_viewController == nil || !_visible) {
+RCT_EXPORT_METHOD(hide:(float)duration) {
+  if (_splashViewController == nil || !_visible) {
     return;
   }
 
   _visible = false;
 
-  UIWindow *window = [[_viewController view] window];
+  UIWindow *window = [[_splashViewController view] window];
 
   if (window != nil) {
     float roundedDuration = lroundf(duration);
 
-    if (roundedDuration > 0) {
+    if (roundedDuration <= 0) {
+      [[window layer] removeAnimationForKey:_transitionKey];
+    } else {
       CATransition *transition = [CATransition animation];
 
       transition.duration = roundedDuration / 1000;
@@ -124,22 +105,10 @@ RCT_EXPORT_MODULE();
       transition.type = kCATransitionFade;
 
       [[window layer] addAnimation:transition forKey:_transitionKey];
-    } else {
-      [[window layer] removeAnimationForKey:_transitionKey];
     }
   }
 
-  [_viewController dismissViewControllerAnimated:false completion:nil];
-}
-
-RCT_EXPORT_METHOD(show:(float)duration) {
-  [RNBootSplash showWithDuration:duration];
-}
-
-RCT_EXPORT_METHOD(hide:(float)duration) {
-  [RNBootSplash unlistenDidFailToLoad];
-  [RNBootSplash removeRootSubView];
-  [RNBootSplash hideWithDuration:duration];
+  [_splashViewController dismissViewControllerAnimated:false completion:nil];
 }
 
 @end
