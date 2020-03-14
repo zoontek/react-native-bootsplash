@@ -17,12 +17,14 @@ import com.facebook.react.bridge.UiThreadUtil;
 
 public class RNBootSplash {
 
+  private static boolean mInitialized = false;
   private static int mDrawableResId = -1;
   private static boolean mIsVisible = false;
 
   public static void init(final int drawableResId, @NonNull final Activity activity) {
-    if (mDrawableResId == -1) {
+    if (!mInitialized) {
       mDrawableResId = drawableResId;
+      mInitialized = true;
       RNBootSplash.show(activity, 0.0f);
     }
   }
@@ -31,7 +33,7 @@ public class RNBootSplash {
     UiThreadUtil.runOnUiThread(new Runnable() {
       @Override
       public void run() {
-        if (mDrawableResId == -1 || mIsVisible) {
+        if (!mInitialized || mIsVisible) {
           return;
         }
 
@@ -70,13 +72,18 @@ public class RNBootSplash {
     UiThreadUtil.runOnUiThread(new Runnable() {
       @Override
       public void run() {
-        if (mDrawableResId == -1 || !mIsVisible) {
+        if (!mInitialized || !mIsVisible) {
           return;
         }
 
         mIsVisible = false;
 
         final LinearLayout layout = activity.findViewById(R.id.bootsplash_layout_id);
+
+        if (layout == null) {
+          return;
+        }
+
         int roundedDuration = duration.intValue();
         final ViewGroup parent = (ViewGroup) layout.getParent();
 
