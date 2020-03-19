@@ -360,6 +360,15 @@ If you want to correctly handle [deep linking](https://developer.android.com/tra
 </manifest>
 ```
 
+### Change Application Background Color After Splash Screen hides (on Android)
+
+If we pass `MainActivity` into `RNBootSplash.init`, library changes `MainActivity`'s background according to SplashScreen design.
+After Splash Screen hides we want the option to set background that fits the app.
+We want this because when Android shows software keyboard, Application background is visible below for a very brief moment
+and Splash Screen design might be inappropriate here. 
+
+To achieve that, use overloaded `init` call in `Java`: `RNBootSplash.init(R.drawable.bootsplash, YourActivity.this, R.color.your_after_hide_color);` 
+
 ## 🕵️‍♂️ Comparison with [react-native-splash-screen](https://github.com/crazycodeboy/react-native-splash-screen)
 
 - If `react-native-splash-screen` encourages you to display an image over your application, `react-native-bootsplash` way-to-go is to design your launch screen using platforms tools ([Xcode layout editor](https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/) and [Android drawable resource](https://developer.android.com/guide/topics/resources/drawable-resource)).

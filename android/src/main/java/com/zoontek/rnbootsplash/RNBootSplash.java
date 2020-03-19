@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 
 import com.facebook.react.bridge.UiThreadUtil;
 
@@ -20,12 +21,27 @@ public class RNBootSplash {
   private static boolean mInitialized = false;
   private static int mDrawableResId = -1;
   private static boolean mIsVisible = false;
+  private static int afterHideColor = 0;
 
   public static void init(final int drawableResId, @NonNull final Activity activity) {
     if (!mInitialized) {
       mDrawableResId = drawableResId;
       mInitialized = true;
       RNBootSplash.show(activity, 0.0f);
+    }
+  }
+
+  public static void init(final int drawableResId, @NonNull final Activity activity, int afterHideColorId) {
+    if (!mInitialized) {
+      RNBootSplash.afterHideColor = ContextCompat.getColor(activity, afterHideColorId);
+      RNBootSplash.init(drawableResId, activity);
+    }
+  }
+
+  private static void changeApplicationBackgroundIfNeeded(@NonNull final Activity activity) {
+    if (afterHideColor != 0) {
+      final View root = activity.findViewById(android.R.id.content).getRootView();
+      root.setBackgroundColor(afterHideColor);
     }
   }
 
@@ -89,6 +105,7 @@ public class RNBootSplash {
 
         if (roundedDuration <= 0) {
           parent.removeView(layout);
+          changeApplicationBackgroundIfNeeded(activity);
         } else {
           layout
               .animate()
@@ -101,6 +118,7 @@ public class RNBootSplash {
                   super.onAnimationEnd(animation);
                   if (parent != null) {
                     parent.removeView(layout);
+                    changeApplicationBackgroundIfNeeded(activity);
                   }
                 }
               }).start();
