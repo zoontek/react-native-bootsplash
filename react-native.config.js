@@ -27,6 +27,7 @@ module.exports = {
         {
           name: "--iconWidth <width>",
           default: 100,
+          parse: arg => parseInt(arg),
           description: "Width of the icon in background image",
         },
       ],
@@ -40,21 +41,13 @@ module.exports = {
             stdio: "inherit",
           });
         } else {
-          console.log("Hello there", {
-            projectPath: ".",
-            assetsPath,
-            iconPath,
-            backgroundColor,
-            iconWidth,
-            confirmation: true,
-          });
           if (!existsSync(assetsPath)) mkdirSync(assetsPath);
           const out = await generate({
             projectPath: ".",
             assetsPath,
             iconPath,
             backgroundColor,
-            iconWidth,
+            iconWidth: iconWidth,
             confirmation: true,
           });
           console.log("Done");
