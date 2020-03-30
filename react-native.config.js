@@ -1,6 +1,7 @@
 const { generate } = require("./lib/generate");
 const { spawnSync } = require("child_process");
 const { join } = require("path");
+const { existsSync, mkdirSync } = require("fs");
 module.exports = {
   commands: [
     {
@@ -47,6 +48,7 @@ module.exports = {
             iconWidth,
             confirmation: true,
           });
+          if (!existsSync(assetsPath)) mkdirSync(assetsPath);
           const out = await generate({
             projectPath: ".",
             assetsPath,
