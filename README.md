@@ -91,12 +91,39 @@ public class MainApplication extends Application implements ReactApplication {
 
 ### Assets generation
 
-In order to speed up the setup, we provide a **CLI** to resize assets, create the Android Drawable XML file and the iOS Storyboard file automatically ✨.
+**NEW** React-Native BootSplash provides a react-native plugin to allow contextual creation of your bootsplash
+
+```bash
+# Noninteractive deployment
+$ react-native init-bootsplash --iconPath=myicon.png
+```
+
+The plugin takes arguments:
+
+```
+$ react-native init-bootsplash --help
+react-native init-bootsplash
+
+Initialize bootsplash with arguments or interactively
+
+Options:
+  --assetsPath <path>        Path for storing assets (default: "./assets")
+  --iconPath [path]          Path to icon to build the bootsplash screen around (leave blank for interactive) (default: "")
+  --backgroundColor <color>  Background color to wrap around the icon (default: "#fff")
+  --iconWidth <width>        Width of the icon in background image (default: 100)
+  -h, --help                 output usage information
+```
+
+Note that the only argument that is required for noninteractive setup is `iconPath` - the system will take care of everything else. Leaving `iconPath` blank will revert to the older, interactive setup process.
+
+We also provide a yarn-based **CLI** to resize assets, create the Android Drawable XML file and the iOS Storyboard file automatically ✨.
 
 ```bash
 $ npx generate-bootsplash
 # --- or ---
 $ yarn generate-bootsplash
+# -- or: note this uses no arguments
+$ react-native init-bootsplash
 ```
 
 ![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/master/scripts/screenshot.png?raw=true)
