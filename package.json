@@ -42,7 +42,10 @@
   "dependencies": {
     "chalk": "4.0.0",
     "jimp": "0.10.1",
-    "prompts": "2.3.2"
+    "prompts": "2.3.2",
+    "@raydeck/xcode": "2.2.1",
+    "glob": "7.1.6",
+    "plist": "3.0.1"
   },
   "devDependencies": {
     "@babel/core": "7.9.0",
