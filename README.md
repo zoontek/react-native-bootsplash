@@ -181,12 +181,6 @@ Edit the `ios/YourProjectName/AppDelegate.m` file:
 }
 ```
 
-Set the `BootSplash.storyboard` as launch screen file:
-
-| Drag and drop the file                                                                                  | Create folder reference                                                                                 | Set as Launch Screen File                                                                               |
-| ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| ![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/master/docs/xcode-1.png?raw=true) | ![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/master/docs/xcode-2.png?raw=true) | ![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/master/docs/xcode-3.png?raw=true) |
-
 ### Android
 
 1. Edit the `android/app/src/main/java/com/yourprojectname/MainActivity.java` file:
