@@ -129,5 +129,18 @@ const questions = [
 
 prompts(questions)
   .then(generate)
-  .then(addToProject)
+  .then(async (path) => {
+    const { add } = await prompts([
+      {
+        name: "add",
+        type: "confirm",
+        message:
+          "Assets created. Update your ios project to use the new launch storyboard?",
+        default: true,
+      },
+    ]);
+    if (add && path) {
+      return addToProject(path);
+    }
+  })
   .catch((error) => log(chalk.red.bold(error.toString())));
