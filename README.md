@@ -89,20 +89,21 @@ public class MainApplication extends Application implements ReactApplication {
 
 ## Setup
 
-### Assets generation
+### React-Native Plugin
 
-**NEW** React-Native BootSplash provides a react-native plugin to allow contextual creation of your bootsplash
+#### Usage
+
+**NEW** React-Native BootSplash provides a react-native plugin `react-native generate-bootsplash` to allow contextual creation of your bootsplash\$ react-native generate-bootsplash --iconPath=myicon.png
 
 ```bash
-# Noninteractive deployment
-$ react-native init-bootsplash --iconPath=myicon.png
+react-native generate-bootsplash --iconPath=myIcon.png --addToXcode
 ```
 
 The plugin takes arguments:
 
 ```
-$ react-native init-bootsplash --help
-react-native init-bootsplash
+$ react-native generate-bootsplash --help
+react-native generate-bootsplash
 
 Initialize bootsplash with arguments or interactively
 
@@ -111,10 +112,13 @@ Options:
   --iconPath [path]          Path to icon to build the bootsplash screen around (leave blank for interactive) (default: "")
   --backgroundColor <color>  Background color to wrap around the icon (default: "#fff")
   --iconWidth <width>        Width of the icon in background image (default: 100)
+  --addToXcode               Add the storyboard file to Xcode and make it default launch screen
   -h, --help                 output usage information
 ```
 
 Note that the only argument that is required for noninteractive setup is `iconPath` - the system will take care of everything else. Leaving `iconPath` blank will revert to the older, interactive setup process.
+
+#### Legacy CLI
 
 We also provide a yarn-based **CLI** to resize assets, create the Android Drawable XML file and the iOS Storyboard file automatically ✨.
 
@@ -122,8 +126,6 @@ We also provide a yarn-based **CLI** to resize assets, create the Android Drawab
 $ npx generate-bootsplash
 # --- or ---
 $ yarn generate-bootsplash
-# -- or: note this uses no arguments
-$ react-native init-bootsplash
 ```
 
 ![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/master/scripts/screenshot.png?raw=true)
