@@ -5,7 +5,14 @@ const { existsSync, mkdirSync } = require("fs");
 module.exports = {
   commands: [
     {
-      name: "init-bootsplash",
+      name: "add-bootsplash-to-xcode",
+      description: "Add bootsplash launch screen to xcode",
+      func: () => {
+        addToProject();
+      },
+    },
+    {
+      name: "generate-bootsplash",
       description: "Initialize bootsplash with arguments or interactively",
       options: [
         {
@@ -30,11 +37,16 @@ module.exports = {
           parse: arg => parseInt(arg),
           description: "Width of the icon in background image",
         },
+        {
+          name: "--addToXcode",
+          description:
+            "Add the storyboard file to Xcode and make it default launch screen",
+        },
       ],
       func: async (
         _,
         __,
-        { assetsPath, iconPath, backgroundColor, iconWidth },
+        { assetsPath, iconPath, backgroundColor, iconWidth, addToXcode },
       ) => {
         if (!iconPath) {
           spawnSync("node", [join(__dirname, "scripts", "generate.js")], {
@@ -50,7 +62,7 @@ module.exports = {
             iconWidth: iconWidth,
             confirmation: true,
           });
-          addToProject();
+          if (addToXcode) addToProject();
         }
       },
     },
