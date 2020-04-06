@@ -9,3 +9,4 @@ export default {
     RNBootSplash.show({ duration: 0, ...config }.duration);
   },
 };
+export { show, hide };
