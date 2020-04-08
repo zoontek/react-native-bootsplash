@@ -366,6 +366,6 @@ If you want to correctly handle [deep linking](https://developer.android.com/tra
 
 - Instead of displaying the launch screen over the main `UIView` / `Activity`, it will be displayed inside it. This prevents "jump" during transition (like in the example: horizontal & vertical centering using iOS auto layout or android gravity params will match perfectly the mounted component which uses `{ alignItems: "center"; justifyContent: "center" }` to center its logo).
 
-- It should not prevents you from seeing red screen errors.
+- It should not prevent you from seeing red screen errors.
 
 - Hiding the launch screen is configurable: fade it out with a custom duration or hide it without any animation at all (no fade needed if you want to animate it out!).
