@@ -11,17 +11,14 @@
     android:allowBackup="false"
     android:theme="@style/AppTheme">
 
-    <!-- ALWAYS set android:exported="true" -->
-    <!-- set android:launchMode="singleTask" if you want to supports deep links -->
     <activity
       android:name=".MainActivity"
-      android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
       android:label="@string/app_name"
+      android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
+      android:launchMode="singleTask"
       android:windowSoftInputMode="adjustResize"
-      android:exported="true"
-      android:launchMode="singleTask" />
+      android:exported="true" />
 
-    <!-- set android:launchMode="singleTask" if you want to supports deep links -->
     <activity
       android:name="com.zoontek.rnbootsplash.RNBootSplashActivity"
       android:theme="@style/BootTheme"
@@ -31,7 +28,7 @@
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
 
-      <!-- if you support deep links, add their declarations here -->
+      <!-- needed to handle deep links -->
       <intent-filter>
         <action android:name="android.intent.action.VIEW" />
         <category android:name="android.intent.category.BROWSABLE" />

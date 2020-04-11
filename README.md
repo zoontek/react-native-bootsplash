@@ -219,19 +219,22 @@ As Android will not create our main activity before launching the app, we need t
     android:allowBackup="false"
     android:theme="@style/AppTheme">
 
+    <!-- set android:launchMode="singleTask", set android:exported="true" -->
     <activity
       android:name=".MainActivity"
-      android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
       android:label="@string/app_name"
+      android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
+      android:launchMode="singleTask"
       android:windowSoftInputMode="adjustResize"
-      android:exported="true"> <!-- add this line -->
-      <!-- remove the intent-filter from MainActivity -->
+      android:exported="true">
+      <!-- ⚠️ remove the intent-filter from MainActivity -->
     </activity>
 
-    <!-- add the following lines -->
+    <!-- add the following lines (use the theme you created at step 3) -->
     <activity
       android:name="com.zoontek.rnbootsplash.RNBootSplashActivity"
-      android:theme="@style/BootTheme"> <!-- apply the theme you created at step 3. -->
+      android:theme="@style/BootTheme"
+      android:launchMode="singleTask">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
@@ -327,18 +330,19 @@ If you want to correctly handle [deep linking](https://developer.android.com/tra
     android:allowBackup="false"
     android:theme="@style/AppTheme">
 
+    <!-- set android:launchMode="singleTask" and android:exported="true" -->
     <activity
       android:name=".MainActivity"
       android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
       android:label="@string/app_name"
       android:windowSoftInputMode="adjustResize"
       android:exported="true"
-      android:launchMode="singleTask" /> <!-- set MainActivity android:launchMode to "singleTask" and add android:exported="true" -->
+      android:launchMode="singleTask" />
 
     <activity
       android:name="com.zoontek.rnbootsplash.RNBootSplashActivity"
       android:theme="@style/BootTheme"
-      android:launchMode="singleTask"> <!-- set RNBootSplashActivity android:launchMode to "singleTask" -->
+      android:launchMode="singleTask">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
