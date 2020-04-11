@@ -4,8 +4,8 @@ import BootSplash from "react-native-bootsplash";
 
 let bootSplashLogo = require("./assets/bootsplash_logo.png");
 
-let fakeApiCallWithoutBadNetwork = ms =>
-  new Promise(resolve => setTimeout(resolve, ms));
+let fakeApiCallWithoutBadNetwork = (ms) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
 
 let App = () => {
   let [bootSplashIsVisible, setBootSplashIsVisible] = useState(true);

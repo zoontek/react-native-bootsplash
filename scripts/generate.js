@@ -47,13 +47,11 @@ const ContentsJson = `{
 }
 `;
 
-const getStoryboard = ({
-  height,
-  width,
-  r,
-  g,
-  b,
-}) => `<?xml version="1.0" encoding="UTF-8"?>
+const getStoryboard = ({ height, width, r, g, b }) => {
+  const x = (414 - width) / 2;
+  const y = (896 - height) / 2;
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Dtp-p8-LvN">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
@@ -72,9 +70,7 @@ const getStoryboard = ({
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <imageView autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="${xcassetName}" translatesAutoresizingMaskIntoConstraints="NO" id="3lX-Ut-9ad">
-                                <rect key="frame" x="${(414 - width) /
-                                  2}" y="${(896 - height) /
-  2}" width="${width}" height="${height}"/>
+                                <rect key="frame" x="${x}" y="${y}" width="${width}" height="${height}"/>
                                 <accessibility key="accessibilityConfiguration">
                                     <accessibilityTraits key="traits" image="YES" notEnabled="YES"/>
                                 </accessibility>
@@ -101,6 +97,7 @@ const getStoryboard = ({
     </resources>
 </document>
 `;
+};
 
 const drawableXml = `<?xml version="1.0" encoding="utf-8"?>
 
@@ -117,15 +114,15 @@ const log = (text, dim = false) => {
   console.log(dim ? chalk.dim(text) : text);
 };
 
-const ensureDir = dir => {
+const ensureDir = (dir) => {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir);
   }
 };
 
-const isValidHexadecimal = value => /^#?([0-9A-F]{3}){1,2}$/i.test(value);
+const isValidHexadecimal = (value) => /^#?([0-9A-F]{3}){1,2}$/i.test(value);
 
-const toFullHexadecimal = hex => {
+const toFullHexadecimal = (hex) => {
   const prefixed = hex[0] === "#" ? hex : `#${hex}`;
   const up = prefixed.toUpperCase();
 
@@ -134,13 +131,13 @@ const toFullHexadecimal = hex => {
     : up;
 };
 
-const hexadecimalToAppleColor = hex => ({
+const hexadecimalToAppleColor = (hex) => ({
   r: (parseInt(hex[1] + hex[2], 16) / 255).toPrecision(15),
   g: (parseInt(hex[3] + hex[4], 16) / 255).toPrecision(15),
   b: (parseInt(hex[5] + hex[6], 16) / 255).toPrecision(15),
 });
 
-const getProjectName = projectPath => {
+const getProjectName = (projectPath) => {
   try {
     const appJsonPath = path.join(projectPath, "app.json");
     const appJson = fs.readFileSync(appJsonPath, "utf-8");
@@ -163,7 +160,7 @@ const questions = [
     initial: initialProjectPath,
     message: "The path to the root of your React Native project",
 
-    validate: value => {
+    validate: (value) => {
       if (!fs.existsSync(value)) {
         return `Invalid project path. The directory ${chalk.bold(
           value,
@@ -184,10 +181,10 @@ const questions = [
   {
     name: "assetsPath",
     type: "text",
-    initial: prev => path.join(prev, "assets"),
+    initial: (prev) => path.join(prev, "assets"),
     message: "The path to your static assets directory",
 
-    validate: value => {
+    validate: (value) => {
       if (!fs.existsSync(value)) {
         return `Invalid assets path. The directory ${chalk.bold(
           value,
@@ -201,9 +198,9 @@ const questions = [
     name: "iconPath",
     type: "text",
     message: "Your original icon file",
-    initial: prev => path.join(prev, `${logoFileName}_original.png`),
+    initial: (prev) => path.join(prev, `${logoFileName}_original.png`),
 
-    validate: value => {
+    validate: (value) => {
       if (!fs.existsSync(value)) {
         return `Invalid icon file path. The file ${chalk.bold(
           value,
@@ -219,7 +216,7 @@ const questions = [
     message: "The bootsplash background color (in hexadecimal)",
     initial: "#FFF",
 
-    validate: value => {
+    validate: (value) => {
       if (!isValidHexadecimal(value)) {
         return "Invalid hexadecimal color.";
       }
@@ -261,7 +258,7 @@ async function generate({
   const fullHexadecimal = toFullHexadecimal(backgroundColor);
   const appleColors = hexadecimalToAppleColor(fullHexadecimal);
 
-  const h = size =>
+  const h = (size) =>
     Math.ceil(size * (image.bitmap.height / image.bitmap.width));
 
   const w15 = w1 * 1.5;
@@ -402,4 +399,4 @@ async function generate({
 
 prompts(questions)
   .then(generate)
-  .catch(error => log(chalk.red.bold(error.toString())));
+  .catch((error) => log(chalk.red.bold(error.toString())));
