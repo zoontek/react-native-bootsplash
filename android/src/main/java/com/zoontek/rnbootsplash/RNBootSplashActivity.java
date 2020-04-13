@@ -11,9 +11,9 @@ public class RNBootSplashActivity extends AppCompatActivity {
 
   private Class<?> getMainActivityClass() throws Exception {
     final Context appContext = getApplicationContext();
-    final Package appPackage = appContext.getClass().getPackage();
-    assert appPackage != null;
-    final String className = appPackage.getName() + ".MainActivity";
+    String packageName = appContext.getPackageName();
+    assert packageName != null;
+    final String className = packageName + ".MainActivity";
 
     return Class.forName(className);
   }
