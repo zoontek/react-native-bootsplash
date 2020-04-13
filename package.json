@@ -1,6 +1,6 @@
 {
   "name": "react-native-bootsplash",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "license": "MIT",
   "description": "Display a bootsplash on your app starts. Hide it when you want.",
   "author": "Mathieu Acthernoene <zoontek@gmail.com>",
@@ -40,15 +40,15 @@
     "react-native": ">=0.60.0"
   },
   "dependencies": {
-    "jimp": "0.10.1"
+    "chalk": "4.0.0",
+    "jimp": "0.10.1",
+    "prompts": "2.3.2"
   },
   "devDependencies": {
     "@babel/core": "7.9.0",
-    "chalk": "4.0.0",
     "husky": "4.2.5",
     "lint-staged": "10.1.3",
     "prettier": "2.0.4",
-    "prompts": "2.3.2",
     "react": "16.11.0",
     "react-native": "0.62.2"
   }

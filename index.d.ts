@@ -6,11 +6,13 @@ declare module "react-native-bootsplash" {
     duration?: number;
   };
 
+  export function show(config?: ShowConfig): void;
+  export function hide(config?: HideConfig): void;
+
   const RNBootSplash: {
     show(config?: ShowConfig): void;
     hide(config?: HideConfig): void;
   };
+
   export default RNBootSplash;
-  export function show(config?: ShowConfig): void;
-  export function hide(config?: HideConfig): void;
 }
