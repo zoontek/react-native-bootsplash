@@ -48,6 +48,7 @@ RCT_EXPORT_MODULE();
 
   [RCTPresentedViewController() presentViewController:_splashViewController animated:false completion:^{
     [_rootView.loadingView removeFromSuperview];
+    _rootView.loadingView = nil;
   }];
 
   [[NSNotificationCenter defaultCenter] removeObserver:self

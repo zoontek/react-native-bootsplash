@@ -4094,7 +4094,7 @@ react-is@^16.12.0, react-is@^16.8.1, react-is@^16.8.4:
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
 "react-native-bootsplash@file:..":
-  version "2.2.0"
+  version "2.2.1"
   dependencies:
     jimp "0.10.1"
 
