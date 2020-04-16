@@ -25,15 +25,13 @@ public class RNBootSplashActivity extends AppCompatActivity {
     try {
       Intent intent = new Intent(this, getMainActivityClass());
       Bundle extras = getIntent().getExtras();
-      String action = getIntent().getAction();
 
       if (extras != null) {
         intent.putExtras(extras);
       }
-      if (Intent.ACTION_VIEW.equals(action)) {
-        intent.setAction(action);
-        intent.setData(getIntent().getData());
-      }
+
+      intent.setAction(getIntent().getAction());
+      intent.setData(getIntent().getData());
 
       startActivity(intent);
       finish();
