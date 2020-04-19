@@ -93,7 +93,7 @@ public class MainApplication extends Application implements ReactApplication {
 
 #### Usage
 
-**NEW** React-Native BootSplash provides a react-native plugin `react-native generate-bootsplash` to allow contextual creation of your bootsplash\$ react-native generate-bootsplash --iconPath=myicon.png
+React-Native BootSplash provides a react-native plugin `react-native generate-bootsplash` to allow contextual creation of your bootsplash.
 
 ```bash
 react-native generate-bootsplash --iconPath=myIcon.png --addToXcode
@@ -103,7 +103,7 @@ The plugin takes arguments:
 
 ```
 $ react-native generate-bootsplash --help
-react-native generate-bootsplash
+react-native generate-bootsplash [iconPath]
 
 Initialize bootsplash with arguments or interactively
 
@@ -114,6 +114,12 @@ Options:
   --iconWidth <width>        Width of the icon in background image (default: 100)
   --addToXcode               Add the storyboard file to Xcode and make it default launch screen
   -h, --help                 output usage information
+```
+
+For best results, specify the icon and use the `addToXcode` directive:
+
+```bash
+$ react-native generate-bootsplash /path/to/my/icon --addToXcode
 ```
 
 Note that the only argument that is required for noninteractive setup is `iconPath` - the system will take care of everything else. Leaving `iconPath` blank will revert to an interactive setup process:
