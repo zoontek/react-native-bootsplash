@@ -116,17 +116,7 @@ Options:
   -h, --help                 output usage information
 ```
 
-Note that the only argument that is required for noninteractive setup is `iconPath` - the system will take care of everything else. Leaving `iconPath` blank will revert to the older, interactive setup process.
-
-#### Legacy CLI
-
-We also provide a yarn-based **CLI** to resize assets, create the Android Drawable XML file and the iOS Storyboard file automatically ✨.
-
-```bash
-$ npx generate-bootsplash
-# --- or ---
-$ yarn generate-bootsplash
-```
+Note that the only argument that is required for noninteractive setup is `iconPath` - the system will take care of everything else. Leaving `iconPath` blank will revert to an interactive setup process:
 
 ![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/master/scripts/screenshot.png?raw=true)
 
