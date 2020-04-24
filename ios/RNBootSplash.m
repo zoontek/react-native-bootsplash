@@ -27,7 +27,7 @@ RCT_EXPORT_MODULE();
   UIView *loadingView = [[storyboard instantiateInitialViewController] view];
 
   [rootView setLoadingView:loadingView];
-  rootView.loadingViewFadeDelay = 0;
+  rootView.loadingViewFadeDelay = 0.1;
   rootView.loadingViewFadeDuration = 0;
 
   _splashViewController = [storyboard instantiateInitialViewController];
@@ -43,12 +43,19 @@ RCT_EXPORT_MODULE();
                                             object:[rootView bridge]];
 }
 
++ (void)removeLoadingView {
+  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(_rootView.loadingViewFadeDelay * NSEC_PER_SEC)),
+                 dispatch_get_main_queue(), ^{
+    [_rootView.loadingView removeFromSuperview];
+    _rootView.loadingView = nil;
+  });
+}
+
 + (void)onJavaScriptDidLoad:(NSNotification *)notification {
   _visible = true;
 
   [RCTPresentedViewController() presentViewController:_splashViewController animated:false completion:^{
-    [_rootView.loadingView removeFromSuperview];
-    _rootView.loadingView = nil;
+    [RNBootSplash removeLoadingView];
   }];
 
   [[NSNotificationCenter defaultCenter] removeObserver:self
