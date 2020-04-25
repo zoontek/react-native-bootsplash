@@ -63,10 +63,6 @@ RCT_EXPORT_MODULE();
                                                 object:[_rootView bridge]];
 }
 
-+ (void)initialShow {
-  NSLog(@"🚨 [RNBootSplash initialShow] This method as been deprecated and will be removed in a future version. You can safely delete the call.");
-}
-
 + (void)setAnimationForWindow:(UIWindow * _Nullable)window
                      duration:(float)duration
                timingFunction:(CAMediaTimingFunctionName _Nonnull)function {
