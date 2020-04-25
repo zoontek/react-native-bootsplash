@@ -1,11 +1,14 @@
 #import "RNBootSplash.h"
+
 #import <React/RCTBridge.h>
 #import <React/RCTUtils.h>
 
 static RCTRootView *_rootView = nil;
-static UIViewController *_splashViewController = nil;
+static bool _animated = false;
 static bool _visible = false;
-static NSString *_transitionKey = @"BootSplashTransition";
+static UIViewController *_bootsplashViewController = nil;
+static NSTimer *_timer = nil;
+static RCTPromiseResolveBlock _resolve = nil;
 
 @implementation RNBootSplash
 
@@ -30,8 +33,9 @@ RCT_EXPORT_MODULE();
   rootView.loadingViewFadeDelay = 0.1;
   rootView.loadingViewFadeDuration = 0;
 
-  _splashViewController = [storyboard instantiateInitialViewController];
-  [_splashViewController setModalPresentationStyle:UIModalPresentationOverFullScreen];
+  _bootsplashViewController = [storyboard instantiateInitialViewController];
+  [_bootsplashViewController setModalPresentationStyle:UIModalPresentationOverFullScreen];
+  [_bootsplashViewController setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
 
   [[NSNotificationCenter defaultCenter] removeObserver:rootView
                                                   name:RCTContentDidAppearNotification
@@ -43,19 +47,17 @@ RCT_EXPORT_MODULE();
                                             object:[rootView bridge]];
 }
 
-+ (void)removeLoadingView {
-  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(_rootView.loadingViewFadeDelay * NSEC_PER_SEC)),
-                 dispatch_get_main_queue(), ^{
-    [_rootView.loadingView removeFromSuperview];
-    _rootView.loadingView = nil;
-  });
-}
-
 + (void)onJavaScriptDidLoad:(NSNotification *)notification {
   _visible = true;
 
-  [RCTPresentedViewController() presentViewController:_splashViewController animated:false completion:^{
-    [RNBootSplash removeLoadingView];
+  [RCTPresentedViewController() presentViewController:_bootsplashViewController
+                                             animated:false
+                                           completion:^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(_rootView.loadingViewFadeDelay * NSEC_PER_SEC)),
+                   dispatch_get_main_queue(), ^{
+      [_rootView.loadingView removeFromSuperview];
+      _rootView.loadingView = nil;
+    });
   }];
 
   [[NSNotificationCenter defaultCenter] removeObserver:self
@@ -63,52 +65,58 @@ RCT_EXPORT_MODULE();
                                                 object:[_rootView bridge]];
 }
 
-+ (void)setAnimationForWindow:(UIWindow * _Nullable)window
-                     duration:(float)duration
-               timingFunction:(CAMediaTimingFunctionName _Nonnull)function {
-  if (window == nil)
-    return;
+- (void)onHideInterval {
+  if (_rootView.loadingView != nil)
+    return; // wait until rootView.loadingView is removed
 
-  float roundedDuration = lroundf(duration);
+  [_timer invalidate];
+  _timer = nil;
 
-  if (roundedDuration <= 0)
-    return [[window layer] removeAnimationForKey:_transitionKey];
-
-  CATransition *transition = [CATransition animation];
-  transition.duration = roundedDuration / 1000;
-  transition.type = kCATransitionFade;
-  transition.timingFunction = [CAMediaTimingFunction functionWithName:function];
-
-  [[window layer] addAnimation:transition
-                        forKey:_transitionKey];
+  [_bootsplashViewController dismissViewControllerAnimated:_animated
+                                                completion:^{
+    _resolve(@(true));
+    _resolve = nil;
+  }];
 }
 
-RCT_EXPORT_METHOD(show:(float)duration) {
-  if (_splashViewController == nil || _visible)
-    return;
+RCT_REMAP_METHOD(show,
+                 showWithAnimated:(BOOL)animated
+                 resolver:(RCTPromiseResolveBlock)resolve
+                 rejecter:(RCTPromiseRejectBlock)reject) {
+  if (_bootsplashViewController == nil)
+    return reject(@"uninitialized_bootsplash", @"Your bootsplash has not been initialized. Add the `initWithStoryboard` method call to your `AppDelegate.m`.", nil);
+
+  if (_visible)
+    return reject(@"visible_bootsplash", @"Your bootsplash is already visible. Calling `show` here have no effect.", nil);
 
   _visible = true;
 
-  UIViewController *_presentedViewController = RCTPresentedViewController();
-
-  [RNBootSplash setAnimationForWindow:[[_presentedViewController view] window]
-                             duration:duration
-                       timingFunction:kCAMediaTimingFunctionEaseOut];
-
-  [_presentedViewController presentViewController:_splashViewController animated:false completion:nil];
+  [RCTPresentedViewController() presentViewController:_bootsplashViewController
+                                             animated:animated
+                                           completion:^{
+    resolve(@(true));
+  }];
 }
 
-RCT_EXPORT_METHOD(hide:(float)duration) {
-  if (_splashViewController == nil || !_visible)
-    return;
+RCT_REMAP_METHOD(hide,
+                 hideWithAnimated:(BOOL)animated
+                 resolver:(RCTPromiseResolveBlock)resolve
+                 rejecter:(RCTPromiseRejectBlock)reject) {
+  if (_bootsplashViewController == nil)
+    return reject(@"uninitialized_bootsplash", @"Your bootsplash has not been initialized. Add the `initWithStoryboard` method call to your `AppDelegate.m`.", nil);
+
+  if (!_visible)
+    return reject(@"hidden_bootsplash", @"Your bootsplash is already hidden. Calling `hide` here have no effect.", nil);
 
   _visible = false;
+  _animated = animated;
+  _resolve = resolve;
 
-  [RNBootSplash setAnimationForWindow:[[_splashViewController view] window]
-                             duration:duration
-                       timingFunction:kCAMediaTimingFunctionEaseIn];
-
-  [_splashViewController dismissViewControllerAnimated:false completion:nil];
+  _timer = [NSTimer scheduledTimerWithTimeInterval:0.05
+                                            target:self
+                                          selector:@selector(onHideInterval)
+                                          userInfo:nil
+                                           repeats:true];
 }
 
 @end
