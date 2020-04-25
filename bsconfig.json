@@ -1,0 +1,15 @@
+{
+  "name": "react-native-bootsplash",
+  "refmt": 3,
+  "package-specs": {
+    "module": "es6",
+    "in-source": true
+  },
+  "suffix": ".bs.js",
+  "sources": [
+    {
+      "dir": ".",
+      "subdirs": false
+    }
+  ]
+}

@@ -46,3 +46,10 @@ Thumbs.db
 Desktop.ini
 
 .vscode/
+
+# Ocaml / Reason / BuckleScript artifacts
+*.bs.js
+.bsb.lock
+**/lib/bs
+**/lib/ocaml
+**/.merlin
