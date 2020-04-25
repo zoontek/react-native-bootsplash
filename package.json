@@ -40,7 +40,7 @@
     "react-native": ">=0.60.0"
   },
   "dependencies": {
-    "chalk": "4.0.0",
+    "chalk": "3.0.0",
     "jimp": "0.10.1",
     "prompts": "2.3.2",
     "@raydeck/xcode": "2.2.1",
