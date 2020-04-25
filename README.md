@@ -124,7 +124,7 @@ $ react-native generate-bootsplash /path/to/my/icon --addToXcode
 
 Note that the only argument that is required for noninteractive setup is `iconPath` - the system will take care of everything else. Leaving `iconPath` blank will revert to an interactive setup process:
 
-![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/master/scripts/screenshot.png?raw=true)
+![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/master/docs/cli_tool.png?raw=true)
 
 This tool relies on the naming conventions that are used in the `/example` project and will therefore create the following files:
 
