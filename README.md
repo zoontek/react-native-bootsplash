@@ -145,10 +145,10 @@ Edit the `ios/YourProjectName/AppDelegate.m` file:
 {
   // …
   rootViewController.view = rootView;
-  [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView]; // <- initialization using the storyboard file name
 
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
+  [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView]; // <- initialization using the storyboard file name
 
   return YES;
 }
