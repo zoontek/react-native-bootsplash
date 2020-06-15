@@ -232,6 +232,30 @@ const questions = [
     max: 1000,
   },
   {
+    name: "webSetup",
+    type: "confirm",
+    message: "Do you want to setup bootsplash for react-native-web?",
+    initial: false,
+  },
+  {
+    name: "webPath",
+    type: (prev) => (prev ? "text" : null),
+    initial: (prev, values) => path.join(values.projectPath, "web"),
+    message: `The path to your web dist folder (ie. where ${chalk.bold(
+      "index.html",
+    )} resides)`,
+
+    validate: (value) => {
+      if (!fs.existsSync(value)) {
+        return `Invalid web path. The directory ${chalk.bold(
+          value,
+        )} could not be found.`;
+      }
+
+      return true;
+    },
+  },
+  {
     name: "confirmation",
     type: "confirm",
     message:
@@ -246,6 +270,8 @@ async function generate({
   iconPath,
   backgroundColor,
   iconWidth: w1,
+  webSetup,
+  webPath,
   confirmation,
 }) {
   if (!projectPath || !assetsPath || !iconPath || !w1 || !confirmation) {
@@ -309,6 +335,18 @@ async function generate({
     );
   } else {
     log(`No ${iosImagesPath} directory found. Skipping iOS generation…`);
+  }
+
+  if (webSetup) {
+    if (fs.existsSync(webPath)) {
+      imageMap.push([path.join(webPath, logoFileName + ".png"), [w3, h(w3)]]);
+      imageMap.push([
+        path.join(webPath, logoFileName + "-hires.png"),
+        [w4, h(w4)],
+      ]);
+    } else {
+      log(`No ${webPath} directory found. Skipping web generation…`);
+    }
   }
 
   imageMap.push(

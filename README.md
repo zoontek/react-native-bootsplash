@@ -122,6 +122,10 @@ This tool relies on the naming conventions that are used in the `/example` proje
 <PROJECT_ROOT>/ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo.png
 <PROJECT_ROOT>/ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo@2x.png
 <PROJECT_ROOT>/ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo@3x.png
+
+<PROJECT_ROOT>/web/bootsplash_logo.png
+<PROJECT_ROOT>/web/bootsplash_logo-hires.png
+
 ```
 
 ### iOS
@@ -246,6 +250,105 @@ As Android will not create our main activity before launching the app, we need t
   </application>
 
 </manifest>
+```
+
+### WEB
+
+_⚠️ React Native Web Support is Experimental!_
+
+If you have opted in for the web support during the image generation process you should have `bootsplash_logo.png` and `bootsplash_logo-hires.png` in your `WEBROOT` directory.
+
+Edit `index.html` file to add bootsplkash on initial load.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    ...
+    <!-- Style -->
+    <style>
+      /* bootsplash related variables */
+      :root {
+        --bootsplash: url("bootsplash_logo.png");
+        --bootsplash-hires: url("bootsplash_logo-hires.png");
+        --bootsplash-color: #fff;
+      }
+
+      #bootsplash {
+        position: absolute;
+        display: block;
+        height: 100%;
+        width: 100%;
+        z-index: 99;
+        background-image: var(--bootsplash);
+        background-color: var(--bootsplash-color);
+        background-attachment: fixed;
+        background-size: auto 50%;
+        background-repeat: no-repeat;
+        background-position: center;
+      }
+
+      /* show bootsplash in the middle of the screen on portrait devices like phones. */
+      @media screen and (orientation: portrait) {
+        #bootsplash {
+          background-size: 50% auto;
+        }
+      }
+    </style>
+    ...
+  </head>
+
+  <body>
+    <!-- add a div for bootsplash to show up before your react-root -->
+    <div id="bootsplash"></div>
+    ...
+  </body>
+</html>
+```
+
+#### Optional:
+
+If you want a pulse effect while the bootsplash is active, you can use a keyframe animation.
+
+```css
+/* if you want a pulse effect on bootsplash logo */
+:root {
+  --bootsplash-pulse-opacity: 0.33;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: var(--bootsplash-pulse-opacity);
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+#bootsplash::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: var(--bootsplash-color);
+  animation: pulse 1s infinite;
+  z-index: 100;
+}
+```
+
+to show hires version on hi dpi screens:
+
+```css
+@media (min-resolution: 192dpi) {
+  #bootsplash {
+    background-image: var(--bootsplash-hires);
+  }
+}
 ```
 
 ## API
