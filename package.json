@@ -6,6 +6,15 @@
   "author": "Mathieu Acthernoene <zoontek@gmail.com>",
   "homepage": "https://github.com/zoontek/react-native-bootsplash",
   "main": "index.js",
+  "files": [
+    "android/",
+    "index.d.ts",
+    "ios/",
+    "package.json",
+    "ReactNativeBootSplash.re",
+    "RNBootSplash.podspec",
+    "scripts/"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/zoontek/react-native-bootsplash.git"
