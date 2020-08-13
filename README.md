@@ -20,9 +20,9 @@ For 0.59-, you should use [`jetify -r`](https://github.com/mikehardy/jetifier/bl
 ## Installation
 
 ```bash
-$ npm install --save react-native-bootsplash
+$ npm install --save react-native-bootsplash@next
 # --- or ---
-$ yarn add react-native-bootsplash
+$ yarn add react-native-bootsplash@next
 ```
 
 Don't forget going into the `ios` directory to execute a `pod install`.
