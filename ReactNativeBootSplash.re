@@ -1,30 +1,16 @@
-type showConfig;
-[@bs.obj] external showConfig: (~duration: float=?) => showConfig = "";
-
-type hideConfig;
-[@bs.obj] external hideConfig: (~duration: float=?) => hideConfig = "";
+type config = {fade: bool};
 
 [@bs.module "react-native-bootsplash"] [@bs.scope "default"]
-external show: option(showConfig) => unit = "show";
+external hide: config => unit = "hide";
 
 [@bs.module "react-native-bootsplash"] [@bs.scope "default"]
-external hide: option(hideConfig) => unit = "hide";
+external show: config => unit = "show";
 
 /*
  ## Usage
 
- ### No options
-
  ```re
- ReactNativeBootSplash.hide(None);
- ReactNativeBootSplash.show(None);
+ ReactNativeBootSplash.hide({fade: true});
+ ReactNativeBootSplash.show({fade: false});
  ```
-
- ## With options
-
- ```re
- ReactNativeBootSplash.(show(Some(showConfig(~duration=1000.))));
- ReactNativeBootSplash.(hide(Some(hideConfig(~duration=1000.))));
- ```
-
  */
