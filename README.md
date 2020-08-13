@@ -91,12 +91,35 @@ public class MainApplication extends Application implements ReactApplication {
 
 ### Assets generation
 
-In order to speed up the setup, we provide a **CLI** to resize assets, create the Android Drawable XML file and the iOS Storyboard file automatically ✨.
+In order to speed up the setup, we provide a **CLI** to generate assets, create the Android Drawable XML file and the iOS Storyboard file automatically ✨.
 
 ```bash
-$ npx generate-bootsplash
+$ npx react-native generate-bootsplash --help
 # --- or ---
-$ yarn generate-bootsplash
+$ yarn react-native generate-bootsplash --help
+```
+
+The command can take multiple arguments:
+
+```bash
+react-native generate-bootsplash <logoPath>
+
+Generate a launch screen using an original logo file
+
+Options:
+  --background-color <color>  color used as launch screen background (in hexadecimal format) (default: "#fff")
+  --logo-width <width>        logo width at @1x (in dp - we recommand approximately ~100) (default: 100)
+  --assets-path [path]        path to your static assets directory (useful to require the logo file in JS)
+  -h, --help                  output usage information
+```
+
+#### Full command usage example
+
+```bash
+yarn react-native generate-bootsplash assets/bootsplash_logo_original.png \
+  --background-color=F5FCFF \
+  --logo-width=100 \
+  --assets-path=assets
 ```
 
 ![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/master/docs/cli_tool.png?raw=true)
@@ -126,7 +149,7 @@ This tool relies on the naming conventions that are used in the `/example` proje
 
 ### iOS
 
-_⚠️ Only `.storyboard` are supported ([Apple will deprecate other methods in April 2020](https://developer.apple.com/news/?id=01132020b))._
+_⚠️ Only `.storyboard` files are supported ([Apple will deprecate other methods in April 2020](https://developer.apple.com/news/?id=01132020b))._
 
 Edit the `ios/YourProjectName/AppDelegate.m` file:
 
@@ -176,8 +199,8 @@ public class MainActivity extends ReactActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
+    RNBootSplash.init(this, R.style.AppTheme); // <- display the generated bootsplash.xml drawable over our MainActivity
     super.onCreate(savedInstanceState);
-    RNBootSplash.init(R.drawable.bootsplash, MainActivity.this); // <- display the generated bootsplash.xml drawable over our MainActivity
   }
 ```
 
@@ -191,61 +214,13 @@ As Android will not create our main activity before launching the app, we need t
   <!-- Base application theme -->
   <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
     <!-- Your base theme customization -->
-  </style>
+    <!-- … -->
 
-  <!-- Add the following lines -->
-  <!-- BootTheme should inherit from AppTheme -->
-  <style name="BootTheme" parent="AppTheme">
-    <!-- set the generated bootsplash.xml drawable as activity background -->
+    <!-- Set the generated bootsplash.xml drawable as activity background -->
     <item name="android:background">@drawable/bootsplash</item>
   </style>
 
 </resources>
-```
-
-3. Edit the `android/app/src/main/AndroidManifest.xml` file:
-
-```xml
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.rnbootsplashexample">
-
-  <!-- … -->
-
-  <application
-    android:name=".MainApplication"
-    android:label="@string/app_name"
-    android:icon="@mipmap/ic_launcher"
-    android:roundIcon="@mipmap/ic_launcher_round"
-    android:allowBackup="false"
-    android:theme="@style/AppTheme">
-
-    <!-- set android:launchMode="singleTask", set android:exported="true" -->
-    <activity
-      android:name=".MainActivity"
-      android:label="@string/app_name"
-      android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
-      android:launchMode="singleTask"
-      android:windowSoftInputMode="adjustResize"
-      android:exported="true">
-      <!-- ⚠️ remove the intent-filter from MainActivity -->
-    </activity>
-
-    <!-- add the following lines (use the theme you created at step 3) -->
-    <activity
-      android:name="com.zoontek.rnbootsplash.RNBootSplashActivity"
-      android:theme="@style/BootTheme"
-      android:launchMode="singleTask">
-      <intent-filter>
-        <action android:name="android.intent.action.MAIN" />
-        <category android:name="android.intent.category.LAUNCHER" />
-      </intent-filter>
-    </activity>
-
-    <!-- … -->
-
-  </application>
-
-</manifest>
 ```
 
 ## API
@@ -255,7 +230,7 @@ As Android will not create our main activity before launching the app, we need t
 #### Method type
 
 ```ts
-type hide = (config?: { duration?: number }) => void;
+type hide = (config?: { fade?: boolean }) => Promise<void>;
 ```
 
 #### Usage
@@ -264,7 +239,7 @@ type hide = (config?: { duration?: number }) => void;
 import RNBootSplash from "react-native-bootsplash";
 
 RNBootSplash.hide(); // immediate
-RNBootSplash.hide({ duration: 250 }); // fade
+RNBootSplash.hide({ fade: true }); // fade
 ```
 
 ---
@@ -274,7 +249,7 @@ RNBootSplash.hide({ duration: 250 }); // fade
 #### Method type
 
 ```ts
-type show = (config?: { duration?: number }) => void;
+type show = (config?: { fade?: number }) => Promise<void>;
 ```
 
 #### Usage
@@ -283,7 +258,26 @@ type show = (config?: { duration?: number }) => void;
 import RNBootSplash from "react-native-bootsplash";
 
 RNBootSplash.show(); // immediate
-RNBootSplash.show({ duration: 250 }); // fade
+RNBootSplash.show({ fade: true }); // fade
+```
+
+---
+
+### getVisibilityStatus()
+
+#### Method type
+
+```ts
+type VisibilityStatus = "visible" | "hidden" | "transitioning";
+type getVisibilityStatus = () => Promise<VisibilityStatus>;
+```
+
+#### Usage
+
+```js
+import RNBootSplash from "react-native-bootsplash";
+
+RNBootSplash.getVisibilityStatus().then((status) => console.log(status));
 ```
 
 ## Real world example
@@ -300,7 +294,7 @@ function App() {
 
   useEffect(() => {
     init().finally(() => {
-      RNBootSplash.hide({ duration: 250 });
+      RNBootSplash.hide({ fade: true });
     });
   }, []);
 
@@ -310,65 +304,9 @@ function App() {
 
 **🤙 A more complex example is available in the [`/example` folder](example).**
 
-## Guides
-
-### Handle deep linking (on Android)
-
-If you want to correctly handle [deep linking](https://developer.android.com/training/app-links/deep-linking) with this package, you should edit the `android/app/src/main/AndroidManifest.xml` file like this:
-
-```xml
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.rnbootsplashexample">
-
-  <!-- … -->
-
-  <application
-    android:name=".MainApplication"
-    android:label="@string/app_name"
-    android:icon="@mipmap/ic_launcher"
-    android:roundIcon="@mipmap/ic_launcher_round"
-    android:allowBackup="false"
-    android:theme="@style/AppTheme">
-
-    <!-- set android:launchMode="singleTask" and android:exported="true" -->
-    <activity
-      android:name=".MainActivity"
-      android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
-      android:label="@string/app_name"
-      android:windowSoftInputMode="adjustResize"
-      android:exported="true"
-      android:launchMode="singleTask" />
-
-    <activity
-      android:name="com.zoontek.rnbootsplash.RNBootSplashActivity"
-      android:theme="@style/BootTheme"
-      android:launchMode="singleTask">
-      <intent-filter>
-        <action android:name="android.intent.action.MAIN" />
-        <category android:name="android.intent.category.LAUNCHER" />
-      </intent-filter>
-
-      <!-- add your deep linking instructions inside the RNBootSplashActivity declaration -->
-      <intent-filter>
-        <action android:name="android.intent.action.VIEW" />
-        <category android:name="android.intent.category.DEFAULT" />
-        <category android:name="android.intent.category.BROWSABLE" />
-        <data android:scheme="YOUR APP SCHEME" /> <!-- replace this with your custom scheme -->
-      </intent-filter>
-    </activity>
-
-    <!-- … -->
-
-  </application>
-
-</manifest>
-```
-
 ## 🕵️‍♂️ Comparison with [react-native-splash-screen](https://github.com/crazycodeboy/react-native-splash-screen)
 
 - If `react-native-splash-screen` encourages you to display an image over your application, `react-native-bootsplash` way-to-go is to design your launch screen using platforms tools ([Xcode layout editor](https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/) and [Android drawable resource](https://developer.android.com/guide/topics/resources/drawable-resource)).
-
-- Instead of displaying the launch screen over the main `UIView` / `Activity`, it will be displayed inside it. This prevents "jump" during transition (like in the example: horizontal & vertical centering using iOS auto layout or android gravity params will match perfectly the mounted component which uses `{ alignItems: "center"; justifyContent: "center" }` to center its logo).
 
 - It should not prevent you from seeing red screen errors.
 
