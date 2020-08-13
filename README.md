@@ -101,7 +101,7 @@ $ npx generate-bootsplash
 $ yarn generate-bootsplash
 ```
 
-![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/master/scripts/screenshot.png?raw=true)
+![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/master/docs/cli_tool.png?raw=true)
 
 This tool relies on the naming conventions that are used in the `/example` project and will therefore create the following files:
 

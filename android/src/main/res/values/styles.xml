@@ -1,0 +1,10 @@
+<resources>
+    <style name="BootSplashNullBackgroundTheme">
+        <item name="android:background">@null</item>
+    </style>
+
+    <style name="BootSplashDialogTheme">
+        <item name="android:windowEnterAnimation">@anim/bootsplash_fade_enter</item>
+        <item name="android:windowExitAnimation">@anim/bootsplash_fade_exit</item>
+    </style>
+</resources>

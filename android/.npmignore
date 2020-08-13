@@ -1,10 +1,12 @@
-*.iml
-.DS_Store
 .gradle/
 .idea/
-.npmignore
 build/
 gradle/
-gradlew
+
+*.iml
+
+.DS_Store
+.npmignore
 gradlew.bat
+gradlew
 local.properties
