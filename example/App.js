@@ -14,10 +14,10 @@ let App = () => {
   let translateY = useRef(new Animated.Value(0));
 
   let init = async () => {
-    BootSplash.hide();
-
     // You can uncomment this line to add a delay on app startup
     // let data = await fakeApiCallWithoutBadNetwork(3000);
+
+    await BootSplash.hide();
 
     let useNativeDriver = true;
 

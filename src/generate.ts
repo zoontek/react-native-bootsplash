@@ -12,18 +12,18 @@ const ContentsJson = `{
   "images": [
     {
       "idiom": "universal",
-      "scale": "1x",
-      "filename": "${logoFileName}.png"
+      "filename": "${logoFileName}.png",
+      "scale": "1x"
     },
     {
       "idiom": "universal",
-      "scale": "2x",
-      "filename": "${logoFileName}@2x.png"
+      "filename": "${logoFileName}@2x.png",
+      "scale": "2x"
     },
     {
       "idiom": "universal",
-      "scale": "3x",
-      "filename": "${logoFileName}@3x.png"
+      "filename": "${logoFileName}@3x.png",
+      "scale": "3x"
     }
   ],
   "info": {
@@ -79,8 +79,8 @@ const getStoryboard = ({
                             <accessibilityTraits key="traits" notEnabled="YES"/>
                         </accessibility>
                         <constraints>
-                            <constraint firstItem="3lX-Ut-9ad" firstAttribute="centerX" secondItem="Bcu-3y-fUS" secondAttribute="centerX" id="Fh9-Fy-1nT"/>
-                            <constraint firstItem="3lX-Ut-9ad" firstAttribute="centerY" secondItem="Bcu-3y-fUS" secondAttribute="centerY" id="nvB-Ic-PnI"/>
+                            <constraint firstItem="3lX-Ut-9ad" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="Fh9-Fy-1nT"/>
+                            <constraint firstItem="3lX-Ut-9ad" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="nvB-Ic-PnI"/>
                         </constraints>
                     </view>
                 </viewController>
