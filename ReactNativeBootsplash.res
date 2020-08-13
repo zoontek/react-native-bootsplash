@@ -10,7 +10,7 @@ external show: config => unit = "show"
 type visibilityStatus = [#visible | #hidden | #transitioning]
 
 @bs.module("react-native-bootsplash") @bs.scope("default")
-external getVisibilityStatus: unit => Js.Promise.t<visibilityStatus> = "show"
+external getVisibilityStatus: unit => Js.Promise.t<visibilityStatus> = "getVisibilityStatus"
 /*
  ## Usage
 
