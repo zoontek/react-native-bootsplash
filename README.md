@@ -127,24 +127,25 @@ yarn react-native generate-bootsplash assets/bootsplash_logo_original.png \
 This tool relies on the naming conventions that are used in the `/example` project and will therefore create the following files:
 
 ```bash
-<PROJECT_ROOT>/assets/bootsplash_logo.png
-<PROJECT_ROOT>/assets/bootsplash_logo@1,5x.png
-<PROJECT_ROOT>/assets/bootsplash_logo@2x.png
-<PROJECT_ROOT>/assets/bootsplash_logo@3x.png
-<PROJECT_ROOT>/assets/bootsplash_logo@4x.png
+android/app/src/main/res/drawable/bootsplash.xml
+android/app/src/main/res/values/colors.xml (creation and edition)
+android/app/src/main/res/mipmap-hdpi/bootsplash_logo.png
+android/app/src/main/res/mipmap-mdpi/bootsplash_logo.png
+android/app/src/main/res/mipmap-xhdpi/bootsplash_logo.png
+android/app/src/main/res/mipmap-xxhdpi/bootsplash_logo.png
+android/app/src/main/res/mipmap-xxxhdpi/bootsplash_logo.png
 
-<PROJECT_ROOT>/android/app/src/main/res/drawable/bootsplash.xml
-<PROJECT_ROOT>/android/app/src/main/res/values/colors.xml (creation and edition)
-<PROJECT_ROOT>/android/app/src/main/res/mipmap-hdpi/bootsplash_logo.png
-<PROJECT_ROOT>/android/app/src/main/res/mipmap-mdpi/bootsplash_logo.png
-<PROJECT_ROOT>/android/app/src/main/res/mipmap-xhdpi/bootsplash_logo.png
-<PROJECT_ROOT>/android/app/src/main/res/mipmap-xxhdpi/bootsplash_logo.png
-<PROJECT_ROOT>/android/app/src/main/res/mipmap-xxxhdpi/bootsplash_logo.png
+ios/RNBootSplashExample/BootSplash.storyboard
+ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo.png
+ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo@2x.png
+ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo@3x.png
 
-<PROJECT_ROOT>/ios/RNBootSplashExample/BootSplash.storyboard
-<PROJECT_ROOT>/ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo.png
-<PROJECT_ROOT>/ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo@2x.png
-<PROJECT_ROOT>/ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo@3x.png
+# Only if --assets-path was specified
+assets/bootsplash_logo.png
+assets/bootsplash_logo@1,5x.png
+assets/bootsplash_logo@2x.png
+assets/bootsplash_logo@3x.png
+assets/bootsplash_logo@4x.png
 ```
 
 ### iOS
