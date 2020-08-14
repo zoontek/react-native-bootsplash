@@ -4,6 +4,8 @@
 
 Show a bootsplash during app startup. Hide it when you are ready.
 
+**👉 Try and give feedbacks about [the next major version (3.0.0)](https://github.com/zoontek/react-native-bootsplash/tree/3.0.0)!**
+
 <p>
   <img height="520" src="https://raw.githubusercontent.com/zoontek/react-native-bootsplash/HEAD/docs/ios_demo.gif?raw=true" alt="iOS demo"></img>
   <img width="300" src="https://raw.githubusercontent.com/zoontek/react-native-bootsplash/HEAD/docs/android_demo.gif?raw=true" alt="android demo"></img>
