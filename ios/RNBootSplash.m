@@ -51,6 +51,16 @@ RCT_EXPORT_MODULE();
     _rootView.loadingView = nil;
   }];
 
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                                           selector:@selector(removeJavaScriptLoadingListeners:)
+                                               name:RCTJavaScriptDidLoadNotification
+                                             object:nil];
+
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                                           selector:@selector(onDidFailToLoadNotification:)
+                                               name:RCTJavaScriptDidFailToLoadNotification
+                                             object:nil];
+
   // https://github.com/facebook/react-native/blob/v0.63.2/React/CoreModules/RCTAppState.mm#L73
   for (NSString *name in @[
          UIApplicationDidBecomeActiveNotification,
@@ -88,6 +98,26 @@ RCT_EXPORT_MODULE();
   }
 
   _taskToRunOnResume = nil;
+}
+
++ (void)removeJavaScriptLoadingListeners:(NSNotification *)notification {
+  [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                  name:RCTJavaScriptDidLoadNotification
+                                                object:nil];
+
+  [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                  name:RCTJavaScriptDidFailToLoadNotification
+                                                object:nil];
+}
+
++ (void)onDidFailToLoadNotification:(NSNotification *)notification {
+  [RNBootSplash removeJavaScriptLoadingListeners:nil];
+
+  if (_viewController != nil) {
+    [_viewController dismissViewControllerAnimated:false completion:^{
+      _viewController = nil;
+    }];
+  }
 }
 
 + (void)onStaticShowInterval {
