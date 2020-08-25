@@ -229,7 +229,8 @@ As Android will not create our main activity before launching the app, we need t
       android:launchMode="singleTask"
       android:windowSoftInputMode="adjustResize"
       android:exported="true">
-      <!-- ⚠️ remove the intent-filter from MainActivity -->
+      <!-- ⚠️ add android:exported="true" above-->
+      <!-- and remove the intent-filter from MainActivity -->
     </activity>
 
     <!-- add the following lines (use the theme you created at step 3) -->
