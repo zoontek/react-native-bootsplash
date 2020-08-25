@@ -3883,7 +3883,7 @@ react-is@^16.12.0, react-is@^16.8.1, react-is@^16.8.4:
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
 "react-native-bootsplash@file:..":
-  version "3.0.0-alpha.0"
+  version "3.0.0-alpha.2"
   dependencies:
     chalk "^4.1.0"
     fs-extra "^9.0.1"
