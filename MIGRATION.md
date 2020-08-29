@@ -56,7 +56,7 @@ public class MainActivity extends ReactActivity {
 
 3. `android/app/src/main/AndroidManifest.xml`
 
-👀 As no change is needed in this file anymore, we restore it as it was originally.
+👀 As **not a single change is needed in this file anymore**, we restore it as it was originally.<br />
 If you did handle deep linking in `RNBootSplashActivity`, move it back to `MainActivity` too!
 
 ```diff
@@ -122,4 +122,7 @@ function App() {
 }
 ```
 
-⚠️ We also recommend you to regenerate the `BootSplash.storyboard` file using the CLI.
+## Generated files
+
+No generated asset will be modified by the new CLI tool except `BootSplash.storyboard`.<br />
+We recommand doing it if you kept the base design with a centered logo.
