@@ -125,4 +125,4 @@ function App() {
 ## Generated files
 
 No generated asset will be modified by the new CLI tool except `BootSplash.storyboard`.<br />
-We recommand doing it if you kept the base design with a centered logo.
+⚠️ We recommend doing it if you kept the base design with a centered logo.
