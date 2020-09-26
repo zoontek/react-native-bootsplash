@@ -1,30 +1,5 @@
-<!--
+# No Template
 
-👋 Hello!
+👉 Please follow one of the issue templates provided by the repo - if you are seeing this message, it means you haven't.
 
-⚠️ Please read the following carefully before opening a new issue.
-Your issue may be closed if it doesn't provide the informations required.
-
--->
-
-### 💻 My environment
-
-- react-native-bootsplash version:
-- react-native version:
-- Platform: ios / android / both
-- OS version: ?
-- Device: brand + model
-- Simulator: yes / no
-- Android Studio version: ?
-- Android buildToolsVersion: ?
-- Xcode version: ?
-
-### 🕵️‍♂️ Reproducing the issue
-
-Explain what you did, what you expected to happen, and what actually happens.
-Provide some code or screenshots if needed.
-
-### 🤞Solution
-
-Do you know what needs to be done to address this issue?
-Ideally, provide a pull request with a fix.
+If you don't follow the issue template, we may immediately close it.
