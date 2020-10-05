@@ -365,6 +365,31 @@ If you want to correctly handle [deep linking](https://developer.android.com/tra
 </manifest>
 ```
 
+### Testing with Jest
+
+Testing code which uses this library required some setup since we need to mock the native methods.
+
+To add the mocks, create a file *jest/setup.js* (or any other file name) containing the following code:
+
+```js
+jest.mock('react-native-bootsplash', () => {
+  return {
+    hide: jest.fn(),
+    show: jest.fn(),
+  }
+})
+```
+
+After that, we need to add the setup file in the jest config. You can add it under [setupFiles](https://jestjs.io/docs/en/configuration.html#setupfiles-array) option in your jest config file:
+
+```json
+{
+  "setupFiles": [
+    "<rootDir>/jest/setup.js"
+  ]
+}
+```
+
 ## 🕵️‍♂️ Comparison with [react-native-splash-screen](https://github.com/crazycodeboy/react-native-splash-screen)
 
 - If `react-native-splash-screen` encourages you to display an image over your application, `react-native-bootsplash` way-to-go is to design your launch screen using platforms tools ([Xcode layout editor](https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/) and [Android drawable resource](https://developer.android.com/guide/topics/resources/drawable-resource)).
