@@ -15,22 +15,23 @@ let App = () => {
 
   let init = async () => {
     // You can uncomment this line to add a delay on app startup
-    // let data = await fakeApiCallWithoutBadNetwork(3000);
+    // await fakeApiCallWithoutBadNetwork(3000);
 
     await BootSplash.hide();
 
-    let useNativeDriver = true;
-
     Animated.stagger(250, [
-      Animated.spring(translateY.current, { useNativeDriver, toValue: -50 }),
       Animated.spring(translateY.current, {
-        useNativeDriver,
+        useNativeDriver: true,
+        toValue: -50,
+      }),
+      Animated.spring(translateY.current, {
+        useNativeDriver: true,
         toValue: Dimensions.get("window").height,
       }),
     ]).start();
 
     Animated.timing(opacity.current, {
-      useNativeDriver,
+      useNativeDriver: true,
       toValue: 0,
       duration: 150,
       delay: 350,
