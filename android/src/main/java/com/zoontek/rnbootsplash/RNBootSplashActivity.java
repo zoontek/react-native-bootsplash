@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class RNBootSplashActivity extends AppCompatActivity {
 
-  private Class<?> getMainActivityClass() throws Exception {
+  protected Class<?> getMainActivityClass() throws Exception {
     final Context appContext = getApplicationContext();
     final Package appPackage = appContext.getClass().getPackage();
     assert appPackage != null;
