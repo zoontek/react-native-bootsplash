@@ -18,32 +18,24 @@ public class RNBootSplashActivity extends AppCompatActivity {
     return Class.forName(className);
   }
 
-  protected void forwardIntentToMainActivity(Intent intent) {
+  @Override
+  protected void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+
     try {
-      Intent intentCopy = new Intent(intent);
+      Intent originalIntent = getIntent();
+      Intent intent = new Intent(originalIntent);
 
-      intentCopy.setClass(this, getMainActivityClass());
-      intentCopy.putExtras(intent);
-      intentCopy.setData(intent.getData());
-      intentCopy.setAction(intent.getAction());
+      intent.setClass(this, getMainActivityClass());
+      intent.putExtras(originalIntent);
+      intent.setData(originalIntent.getData());
+      intent.setAction(originalIntent.getAction());
 
-      startActivity(intentCopy);
+      startActivity(intent);
       finish();
     } catch (Exception e) {
       e.printStackTrace();
       finishAffinity();
     }
-  }
-
-  @Override
-  protected void onNewIntent(Intent intent) {
-    super.onNewIntent(intent);
-    forwardIntentToMainActivity(intent);
-  }
-
-  @Override
-  protected void onCreate(@Nullable Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    forwardIntentToMainActivity(getIntent());
   }
 }

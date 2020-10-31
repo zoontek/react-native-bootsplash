@@ -289,14 +289,13 @@ import { Text } from "react-native";
 import RNBootSplash from "react-native-bootsplash";
 
 function App() {
-  let init = async () => {
-    // …do multiple async tasks
-  };
-
   useEffect(() => {
-    init().finally(() => {
-      RNBootSplash.hide({ fade: true });
-    });
+    const init = async () => {
+      // …do multiple sync or async tasks before
+      await RNBootSplash.hide({ fade: true });
+    };
+
+    init();
   }, []);
 
   return <Text>My awesome app</Text>;
@@ -325,14 +324,16 @@ If you want to correctly handle [deep linking](https://developer.android.com/tra
     android:allowBackup="false"
     android:theme="@style/AppTheme">
 
-    <!-- set android:launchMode="singleTask" and android:exported="true" -->
     <activity
       android:name=".MainActivity"
-      android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+      android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
       android:label="@string/app_name"
       android:windowSoftInputMode="adjustResize"
       android:exported="true"
-      android:launchMode="singleTask" />
+      android:launchMode="singleTask">
+      <!-- ⚠️ add android:exported="true" and android:launchMode="singleTask" above -->
+      <!-- remove the <intent-filter> from .MainActivity -->
+    </activity>
 
     <activity
       android:name="com.zoontek.rnbootsplash.RNBootSplashActivity"
@@ -368,8 +369,9 @@ To add the mocks, create a file _jest/setup.js_ (or any other file name) contain
 ```js
 jest.mock("react-native-bootsplash", () => {
   return {
-    hide: jest.fn(),
-    show: jest.fn(),
+    hide: jest.fn().mockResolvedValueOnce(),
+    show: jest.fn().mockResolvedValueOnce(),
+    getVisibilityStatus: jest.fn().mockResolvedValue("hidden"),
   };
 });
 ```

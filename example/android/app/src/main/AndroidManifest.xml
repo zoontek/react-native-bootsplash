@@ -10,17 +10,28 @@
       android:roundIcon="@mipmap/ic_launcher_round"
       android:allowBackup="false"
       android:theme="@style/AppTheme">
+
       <activity
         android:name=".MainActivity"
-        android:label="@string/app_name"
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
-        android:launchMode="singleTask"
-        android:windowSoftInputMode="adjustResize">
+        android:label="@string/app_name"
+        android:windowSoftInputMode="adjustResize"
+        android:exported="true"
+        android:launchMode="singleTask">
+        <!-- ⚠️ add android:exported="true" and android:launchMode="singleTask" above -->
+        <!-- remove the <intent-filter> from .MainActivity -->
+      </activity>
+
+      <activity
+        android:name="com.zoontek.rnbootsplash.RNBootSplashActivity"
+        android:theme="@style/BootTheme"
+        android:launchMode="singleTask">
         <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
+          <action android:name="android.intent.action.MAIN" />
+          <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
       </activity>
+
       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
     </application>
 

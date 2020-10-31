@@ -18,7 +18,7 @@ public class MainActivity extends ReactActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    RNBootSplash.init(this, R.style.AppTheme);
+    RNBootSplash.init(R.drawable.bootsplash, MainActivity.this);
     super.onCreate(savedInstanceState);
   }
 }
