@@ -1,6 +1,6 @@
 # 🚀 react-native-bootsplash
 
-[![npm version](https://badge.fury.io/js/react-native-bootsplash.svg)](https://badge.fury.io/js/react-native-bootsplash) [![npm](https://img.shields.io/npm/dt/react-native-bootsplash.svg)](https://www.npmjs.org/package/react-native-bootsplash) ![Platform - Android and iOS](https://img.shields.io/badge/platform-Android%20%7C%20iOS-yellow.svg) ![MIT](https://img.shields.io/dub/l/vibe-d.svg) [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/)
+[![npm version](https://badge.fury.io/js/react-native-bootsplash.svg)](https://badge.fury.io/js/react-native-bootsplash) [![npm](https://img.shields.io/npm/dt/react-native-bootsplash.svg)](https://www.npmjs.org/package/react-native-bootsplash) ![Platform - Android and iOS](https://img.shields.io/badge/platform-Android%20%7C%20iOS-yellow.svg) ![MIT](https://img.shields.io/dub/l/vibe-d.svg) [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
 Show a bootsplash during app startup. Hide it when you are ready.
 
@@ -202,10 +202,12 @@ public class MainActivity extends ReactActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    RNBootSplash.init(this, R.style.AppTheme); // <- display the generated bootsplash.xml drawable over our MainActivity
     super.onCreate(savedInstanceState);
+    RNBootSplash.init(R.drawable.bootsplash, MainActivity.this); // <- display the generated bootsplash.xml drawable over our MainActivity
   }
 ```
+
+As Android will not create our main activity before launching the app, we need to display a different activity at start, then switch to our main one.
 
 2. Edit the `android/app/src/main/res/values/styles.xml` file:
 
@@ -215,13 +217,60 @@ public class MainActivity extends ReactActivity {
   <!-- Base application theme -->
   <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
     <!-- Your base theme customization -->
-    <!-- … -->
+  </style>
 
-    <!-- Set the generated bootsplash.xml drawable as MainActivity background -->
+  <!-- Add the following lines (BootTheme should inherit from AppTheme) -->
+  <style name="BootTheme" parent="AppTheme">
+    <!-- set the generated bootsplash.xml drawable as activity background -->
     <item name="android:background">@drawable/bootsplash</item>
   </style>
 
 </resources>
+```
+
+3. Edit the `android/app/src/main/AndroidManifest.xml` file:
+
+```xml
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  package="com.rnbootsplashexample">
+
+  <!-- … -->
+
+  <application
+    android:name=".MainApplication"
+    android:label="@string/app_name"
+    android:icon="@mipmap/ic_launcher"
+    android:roundIcon="@mipmap/ic_launcher_round"
+    android:allowBackup="false"
+    android:theme="@style/AppTheme">
+
+    <activity
+      android:name=".MainActivity"
+      android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
+      android:label="@string/app_name"
+      android:windowSoftInputMode="adjustResize"
+      android:exported="true"
+      android:launchMode="singleTask">
+      <!-- ⚠️ add android:exported="true" and android:launchMode="singleTask" above -->
+      <!-- remove the <intent-filter> from .MainActivity -->
+    </activity>
+
+    <!-- add the following lines (use the theme you created at step 3) -->
+    <activity
+      android:name="com.zoontek.rnbootsplash.RNBootSplashActivity"
+      android:theme="@style/BootTheme"
+      android:launchMode="singleTask">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+    </activity>
+
+    <!-- … -->
+
+  </application>
+
+</manifest>
 ```
 
 ## API
@@ -250,7 +299,7 @@ RNBootSplash.hide({ fade: true }); // fade
 #### Method type
 
 ```ts
-type show = (config?: { fade?: number }) => Promise<void>;
+type show = (config?: { fade?: boolean }) => Promise<void>;
 ```
 
 #### Usage
@@ -291,11 +340,13 @@ import RNBootSplash from "react-native-bootsplash";
 function App() {
   useEffect(() => {
     const init = async () => {
-      // …do multiple sync or async tasks before
-      await RNBootSplash.hide({ fade: true });
+      // …do multiple sync or async tasks
     };
 
-    init();
+    init().finally(async () => {
+      await RNBootSplash.hide({ fade: 250 });
+      console.log("Bootsplash has been hidden successfully");
+    });
   }, []);
 
   return <Text>My awesome app</Text>;
@@ -388,4 +439,6 @@ After that, we need to add the setup file in the jest config. You can add it und
 
 - If `react-native-splash-screen` encourages you to display an image over your application, `react-native-bootsplash` way-to-go is to design your launch screen using platforms tools ([Xcode layout editor](https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/) and [Android drawable resource](https://developer.android.com/guide/topics/resources/drawable-resource)).
 
-* Hiding the launch screen is configurable: fade it out or hide it without any animation at all (no fade needed if you want to animate it out!).
+- It should not prevent you from seeing red screen errors.
+
+- Hiding the launch screen is configurable: fade it out or hide it without any animation at all (no fade needed if you want to animate it out!).
