@@ -13,11 +13,14 @@
 
     <activity
       android:name=".MainActivity"
-      android:label="@string/app_name"
       android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
-      android:launchMode="singleTask"
+      android:label="@string/app_name"
       android:windowSoftInputMode="adjustResize"
-      android:exported="true" />
+      android:exported="true"
+      android:launchMode="singleTask">
+      <!-- ⚠️ add android:exported="true" and android:launchMode="singleTask" above -->
+      <!-- remove the <intent-filter> from .MainActivity -->
+    </activity>
 
     <activity
       android:name="com.zoontek.rnbootsplash.RNBootSplashActivity"
@@ -26,14 +29,6 @@
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
-      </intent-filter>
-
-      <!-- needed to handle deep links -->
-      <intent-filter>
-        <action android:name="android.intent.action.VIEW" />
-        <category android:name="android.intent.category.BROWSABLE" />
-        <category android:name="android.intent.category.DEFAULT" />
-        <data android:scheme="bootsplash" />
       </intent-filter>
     </activity>
 

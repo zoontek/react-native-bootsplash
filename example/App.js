@@ -14,23 +14,24 @@ let App = () => {
   let translateY = useRef(new Animated.Value(0));
 
   let init = async () => {
-    BootSplash.hide();
-
     // You can uncomment this line to add a delay on app startup
-    // let data = await fakeApiCallWithoutBadNetwork(3000);
+    // await fakeApiCallWithoutBadNetwork(3000);
 
-    let useNativeDriver = true;
+    await BootSplash.hide();
 
     Animated.stagger(250, [
-      Animated.spring(translateY.current, { useNativeDriver, toValue: -50 }),
       Animated.spring(translateY.current, {
-        useNativeDriver,
+        useNativeDriver: true,
+        toValue: -50,
+      }),
+      Animated.spring(translateY.current, {
+        useNativeDriver: true,
         toValue: Dimensions.get("window").height,
       }),
     ]).start();
 
     Animated.timing(opacity.current, {
-      useNativeDriver,
+      useNativeDriver: true,
       toValue: 0,
       duration: 150,
       delay: 350,

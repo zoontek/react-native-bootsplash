@@ -5,19 +5,19 @@
   "scripts": {
     "clean-modules": "rm -rf ./node_modules/react-native-bootsplash/{example,node_modules}",
     "clean": "rm -rf ./node_modules ./ios/Pods",
-    "postinstall": "yarn clean-modules && yarn pod-install",
-    "pod-install": "cd ./ios && pod install && cd ..",
+    "pod-update": "cd ./ios && pod update && cd ..",
+    "postinstall": "yarn clean-modules && yarn pod-update",
     "start": "react-native start",
     "reinstall": "yarn clean && yarn install"
   },
   "dependencies": {
-    "react": "16.11.0",
-    "react-native": "0.62.2",
+    "react": "16.13.1",
+    "react-native": "0.63.3",
     "react-native-bootsplash": "file:../"
   },
   "devDependencies": {
-    "@babel/core": "7.10.4",
-    "@babel/runtime": "7.10.4",
-    "metro-react-native-babel-preset": "0.60.0"
+    "@babel/core": "^7.12.3",
+    "@babel/runtime": "^7.12.5",
+    "metro-react-native-babel-preset": "^0.59.0"
   }
 }

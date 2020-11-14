@@ -6,7 +6,4 @@
 + (void)initWithStoryboard:(NSString * _Nonnull)storyboardName
                   rootView:(RCTRootView * _Nonnull)rootView;
 
-// Deprecated, will be removed in a future version
-+ (void)initialShow;
-
 @end
