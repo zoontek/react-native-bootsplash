@@ -342,7 +342,7 @@ function App() {
     };
 
     init().finally(async () => {
-      await RNBootSplash.hide({ fade: 250 });
+      await RNBootSplash.hide({ fade: true });
       console.log("Bootsplash has been hidden successfully");
     });
   }, []);
