@@ -253,7 +253,7 @@ As Android will not create our main activity before launching the app, we need t
       <!-- remove the <intent-filter> from .MainActivity -->
     </activity>
 
-    <!-- add the following lines (use the theme you created at step 3) -->
+    <!-- add the following lines (use the theme you created at step 2) -->
     <activity
       android:name="com.zoontek.rnbootsplash.RNBootSplashActivity"
       android:theme="@style/BootTheme"
