@@ -45,6 +45,8 @@ Library version: x.x.x
 <!--
 - You must provide a clear list of steps and code to reproduce the problem.
 - Keep the code reproducing the bug as simple as possible, with the minimum amount of code required to reproduce the issue. See https://stackoverflow.com/help/mcve.
+- Is the issue happening on iOS, Android or both?
+- Do you run your app on a simulator (which OS version?) or on a physical device (which one? which OS version?)
 - If this library has additional install steps, describe them (e.g., pod install? jetify? etc).
 - Either re-create the bug using the repository's example app or link to a GitHub repository with code that reproduces the bug.
 - Explain the steps we need to take to reproduce the issue:
