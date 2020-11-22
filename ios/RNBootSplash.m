@@ -88,7 +88,7 @@ RCT_EXPORT_MODULE();
                                                object:nil];
 
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(onDidFailToLoadNotification:)
+                                             selector:@selector(invalidate)
                                                  name:RCTJavaScriptDidFailToLoadNotification
                                                object:nil];
 
@@ -109,9 +109,7 @@ RCT_EXPORT_MODULE();
     }];
   }
 
-  [[NSNotificationCenter defaultCenter] removeObserver:self
-                                               name:UIApplicationDidBecomeActiveNotification
-                                             object:nil];
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)removeJavaScriptLoadingObservers:(NSNotification *)notification {
@@ -122,11 +120,6 @@ RCT_EXPORT_MODULE();
   [[NSNotificationCenter defaultCenter] removeObserver:self
                                                   name:RCTJavaScriptDidFailToLoadNotification
                                                 object:nil];
-}
-
-- (void)onDidFailToLoadNotification:(NSNotification *)notification {
-  [self invalidate];
-  [self removeJavaScriptLoadingObservers:nil];
 }
 
 - (void)shiftNextTask {
