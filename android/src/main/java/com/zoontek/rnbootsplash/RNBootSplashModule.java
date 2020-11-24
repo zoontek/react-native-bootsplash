@@ -228,7 +228,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
 
         if (activity == null || activity.isFinishing()) {
           promise.reject("invalid_activity",
-            "Couldn't call show() without a valid Activity");
+            "Couldn't call hide() without a valid Activity");
           shiftNextTask();
           return;
         }
