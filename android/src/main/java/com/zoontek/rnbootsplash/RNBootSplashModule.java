@@ -24,6 +24,8 @@ import com.facebook.react.bridge.UiThreadUtil;
 import com.facebook.react.module.annotations.ReactModule;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @ReactModule(name = RNBootSplashModule.MODULE_NAME)
 public class RNBootSplashModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
@@ -166,6 +168,18 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
     }
   }
 
+  private void waitAndShiftNextTask() {
+    final Timer timer = new Timer();
+
+    timer.schedule(new TimerTask() {
+      @Override
+      public void run() {
+        shiftNextTask();
+        timer.cancel();
+      }
+    }, 250);
+  }
+
   private void show(final RNBootSplashTask task) {
     UiThreadUtil.runOnUiThread(new Runnable() {
       @Override
@@ -174,9 +188,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
         final Promise promise = task.getPromise();
 
         if (activity == null || activity.isFinishing()) {
-          promise.reject("invalid_activity",
-            "Couldn't call show() without a valid Activity");
-          shiftNextTask();
+          waitAndShiftNextTask();
           return;
         }
 
@@ -229,9 +241,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
         final Promise promise = task.getPromise();
 
         if (activity == null || activity.isFinishing()) {
-          promise.reject("invalid_activity",
-            "Couldn't call hide() without a valid Activity");
-          shiftNextTask();
+          waitAndShiftNextTask();
           return;
         }
 
