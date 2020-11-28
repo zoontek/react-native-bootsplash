@@ -9,7 +9,8 @@ typedef enum {
 typedef enum {
   RNBootSplashStatusVisible = 0,
   RNBootSplashStatusHidden = 1,
-  RNBootSplashStatusTransitioning = 2,
+  RNBootSplashStatusTransitioningToVisible = 2,
+  RNBootSplashStatusTransitioningToHidden = 3
 } RNBootSplashStatus;
 
 @interface RNBootSplashTask : NSObject

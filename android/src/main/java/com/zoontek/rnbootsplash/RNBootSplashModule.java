@@ -34,7 +34,8 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
   private enum Status {
     VISIBLE,
     HIDDEN,
-    TRANSITIONING
+    TRANSITIONING_TO_VISIBLE,
+    TRANSITIONING_TO_HIDDEN
   }
 
   private static int mDrawableResId = -1;
@@ -146,7 +147,8 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
 
   private void shiftNextTask() {
     boolean shouldSkipTick = mDrawableResId == -1
-      || mStatus == Status.TRANSITIONING
+      || mStatus == Status.TRANSITIONING_TO_VISIBLE
+      || mStatus == Status.TRANSITIONING_TO_HIDDEN
       || mIsAppInBackground
       || mTaskQueue.isEmpty();
 
@@ -184,7 +186,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
           return;
         }
 
-        mStatus = Status.TRANSITIONING;
+        mStatus = Status.TRANSITIONING_TO_VISIBLE;
 
         LayoutParams params = new LayoutParams(
           LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
@@ -241,7 +243,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
           return;
         }
 
-        mStatus = Status.TRANSITIONING;
+        mStatus = Status.TRANSITIONING_TO_HIDDEN;
 
         final ViewGroup parent = (ViewGroup) layout.getParent();
 
@@ -303,7 +305,8 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
       case HIDDEN:
         promise.resolve("hidden");
         break;
-      case TRANSITIONING:
+      case TRANSITIONING_TO_VISIBLE:
+      case TRANSITIONING_TO_HIDDEN:
         promise.resolve("transitioning");
         break;
     }

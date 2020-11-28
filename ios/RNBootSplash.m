@@ -124,7 +124,8 @@ RCT_EXPORT_MODULE();
 
 - (void)shiftNextTask {
   bool shouldSkipTick = _rootView.loadingView != nil
-    || _status == RNBootSplashStatusTransitioning
+    || _status == RNBootSplashStatusTransitioningToVisible
+    || _status == RNBootSplashStatusTransitioningToHidden
     || [_taskQueue count] == 0
     || [[UIApplication sharedApplication] applicationState] == UIApplicationStateBackground;
 
@@ -146,7 +147,7 @@ RCT_EXPORT_MODULE();
     task.resolve(@(true)); // splash screen is already visible
     [self shiftNextTask];
   } else {
-    _status = RNBootSplashStatusTransitioning;
+    _status = RNBootSplashStatusTransitioningToVisible;
 
     _splashVC = [[UIStoryboard storyboardWithName:_storyboardName bundle:nil] instantiateInitialViewController];
     [_splashVC setModalPresentationStyle:UIModalPresentationOverFullScreen];
@@ -167,7 +168,7 @@ RCT_EXPORT_MODULE();
     task.resolve(@(true)); // splash screen is already hidden
     [self shiftNextTask];
   } else {
-    _status = RNBootSplashStatusTransitioning;
+    _status = RNBootSplashStatusTransitioningToHidden;
 
     [_splashVC dismissViewControllerAnimated:task.fade
                                   completion:^{
@@ -219,7 +220,8 @@ RCT_REMAP_METHOD(getVisibilityStatus,
       return resolve(@"visible");
     case RNBootSplashStatusHidden:
       return resolve(@"hidden");
-    case RNBootSplashStatusTransitioning:
+    case RNBootSplashStatusTransitioningToVisible:
+    case RNBootSplashStatusTransitioningToHidden:
       return resolve(@"transitioning");
   }
 }
