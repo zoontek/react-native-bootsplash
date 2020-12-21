@@ -221,7 +221,7 @@ As Android will not create our main activity before launching the app, we need t
   <!-- Add the following lines (BootTheme should inherit from AppTheme) -->
   <style name="BootTheme" parent="AppTheme">
     <!-- set the generated bootsplash.xml drawable as activity background -->
-    <item name="android:background">@drawable/bootsplash</item>
+    <item name="android:windowBackground">@drawable/bootsplash</item>
   </style>
 
 </resources>
