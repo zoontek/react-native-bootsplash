@@ -3,7 +3,6 @@ package com.zoontek.rnbootsplash;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
-import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
@@ -62,9 +61,8 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
   }
 
   private static LinearLayout getLayout(@NonNull Activity activity, LayoutParams params) {
-    Context context = activity.getApplicationContext();
-    LinearLayout layout = new LinearLayout(context);
-    View view = new View(context);
+    LinearLayout layout = new LinearLayout(activity);
+    View view = new View(activity);
 
     view.setBackgroundResource(mDrawableResId);
     layout.setId(R.id.bootsplash_layout_id);
