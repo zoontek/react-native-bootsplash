@@ -96,6 +96,9 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
   public void onCatalystInstanceDestroy() {
     super.onCatalystInstanceDestroy();
 
+    // Ignore if RNBootSplash was not initialized
+    if (mDrawableResId == -1) return;
+
     try {
       Activity activity = getReactApplicationContext().getCurrentActivity();
       assert activity != null;
