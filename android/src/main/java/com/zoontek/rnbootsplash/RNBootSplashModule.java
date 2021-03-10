@@ -63,12 +63,8 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
   private static LinearLayout getLayout(@NonNull Activity activity, LayoutParams params) {
     LinearLayout layout = new LinearLayout(activity);
     View view = new View(activity);
-    // if `init` method was not called the mDrawableResId has the default value
-    // setBackgroundResource will trigger an error when the resId is -1 and the app will crash
-    if(mDrawableResId != -1){
-      view.setBackgroundResource(mDrawableResId);
-    }
 
+    view.setBackgroundResource(mDrawableResId);
     layout.setId(R.id.bootsplash_layout_id);
     layout.setLayoutTransition(null);
     layout.setOrientation(LinearLayout.VERTICAL);
