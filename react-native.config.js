@@ -25,11 +25,16 @@ module.exports = {
           description:
             "path to your static assets directory (useful to require the logo file in JS)",
         },
+        {
+          name: "--flavor <flavor>",
+          description:
+            "[android only] flavor build variant (results in a android resource path other than 'main')",
+        },
       ],
       func: (
         [logoPath],
         { project: { android, ios } },
-        { backgroundColor, logoWidth, assetsPath },
+        { backgroundColor, logoWidth, assetsPath, flavor },
       ) => {
         const workingDirectory =
           process.env.INIT_CWD || process.env.PWD || process.cwd();
@@ -45,6 +50,7 @@ module.exports = {
           assetsPath: assetsPath
             ? path.resolve(workingDirectory, assetsPath)
             : undefined,
+          flavor,
         }).catch((error) => {
           console.error(error);
         });

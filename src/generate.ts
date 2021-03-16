@@ -132,6 +132,7 @@ export const generate = async ({
   backgroundColor,
   logoWidth,
   assetsPath,
+  flavor,
 }: {
   android: {
     sourceDir: string;
@@ -146,6 +147,7 @@ export const generate = async ({
   backgroundColor: string;
   logoWidth: number;
   assetsPath?: string;
+  flavor?: string;
 }) => {
   if (!isValidHexadecimal(backgroundColor)) {
     throw new Error(
@@ -216,7 +218,12 @@ export const generate = async ({
       ? path.resolve(android.sourceDir, android.appName)
       : path.resolve(android.sourceDir); // @react-native-community/cli 2.x & 3.x support
 
-    const resPath = path.resolve(appPath, "src", "main", "res");
+    const resPath = path.resolve(
+      appPath,
+      "src",
+      `${flavor ? flavor : "main"}`,
+      "res",
+    );
     const drawablePath = path.resolve(resPath, "drawable");
     const valuesPath = path.resolve(resPath, "values");
 
