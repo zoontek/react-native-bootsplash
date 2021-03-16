@@ -28,7 +28,7 @@ module.exports = {
         {
           name: "--flavor <flavor>",
           description:
-            "[android only] flavor build variant (results in a android resource path other than 'main')",
+            '[android only] flavor build variant (outputs in an android resource directory other than "main")',
         },
       ],
       func: (

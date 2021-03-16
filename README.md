@@ -111,7 +111,7 @@ Options:
   --background-color <color>  color used as launch screen background (in hexadecimal format) (default: "#fff")
   --logo-width <width>        logo width at @1x (in dp - we recommand approximately ~100) (default: 100)
   --assets-path [path]        path to your static assets directory (useful to require the logo file in JS)
-  --flavor <flavor>           [android only] flavor build variant (results \in a android resource path other than 'main')
+  --flavor <flavor>           [android only] flavor build variant (outputs in an android resource directory other than "main")
   -h, --help                  output usage information
 ```
 
@@ -121,7 +121,7 @@ Options:
 yarn react-native generate-bootsplash assets/bootsplash_logo_original.png \
   --background-color=F5FCFF \
   --logo-width=100 \
-  --assets-path=assets
+  --assets-path=assets \
   --flavor=main
 ```
 
@@ -149,22 +149,6 @@ assets/bootsplash_logo@1,5x.png
 assets/bootsplash_logo@2x.png
 assets/bootsplash_logo@3x.png
 assets/bootsplash_logo@4x.png
-```
-
-_[android-only]_
-
-If `--flavor` was specified, the `main folder` is changed for `flavor name`
-
-sample with `--flavor=free`:
-
-```
-android/app/src/free/res/drawable/bootsplash.xml
-android/app/src/free/res/values/colors.xml (creation and edition)
-android/app/src/free/res/mipmap-hdpi/bootsplash_logo.png
-android/app/src/free/res/mipmap-mdpi/bootsplash_logo.png
-android/app/src/free/res/mipmap-xhdpi/bootsplash_logo.png
-android/app/src/free/res/mipmap-xxhdpi/bootsplash_logo.png
-android/app/src/free/res/mipmap-xxxhdpi/bootsplash_logo.png
 ```
 
 ### iOS

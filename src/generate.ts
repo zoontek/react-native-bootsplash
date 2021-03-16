@@ -132,7 +132,7 @@ export const generate = async ({
   backgroundColor,
   logoWidth,
   assetsPath,
-  flavor,
+  flavor = "main",
 }: {
   android: {
     sourceDir: string;
@@ -218,12 +218,7 @@ export const generate = async ({
       ? path.resolve(android.sourceDir, android.appName)
       : path.resolve(android.sourceDir); // @react-native-community/cli 2.x & 3.x support
 
-    const resPath = path.resolve(
-      appPath,
-      "src",
-      `${flavor ? flavor : "main"}`,
-      "res",
-    );
+    const resPath = path.resolve(appPath, "src", flavor, "res");
     const drawablePath = path.resolve(resPath, "drawable");
     const valuesPath = path.resolve(resPath, "values");
 
