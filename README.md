@@ -1,5 +1,5 @@
 <a href="https://github.com/sponsors/zoontek">
-  <img align="right" width="200" alt="Philosopher’s stone, logo of PostCSS" src=".github/funding-octocat.svg">
+  <img align="right" width="200" alt="This library helped you? Consider sponsoring!" src=".github/funding-octocat.svg">
 </a>
 
 # 🚀 react-native-bootsplash
