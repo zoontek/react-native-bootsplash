@@ -1,8 +1,10 @@
+# 🚀 React native bootsplash
+
 <a href="https://github.com/sponsors/zoontek">
-  <img align="right" width="200" alt="This library helped you? Consider sponsoring!" src=".github/funding-octocat.svg">
+  <img align="right" width="160" alt="This library helped you? Consider sponsoring!" src=".github/funding-octocat.svg">
 </a>
 
-# 🚀 react-native-bootsplash
+Show a bootsplash during app startup. Hide it when you are ready.
 
 [![npm version](https://badge.fury.io/js/react-native-bootsplash.svg)](https://badge.fury.io/js/react-native-bootsplash)
 ![MIT](https://img.shields.io/dub/l/vibe-d.svg)
@@ -10,8 +12,6 @@
 <br />
 ![Platform - Android](https://img.shields.io/badge/platform-Android-3ddc84.svg?style=flat&logo=android)
 ![Platform - iOS](https://img.shields.io/badge/platform-iOS-000.svg?style=flat&logo=apple)
-
-Show a bootsplash during app startup. Hide it when you are ready.
 
 <p>
   <img height="520" src="https://raw.githubusercontent.com/zoontek/react-native-bootsplash/HEAD/docs/ios_demo.gif?raw=true" alt="iOS demo"></img>
