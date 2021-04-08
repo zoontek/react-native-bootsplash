@@ -296,7 +296,7 @@ type hide = (config?: { fade?: boolean }) => Promise<void>;
 #### Usage
 
 ```js
-import RNBootSplash from "react-native-bootsplash";
+import RNBootSplash from 'react-native-bootsplash';
 
 RNBootSplash.hide(); // immediate
 RNBootSplash.hide({ fade: true }); // fade
@@ -315,7 +315,7 @@ type show = (config?: { fade?: boolean }) => Promise<void>;
 #### Usage
 
 ```js
-import RNBootSplash from "react-native-bootsplash";
+import RNBootSplash from 'react-native-bootsplash';
 
 RNBootSplash.show(); // immediate
 RNBootSplash.show({ fade: true }); // fade
@@ -328,14 +328,14 @@ RNBootSplash.show({ fade: true }); // fade
 #### Method type
 
 ```ts
-type VisibilityStatus = "visible" | "hidden" | "transitioning";
+type VisibilityStatus = 'visible' | 'hidden' | 'transitioning';
 type getVisibilityStatus = () => Promise<VisibilityStatus>;
 ```
 
 #### Usage
 
 ```js
-import RNBootSplash from "react-native-bootsplash";
+import RNBootSplash from 'react-native-bootsplash';
 
 RNBootSplash.getVisibilityStatus().then((status) => console.log(status));
 ```
@@ -343,9 +343,9 @@ RNBootSplash.getVisibilityStatus().then((status) => console.log(status));
 ## Real world example
 
 ```js
-import React, { useEffect } from "react";
-import { Text } from "react-native";
-import RNBootSplash from "react-native-bootsplash";
+import React, { useEffect } from 'react';
+import { Text } from 'react-native';
+import RNBootSplash from 'react-native-bootsplash';
 
 function App() {
   useEffect(() => {
@@ -355,7 +355,7 @@ function App() {
 
     init().finally(async () => {
       await RNBootSplash.hide({ fade: true });
-      console.log("Bootsplash has been hidden successfully");
+      console.log('Bootsplash has been hidden successfully');
     });
   }, []);
 
@@ -428,11 +428,11 @@ Testing code which uses this library required some setup since we need to mock t
 To add the mocks, create a file _jest/setup.js_ (or any other file name) containing the following code:
 
 ```js
-jest.mock("react-native-bootsplash", () => {
+jest.mock('react-native-bootsplash', () => {
   return {
     hide: jest.fn().mockResolvedValueOnce(),
     show: jest.fn().mockResolvedValueOnce(),
-    getVisibilityStatus: jest.fn().mockResolvedValue("hidden"),
+    getVisibilityStatus: jest.fn().mockResolvedValue('hidden'),
   };
 });
 ```
@@ -442,6 +442,24 @@ After that, we need to add the setup file in the jest config. You can add it und
 ```json
 {
   "setupFiles": ["<rootDir>/jest/setup.js"]
+}
+```
+
+### Using React Navigation
+
+If using React Navigation you can hide the splash screen once the navigation container and all children have finished mounting by using the `onReady` function.
+
+```js
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import RNBootSplash from 'react-native-bootsplash';
+
+function App() {
+  return (
+    <NavigationContainer onReady={() => RNBootSplash.hide()}>
+      {/* content */}
+    </NavigationContainer>
+  );
 }
 ```
 
