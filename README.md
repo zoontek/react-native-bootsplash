@@ -445,6 +445,21 @@ After that, we need to add the setup file in the jest config. You can add it und
 }
 ```
 
+### Using React Navigation
+If using React Navigation you can hide the splash screen once the navigation container and all children have finished mounting by using the `onReady` function.
+```js
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import RNBootSplash from "react-native-bootsplash";
+function App() {
+  return (
+    <NavigationContainer onReady={() => RNBootSplash.hide()}>
+      {/* content */}
+    </NavigationContainer>
+  );
+}
+```
+
 ## 🕵️‍♂️ Comparison with [react-native-splash-screen](https://github.com/crazycodeboy/react-native-splash-screen)
 
 - If `react-native-splash-screen` encourages you to display an image over your application, `react-native-bootsplash` way-to-go is to design your launch screen using platforms tools ([Xcode layout editor](https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/) and [Android drawable resource](https://developer.android.com/guide/topics/resources/drawable-resource)).
