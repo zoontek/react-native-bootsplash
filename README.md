@@ -446,11 +446,14 @@ After that, we need to add the setup file in the jest config. You can add it und
 ```
 
 ### Using React Navigation
-If using React Navigation you can hide the splash screen once the navigation container and all children have finished mounting by using the `onReady` function.
+
+If you are using React Navigation, you can hide the splash screen once the navigation container and all children have finished mounting by using the `onReady` function.
+
 ```js
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import RNBootSplash from "react-native-bootsplash";
+
 function App() {
   return (
     <NavigationContainer onReady={() => RNBootSplash.hide()}>
