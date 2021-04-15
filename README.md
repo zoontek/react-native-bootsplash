@@ -162,7 +162,7 @@ assets/bootsplash_logo@4x.png
 
 ### iOS
 
-_⚠️ Only `.storyboard` files are supported ([Apple will deprecate other methods in April 2020](https://developer.apple.com/news/?id=01132020b))._
+_⚠️ Only `.storyboard` files are supported ([Apple has deprecated other methods in April 2020](https://developer.apple.com/news/?id=01132020b))._
 
 Edit the `ios/YourProjectName/AppDelegate.m` file:
 
