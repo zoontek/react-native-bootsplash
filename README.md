@@ -273,8 +273,7 @@ As Android will not create our main activity before launching the app, we need t
 
 2. Edit the `android/app/src/main/res/values/styles.xml` file:
 
-This step is not needed if you are displaying a custom layout as mentioned above.
-
+**With drawable**
 ```xml
 <resources>
 
@@ -287,6 +286,24 @@ This step is not needed if you are displaying a custom layout as mentioned above
   <style name="BootTheme" parent="AppTheme">
     <!-- set the generated bootsplash.xml drawable as activity background -->
     <item name="android:background">@drawable/bootsplash</item>
+  </style>
+
+</resources>
+```
+
+**With Custom Layout**
+```xml
+<resources>
+
+  <!-- Base application theme -->
+  <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <!-- Your base theme customization -->
+  </style>
+
+  <!-- Add the following lines (BootTheme should inherit from AppTheme) -->
+  <style name="BootTheme" parent="AppTheme">
+    <!-- windowDisablePreview is needed to avoid white screen at startup -->
+    <item name="android:windowDisablePreview">true</item>
   </style>
 
 </resources>
