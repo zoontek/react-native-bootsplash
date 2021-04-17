@@ -20,5 +20,9 @@ public class MainActivity extends ReactActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     RNBootSplash.init(R.drawable.bootsplash, MainActivity.this);
+    /**
+    * RNBootSplash.initLayout(R.layout.splash_layout, R.id.splash_id, MainActivity.this);
+    * You can use this example if you want to implement a custom layout instead of a drawable.
+    */
   }
 }
