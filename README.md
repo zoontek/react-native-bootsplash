@@ -219,7 +219,61 @@ public class MainActivity extends ReactActivity {
 
 As Android will not create our main activity before launching the app, we need to display a different activity at start, then switch to our main one.
 
+**If you want to display a custom layout instead** of a drawable you can make these changes instead:
+
+- First create the necessary resources (Make sure it's a `LinearLayout`):
+
+  **res/layout/splash_layout.xml**
+
+  ```xml
+  <?xml version="1.0" encoding="utf-8"?>
+  <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+      android:id="@+id/splash_id"
+      android:background="@android:color/white"
+      android:orientation="vertical"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:gravity="center">
+
+      <TextView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:text="I am a layout" />
+  </LinearLayout>
+  ```
+
+  **res/values/ids.xml**
+
+  ```xml
+  <resources>
+    <item type="id" name="splash_id" />
+  </resources>
+  ```
+
+- Then add the changes below:
+
+  **MainActivity.java**
+
+  ```java
+  import android.os.Bundle; // <- add this necessary import
+
+  import com.facebook.react.ReactActivity;
+  import com.zoontek.rnbootsplash.RNBootSplash; // <- add this necessary import
+
+  public class MainActivity extends ReactActivity {
+
+    // …
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+      super.onCreate(savedInstanceState);
+      RNBootSplash.initLayout(R.layout.splash_layout, R.id.splash_id, MainActivity.this); // <- display your custom layout
+    }
+  ```
+
 2. Edit the `android/app/src/main/res/values/styles.xml` file:
+
+This step is not needed if you are displaying a custom layout as mentioned above.
 
 ```xml
 <resources>
