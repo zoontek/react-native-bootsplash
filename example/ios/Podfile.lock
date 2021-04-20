@@ -22,7 +22,7 @@ PODS:
     - OpenSSL-Universal (= 1.1.180)
   - Flipper-Glog (0.3.6)
   - Flipper-PeerTalk (0.0.4)
-  - Flipper-RSocket (1.3.0):
+  - Flipper-RSocket (1.3.1):
     - Flipper-Folly (~> 2.5)
   - FlipperKit (0.75.1):
     - FlipperKit/Core (= 0.75.1)
@@ -316,7 +316,7 @@ PODS:
     - React-cxxreact (= 0.64.0)
     - React-jsi (= 0.64.0)
     - React-perflogger (= 0.64.0)
-  - RNBootSplash (3.2.0):
+  - RNBootSplash (3.2.1):
     - React-Core
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
@@ -460,7 +460,7 @@ SPEC CHECKSUMS:
   Flipper-Folly: f7a3caafbd74bda4827954fd7a6e000e36355489
   Flipper-Glog: 1dfd6abf1e922806c52ceb8701a3599a79a200a6
   Flipper-PeerTalk: 116d8f857dc6ef55c7a5a75ea3ceaafe878aadc9
-  Flipper-RSocket: 602921fee03edacf18f5d6f3d3594ba477f456e5
+  Flipper-RSocket: 127954abe8b162fcaf68d2134d34dc2bd7076154
   FlipperKit: 8a20b5c5fcf9436cac58551dc049867247f64b00
   glog: 73c2498ac6884b13ede40eda8228cb1eee9d9d62
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
@@ -488,7 +488,7 @@ SPEC CHECKSUMS:
   React-RCTVibration: 0fd6b21751a33cb72fce1a4a33ab9678416d307a
   React-runtimeexecutor: cad74a1eaa53ee6e7a3620231939d8fe2c6afcf0
   ReactCommon: cfe2b7fd20e0dbd2d1185cd7d8f99633fbc5ff05
-  RNBootSplash: 24175aa28fe203b10c48dc34e78d946fd33c77af
+  RNBootSplash: a7750857d7c7c51fb37ba453cd506b5950e62f74
   Yoga: 8c8436d4171c87504c648ae23b1d81242bdf3bbf
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
