@@ -131,8 +131,8 @@ export const generate = async ({
   logoPath,
   backgroundColor,
   logoWidth,
+  flavor,
   assetsPath,
-  flavor = "main",
 }: {
   android: {
     sourceDir: string;
@@ -146,8 +146,8 @@ export const generate = async ({
   logoPath: string;
   backgroundColor: string;
   logoWidth: number;
+  flavor: string;
   assetsPath?: string;
-  flavor?: string;
 }) => {
   if (!isValidHexadecimal(backgroundColor)) {
     throw new Error(

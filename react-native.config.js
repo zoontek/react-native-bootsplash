@@ -29,6 +29,7 @@ module.exports = {
           name: "--flavor <flavor>",
           description:
             '[android only] flavor build variant (outputs in an android resource directory other than "main")',
+          default: "main",
         },
       ],
       func: (
@@ -47,10 +48,10 @@ module.exports = {
           logoPath: path.resolve(workingDirectory, logoPath),
           backgroundColor,
           logoWidth,
+          flavor,
           assetsPath: assetsPath
             ? path.resolve(workingDirectory, assetsPath)
             : undefined,
-          flavor,
         }).catch((error) => {
           console.error(error);
         });
