@@ -13,7 +13,6 @@ import android.widget.LinearLayout.LayoutParams;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 
-import com.facebook.react.ReactApplication;
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -40,18 +39,12 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
   }
 
   private static int mDrawableResId = -1;
-
-  private final ArrayList<RNBootSplashTask> mTaskQueue = new ArrayList<>();
-  private Status mStatus = Status.HIDDEN;
-  private boolean mIsAppInBackground = false;
+  private static final ArrayList<RNBootSplashTask> mTaskQueue = new ArrayList<>();
+  private static Status mStatus = Status.HIDDEN;
+  private static boolean mIsAppInBackground = false;
 
   public RNBootSplashModule(ReactApplicationContext reactContext) {
     super(reactContext);
-
-    if (mDrawableResId != -1) {
-      mStatus = Status.VISIBLE;
-    }
-
     reactContext.addLifecycleEventListener(this);
   }
 
@@ -74,8 +67,6 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
   }
 
   protected static void init(final @DrawableRes int drawableResId, final Activity activity) {
-    mDrawableResId = drawableResId;
-
     UiThreadUtil.runOnUiThread(new Runnable() {
       @Override
       public void run() {
@@ -85,51 +76,14 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
           return;
         }
 
+        mDrawableResId = drawableResId;
+        mStatus = Status.VISIBLE;
+
         LayoutParams params = new LayoutParams(
           LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         activity.addContentView(getLayout(activity, params), params);
       }
     });
-  }
-
-  @Override
-  public void onCatalystInstanceDestroy() {
-    super.onCatalystInstanceDestroy();
-
-    // Don't go further if module was not initialized
-    if (mDrawableResId == -1) return;
-
-    try {
-      Activity activity = getReactApplicationContext().getCurrentActivity();
-      assert activity != null;
-      ReactApplication application = (ReactApplication) activity.getApplication();
-
-      boolean isDevelopmentReload = application
-        .getReactNativeHost()
-        .getUseDeveloperSupport();
-
-      if (!isDevelopmentReload) return;
-
-      UiThreadUtil.runOnUiThread(new Runnable() {
-        @Override
-        public void run() {
-          Activity activity = getReactApplicationContext().getCurrentActivity();
-
-          if (activity == null
-            || activity.isFinishing()
-            || activity.findViewById(R.id.bootsplash_layout_id) != null) {
-            return;
-          }
-
-          mStatus = Status.VISIBLE;
-
-          LayoutParams params = new LayoutParams(
-            LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-          activity.addContentView(getLayout(activity, params), params);
-        }
-      });
-    } catch (Exception ignored) {
-    }
   }
 
   @Override

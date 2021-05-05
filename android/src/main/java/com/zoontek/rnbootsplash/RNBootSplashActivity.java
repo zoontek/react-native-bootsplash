@@ -26,9 +26,10 @@ public class RNBootSplashActivity extends AppCompatActivity {
       intentCopy.putExtras(intent);
       intentCopy.setData(intent.getData());
       intentCopy.setAction(intent.getAction());
-      
+
       String type = intent.getType();
-      if (type != null) { 
+
+      if (type != null) {
         intentCopy.setType(type);
       }
 
