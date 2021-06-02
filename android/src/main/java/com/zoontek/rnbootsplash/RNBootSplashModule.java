@@ -126,11 +126,6 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
     });
   }
 
-  protected static void init(final Activity activity,
-                             @StyleRes final int bootThemeResId) {
-    init(activity, bootThemeResId, android.R.color.white);
-  }
-
   @Override
   public void onHostDestroy() {
     mIsAppInBackground = true;

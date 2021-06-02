@@ -10,7 +10,7 @@ public class RNBootSplash {
 
   public static void init(@NonNull final Activity activity,
                           @StyleRes final int bootThemeResId) {
-    RNBootSplashModule.init(activity, bootThemeResId);
+    RNBootSplashModule.init(activity, bootThemeResId, android.R.color.white);
   }
 
   public static void init(@NonNull final Activity activity,
