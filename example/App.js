@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { NativeModules } from "react-native";
 import { Animated, Dimensions, StyleSheet, Text, View } from "react-native";
 import BootSplash from "react-native-bootsplash";
 
@@ -95,6 +96,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#F5FCFF",
+    marginTop: -NativeModules.RNBootSplash.statusBarHeight,
+    marginBottom: -NativeModules.RNBootSplash.navigationBarHeight,
   },
   logo: {
     height: 100,
