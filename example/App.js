@@ -96,8 +96,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#F5FCFF",
-    marginTop: -NativeModules.RNBootSplash.statusBarHeight,
-    marginBottom: -NativeModules.RNBootSplash.navigationBarHeight,
+    marginTop: -BootSplash.statusBarHeight,
+    marginBottom: -BootSplash.navigationBarHeight,
   },
   logo: {
     height: 100,
