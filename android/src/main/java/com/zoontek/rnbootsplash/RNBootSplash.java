@@ -15,7 +15,7 @@ public class RNBootSplash {
 
   public static void init(@NonNull final Activity activity,
                           @StyleRes final int bootThemeResId,
-                          @ColorRes final int colorResId) {
-    RNBootSplashModule.init(activity, bootThemeResId, colorResId);
+                          @ColorRes final int backgroundColorResId) {
+    RNBootSplashModule.init(activity, bootThemeResId, backgroundColorResId);
   }
 }

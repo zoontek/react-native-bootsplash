@@ -87,7 +87,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
 
   protected static void init(final Activity activity,
                              @StyleRes final int bootThemeResId,
-                             @ColorRes final int colorResId) {
+                             @ColorRes final int backgroundColorResId) {
     UiThreadUtil.runOnUiThread(new Runnable() {
       @Override
       public void run() {
@@ -97,7 +97,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
           return;
         }
 
-        final int backgroundColor = activity.getResources().getColor(colorResId);
+        final int backgroundColor = activity.getResources().getColor(backgroundColorResId);
         final View decorView = activity.getWindow().getDecorView();
 
         mBootThemeResId = bootThemeResId;
