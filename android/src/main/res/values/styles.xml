@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+  <style name="bootsplash_no_animation">
+    <item name="android:windowEnterAnimation">@null</item>
+    <item name="android:windowExitAnimation">@null</item>
+  </style>
+
+  <style name="bootsplash_fade_animation">
+    <item name="android:windowEnterAnimation">@anim/bootsplash_fade_in</item>
+    <item name="android:windowExitAnimation">@anim/bootsplash_fade_out</item>
+  </style>
+</resources>

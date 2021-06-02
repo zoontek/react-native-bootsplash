@@ -8,8 +8,7 @@
 
   <!-- BootTheme should inherit from AppTheme -->
   <style name="BootTheme" parent="AppTheme">
-    <!-- set bootsplash.xml as background -->
-    <item name="android:background">@drawable/bootsplash</item>
+    <item name="android:windowBackground">@drawable/bootsplash</item>
   </style>
 
 </resources>

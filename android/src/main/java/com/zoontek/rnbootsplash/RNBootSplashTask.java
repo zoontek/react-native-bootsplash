@@ -15,9 +15,9 @@ public class RNBootSplashTask {
   @NonNull private final Promise mPromise;
   @NonNull private final Type mType;
 
-  public RNBootSplashTask(@NonNull Type type,
-                          boolean fade,
-                          @NonNull Promise promise) {
+  public RNBootSplashTask(@NonNull final Type type,
+                          final boolean fade,
+                          @NonNull final Promise promise) {
     mType = type;
     mFade = fade;
     mPromise = promise;
