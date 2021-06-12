@@ -300,7 +300,7 @@ If automatic `index.html` edit failed on asset generation or you ofted out of it
   <summary>Show HTML and CSS Code</summary>
   #### HTML
 
-Add a `div` with id `bootsplash` and class `visible` below your `react-root` element. ie.
+Add a `div` with id `bootsplash` and class `visible` below your `root` element. ie.
 
 ```html
 ...
@@ -384,6 +384,38 @@ Add the required css in a style tag with id `bootsplashStyle` inside the head se
     }
   </style>
 </head>
+```
+
+You may also need to adopt your main style to resemble the following.
+
+```css
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  display: flex;
+  max-height: 100vh;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  flex: 1;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+#root::-webkit-scrollbar {
+  display: none;
+}
+
+#root {
+  flex-direction: column;
+}
 ```
 
 </details>
