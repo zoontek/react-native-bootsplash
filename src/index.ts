@@ -1,13 +1,15 @@
-import { NativeModules } from "react-native";
+import { NativeModules } from "./react-native";
 
 export type VisibilityStatus = "visible" | "hidden" | "transitioning";
 export type Config = { fade?: boolean };
 
-const NativeModule: {
+export type RNBootSplash = {
   show: (fade: boolean) => Promise<true>;
   hide: (fade: boolean) => Promise<true>;
   getVisibilityStatus: () => Promise<VisibilityStatus>;
-} = NativeModules.RNBootSplash;
+};
+
+const NativeModule: RNBootSplash = NativeModules.RNBootSplash;
 
 export function show(config: Config = {}): Promise<void> {
   return NativeModule.show({ fade: false, ...config }.fade).then(() => {});

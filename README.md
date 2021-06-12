@@ -121,6 +121,8 @@ Options:
   --logo-width <width>        logo width at @1x (in dp - we recommand approximately ~100) (default: 100)
   --assets-path [path]        path to your static assets directory (useful to require the logo file in JS)
   --flavor <flavor>           [android only] flavor build variant (outputs in an android resource directory other than "main")
+  --webroot-path [path]       [web only] path to your web root directoory i.e where the index.html file resides. Leave empty to skip web assets generation.
+  --edit-index <boolean>      [web only] automatically add required html markup and css styles on index.html file. (default: true)
   -h, --help                  output usage information
 ```
 
@@ -132,6 +134,13 @@ yarn react-native generate-bootsplash assets/bootsplash_logo_original.png \
   --logo-width=100 \
   --assets-path=assets \
   --flavor=main
+
+# Web Example
+yarn react-native generate-bootsplash assets/bootsplash_logo_original.png \
+  --background-color=F5FCFF \
+  --logo-width=100 \
+  --assets-path=assets \
+  --webroot-path=web
 ```
 
 ![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/master/docs/cli_tool.png?raw=true)
@@ -282,6 +291,102 @@ As Android will not create our main activity before launching the app, we need t
 
 </manifest>
 ```
+
+### Web
+
+If automatic `index.html` edit failed on asset generation or you ofted out of it using `--edit-index false`, you need to manually add required styles and markup to your `index.html` file.
+
+<details>
+  <summary>Show HTML and CSS Code</summary>
+  #### HTML
+
+Add a `div` with id `bootsplash` and class `visible` below your `react-root` element. ie.
+
+```html
+...
+<body>
+  <div id="root"></div>
+  <div id="bootsplash" class="visible"></div>
+</body>
+...
+```
+
+#### CSS
+
+Add the required css in a style tag with id `bootsplashStyle` inside the head section (recommanded) or an external css. ie.
+
+```html
+<head>
+  <style id="">
+    :root {
+      --bootsplash: url('${logoFileName}.png');
+      --bootsplash2x: url('${logoFileName}@2x.png');
+      --bootsplash3x: url('${logoFileName}@3x.png');
+      --bootsplash4x: url('${logoFileName}@4x.png');
+      --bootsplash-color: ${backgroundColorHex};
+    }
+
+    #bootsplash {
+      position: absolute;
+      height: 100%;
+      width: 100%;
+      z-index: 99;
+      background-image: var(--bootsplash);
+      background-color: var(--bootsplash-color);
+      background-attachment: fixed;
+      background-size: auto 50%;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    @media only screen and (min-resolution: 2dppx) {
+      #bootsplash {
+        background-image: var(--bootsplash2x);
+      }
+    }
+
+    @media only screen and (min-resolution: 3dppx) {
+      #bootsplash {
+        background-image: var(--bootsplash3x);
+      }
+    }
+
+    @media only screen and (min-resolution: 4dppx) {
+      #bootsplash {
+        background-image: var(--bootsplash4x);
+      }
+    }
+
+    #bootsplash.visibleFade {
+      visibility: visible;
+      opacity: 1;
+      transition: opacity 500ms linear;
+    }
+
+    #bootsplash.hiddenFade {
+      visibility: hidden;
+      opacity: 0;
+      transition: visibility 0s 500ms, opacity 500ms linear;
+    }
+
+    #bootsplash.visible {
+      display: block;
+    }
+
+    #bootsplash.hidden {
+      display: none;
+    }
+
+    @media screen and (orientation: portrait) {
+      #bootsplash {
+        background-size: 50% auto;
+      }
+    }
+  </style>
+</head>
+```
+
+</details>
 
 ## API
 

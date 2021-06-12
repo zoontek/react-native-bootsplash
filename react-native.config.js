@@ -31,11 +31,30 @@ module.exports = {
             '[android only] flavor build variant (outputs in an android resource directory other than "main")',
           default: "main",
         },
+        {
+          name: "--webroot-path [path]",
+          description:
+            "[web only] path to your web root directoory i.e where the index.html file resides. Leave empty to skip web assets generation.",
+        },
+        {
+          name: "--edit-index <boolean>",
+          description:
+            "[web only] automatically add required html markup and css styles on index.html file.",
+          default: true,
+          parse: (value) => Boolean(value),
+        },
       ],
       func: (
         [logoPath],
         { project: { android, ios } },
-        { backgroundColor, logoWidth, assetsPath, flavor },
+        {
+          backgroundColor,
+          logoWidth,
+          assetsPath,
+          flavor,
+          webrootPath,
+          editIndex,
+        },
       ) => {
         const workingDirectory =
           process.env.INIT_CWD || process.env.PWD || process.cwd();
@@ -52,6 +71,10 @@ module.exports = {
           assetsPath: assetsPath
             ? path.resolve(workingDirectory, assetsPath)
             : undefined,
+          webrootPath: webrootPath
+            ? path.resolve(workingDirectory, webrootPath)
+            : undefined,
+          editIndex,
         }).catch((error) => {
           console.error(error);
         });

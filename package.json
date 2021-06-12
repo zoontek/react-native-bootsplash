@@ -62,12 +62,14 @@
   "dependencies": {
     "chalk": "^4.1.0",
     "fs-extra": "^9.1.0",
-    "jimp": "^0.16.1"
+    "jimp": "^0.16.1",
+    "jsdom": "^16.6.0"
   },
   "devDependencies": {
     "@babel/core": "^7.13.10",
     "@react-native-community/bob": "^0.17.1",
     "@types/fs-extra": "^9.0.8",
+    "@types/jsdom": "^16.2.11",
     "@types/react-native": "^0.63.52",
     "bs-platform": "^9.0.2",
     "husky": "^4.3.8",

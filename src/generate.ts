@@ -2,6 +2,7 @@ import chalk from "chalk";
 import fs from "fs-extra";
 import jimp from "jimp";
 import path from "path";
+import { JSDOM } from "jsdom";
 
 const logoFileName = "bootsplash_logo";
 const xcassetName = "BootSplashLogo";
@@ -133,6 +134,8 @@ export const generate = async ({
   logoWidth,
   flavor,
   assetsPath,
+  webrootPath,
+  editIndex,
 }: {
   android: {
     sourceDir: string;
@@ -148,6 +151,8 @@ export const generate = async ({
   logoWidth: number;
   flavor: string;
   assetsPath?: string;
+  webrootPath?: string;
+  editIndex: boolean;
 }) => {
   if (!isValidHexadecimal(backgroundColor)) {
     throw new Error(
@@ -351,6 +356,130 @@ export const generate = async ({
       log(
         `No "${imagesPath}" directory found. Skipping iOS images generation…`,
       );
+    }
+  }
+
+  if (webrootPath && fs.existsSync(webrootPath)) {
+    images.push(
+      {
+        filePath: path.resolve(webrootPath, logoFileName + ".png"),
+        width: width["@1x"],
+        height: height["@1x"],
+      },
+      {
+        filePath: path.resolve(webrootPath, logoFileName + "@2x.png"),
+        width: width["@2x"],
+        height: height["@2x"],
+      },
+      {
+        filePath: path.resolve(webrootPath, logoFileName + "@3x.png"),
+        width: width["@3x"],
+        height: height["@3x"],
+      },
+      {
+        filePath: path.resolve(webrootPath, logoFileName + "@4x.png"),
+        width: width["@4x"],
+        height: height["@4x"],
+      },
+    );
+
+    if (editIndex) {
+      const indexHtmlPath = path.resolve(webrootPath, "index.html");
+      if (fs.existsSync(indexHtmlPath)) {
+        const css = `
+        :root {
+          --bootsplash: url('${logoFileName}.png');
+          --bootsplash2x: url('${logoFileName}@2x.png');
+          --bootsplash3x: url('${logoFileName}@3x.png');
+          --bootsplash4x: url('${logoFileName}@4x.png');
+          --bootsplash-color: ${backgroundColorHex};
+        }
+        
+        #bootsplash {
+          position: absolute;
+          height: 100%;
+          width: 100%;
+          z-index: 99;
+          background-image: var(--bootsplash);
+          background-color: var(--bootsplash-color);
+          background-attachment: fixed;
+          background-size: auto 50%;
+          background-repeat: no-repeat;
+          background-position: center;
+        }
+        
+        @media only screen and (min-resolution: 2dppx) {
+          #bootsplash {
+            background-image: var(--bootsplash2x);
+          }
+        }
+        
+        @media only screen and (min-resolution: 3dppx) {
+          #bootsplash {
+            background-image: var(--bootsplash3x);
+          }
+        }
+        
+        @media only screen and (min-resolution: 4dppx) {
+          #bootsplash {
+            background-image: var(--bootsplash4x);
+          }
+        }
+        
+        #bootsplash.visibleFade {
+          visibility: visible;
+          opacity: 1;
+          transition: opacity 500ms linear;
+        }
+        
+        #bootsplash.hiddenFade {
+          visibility: hidden;
+          opacity: 0;
+          transition: visibility 0s 500ms, opacity 500ms linear;
+        }
+        
+        #bootsplash.visible {
+          display: block;
+        }
+        
+        #bootsplash.hidden {
+          display: none;
+        }
+        
+        @media screen and (orientation: portrait) {
+          #bootsplash {
+            background-size: 50% auto;
+          }
+        }
+        `;
+
+        const html = new JSDOM(fs.readFileSync(indexHtmlPath, "utf-8"));
+
+        html.window.document.getElementById("bootsplashStyle")?.remove();
+        html.window.document.getElementById("bootsplash")?.remove();
+
+        const style = html.window.document.createElement("style");
+        style.id = "bootsplashStyle";
+        style.appendChild(html.window.document.createTextNode(css));
+
+        html.window.document.head.appendChild(style);
+
+        const div = html.window.document.createElement("div");
+        div.id = "bootsplash";
+        div.className = "visible";
+
+        html.window.document.body.appendChild(div);
+
+        fs.writeFileSync(indexHtmlPath, html.serialize(), {
+          encoding: "utf-8",
+        });
+
+        log(`✨  ${path.relative(workingDirectory, indexHtmlPath)}`, true);
+      } else {
+        log(
+          `No "index.html" file found om webroot. You need to manually add required markups and styles. See: https://github.com/zoontek/react-native-bootsplash#web`,
+        );
+      }
     }
   }
 

@@ -2,7 +2,8 @@
   "compilerOptions": {
     "target": "ES5",
     "jsx": "react-native",
-    "lib": ["ES2015"],
+    "lib": ["ES2015", "DOM"],
+    "skipLibCheck": true,
     "moduleResolution": "Node",
     "strict": true,
     "noImplicitAny": true,
