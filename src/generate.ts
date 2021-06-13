@@ -456,8 +456,18 @@ export const generate = async ({
 
         const html = new JSDOM(fs.readFileSync(indexHtmlPath, "utf-8"));
 
+        html.window.document.getElementById("bootsplashPreload")?.remove();
         html.window.document.getElementById("bootsplashStyle")?.remove();
         html.window.document.getElementById("bootsplash")?.remove();
+
+        const link = html.window.document.createElement("link");
+        link.id = "bootsplashPreload";
+        link.rel = "preload";
+        link.as = "image";
+        link.href = `${logoFileName}.png`;
+        link.imageSrcset = `${logoFileName}@2x.png 2x, ${logoFileName}@3x.png 3x, ${logoFileName}@4x.png 4x`;
+
+        html.window.document.head.prepend(link);
 
         const style = html.window.document.createElement("style");
         style.id = "bootsplashStyle";
