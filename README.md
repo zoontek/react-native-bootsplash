@@ -318,6 +318,13 @@ Add the required css in a style tag with id `bootsplashStyle` inside the head se
 
 ```html
 <head>
+  <link
+    id="bootsplashPreload"
+    rel="preload"
+    as="image"
+    href="bootsplash_logo.png"
+    imagesrcset="bootsplash_logo@2x.png 2x, bootsplash_logo@3x.png 3x, bootsplash_logo@4x.png 4x"
+  />
   <style id="">
     :root {
       --bootsplash: url("bootsplash_logo.png");

@@ -463,9 +463,12 @@ export const generate = async ({
         const link = html.window.document.createElement("link");
         link.id = "bootsplashPreload";
         link.rel = "preload";
-        link.as = "image";
+        link.setAttribute("as", "image");
         link.href = `${logoFileName}.png`;
-        link.imageSrcset = `${logoFileName}@2x.png 2x, ${logoFileName}@3x.png 3x, ${logoFileName}@4x.png 4x`;
+        link.setAttribute(
+          "imagesrcset",
+          `${logoFileName}@2x.png 2x, ${logoFileName}@3x.png 3x, ${logoFileName}@4x.png 4x`,
+        );
 
         html.window.document.head.prepend(link);
 
