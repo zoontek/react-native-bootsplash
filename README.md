@@ -298,7 +298,8 @@ If automatic `index.html` edit failed on asset generation or you opted out of it
 
 <details>
   <summary>Show HTML and CSS Code</summary>
-  #### HTML
+  
+#### HTML
 
 Add a `div` with id `bootsplash` and class `visible` below your `root` element. ie.
 

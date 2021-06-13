@@ -478,11 +478,13 @@ export const generate = async ({
         log(`✨  ${path.relative(workingDirectory, indexHtmlPath)}`, true);
       } else {
         log(
-          `No "index.html" file found om webroot. You need to manually add required markups and styles. See: https://github.com/zoontek/react-native-bootsplash#web`,
+          `⚠️  No "index.html" file found om webroot. You need to manually add required markups and styles. See: https://github.com/zoontek/react-native-bootsplash#web`,
         );
       }
     } else {
-      `Automatic "index.html" edit skipped. You need to manually add required markups and styles. See: https://github.com/zoontek/react-native-bootsplash#web`;
+      log(
+        `ℹ️  Not editing 'index.html'. You need to manually add required markups and styles. See: https://github.com/zoontek/react-native-bootsplash#web`,
+      );
     }
   }
 
