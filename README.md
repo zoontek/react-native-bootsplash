@@ -122,7 +122,7 @@ Options:
   --assets-path [path]        path to your static assets directory (useful to require the logo file in JS)
   --flavor <flavor>           [android only] flavor build variant (outputs in an android resource directory other than "main")
   --webroot-path [path]       [web only] path to your web root directoory i.e where the index.html file resides. Leave empty to skip web assets generation.
-  --edit-index <boolean>      [web only] automatically add required html markup and css styles on index.html file. (default: true)
+  --edit-index <true|false>   [web only] automatically add required html markup and css styles on index.html file. (default: true)
   -h, --help                  output usage information
 ```
 
@@ -294,7 +294,7 @@ As Android will not create our main activity before launching the app, we need t
 
 ### Web
 
-If automatic `index.html` edit failed on asset generation or you ofted out of it using `--edit-index false`, you need to manually add required styles and markup to your `index.html` file.
+If automatic `index.html` edit failed on asset generation or you opted out of it using `--edit-index=false`, you need to manually add required styles and markup to your `index.html` file.
 
 <details>
   <summary>Show HTML and CSS Code</summary>
@@ -319,11 +319,11 @@ Add the required css in a style tag with id `bootsplashStyle` inside the head se
 <head>
   <style id="">
     :root {
-      --bootsplash: url('${logoFileName}.png');
-      --bootsplash2x: url('${logoFileName}@2x.png');
-      --bootsplash3x: url('${logoFileName}@3x.png');
-      --bootsplash4x: url('${logoFileName}@4x.png');
-      --bootsplash-color: ${backgroundColorHex};
+      --bootsplash: url("bootsplash_logo.png");
+      --bootsplash2x: url("bootsplash_logo@2x.png");
+      --bootsplash3x: url("bootsplash_logo@3x.png");
+      --bootsplash4x: url("bootsplash_logo@4x.png");
+      --bootsplash-color: #ffffff; /* Use your desired color */
     }
 
     #bootsplash {

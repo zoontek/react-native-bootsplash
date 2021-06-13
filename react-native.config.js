@@ -37,11 +37,11 @@ module.exports = {
             "[web only] path to your web root directoory i.e where the index.html file resides. Leave empty to skip web assets generation.",
         },
         {
-          name: "--edit-index <boolean>",
+          name: "--edit-index <true|false>",
           description:
             "[web only] automatically add required html markup and css styles on index.html file.",
           default: true,
-          parse: (value) => Boolean(value),
+          parse: (value) => value !== "false",
         },
       ],
       func: (

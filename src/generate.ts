@@ -3,6 +3,7 @@ import fs from "fs-extra";
 import jimp from "jimp";
 import path from "path";
 import { JSDOM } from "jsdom";
+import beautify from "js-beautify";
 
 const logoFileName = "bootsplash_logo";
 const xcassetName = "BootSplashLogo";
@@ -470,7 +471,7 @@ export const generate = async ({
 
         html.window.document.body.appendChild(div);
 
-        fs.writeFileSync(indexHtmlPath, html.serialize(), {
+        fs.writeFileSync(indexHtmlPath, beautify.html(html.serialize()), {
           encoding: "utf-8",
         });
 
@@ -480,6 +481,8 @@ export const generate = async ({
           `No "index.html" file found om webroot. You need to manually add required markups and styles. See: https://github.com/zoontek/react-native-bootsplash#web`,
         );
       }
+    } else {
+      `Automatic "index.html" edit skipped. You need to manually add required markups and styles. See: https://github.com/zoontek/react-native-bootsplash#web`;
     }
   }
 
