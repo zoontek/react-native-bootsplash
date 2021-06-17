@@ -45,7 +45,7 @@ RCT_EXPORT_MODULE();
   UIViewController *rootVC = RCTPresentedViewController();
 
   if (!rootVC) {
-    RCTLogError(@"RCTBootSplash initialized before rootViewController set");
+    RCTLogError(@"react-native-bootsplash has been initialized too early: rootViewController must be set");
     return;
   }
 
