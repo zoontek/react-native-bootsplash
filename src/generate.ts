@@ -387,70 +387,58 @@ export const generate = async ({
     if (editIndex) {
       const indexHtmlPath = path.resolve(webrootPath, "index.html");
       if (fs.existsSync(indexHtmlPath)) {
+        let { homepage }: { homepage?: string } = require(path.resolve(
+          workingDirectory,
+          "package.json",
+        ));
+
+        let prefix = "";
+
+        // Inspiration from https://github.com/facebook/create-react-app/blob/64df135c29208f08a175c941a0e94d9a56d9e4af/packages/react-dev-utils/getPublicUrlOrPath.js#L47
+        if (homepage) {
+          const stubDomain = "https://create-react-app.dev";
+
+          homepage = homepage.endsWith("/") ? homepage : homepage + "/";
+
+          const validHomepagePathname = new URL(homepage, stubDomain).pathname;
+          prefix = homepage.startsWith(".") ? homepage : validHomepagePathname;
+        }
+
+        const logoRelativeName = `${prefix}${logoFileName}`;
         const css = `
         :root {
-          --bootsplash: url('${logoFileName}.png');
-          --bootsplash2x: url('${logoFileName}@2x.png');
-          --bootsplash3x: url('${logoFileName}@3x.png');
-          --bootsplash4x: url('${logoFileName}@4x.png');
-          --bootsplash-color: ${backgroundColorHex};
+          --bootsplash-color: #FFFFFF;
         }
-        
+    
         #bootsplash {
           position: absolute;
+          display: flex;
+          justify-content: center;
+          align-items: center;
           height: 100%;
           width: 100%;
           z-index: 99;
-          background-image: var(--bootsplash);
           background-color: var(--bootsplash-color);
-          background-attachment: fixed;
-          background-size: auto 50%;
-          background-repeat: no-repeat;
-          background-position: center;
         }
-        
-        @media only screen and (min-resolution: 2dppx) {
-          #bootsplash {
-            background-image: var(--bootsplash2x);
-          }
-        }
-        
-        @media only screen and (min-resolution: 3dppx) {
-          #bootsplash {
-            background-image: var(--bootsplash3x);
-          }
-        }
-        
-        @media only screen and (min-resolution: 4dppx) {
-          #bootsplash {
-            background-image: var(--bootsplash4x);
-          }
-        }
-        
+    
         #bootsplash.visibleFade {
           visibility: visible;
           opacity: 1;
           transition: opacity 500ms linear;
         }
-        
+    
         #bootsplash.hiddenFade {
           visibility: hidden;
           opacity: 0;
           transition: visibility 0s 500ms, opacity 500ms linear;
         }
-        
+    
         #bootsplash.visible {
-          display: block;
+          display: flex;
         }
-        
+    
         #bootsplash.hidden {
           display: none;
-        }
-        
-        @media screen and (orientation: portrait) {
-          #bootsplash {
-            background-size: 50% auto;
-          }
         }
         `;
 
@@ -464,10 +452,10 @@ export const generate = async ({
         link.id = "bootsplashPreload";
         link.rel = "preload";
         link.setAttribute("as", "image");
-        link.href = `${logoFileName}.png`;
+        link.href = `${logoRelativeName}.png`;
         link.setAttribute(
           "imagesrcset",
-          `${logoFileName}@2x.png 2x, ${logoFileName}@3x.png 3x, ${logoFileName}@4x.png 4x`,
+          `${logoRelativeName}@2x.png 2x, ${logoRelativeName}@3x.png 3x, ${logoRelativeName}@4x.png 4x`,
         );
 
         html.window.document.head.prepend(link);
@@ -478,9 +466,20 @@ export const generate = async ({
 
         html.window.document.head.appendChild(style);
 
+        const img = html.window.document.createElement("img");
+        img.id = "bootsplashImage";
+        img.height = height["@1x"];
+        img.width = width["@1x"];
+        img.src = `${logoRelativeName}.png`;
+        img.setAttribute(
+          "srcset",
+          `${logoRelativeName}@2x.png 2x, ${logoRelativeName}@3x.png 3x, ${logoRelativeName}@4x.png 4x`,
+        );
+
         const div = html.window.document.createElement("div");
         div.id = "bootsplash";
         div.className = "visible";
+        div.appendChild(img);
 
         html.window.document.body.appendChild(div);
 

@@ -307,7 +307,22 @@ Add a `div` with id `bootsplash` and class `visible` below your `root` element. 
 ...
 <body>
   <div id="root"></div>
-  <div id="bootsplash" class="visible"></div>
+  <!-- Add This -->
+  <div id="bootsplash" class="visible">
+    <img
+      id="bootsplashImage"
+      alt="Boot Splash"
+      height="200"
+      width="200"
+      src="bootsplash_logo.png"
+      srcset="
+        bootsplash_logo@2x.png 2x,
+        bootsplash_logo@3x.png 3x,
+        bootsplash_logo@4x.png 4x
+      "
+    />
+  </div>
+  <!-- /Add This -->
 </body>
 ...
 ```
@@ -325,44 +340,20 @@ Add the required css in a style tag with id `bootsplashStyle` inside the head se
     href="bootsplash_logo.png"
     imagesrcset="bootsplash_logo@2x.png 2x, bootsplash_logo@3x.png 3x, bootsplash_logo@4x.png 4x"
   />
-  <style id="">
+  <style id="bootsplashStyle">
     :root {
-      --bootsplash: url("bootsplash_logo.png");
-      --bootsplash2x: url("bootsplash_logo@2x.png");
-      --bootsplash3x: url("bootsplash_logo@3x.png");
-      --bootsplash4x: url("bootsplash_logo@4x.png");
-      --bootsplash-color: #ffffff; /* Use your desired color */
+      --bootsplash-color: #ffffff;
     }
 
     #bootsplash {
       position: absolute;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       height: 100%;
       width: 100%;
       z-index: 99;
-      background-image: var(--bootsplash);
       background-color: var(--bootsplash-color);
-      background-attachment: fixed;
-      background-size: auto 50%;
-      background-repeat: no-repeat;
-      background-position: center;
-    }
-
-    @media only screen and (min-resolution: 2dppx) {
-      #bootsplash {
-        background-image: var(--bootsplash2x);
-      }
-    }
-
-    @media only screen and (min-resolution: 3dppx) {
-      #bootsplash {
-        background-image: var(--bootsplash3x);
-      }
-    }
-
-    @media only screen and (min-resolution: 4dppx) {
-      #bootsplash {
-        background-image: var(--bootsplash4x);
-      }
     }
 
     #bootsplash.visibleFade {
@@ -378,17 +369,11 @@ Add the required css in a style tag with id `bootsplashStyle` inside the head se
     }
 
     #bootsplash.visible {
-      display: block;
+      display: flex;
     }
 
     #bootsplash.hidden {
       display: none;
-    }
-
-    @media screen and (orientation: portrait) {
-      #bootsplash {
-        background-size: 50% auto;
-      }
     }
   </style>
 </head>
