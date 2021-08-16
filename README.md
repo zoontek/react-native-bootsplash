@@ -225,7 +225,7 @@ As Android will not create our main activity before launching the app, we need t
 <resources>
 
   <!-- Base application theme -->
-  <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+  <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
     <!-- Your base theme customization -->
   </style>
 
