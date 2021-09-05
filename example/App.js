@@ -17,27 +17,31 @@ let App = () => {
     // You can uncomment this line to add a delay on app startup
     // await fakeApiCallWithoutBadNetwork(3000);
 
-    await BootSplash.hide();
+    try {
+      await BootSplash.hide();
 
-    Animated.stagger(250, [
-      Animated.spring(translateY.current, {
-        useNativeDriver: true,
-        toValue: -50,
-      }),
-      Animated.spring(translateY.current, {
-        useNativeDriver: true,
-        toValue: Dimensions.get("window").height,
-      }),
-    ]).start();
+      Animated.stagger(250, [
+        Animated.spring(translateY.current, {
+          useNativeDriver: true,
+          toValue: -50,
+        }),
+        Animated.spring(translateY.current, {
+          useNativeDriver: true,
+          toValue: Dimensions.get("window").height,
+        }),
+      ]).start();
 
-    Animated.timing(opacity.current, {
-      useNativeDriver: true,
-      toValue: 0,
-      duration: 150,
-      delay: 350,
-    }).start(() => {
+      Animated.timing(opacity.current, {
+        useNativeDriver: true,
+        toValue: 0,
+        duration: 150,
+        delay: 350,
+      }).start(() => {
+        setBootSplashIsVisible(false);
+      });
+    } catch (error) {
       setBootSplashIsVisible(false);
-    });
+    }
   };
 
   useEffect(() => {
