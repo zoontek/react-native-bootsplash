@@ -45,7 +45,7 @@ RCT_EXPORT_MODULE();
   UIViewController *rootVC = RCTPresentedViewController();
 
   if (!rootVC) {
-    RCTLogError(@"react-native-bootsplash has been initialized too early: rootViewController must be set");
+    RCTLogWarn(@"react-native-bootsplash has been initialized too early: rootViewController must be set");
     return;
   }
 
@@ -174,7 +174,7 @@ RCT_REMAP_METHOD(show,
                  resolver:(RCTPromiseResolveBlock)resolve
                  rejecter:(RCTPromiseRejectBlock)reject) {
   if (_rootView == nil)
-    return reject(@"uninitialized_module", @"react-native-bootsplash has not been initialized", nil);
+    return reject(@"uninitialized_module", @"react-native-bootsplash has not been initialized, or has been too early", nil);
 
   RNBootSplashTask *task = [[RNBootSplashTask alloc] initWithType:RNBootSplashTaskTypeShow
                                                              fade:fade
@@ -190,7 +190,7 @@ RCT_REMAP_METHOD(hide,
                  resolver:(RCTPromiseResolveBlock)resolve
                  rejecter:(RCTPromiseRejectBlock)reject) {
   if (_rootView == nil)
-    return reject(@"uninitialized_module", @"react-native-bootsplash has not been initialized", nil);
+    return reject(@"uninitialized_module", @"react-native-bootsplash has not been initialized, or has been too early", nil);
 
   RNBootSplashTask *task = [[RNBootSplashTask alloc] initWithType:RNBootSplashTaskTypeHide
                                                              fade:fade
