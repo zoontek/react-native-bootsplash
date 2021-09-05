@@ -8,11 +8,11 @@ buildscript {
     // module dependency in an application project.
     if (project == rootProject) {
         repositories {
-            mavenCentral()
             google()
+            mavenCentral()
         }
         dependencies {
-            classpath 'com.android.tools.build:gradle:4.1.0'
+            classpath("com.android.tools.build:gradle:4.2.1")
         }
     }
 }
@@ -20,11 +20,11 @@ buildscript {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion safeExtGet('compileSdkVersion', 29)
-    buildToolsVersion safeExtGet('buildToolsVersion', '29.0.3')
+    compileSdkVersion safeExtGet('compileSdkVersion', 30)
+    buildToolsVersion safeExtGet('buildToolsVersion', '30.0.2')
     defaultConfig {
-        minSdkVersion safeExtGet('minSdkVersion', 16)
-        targetSdkVersion safeExtGet('targetSdkVersion', 29)
+        minSdkVersion safeExtGet('minSdkVersion', 21)
+        targetSdkVersion safeExtGet('targetSdkVersion', 30)
     }
     lintOptions {
         abortOnError false
@@ -32,17 +32,19 @@ android {
 }
 
 repositories {
+mavenCentral()
     mavenLocal()
-    mavenCentral()
     maven {
         // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
-        url "$rootDir/../node_modules/react-native/android"
+        url("$rootDir/../node_modules/react-native/android")
     }
     maven {
         // Android JSC is installed from npm
-        url "$rootDir/../node_modules/jsc-android/dist"
+        url("$rootDir/../node_modules/jsc-android/dist")
     }
+
     google()
+    maven { url 'https://www.jitpack.io' }
 }
 
 dependencies {
