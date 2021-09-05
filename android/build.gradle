@@ -23,7 +23,7 @@ android {
     compileSdkVersion safeExtGet('compileSdkVersion', 30)
     buildToolsVersion safeExtGet('buildToolsVersion', '30.0.2')
     defaultConfig {
-        minSdkVersion safeExtGet('minSdkVersion', 21)
+        minSdkVersion safeExtGet('minSdkVersion', 23)
         targetSdkVersion safeExtGet('targetSdkVersion', 30)
     }
     lintOptions {
@@ -49,5 +49,6 @@ mavenCentral()
 
 dependencies {
     //noinspection GradleDynamicVersion
-    implementation 'com.facebook.react:react-native:+' // From node_modules
+    implementation "com.facebook.react:react-native:+" // From node_modules
+    implementation "androidx.core:core-splashscreen:1.0.0-alpha01"
 }
