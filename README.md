@@ -212,12 +212,8 @@ public class MainActivity extends ReactActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    // If using react-native-screens, you must pass null to super.onCreate to prevent a crash.
-    // If not using react-native-screens, change `null` to `savedInstanceState` in this line.
-    super.onCreate(null); 
-  
-    // Display the generated bootsplash.xml drawable over our MainActivity
-    RNBootSplash.init(R.drawable.bootsplash, MainActivity.this); 
+    super.onCreate(savedInstanceState); // or super.onCreate(null) with react-native-screens
+    RNBootSplash.init(R.drawable.bootsplash, MainActivity.this); // Display the generated bootsplash.xml drawable over our MainActivity
   }
 ```
 
