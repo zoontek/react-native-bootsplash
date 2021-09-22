@@ -1,7 +1,6 @@
 #import "RNBootSplash.h"
 
 #import <React/RCTBridge.h>
-#import <React/RCTLog.h>
 #import <React/RCTUtils.h>
 
 static NSMutableArray<RNBootSplashTask *> *_taskQueue = nil;
@@ -42,13 +41,6 @@ RCT_EXPORT_MODULE();
 
 + (void)initWithStoryboard:(NSString * _Nonnull)storyboardName
                   rootView:(RCTRootView * _Nonnull)rootView {
-  UIViewController *rootVC = RCTPresentedViewController();
-
-  if (!rootVC) {
-    RCTLogWarn(@"react-native-bootsplash has been initialized too early: rootViewController must be set");
-    return;
-  }
-
   _rootView = rootView;
   _status = RNBootSplashStatusVisible;
   _storyboardName = storyboardName;
@@ -65,7 +57,9 @@ RCT_EXPORT_MODULE();
   [_splashVC setModalPresentationStyle:UIModalPresentationOverFullScreen];
   [_splashVC setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
 
-  [rootVC presentViewController:_splashVC animated:false completion:^{
+  [RCTPresentedViewController() presentViewController:_splashVC
+                                             animated:false
+                                           completion:^{
     [_rootView.loadingView removeFromSuperview];
     _rootView.loadingView = nil;
 
