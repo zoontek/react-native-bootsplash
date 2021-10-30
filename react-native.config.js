@@ -16,7 +16,7 @@ module.exports = {
         {
           name: "--logo-width <width>",
           description:
-            "logo width at @1x (in dp - we recommand approximately ~100)",
+            "logo width at @1x (in dp - we recommend approximately ~100)",
           default: 100,
           parse: (value) => parseInt(value, 10),
         },
