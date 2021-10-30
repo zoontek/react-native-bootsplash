@@ -118,7 +118,7 @@ Generate a launch screen using an original logo file
 
 Options:
   --background-color <color>  color used as launch screen background (in hexadecimal format) (default: "#fff")
-  --logo-width <width>        logo width at @1x (in dp - we recommand approximately ~100) (default: 100)
+  --logo-width <width>        logo width at @1x (in dp - we recommend approximately ~100) (default: 100)
   --assets-path [path]        path to your static assets directory (useful to require the logo file in JS)
   --flavor <flavor>           [android only] flavor build variant (outputs in an android resource directory other than "main")
   -h, --help                  output usage information
