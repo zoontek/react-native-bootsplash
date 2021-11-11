@@ -37,22 +37,23 @@ module.exports = {
         { project: { android, ios } },
         { backgroundColor, logoWidth, assetsPath, flavor },
       ) => {
-        const workingDirectory =
+        const workingPath =
           process.env.INIT_CWD || process.env.PWD || process.cwd();
 
         return generate({
           android,
           ios,
 
-          libraryDirectory: __dirname,
-          workingDirectory,
-          logoPath: path.resolve(workingDirectory, logoPath),
-          backgroundColor,
-          logoWidth,
-          flavor,
+          workingPath,
+          libraryPath: __dirname,
+          logoPath: path.resolve(workingPath, logoPath),
           assetsPath: assetsPath
-            ? path.resolve(workingDirectory, assetsPath)
+            ? path.resolve(workingPath, assetsPath)
             : undefined,
+
+          backgroundColor,
+          flavor,
+          logoWidth,
         }).catch((error) => {
           console.error(error);
         });

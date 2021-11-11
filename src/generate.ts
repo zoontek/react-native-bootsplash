@@ -5,13 +5,9 @@ import jimp from "jimp";
 import os from "os";
 import path from "path";
 
-const vdTool = (
-  libraryDirectory: string,
-  inputFile: string,
-  outputDirectory: string,
-) => {
+const vdTool = (libraryPath: string, logoPath: string, outputPath: string) => {
   const file = path.join(
-    libraryDirectory,
+    libraryPath,
     "vendor",
     "vd-tool",
     "bin",
@@ -19,8 +15,8 @@ const vdTool = (
   );
 
   const args: string[] = ["-c"];
-  args.push("-in", inputFile);
-  args.push("-out", outputDirectory);
+  args.push("-in", logoPath);
+  args.push("-out", outputPath);
 
   return execa(file, args);
 };
@@ -149,8 +145,8 @@ export const generate = async ({
   android,
   ios,
 
-  libraryDirectory,
-  workingDirectory,
+  libraryPath,
+  workingPath,
   logoPath,
   backgroundColor,
   logoWidth,
@@ -165,13 +161,14 @@ export const generate = async ({
     projectPath: string;
   } | null;
 
-  libraryDirectory: string;
-  workingDirectory: string;
+  workingPath: string;
+  libraryPath: string;
   logoPath: string;
-  backgroundColor: string;
-  logoWidth: number;
-  flavor: string;
   assetsPath?: string;
+
+  backgroundColor: string;
+  flavor: string;
+  logoWidth: number;
 }) => {
   if (!isValidHexadecimal(backgroundColor)) {
     throw new Error(
@@ -187,14 +184,17 @@ export const generate = async ({
 
     const resPath = path.resolve(appPath, "src", flavor, "res");
     const drawablePath = path.resolve(resPath, "drawable");
+    const bootSplashXmlPath = path.resolve(drawablePath, "bootsplash.xml");
 
     fs.ensureDirSync(drawablePath);
 
-    const { stderr } = await vdTool(libraryDirectory, logoPath, drawablePath);
+    const { stderr } = await vdTool(libraryPath, logoPath, drawablePath);
 
     if (stderr) {
       console.log(stderr);
       process.exit(1);
+    } else {
+      log(`✨  ${path.relative(workingPath, bootSplashXmlPath)}`, true);
     }
 
     return;
@@ -272,7 +272,7 @@ export const generate = async ({
 
     const bootSplashXmlPath = path.resolve(drawablePath, "bootsplash.xml");
     fs.writeFileSync(bootSplashXmlPath, bootSplashXml, "utf-8");
-    log(`✨  ${path.relative(workingDirectory, bootSplashXmlPath)}`, true);
+    log(`✨  ${path.relative(workingPath, bootSplashXmlPath)}`, true);
 
     const colorsXmlPath = path.resolve(valuesPath, "colors.xml");
     const colorsXmlEntry = `<color name="${androidColorName}">${backgroundColorHex}</color>`;
@@ -297,7 +297,7 @@ export const generate = async ({
         );
       }
 
-      log(`✏️   ${path.relative(workingDirectory, colorsXmlPath)}`, true);
+      log(`✏️   ${path.relative(workingPath, colorsXmlPath)}`, true);
     } else {
       fs.writeFileSync(
         colorsXmlPath,
@@ -305,7 +305,7 @@ export const generate = async ({
         "utf-8",
       );
 
-      log(`✨  ${path.relative(workingDirectory, colorsXmlPath)}`, true);
+      log(`✨  ${path.relative(workingPath, colorsXmlPath)}`, true);
     }
 
     images.push(
@@ -358,7 +358,7 @@ export const generate = async ({
         "utf-8",
       );
 
-      log(`✨  ${path.relative(workingDirectory, storyboardPath)}`, true);
+      log(`✨  ${path.relative(workingPath, storyboardPath)}`, true);
     } else {
       log(
         `No "${projectPath}" directory found. Skipping iOS storyboard generation…`,
@@ -407,10 +407,7 @@ export const generate = async ({
         .writeAsync(filePath)
         .then(() => {
           log(
-            `✨  ${path.relative(
-              workingDirectory,
-              filePath,
-            )} (${width}x${height})`,
+            `✨  ${path.relative(workingPath, filePath)} (${width}x${height})`,
             true,
           );
         }),
