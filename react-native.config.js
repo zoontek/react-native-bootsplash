@@ -44,6 +44,7 @@ module.exports = {
           android,
           ios,
 
+          libraryDirectory: __dirname,
           workingDirectory,
           logoPath: path.resolve(workingDirectory, logoPath),
           backgroundColor,

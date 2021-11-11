@@ -1,7 +1,29 @@
 import chalk from "chalk";
+import execa from "execa";
 import fs from "fs-extra";
 import jimp from "jimp";
+import os from "os";
 import path from "path";
+
+const vdTool = (
+  libraryDirectory: string,
+  inputFile: string,
+  outputDirectory: string,
+) => {
+  const file = path.join(
+    libraryDirectory,
+    "vendor",
+    "vd-tool",
+    "bin",
+    os.platform() === "win32" ? "vd-tool.bat" : "vd-tool",
+  );
+
+  const args: string[] = ["-c"];
+  args.push("-in", inputFile);
+  args.push("-out", outputDirectory);
+
+  return execa(file, args);
+};
 
 const logoFileName = "bootsplash_logo";
 const xcassetName = "BootSplashLogo";
@@ -127,6 +149,7 @@ export const generate = async ({
   android,
   ios,
 
+  libraryDirectory,
   workingDirectory,
   logoPath,
   backgroundColor,
@@ -142,6 +165,7 @@ export const generate = async ({
     projectPath: string;
   } | null;
 
+  libraryDirectory: string;
   workingDirectory: string;
   logoPath: string;
   backgroundColor: string;
@@ -153,6 +177,27 @@ export const generate = async ({
     throw new Error(
       "--background-color value is not a valid hexadecimal color.",
     );
+  }
+
+  // TODO: Replace jimp with sharp, only take SVG file
+  if (android && logoPath.endsWith(".svg")) {
+    const appPath = android.appName
+      ? path.resolve(android.sourceDir, android.appName)
+      : path.resolve(android.sourceDir); // @react-native-community/cli 2.x & 3.x support
+
+    const resPath = path.resolve(appPath, "src", flavor, "res");
+    const drawablePath = path.resolve(resPath, "drawable");
+
+    fs.ensureDirSync(drawablePath);
+
+    const { stderr } = await vdTool(libraryDirectory, logoPath, drawablePath);
+
+    if (stderr) {
+      console.log(stderr);
+      process.exit(1);
+    }
+
+    return;
   }
 
   const image = await jimp.read(logoPath);
