@@ -36,8 +36,9 @@
     "launchscreen"
   ],
   "scripts": {
+    "setup-hooks": "git config --local core.hooksPath .hooks",
     "format": "prettier '**/*.{js,json,md,ts,tsx}' --write",
-    "prepare": "bob build"
+    "prepare": "yarn setup-hooks && bob build"
   },
   "@react-native-community/bob": {
     "source": "src",
@@ -47,11 +48,6 @@
       "module",
       "typescript"
     ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
   },
   "lint-staged": {
     "**/*.{js,json,md,ts,tsx}": "prettier --write"
@@ -65,16 +61,15 @@
     "jimp": "^0.16.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.15.5",
+    "@babel/core": "^7.16.0",
     "@react-native-community/bob": "^0.17.1",
-    "@types/fs-extra": "^9.0.12",
-    "@types/react-native": "^0.64.13",
+    "@types/fs-extra": "^9.0.13",
+    "@types/react-native": "^0.66.4",
     "bs-platform": "^9.0.2",
-    "husky": "^4.3.8",
-    "lint-staged": "^11.1.2",
-    "prettier": "^2.3.2",
+    "lint-staged": "^11.2.6",
+    "prettier": "^2.4.1",
     "react": "^17.0.2",
-    "react-native": "^0.65.1",
-    "typescript": "^4.4.2"
+    "react-native": "^0.66.3",
+    "typescript": "^4.4.4"
   }
 }
