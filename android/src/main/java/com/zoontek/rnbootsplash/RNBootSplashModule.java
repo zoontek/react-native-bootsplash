@@ -153,12 +153,12 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
                 @Override
                 public void onAnimationEnd(Animator animation) {
                   super.onAnimationEnd(animation);
-
                   mStatus = Status.HIDDEN;
-                  promise.resolve(true);
+
                   splashScreenViewProvider.remove();
                   mSplashScreen = null;
 
+                  promise.resolve(true);
                   shiftNextTask();
                 }
               }).start();

@@ -139,7 +139,7 @@ RCT_REMAP_METHOD(hide,
                  resolver:(RCTPromiseResolveBlock)resolve
                  rejecter:(RCTPromiseRejectBlock)reject) {
   if (_rootView == nil)
-    return reject(@"uninitialized_module", @"react-native-bootsplash has not been initialized", nil);
+    return resolve(@(true));
 
   RNBootSplashTask *task = [[RNBootSplashTask alloc] initWithFade:fade
                                                          resolver:resolve];
