@@ -1,7 +1,5 @@
 package com.rnbootsplashexample;
 
-import android.os.Bundle;
-
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.zoontek.rnbars.RNBars;
@@ -16,12 +14,6 @@ public class MainActivity extends ReactActivity {
   @Override
   protected String getMainComponentName() {
     return "RNBootSplashExample";
-  }
-
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    RNBootSplash.init(MainActivity.this);
-    super.onCreate(savedInstanceState);
   }
 
   @Override
