@@ -12,19 +12,19 @@ buildscript {
             mavenCentral()
         }
         dependencies {
-            classpath("com.android.tools.build:gradle:4.2.1")
+            classpath("com.android.tools.build:gradle:4.2.2")
         }
     }
 }
 
-apply plugin: 'com.android.library'
+apply plugin: "com.android.library"
 
 android {
-    compileSdkVersion safeExtGet('compileSdkVersion', 30)
-    buildToolsVersion safeExtGet('buildToolsVersion', '30.0.2')
+    compileSdkVersion safeExtGet("compileSdkVersion", 31)
+    buildToolsVersion safeExtGet("buildToolsVersion", "30.0.2")
     defaultConfig {
-        minSdkVersion safeExtGet('minSdkVersion', 23)
-        targetSdkVersion safeExtGet('targetSdkVersion', 30)
+        minSdkVersion safeExtGet("minSdkVersion", 23)
+        targetSdkVersion safeExtGet("targetSdkVersion", 31)
     }
     lintOptions {
         abortOnError false
@@ -32,7 +32,7 @@ android {
 }
 
 repositories {
-mavenCentral()
+    mavenCentral()
     mavenLocal()
     maven {
         // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
@@ -42,13 +42,12 @@ mavenCentral()
         // Android JSC is installed from npm
         url("$rootDir/../node_modules/jsc-android/dist")
     }
-
     google()
-    maven { url 'https://www.jitpack.io' }
+    maven { url "https://www.jitpack.io" }
 }
 
 dependencies {
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+" // From node_modules
-    implementation "androidx.core:core-splashscreen:1.0.0-alpha01"
+    implementation "androidx.core:core-splashscreen:1.0.0-alpha02"
 }
