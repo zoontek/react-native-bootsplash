@@ -2,10 +2,8 @@ package com.zoontek.rnbootsplash;
 
 import android.app.Activity;
 import android.content.DialogInterface;
-import android.view.View;
 import android.view.Window;
 
-import androidx.annotation.ColorRes;
 import androidx.annotation.Nullable;
 import androidx.annotation.StyleRes;
 
@@ -30,8 +28,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
   private enum Status {
     VISIBLE,
     HIDDEN,
-    TRANSITIONING_TO_VISIBLE,
-    TRANSITIONING_TO_HIDDEN
+    TRANSITIONING
   }
 
   private static int mBootThemeResId = -1;
@@ -52,9 +49,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
     return MODULE_NAME;
   }
 
-  protected static void init(final Activity activity,
-                             @StyleRes final int bootThemeResId,
-                             @ColorRes final int backgroundColorResId) {
+  protected static void init(final Activity activity, @StyleRes final int bootThemeResId) {
     UiThreadUtil.runOnUiThread(new Runnable() {
       @Override
       public void run() {
@@ -64,19 +59,9 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
           return;
         }
 
-        final int backgroundColor = activity.getResources().getColor(backgroundColorResId);
-        final View decorView = activity.getWindow().getDecorView();
-
         mBootThemeResId = bootThemeResId;
         mStatus = Status.VISIBLE;
         mDialog = new RNBootSplashDialog(activity, mBootThemeResId);
-
-        mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-          @Override
-          public void onShow(DialogInterface dialog) {
-            decorView.setBackgroundColor(backgroundColor);
-          }
-        });
 
         Window window = mDialog.getWindow();
 
@@ -86,8 +71,6 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
 
         if (!mDialog.isShowing()) {
           mDialog.show();
-        } else {
-          decorView.setBackgroundColor(backgroundColor);
         }
       }
     });
@@ -111,23 +94,14 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
 
   private void shiftNextTask() {
     boolean shouldSkipTick = mBootThemeResId == -1
-      || mStatus == Status.TRANSITIONING_TO_VISIBLE
-      || mStatus == Status.TRANSITIONING_TO_HIDDEN
+      || mStatus == Status.TRANSITIONING
       || mIsAppInBackground
       || mTaskQueue.isEmpty();
 
     if (shouldSkipTick) return;
 
     RNBootSplashTask task = mTaskQueue.remove(0);
-
-    switch (task.getType()) {
-      case SHOW:
-        show(task);
-        break;
-      case HIDE:
-        hide(task);
-        break;
-    }
+    hide(task);
   }
 
   private void waitAndShiftNextTask() {
@@ -140,61 +114,6 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
         timer.cancel();
       }
     }, 250);
-  }
-
-  private void show(final RNBootSplashTask task) {
-    UiThreadUtil.runOnUiThread(new Runnable() {
-      @Override
-      public void run() {
-        final Activity activity = getReactApplicationContext().getCurrentActivity();
-        final boolean fade = task.getFade();
-        final Promise promise = task.getPromise();
-
-        if (activity == null || activity.isFinishing()) {
-          waitAndShiftNextTask();
-          return;
-        }
-
-        if (mDialog != null) {
-          promise.resolve(true); // splash screen is already visible
-          shiftNextTask();
-          return;
-        }
-
-        mStatus = Status.TRANSITIONING_TO_VISIBLE;
-        mDialog = new RNBootSplashDialog(activity, mBootThemeResId);
-
-        Window window = mDialog.getWindow();
-
-        if (window != null) {
-//          window.setWindowAnimations(fade
-//            ? R.style.bootsplash_fade_animation
-//            : R.style.bootsplash_no_animation);
-        }
-
-        if (!mDialog.isShowing()) {
-          mDialog.show();
-        }
-
-        if (!fade) {
-          mStatus = Status.VISIBLE;
-          promise.resolve(true);
-          shiftNextTask();
-        } else {
-          final Timer timer = new Timer();
-
-          timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-              mStatus = Status.VISIBLE;
-              promise.resolve(true);
-              shiftNextTask();
-              timer.cancel();
-            }
-          }, ANIMATION_DURATION);
-        }
-      }
-    });
   }
 
   private void hide(final RNBootSplashTask task) {
@@ -216,7 +135,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
           return;
         }
 
-        mStatus = Status.TRANSITIONING_TO_HIDDEN;
+        mStatus = Status.TRANSITIONING;
 
         Window window = mDialog.getWindow();
 
@@ -255,21 +174,11 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
   }
 
   @ReactMethod
-  public void show(final boolean fade, final Promise promise) {
-    if (mBootThemeResId == -1) {
-      promise.reject("uninitialized_module", "react-native-bootsplash has not been initialized");
-    } else {
-      mTaskQueue.add(new RNBootSplashTask(RNBootSplashTask.Type.SHOW, fade, promise));
-      shiftNextTask();
-    }
-  }
-
-  @ReactMethod
   public void hide(final boolean fade, final Promise promise) {
     if (mBootThemeResId == -1) {
       promise.reject("uninitialized_module", "react-native-bootsplash has not been initialized");
     } else {
-      mTaskQueue.add(new RNBootSplashTask(RNBootSplashTask.Type.HIDE, fade, promise));
+      mTaskQueue.add(new RNBootSplashTask(fade, promise));
       shiftNextTask();
     }
   }
@@ -283,8 +192,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
       case HIDDEN:
         promise.resolve("hidden");
         break;
-      case TRANSITIONING_TO_VISIBLE:
-      case TRANSITIONING_TO_HIDDEN:
+      case TRANSITIONING:
         promise.resolve("transitioning");
         break;
     }

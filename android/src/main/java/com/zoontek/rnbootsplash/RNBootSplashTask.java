@@ -6,30 +6,16 @@ import com.facebook.react.bridge.Promise;
 
 public class RNBootSplashTask {
 
-  public enum Type {
-    SHOW,
-    HIDE
-  }
-
   private final boolean mFade;
   @NonNull private final Promise mPromise;
-  @NonNull private final Type mType;
 
-  public RNBootSplashTask(@NonNull final Type type,
-                          final boolean fade,
-                          @NonNull final Promise promise) {
-    mType = type;
+  public RNBootSplashTask(final boolean fade, @NonNull final Promise promise) {
     mFade = fade;
     mPromise = promise;
   }
 
   public boolean getFade() {
     return mFade;
-  }
-
-  @NonNull
-  public Type getType() {
-    return mType;
   }
 
   @NonNull
