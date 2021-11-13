@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Animated, Dimensions, StyleSheet, Text, View } from "react-native";
-import BootSplash from "react-native-bootsplash";
+import * as BootSplash from "react-native-bootsplash";
 
 const bootSplashLogo = require("./assets/bootsplash_logo.png");
 
@@ -24,8 +24,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#F5FCFF",
-    marginTop: -BootSplash.statusBarHeight,
-    marginBottom: -BootSplash.navigationBarHeight,
   },
   logo: {
     height: 100,

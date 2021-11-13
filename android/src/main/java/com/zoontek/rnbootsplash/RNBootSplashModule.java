@@ -1,11 +1,8 @@
 package com.zoontek.rnbootsplash;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.res.Resources;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.Window;
 
 import androidx.annotation.ColorRes;
@@ -19,11 +16,8 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.UiThreadUtil;
 import com.facebook.react.module.annotations.ReactModule;
-import com.facebook.react.uimanager.PixelUtil;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -58,33 +52,6 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
     return MODULE_NAME;
   }
 
-  @Override
-  public @Nullable Map<String, Object> getConstants() {
-    final HashMap<String, Object> constants = new HashMap<>();
-    final Context context = getReactApplicationContext();
-    final Resources resources = context.getResources();
-    final boolean hasMenuKey = ViewConfiguration.get(context).hasPermanentMenuKey();
-
-    final int statusBarHeightResId =
-      resources.getIdentifier("status_bar_height", "dimen", "android");
-    final int navigationBarHeightResId =
-      resources.getIdentifier("navigation_bar_height", "dimen", "android");
-
-    final float statusBarHeight =
-      statusBarHeightResId > 0
-        ? Math.round(PixelUtil.toDIPFromPixel(resources.getDimensionPixelSize(statusBarHeightResId)))
-        : 0;
-    final float navigationBarHeight =
-      navigationBarHeightResId > 0 && !hasMenuKey
-        ?  Math.round(PixelUtil.toDIPFromPixel(resources.getDimensionPixelSize(navigationBarHeightResId)))
-        : 0;
-
-    constants.put("statusBarHeight", statusBarHeight);
-    constants.put("navigationBarHeight", navigationBarHeight);
-
-    return constants;
-  }
-
   protected static void init(final Activity activity,
                              @StyleRes final int bootThemeResId,
                              @ColorRes final int backgroundColorResId) {
@@ -114,7 +81,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
         Window window = mDialog.getWindow();
 
         if (window != null) {
-          window.setWindowAnimations(R.style.bootsplash_no_animation);
+          // window.setWindowAnimations(R.style.bootsplash_no_animation);
         }
 
         if (!mDialog.isShowing()) {
@@ -200,9 +167,9 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
         Window window = mDialog.getWindow();
 
         if (window != null) {
-          window.setWindowAnimations(fade
-            ? R.style.bootsplash_fade_animation
-            : R.style.bootsplash_no_animation);
+//          window.setWindowAnimations(fade
+//            ? R.style.bootsplash_fade_animation
+//            : R.style.bootsplash_no_animation);
         }
 
         if (!mDialog.isShowing()) {
@@ -264,9 +231,9 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
         });
 
         if (window != null) {
-          window.setWindowAnimations(fade
-            ? R.style.bootsplash_fade_animation
-            : R.style.bootsplash_no_animation);
+//          window.setWindowAnimations(fade
+//            ? R.style.bootsplash_fade_animation
+//            : R.style.bootsplash_no_animation);
         }
 
         if (!fade) {

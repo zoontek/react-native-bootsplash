@@ -6,8 +6,6 @@ export type Config = { fade?: boolean };
 const NativeModule: {
   hide: (fade: boolean) => Promise<true>;
   getVisibilityStatus: () => Promise<VisibilityStatus>;
-  statusBarHeight?: number;
-  navigationBarHeight?: number;
 } = NativeModules.RNBootSplash;
 
 export function hide(config: Config = {}): Promise<void> {
@@ -18,13 +16,7 @@ export function getVisibilityStatus(): Promise<VisibilityStatus> {
   return NativeModule.getVisibilityStatus();
 }
 
-export const statusBarHeight: number = NativeModule.statusBarHeight ?? 0;
-export const navigationBarHeight: number =
-  NativeModule.navigationBarHeight ?? 0;
-
 export default {
   hide,
   getVisibilityStatus,
-  statusBarHeight,
-  navigationBarHeight,
 };
