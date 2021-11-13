@@ -1,80 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
-import { NativeModules } from "react-native";
+import * as React from "react";
 import { Animated, Dimensions, StyleSheet, Text, View } from "react-native";
 import BootSplash from "react-native-bootsplash";
 
-let bootSplashLogo = require("./assets/bootsplash_logo.png");
-
-let fakeApiCallWithoutBadNetwork = (ms) =>
-  new Promise((resolve) => setTimeout(resolve, ms));
-
-let App = () => {
-  let [bootSplashIsVisible, setBootSplashIsVisible] = useState(true);
-  let [bootSplashLogoIsLoaded, setBootSplashLogoIsLoaded] = useState(false);
-  let opacity = useRef(new Animated.Value(1));
-  let translateY = useRef(new Animated.Value(0));
-
-  let init = async () => {
-    // You can uncomment this line to add a delay on app startup
-    // await fakeApiCallWithoutBadNetwork(3000);
-
-    try {
-      await BootSplash.hide();
-
-      Animated.stagger(250, [
-        Animated.spring(translateY.current, {
-          useNativeDriver: true,
-          toValue: -50,
-        }),
-        Animated.spring(translateY.current, {
-          useNativeDriver: true,
-          toValue: Dimensions.get("window").height,
-        }),
-      ]).start();
-
-      Animated.timing(opacity.current, {
-        useNativeDriver: true,
-        toValue: 0,
-        duration: 150,
-        delay: 350,
-      }).start(() => {
-        setBootSplashIsVisible(false);
-      });
-    } catch (error) {
-      setBootSplashIsVisible(false);
-    }
-  };
-
-  useEffect(() => {
-    bootSplashLogoIsLoaded && init();
-  }, [bootSplashLogoIsLoaded]);
-
-  return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Hello, Dave.</Text>
-
-      {bootSplashIsVisible && (
-        <Animated.View
-          style={[
-            StyleSheet.absoluteFill,
-            styles.bootsplash,
-            { opacity: opacity.current },
-          ]}
-        >
-          <Animated.Image
-            source={bootSplashLogo}
-            fadeDuration={0}
-            onLoadEnd={() => setBootSplashLogoIsLoaded(true)}
-            style={[
-              styles.logo,
-              { transform: [{ translateY: translateY.current }] },
-            ]}
-          />
-        </Animated.View>
-      )}
-    </View>
-  );
-};
+const bootSplashLogo = require("./assets/bootsplash_logo.png");
 
 const styles = StyleSheet.create({
   container: {
@@ -105,4 +33,74 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+const fakeApiCallWithoutBadNetwork = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
+
+export const App = () => {
+  const [bootSplashIsVisible, setBootSplashIsVisible] = React.useState(true);
+  const [bootSplashLogoIsLoaded, setBootSplashLogoIsLoaded] =
+    React.useState(false);
+  const opacity = React.useRef(new Animated.Value(1));
+  const translateY = React.useRef(new Animated.Value(0));
+
+  const init = async () => {
+    // You can uncomment this line to add a delay on app startup
+    // await fakeApiCallWithoutBadNetwork(3000);
+
+    try {
+      await BootSplash.hide();
+
+      Animated.stagger(250, [
+        Animated.spring(translateY.current, {
+          useNativeDriver: true,
+          toValue: -50,
+        }),
+        Animated.spring(translateY.current, {
+          useNativeDriver: true,
+          toValue: Dimensions.get("window").height,
+        }),
+      ]).start();
+
+      Animated.timing(opacity.current, {
+        useNativeDriver: true,
+        toValue: 0,
+        duration: 150,
+        delay: 350,
+      }).start(() => {
+        setBootSplashIsVisible(false);
+      });
+    } catch (error) {
+      setBootSplashIsVisible(false);
+    }
+  };
+
+  React.useEffect(() => {
+    bootSplashLogoIsLoaded && init();
+  }, [bootSplashLogoIsLoaded]);
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.text}>Hello, Dave.</Text>
+
+      {bootSplashIsVisible && (
+        <Animated.View
+          style={[
+            StyleSheet.absoluteFill,
+            styles.bootsplash,
+            { opacity: opacity.current },
+          ]}
+        >
+          <Animated.Image
+            source={bootSplashLogo}
+            fadeDuration={0}
+            onLoadEnd={() => setBootSplashLogoIsLoaded(true)}
+            style={[
+              styles.logo,
+              { transform: [{ translateY: translateY.current }] },
+            ]}
+          />
+        </Animated.View>
+      )}
+    </View>
+  );
+};
