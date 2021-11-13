@@ -5,15 +5,14 @@
   "description": "Display a bootsplash on your app starts. Hide it when you want.",
   "author": "Mathieu Acthernoene <zoontek@gmail.com>",
   "homepage": "https://github.com/zoontek/react-native-bootsplash",
-  "types": "dist/typescript/index.d.ts",
   "main": "dist/commonjs/index.js",
   "module": "dist/module/index.js",
+  "types": "dist/typescript/index.d.ts",
   "files": [
     "/android",
     "/dist",
     "/ios",
     "/src",
-    "/vendor",
     "RNBootSplash.podspec",
     "ReactNativeBootsplash.res",
     "bsconfig.json",
@@ -37,11 +36,11 @@
     "launchscreen"
   ],
   "scripts": {
-    "setup-hooks": "git config --local core.hooksPath .hooks",
     "format": "prettier '**/*.{js,json,md,ts,tsx}' --write",
+    "setup-hooks": "git config --local core.hooksPath .hooks",
     "prepare": "yarn setup-hooks && bob build"
   },
-  "@react-native-community/bob": {
+  "react-native-builder-bob": {
     "source": "src",
     "output": "dist",
     "targets": [
@@ -49,6 +48,9 @@
       "module",
       "typescript"
     ]
+  },
+  "prettier": {
+    "trailingComma": "all"
   },
   "lint-staged": {
     "**/*.{js,json,md,ts,tsx}": "prettier --write"
@@ -58,20 +60,19 @@
   },
   "dependencies": {
     "chalk": "^4.1.2",
-    "execa": "^5.1.1",
     "fs-extra": "^10.0.0",
     "jimp": "^0.16.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.16.0",
-    "@react-native-community/bob": "^0.17.1",
     "@types/fs-extra": "^9.0.13",
     "@types/react-native": "^0.66.4",
     "bs-platform": "^9.0.2",
     "lint-staged": "^11.2.6",
     "prettier": "^2.4.1",
+    "prettier-plugin-organize-imports": "^2.3.4",
     "react": "^17.0.2",
     "react-native": "^0.66.3",
+    "react-native-builder-bob": "^0.18.2",
     "typescript": "^4.4.4"
   }
 }

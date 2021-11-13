@@ -1,25 +1,7 @@
 import chalk from "chalk";
-import execa from "execa";
 import fs from "fs-extra";
-import jimp from "jimp";
-import os from "os";
+import Jimp from "jimp";
 import path from "path";
-
-const vdTool = (libraryPath: string, logoPath: string, outputPath: string) => {
-  const file = path.join(
-    libraryPath,
-    "vendor",
-    "vd-tool",
-    "bin",
-    os.platform() === "win32" ? "vd-tool.bat" : "vd-tool",
-  );
-
-  const args: string[] = ["-c"];
-  args.push("-in", logoPath);
-  args.push("-out", outputPath);
-
-  return execa(file, args);
-};
 
 const logoFileName = "bootsplash_logo";
 const xcassetName = "BootSplashLogo";
@@ -117,11 +99,11 @@ const getStoryboard = ({
 const bootSplashXml = `<?xml version="1.0" encoding="utf-8"?>
 
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android" android:opacity="opaque">
-    <item android:drawable="@color/${androidColorName}" />
-
-    <item>
-        <bitmap android:src="@mipmap/${logoFileName}" android:gravity="center" />
-    </item>
+    <item
+        android:drawable="@mipmap/${logoFileName}"
+        android:width="288dp"
+        android:height="288dp"
+        android:gravity="center" />
 </layer-list>
 `;
 
@@ -176,31 +158,10 @@ export const generate = async ({
     );
   }
 
-  // TODO: Replace jimp with sharp, only take SVG file
-  if (android && logoPath.endsWith(".svg")) {
-    const appPath = android.appName
-      ? path.resolve(android.sourceDir, android.appName)
-      : path.resolve(android.sourceDir); // @react-native-community/cli 2.x & 3.x support
+  const SPLASHSCREEN_ICON_SIZE_NO_BACKGROUND = 288;
+  const MASK_FACTOR = 2 / 3;
 
-    const resPath = path.resolve(appPath, "src", flavor, "res");
-    const drawablePath = path.resolve(resPath, "drawable");
-    const bootSplashXmlPath = path.resolve(drawablePath, "bootsplash.xml");
-
-    fs.ensureDirSync(drawablePath);
-
-    const { stderr } = await vdTool(libraryPath, logoPath, drawablePath);
-
-    if (stderr) {
-      console.log(stderr);
-      process.exit(1);
-    } else {
-      log(`✨  ${path.relative(workingPath, bootSplashXmlPath)}`, true);
-    }
-
-    return;
-  }
-
-  const image = await jimp.read(logoPath);
+  const image = await Jimp.read(logoPath);
   const backgroundColorHex = toFullHexadecimal(backgroundColor);
 
   const images: {
@@ -270,9 +231,13 @@ export const generate = async ({
     fs.ensureDirSync(drawablePath);
     fs.ensureDirSync(valuesPath);
 
-    const bootSplashXmlPath = path.resolve(drawablePath, "bootsplash.xml");
-    fs.writeFileSync(bootSplashXmlPath, bootSplashXml, "utf-8");
-    log(`✨  ${path.relative(workingPath, bootSplashXmlPath)}`, true);
+    const bootSplashLogoXmlPath = path.resolve(
+      drawablePath,
+      "bootsplash_logo.xml",
+    );
+
+    fs.writeFileSync(bootSplashLogoXmlPath, bootSplashXml, "utf-8");
+    log(`✨  ${path.relative(workingPath, bootSplashLogoXmlPath)}`, true);
 
     const colorsXmlPath = path.resolve(valuesPath, "colors.xml");
     const colorsXmlEntry = `<color name="${androidColorName}">${backgroundColorHex}</color>`;
@@ -308,36 +273,74 @@ export const generate = async ({
       log(`✨  ${path.relative(workingPath, colorsXmlPath)}`, true);
     }
 
-    images.push(
-      {
-        filePath: path.resolve(resPath, "mipmap-mdpi", logoFileName + ".png"),
-        width: width["@1x"],
-        height: height["@1x"],
-      },
-      {
-        filePath: path.resolve(resPath, "mipmap-hdpi", logoFileName + ".png"),
-        width: width["@1,5x"],
-        height: height["@1,5x"],
-      },
-      {
-        filePath: path.resolve(resPath, "mipmap-xhdpi", logoFileName + ".png"),
-        width: width["@2x"],
-        height: height["@2x"],
-      },
-      {
-        filePath: path.resolve(resPath, "mipmap-xxhdpi", logoFileName + ".png"),
-        width: width["@3x"],
-        height: height["@3x"],
-      },
-      {
-        filePath: path.resolve(
-          resPath,
-          "mipmap-xxxhdpi",
-          logoFileName + ".png",
-        ),
-        width: width["@4x"],
-        height: height["@4x"],
-      },
+    await Promise.all(
+      [
+        {
+          filePath: path.resolve(resPath, "mipmap-mdpi", logoFileName + ".png"),
+          ratio: 1,
+          width: width["@1x"],
+          height: height["@1x"],
+        },
+        {
+          filePath: path.resolve(resPath, "mipmap-hdpi", logoFileName + ".png"),
+          ratio: 1.5,
+          width: width["@1,5x"],
+          height: height["@1,5x"],
+        },
+        {
+          filePath: path.resolve(
+            resPath,
+            "mipmap-xhdpi",
+            logoFileName + ".png",
+          ),
+          ratio: 2,
+          width: width["@2x"],
+          height: height["@2x"],
+        },
+        {
+          filePath: path.resolve(
+            resPath,
+            "mipmap-xxhdpi",
+            logoFileName + ".png",
+          ),
+          ratio: 3,
+          width: width["@3x"],
+          height: height["@3x"],
+        },
+        {
+          filePath: path.resolve(
+            resPath,
+            "mipmap-xxxhdpi",
+            logoFileName + ".png",
+          ),
+          ratio: 4,
+          width: width["@4x"],
+          height: height["@4x"],
+        },
+      ].map(({ filePath, ratio, width, height }) => {
+        const canvasSize = SPLASHSCREEN_ICON_SIZE_NO_BACKGROUND * ratio;
+
+        // https://github.com/oliver-moran/jimp/tree/master/packages/jimp#creating-new-images
+        const canvas = new Jimp(canvasSize, canvasSize, 0xffffff00);
+        const logo = image.clone().resize(width, height);
+
+        const x = (canvasSize - width) / 2;
+        const y = (canvasSize - height) / 2;
+
+        return canvas
+          .blit(logo, x, y)
+          .quality(100)
+          .writeAsync(filePath)
+          .then(() => {
+            log(
+              `✨  ${path.relative(
+                workingPath,
+                filePath,
+              )} (${canvasSize}x${canvasSize})`,
+              true,
+            );
+          });
+      }),
     );
   }
 
