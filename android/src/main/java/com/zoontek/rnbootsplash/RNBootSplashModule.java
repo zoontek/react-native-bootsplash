@@ -2,8 +2,8 @@ package com.zoontek.rnbootsplash;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.TimeInterpolator;
 import android.app.Activity;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
@@ -31,6 +31,7 @@ import java.util.TimerTask;
 public class RNBootSplashModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
 
   public static final String NAME = "RNBootSplash";
+  private static final int ANIMATION_DURATION = 220;
 
   private enum Status {
     VISIBLE,
@@ -125,12 +126,11 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
       return;
     }
 
-    // CHECK IF STILL USEFUL ?
     UiThreadUtil.runOnUiThread(new Runnable() {
       @Override
       public void run() {
         if (activity == null || activity.isFinishing()) {
-          waitAndShiftNextTask();
+          waitAndShiftNextTask(); // Wait for activity to be ready
           return;
         }
 
@@ -140,12 +140,15 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
           @Override
           public void onSplashScreenExit(@NonNull SplashScreenViewProvider splashScreenViewProvider) {
             View splashScreenView = splashScreenViewProvider.getView();
+            // Avoid automatic transitions by setting the lowest value possible
+            int duration = fade ? ANIMATION_DURATION : 60;
+            TimeInterpolator interpolator =  fade ? new AccelerateInterpolator() : new LinearInterpolator();
 
             splashScreenView
               .animate()
-              .setDuration(fade ? 220 : 60) // Avoid automatic transitions by setting a low value
+              .setDuration(duration)
               .alpha(0.0f)
-              .setInterpolator(fade ? new AccelerateInterpolator() : new LinearInterpolator())
+              .setInterpolator(interpolator)
               .setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
