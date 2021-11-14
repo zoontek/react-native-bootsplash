@@ -98,17 +98,6 @@ const getStoryboard = ({
 `;
 };
 
-const bootSplashLogoXml = `<?xml version="1.0" encoding="utf-8"?>
-
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android" android:opacity="opaque">
-    <item
-        android:drawable="@mipmap/${logoFileName}"
-        android:width="${splashScreenIconSizeNoBackground}dp"
-        android:height="${splashScreenIconSizeNoBackground}dp"
-        android:gravity="center" />
-</layer-list>
-`;
-
 const log = (text: string, dim = false) => {
   console.log(dim ? chalk.dim(text) : text);
 };
@@ -209,19 +198,9 @@ export const generate = async ({
       : path.resolve(android.sourceDir); // @react-native-community/cli 2.x & 3.x support
 
     const resPath = path.resolve(appPath, "src", flavor, "res");
-    const drawablePath = path.resolve(resPath, "drawable");
     const valuesPath = path.resolve(resPath, "values");
 
-    fs.ensureDirSync(drawablePath);
     fs.ensureDirSync(valuesPath);
-
-    const bootSplashLogoXmlPath = path.resolve(
-      drawablePath,
-      "bootsplash_logo.xml",
-    );
-
-    fs.writeFileSync(bootSplashLogoXmlPath, bootSplashLogoXml, "utf-8");
-    logWrite("✨", bootSplashLogoXmlPath);
 
     const colorsXmlPath = path.resolve(valuesPath, "colors.xml");
     const colorsXmlEntry = `<color name="${androidColorName}">${backgroundColorHex}</color>`;
