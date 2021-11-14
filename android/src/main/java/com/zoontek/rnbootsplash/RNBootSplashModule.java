@@ -3,9 +3,8 @@ package com.zoontek.rnbootsplash;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
-import android.content.DialogInterface;
+import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 
@@ -32,7 +31,6 @@ import java.util.TimerTask;
 public class RNBootSplashModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
 
   public static final String NAME = "RNBootSplash";
-  private static final int ANIMATION_DURATION = 220;
 
   private enum Status {
     VISIBLE,
@@ -66,7 +64,8 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
       return;
     }
 
-    SplashScreen mSplashScreen = SplashScreen.installSplashScreen(activity);
+    mSplashScreen = SplashScreen.installSplashScreen(activity);
+    mStatus = Status.VISIBLE;
 
     mSplashScreen.setKeepVisibleCondition(new SplashScreen.KeepOnScreenCondition() {
       @Override
@@ -74,8 +73,6 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
         return mShouldKeepOnScreen;
       }
     });
-
-    mStatus = Status.VISIBLE;
   }
 
   @Override
@@ -128,7 +125,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
       return;
     }
 
-//    STILL USEFUL ?
+    // CHECK IF STILL USEFUL ?
     UiThreadUtil.runOnUiThread(new Runnable() {
       @Override
       public void run() {
@@ -146,7 +143,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
 
             splashScreenView
               .animate()
-              .setDuration(fade ? 220 : 60) // Avoid automatic transitions
+              .setDuration(fade ? 220 : 60) // Avoid automatic transitions by setting a low value
               .alpha(0.0f)
               .setInterpolator(fade ? new AccelerateInterpolator() : new LinearInterpolator())
               .setListener(new AnimatorListenerAdapter() {
