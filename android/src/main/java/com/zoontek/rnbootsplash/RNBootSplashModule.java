@@ -103,7 +103,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
     hideWithTask(task);
   }
 
-  private void waitAndShiftNextTask() {
+  private void waitAndRetry() {
     final Timer timer = new Timer();
 
     timer.schedule(new TimerTask() {
@@ -130,42 +130,63 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
       @Override
       public void run() {
         if (activity == null || activity.isFinishing()) {
-          waitAndShiftNextTask(); // Wait for activity to be ready
+          waitAndRetry(); // Wait for activity to be ready
           return;
         }
 
-        mStatus = Status.TRANSITIONING;
+        if (fade) {
+          mStatus = Status.TRANSITIONING;
 
-        mSplashScreen.setOnExitAnimationListener(new SplashScreen.OnExitAnimationListener() {
-          @Override
-          public void onSplashScreenExit(@NonNull SplashScreenViewProvider splashScreenViewProvider) {
-            View splashScreenView = splashScreenViewProvider.getView();
-            TimeInterpolator interpolator =
-              fade ? new AccelerateInterpolator() : new LinearInterpolator();
+          mSplashScreen.setOnExitAnimationListener(new SplashScreen.OnExitAnimationListener() {
+            @Override
+            public void onSplashScreenExit(@NonNull SplashScreenViewProvider splashScreenViewProvider) {
+              View splashScreenView = splashScreenViewProvider.getView();
 
-            // Avoid automatic transitions by setting the lowest value possible
-            int duration = fade ? ANIMATION_DURATION : 60;
+              splashScreenView
+                .animate()
+                .setDuration(ANIMATION_DURATION)
+                .alpha(0.0f)
+                .setInterpolator(new AccelerateInterpolator())
+                .setListener(new AnimatorListenerAdapter() {
+                  @Override
+                  public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    splashScreenViewProvider.remove();
+                  }
+                }).start();
+            }
+          });
 
-            splashScreenView
-              .animate()
-              .setDuration(duration)
-              .alpha(0.0f)
-              .setInterpolator(interpolator)
-              .setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                  super.onAnimationEnd(animation);
-                  mStatus = Status.HIDDEN;
+          final Timer timer = new Timer();
 
-                  splashScreenViewProvider.remove();
-                  mSplashScreen = null;
+          // We cannot rely on setOnExitAnimationListener
+          // See https://issuetracker.google.com/issues/197906327
+          timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+              mStatus = Status.HIDDEN;
+              promise.resolve(true);
+              timer.cancel();
+              shiftNextTask();
+            }
+          }, ANIMATION_DURATION);
+        } else {
+          mStatus = Status.HIDDEN;
 
-                  promise.resolve(true);
-                  shiftNextTask();
-                }
-              }).start();
-          }
-        });
+          mSplashScreen.setOnExitAnimationListener(new SplashScreen.OnExitAnimationListener() {
+            @Override
+            public void onSplashScreenExit(@NonNull SplashScreenViewProvider splashScreenViewProvider) {
+              View splashScreenView = splashScreenViewProvider.getView();
+              splashScreenView.setVisibility(View.GONE);
+              splashScreenViewProvider.remove();
+            }
+          });
+
+          // We cannot rely on setOnExitAnimationListener
+          // See https://issuetracker.google.com/issues/197906327
+          promise.resolve(true);
+          shiftNextTask();
+        }
 
         mShouldKeepOnScreen = false;
       }
@@ -174,7 +195,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
 
   @ReactMethod
   public void hide(final boolean fade, final Promise promise) {
-    if (mSplashScreen == null) {
+    if (mSplashScreen == null || mStatus == Status.HIDDEN) {
       promise.resolve(true);
     } else {
       mTaskQueue.add(new RNBootSplashTask(fade, promise));
