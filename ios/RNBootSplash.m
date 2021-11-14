@@ -138,7 +138,7 @@ RCT_REMAP_METHOD(hide,
                  hideWithFade:(BOOL)fade
                  resolver:(RCTPromiseResolveBlock)resolve
                  rejecter:(RCTPromiseRejectBlock)reject) {
-  if (_rootView == nil)
+  if (_rootView == nil || _status == RNBootSplashStatusHidden)
     return resolve(@(true));
 
   RNBootSplashTask *task = [[RNBootSplashTask alloc] initWithFade:fade

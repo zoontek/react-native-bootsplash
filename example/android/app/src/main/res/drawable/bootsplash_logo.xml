@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android" android:opacity="opaque">
-    <item
-        android:drawable="@mipmap/bootsplash_logo"
-        android:width="288dp"
-        android:height="288dp"
-        android:gravity="center" />
-</layer-list>

@@ -2,11 +2,9 @@ package com.zoontek.rnbootsplash;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.animation.TimeInterpolator;
 import android.app.Activity;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
-import android.view.animation.LinearInterpolator;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -45,6 +43,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
   private static final ArrayList<RNBootSplashTask> mTaskQueue = new ArrayList<>();
   private static Status mStatus = Status.HIDDEN;
   private static boolean mIsAppInBackground = false;
+  private static boolean mShouldFade = false;
   private static boolean mShouldKeepOnScreen = true;
 
   public RNBootSplashModule(ReactApplicationContext reactContext) {
@@ -72,6 +71,28 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
       @Override
       public boolean shouldKeepOnScreen() {
         return mShouldKeepOnScreen;
+      }
+    });
+
+    mSplashScreen.setOnExitAnimationListener(new SplashScreen.OnExitAnimationListener() {
+      @Override
+      public void onSplashScreenExit(@NonNull SplashScreenViewProvider splashScreenViewProvider) {
+        View splashScreenView = splashScreenViewProvider.getView();
+
+        splashScreenView
+          .animate()
+          // Crappy hack to avoid automatic layout transitions
+          .setDuration(mShouldFade ? ANIMATION_DURATION: 0)
+          .setStartDelay(mShouldFade ? 0 : ANIMATION_DURATION)
+          .alpha(0.0f)
+          .setInterpolator(new AccelerateInterpolator())
+          .setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+              super.onAnimationEnd(animation);
+              splashScreenViewProvider.remove();
+            }
+          }).start();
       }
     });
   }
@@ -136,59 +157,24 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
 
         if (fade) {
           mStatus = Status.TRANSITIONING;
-
-          mSplashScreen.setOnExitAnimationListener(new SplashScreen.OnExitAnimationListener() {
-            @Override
-            public void onSplashScreenExit(@NonNull SplashScreenViewProvider splashScreenViewProvider) {
-              View splashScreenView = splashScreenViewProvider.getView();
-
-              splashScreenView
-                .animate()
-                .setDuration(ANIMATION_DURATION)
-                .alpha(0.0f)
-                .setInterpolator(new AccelerateInterpolator())
-                .setListener(new AnimatorListenerAdapter() {
-                  @Override
-                  public void onAnimationEnd(Animator animation) {
-                    super.onAnimationEnd(animation);
-                    splashScreenViewProvider.remove();
-                  }
-                }).start();
-            }
-          });
-
-          final Timer timer = new Timer();
-
-          // We cannot rely on setOnExitAnimationListener
-          // See https://issuetracker.google.com/issues/197906327
-          timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-              mStatus = Status.HIDDEN;
-              promise.resolve(true);
-              timer.cancel();
-              shiftNextTask();
-            }
-          }, ANIMATION_DURATION);
-        } else {
-          mStatus = Status.HIDDEN;
-
-          mSplashScreen.setOnExitAnimationListener(new SplashScreen.OnExitAnimationListener() {
-            @Override
-            public void onSplashScreenExit(@NonNull SplashScreenViewProvider splashScreenViewProvider) {
-              View splashScreenView = splashScreenViewProvider.getView();
-              splashScreenView.setVisibility(View.GONE);
-              splashScreenViewProvider.remove();
-            }
-          });
-
-          // We cannot rely on setOnExitAnimationListener
-          // See https://issuetracker.google.com/issues/197906327
-          promise.resolve(true);
-          shiftNextTask();
         }
 
+        mShouldFade = fade;
         mShouldKeepOnScreen = false;
+
+        final Timer timer = new Timer();
+
+        // We cannot rely on setOnExitAnimationListener
+        // See https://issuetracker.google.com/issues/197906327
+        timer.schedule(new TimerTask() {
+          @Override
+          public void run() {
+            mStatus = Status.HIDDEN;
+            promise.resolve(true);
+            timer.cancel();
+            shiftNextTask();
+          }
+        }, ANIMATION_DURATION);
       }
     });
   }

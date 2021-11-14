@@ -91,6 +91,7 @@ export const App = () => {
           <Animated.Image
             source={bootSplashLogo}
             fadeDuration={0}
+            resizeMode="contain"
             onLoadEnd={() => setBootSplashLogoIsLoaded(true)}
             style={[
               styles.logo,
