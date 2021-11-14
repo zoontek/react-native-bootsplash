@@ -140,9 +140,11 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
           @Override
           public void onSplashScreenExit(@NonNull SplashScreenViewProvider splashScreenViewProvider) {
             View splashScreenView = splashScreenViewProvider.getView();
+            TimeInterpolator interpolator =
+              fade ? new AccelerateInterpolator() : new LinearInterpolator();
+
             // Avoid automatic transitions by setting the lowest value possible
             int duration = fade ? ANIMATION_DURATION : 60;
-            TimeInterpolator interpolator =  fade ? new AccelerateInterpolator() : new LinearInterpolator();
 
             splashScreenView
               .animate()
