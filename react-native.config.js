@@ -40,12 +40,23 @@ module.exports = {
         const workingPath =
           process.env.INIT_CWD || process.env.PWD || process.cwd();
 
+        if (logoWidth > 288) {
+          console.warn(
+            "logo-width can't be superior to 288 as it will be cropped on Android. Exiting…",
+          );
+
+          process.exit(1);
+        } else if (logoWidth > 192) {
+          console.warn(
+            "As logo-width is superior to 192dp, it might be cropped on Android.",
+          );
+        }
+
         return generate({
           android,
           ios,
 
           workingPath,
-          libraryPath: __dirname,
           logoPath: path.resolve(workingPath, logoPath),
           assetsPath: assetsPath
             ? path.resolve(workingPath, assetsPath)
