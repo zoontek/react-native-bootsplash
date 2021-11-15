@@ -124,6 +124,8 @@ Options:
   --logo-width <width>        logo width at @1x (in dp - we recommend approximately ~100) (default: 100)
   --assets-path [path]        path to your static assets directory (useful to require the logo file in JS)
   --flavor <flavor>           [android only] flavor build variant (outputs in an android resource directory other than "main")
+  --webroot-path [path]       [web only] path to your web root directoory i.e where the index.html file resides. Leave empty to skip web assets generation.
+  --edit-index <true|false>   [web only] automatically add required html markup and css styles on index.html file. (default: true)
   -h, --help                  output usage information
 ```
 
@@ -135,6 +137,13 @@ yarn react-native generate-bootsplash assets/bootsplash_logo_original.png \
   --logo-width=100 \
   --assets-path=assets \
   --flavor=main
+
+# Web Example
+yarn react-native generate-bootsplash assets/bootsplash_logo_original.png \
+  --background-color=F5FCFF \
+  --logo-width=100 \
+  --assets-path=assets \
+  --webroot-path=web
 ```
 
 ![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/master/docs/cli_tool.png?raw=true)
@@ -301,6 +310,127 @@ public class MainActivity extends ReactActivity {
   }
 }
 ```
+
+### Web
+
+If automatic `index.html` edit failed on asset generation or you opted out of it using `--edit-index=false`, you need to manually add required styles and markup to your `index.html` file.
+
+<details>
+  <summary>Show HTML and CSS Code</summary>
+  
+#### HTML
+
+Add a `div` with id `bootsplash` and class `visible` below your `root` element. ie.
+
+```html
+...
+<body>
+  <div id="root"></div>
+  <!-- Add This -->
+  <div id="bootsplash" class="visible">
+    <img
+      id="bootsplashImage"
+      alt="Boot Splash"
+      height="200"
+      width="200"
+      src="bootsplash_logo.png"
+      srcset="
+        bootsplash_logo@2x.png 2x,
+        bootsplash_logo@3x.png 3x,
+        bootsplash_logo@4x.png 4x
+      "
+    />
+  </div>
+  <!-- /Add This -->
+</body>
+...
+```
+
+#### CSS
+
+Add the required css in a style tag with id `bootsplashStyle` inside the head section (recommanded) or an external css. ie.
+
+```html
+<head>
+  <link
+    id="bootsplashPreload"
+    rel="preload"
+    as="image"
+    href="bootsplash_logo.png"
+    imagesrcset="bootsplash_logo@2x.png 2x, bootsplash_logo@3x.png 3x, bootsplash_logo@4x.png 4x"
+  />
+  <style id="bootsplashStyle">
+    :root {
+      --bootsplash-color: #ffffff;
+    }
+
+    #bootsplash {
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      width: 100%;
+      z-index: 99;
+      background-color: var(--bootsplash-color);
+    }
+
+    #bootsplash.visibleFade {
+      visibility: visible;
+      opacity: 1;
+      transition: opacity 500ms linear;
+    }
+
+    #bootsplash.hiddenFade {
+      visibility: hidden;
+      opacity: 0;
+      transition: visibility 0s 500ms, opacity 500ms linear;
+    }
+
+    #bootsplash.visible {
+      display: flex;
+    }
+
+    #bootsplash.hidden {
+      display: none;
+    }
+  </style>
+</head>
+```
+
+You may also need to adopt your main style to resemble the following.
+
+```css
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  display: flex;
+  max-height: 100vh;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  flex: 1;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+#root::-webkit-scrollbar {
+  display: none;
+}
+
+#root {
+  flex-direction: column;
+}
+```
+
+</details>
 
 ## API
 

@@ -2,7 +2,7 @@
   "compilerOptions": {
     "jsx": "react-native",
     "target": "ES2015",
-    "lib": ["ES2015"],
+    "lib": ["DOM", "ES2015"],
     "moduleResolution": "Node",
 
     "allowJs": false,

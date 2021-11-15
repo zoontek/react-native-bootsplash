@@ -1,6 +1,8 @@
 import chalk from "chalk";
 import fs from "fs-extra";
 import Jimp from "jimp";
+import beautify from "js-beautify";
+import { JSDOM } from "jsdom";
 import path from "path";
 
 const logoFileName = "bootsplash_logo";
@@ -124,6 +126,8 @@ export const generate = async ({
   logoWidth,
   flavor,
   assetsPath,
+  webrootPath,
+  editIndex,
 }: {
   android: {
     sourceDir: string;
@@ -140,6 +144,9 @@ export const generate = async ({
   backgroundColor: string;
   flavor: string;
   logoWidth: number;
+
+  webrootPath?: string;
+  editIndex: boolean;
 }) => {
   if (!isValidHexadecimal(backgroundColor)) {
     throw new Error(
@@ -327,6 +334,146 @@ export const generate = async ({
     } else {
       log(
         `No "${imagesPath}" directory found. Skipping iOS images generation…`,
+      );
+    }
+  }
+
+  if (webrootPath && fs.existsSync(webrootPath)) {
+    // images.push(
+    //   {
+    //     filePath: path.resolve(webrootPath, logoFileName + ".png"),
+    //     width: width["@1x"],
+    //     height: height["@1x"],
+    //   },
+    //   {
+    //     filePath: path.resolve(webrootPath, logoFileName + "@2x.png"),
+    //     width: width["@2x"],
+    //     height: height["@2x"],
+    //   },
+    //   {
+    //     filePath: path.resolve(webrootPath, logoFileName + "@3x.png"),
+    //     width: width["@3x"],
+    //     height: height["@3x"],
+    //   },
+    //   {
+    //     filePath: path.resolve(webrootPath, logoFileName + "@4x.png"),
+    //     width: width["@4x"],
+    //     height: height["@4x"],
+    //   },
+    // );
+
+    if (editIndex) {
+      const indexHtmlPath = path.resolve(webrootPath, "index.html");
+      if (fs.existsSync(indexHtmlPath)) {
+        let { homepage }: { homepage?: string } = require(path.resolve(
+          workingPath,
+          "package.json",
+        ));
+
+        let prefix = "";
+
+        // Inspiration from https://github.com/facebook/create-react-app/blob/64df135c29208f08a175c941a0e94d9a56d9e4af/packages/react-dev-utils/getPublicUrlOrPath.js#L47
+        if (homepage) {
+          const stubDomain = "https://create-react-app.dev";
+
+          homepage = homepage.endsWith("/") ? homepage : homepage + "/";
+
+          const validHomepagePathname = new URL(homepage, stubDomain).pathname;
+          prefix = homepage.startsWith(".") ? homepage : validHomepagePathname;
+        }
+
+        const logoRelativeName = `${prefix}${logoFileName}`;
+        const css = `
+        :root {
+          --bootsplash-color: #FFFFFF;
+        }
+
+        #bootsplash {
+          position: absolute;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100%;
+          width: 100%;
+          z-index: 99;
+          background-color: var(--bootsplash-color);
+        }
+
+        #bootsplash.visibleFade {
+          visibility: visible;
+          opacity: 1;
+          transition: opacity 500ms linear;
+        }
+
+        #bootsplash.hiddenFade {
+          visibility: hidden;
+          opacity: 0;
+          transition: visibility 0s 500ms, opacity 500ms linear;
+        }
+
+        #bootsplash.visible {
+          display: flex;
+        }
+
+        #bootsplash.hidden {
+          display: none;
+        }
+        `;
+
+        const html = new JSDOM(fs.readFileSync(indexHtmlPath, "utf-8"));
+
+        html.window.document.getElementById("bootsplashPreload")?.remove();
+        html.window.document.getElementById("bootsplashStyle")?.remove();
+        html.window.document.getElementById("bootsplash")?.remove();
+
+        const link = html.window.document.createElement("link");
+        link.id = "bootsplashPreload";
+        link.rel = "preload";
+        link.setAttribute("as", "image");
+        link.href = `${logoRelativeName}.png`;
+        link.setAttribute(
+          "imagesrcset",
+          `${logoRelativeName}@2x.png 2x, ${logoRelativeName}@3x.png 3x, ${logoRelativeName}@4x.png 4x`,
+        );
+
+        html.window.document.head.prepend(link);
+
+        const style = html.window.document.createElement("style");
+        style.id = "bootsplashStyle";
+        style.appendChild(html.window.document.createTextNode(css));
+
+        html.window.document.head.appendChild(style);
+
+        const img = html.window.document.createElement("img");
+        img.id = "bootsplashImage";
+        // img.height = height["@1x"];
+        // img.width = width["@1x"];
+        img.src = `${logoRelativeName}.png`;
+        img.setAttribute(
+          "srcset",
+          `${logoRelativeName}@2x.png 2x, ${logoRelativeName}@3x.png 3x, ${logoRelativeName}@4x.png 4x`,
+        );
+
+        const div = html.window.document.createElement("div");
+        div.id = "bootsplash";
+        div.className = "visible";
+        div.appendChild(img);
+
+        html.window.document.body.appendChild(div);
+
+        fs.writeFileSync(indexHtmlPath, beautify.html(html.serialize()), {
+          encoding: "utf-8",
+        });
+
+        log(`✨  ${path.relative(workingPath, indexHtmlPath)}`, true);
+      } else {
+        log(
+          `⚠️  No "index.html" file found om webroot. You need to manually add required markups and styles. See: https://github.com/zoontek/react-native-bootsplash#web`,
+        );
+      }
+    } else {
+      log(
+        `ℹ️  Not editing 'index.html'. You need to manually add required markups and styles. See: https://github.com/zoontek/react-native-bootsplash#web`,
       );
     }
   }

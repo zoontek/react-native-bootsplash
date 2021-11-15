@@ -61,10 +61,14 @@
   "dependencies": {
     "chalk": "^4.1.2",
     "fs-extra": "^10.0.0",
-    "jimp": "^0.16.1"
+    "jimp": "^0.16.1",
+    "js-beautify": "^1.14.0",
+    "jsdom": "^18.1.0"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",
+    "@types/js-beautify": "^1.13.3",
+    "@types/jsdom": "^16.2.13",
     "@types/react-native": "^0.66.4",
     "bs-platform": "^9.0.2",
     "lint-staged": "^11.2.6",
