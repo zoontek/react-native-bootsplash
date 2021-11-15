@@ -42,7 +42,7 @@ Don't forget going into the `ios` directory to execute a `pod install`.
 
 ## 🆘 Manual linking
 
-Because this package targets React Native 0.65.0+, you will probably don't need to link it manually. Otherwise if it's not the case, follow this additional instructions:
+Because this package targets React Native 0.65.0+, you probably don't need to link it manually. But if you have a special case, follow these additional instructions:
 
 <details>
   <summary><b>👀 See manual linking instructions</b></summary>
@@ -206,7 +206,7 @@ Set the `BootSplash.storyboard` as launch screen file:
 buildscript {
   ext {
     buildToolsVersion = "30.0.2"
-    minSdkVersion = 23 // <- set at least 23
+    minSdkVersion = 23 // <- AndroidX splashscreen has "theme switch only" support for 21, but 23 is best
     compileSdkVersion = 31 // <- set at least 31
     targetSdkVersion = 31 // <- set at least 31
 
@@ -367,7 +367,7 @@ function App() {
 
 ### Testing with Jest
 
-Testing code which uses this library required some setup since we need to mock the native methods.
+Testing code which uses this library requires some setup since we need to mock the native methods.
 
 To add the mocks, create a file _jest/setup.js_ (or any other file name) containing the following code:
 

@@ -2,7 +2,7 @@
 
 ## What's new
 
-- The drop of Android < 6 and iOS < 11
+- The drop of Android < 6 and iOS < 11 (Android 5 is *possible* but the AndroidX library offers only the most basic features on Android 5)
 - A switch to [AndroidX splashscreen library](https://developer.android.com/jetpack/androidx/releases/core#core-splashscreen-1.0.0-alpha02) to fully support Android 12
 - The removal of the `show` method
 - The `hide` method cannot reject anymore
@@ -89,7 +89,7 @@ For `android/app/src/main/AndroidManifest.xml`:
       android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
       android:launchMode="singleTask"
       android:windowSoftInputMode="adjustResize"
-      android:exported="true">
+      android:exported="true"> <!-- note the new "exported" element needed for API31 -->
 +     <intent-filter>
 +         <action android:name="android.intent.action.MAIN" />
 +         <category android:name="android.intent.category.LAUNCHER" />
