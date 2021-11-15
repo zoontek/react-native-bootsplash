@@ -21,6 +21,8 @@ Show a bootsplash during app startup. Hide it when you are ready.
 **⚠️ You are currently reading the 4.x version documentation, which is still in beta.**<br>
 **For the stable version, check the [`3.2.6` tag `README.md`](https://github.com/zoontek/react-native-bootsplash/tree/3.2.6).**
 
+**For migration from the v3, check the [`MIGRATION.md` file](https://github.com/zoontek/react-native-bootsplash/blob/master/MIGRATION.md).**
+
 ## Support
 
 | version | react-native version |
