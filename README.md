@@ -42,7 +42,7 @@ Don't forget going into the `ios` directory to execute a `pod install`.
 
 ## 🆘 Manual linking
 
-Because this package targets React Native 0.65.0+, you will probably don't need to link it manually. Otherwise if it's not the case, follow this additional instructions:
+Because this package targets React Native 0.65.0+, you probably don't need to link it manually. But if you have a special case, follow these additional instructions:
 
 <details>
   <summary><b>👀 See manual linking instructions</b></summary>
@@ -209,24 +209,12 @@ buildscript {
     minSdkVersion = 23 // <- set at least 23
     compileSdkVersion = 31 // <- set at least 31
     targetSdkVersion = 31 // <- set at least 31
+    androidXSplashScreenVersion = "1.0.0-alpha02" // <-- optional version override for the AndroidX Splashscreen dependency
 
     // …
 ```
 
-2. Then edit your `android/app/build.gradle` file:
-
-```gradle
-dependencies {
-  implementation fileTree(dir: "libs", include: ["*.jar"])
-  //noinspection GradleDynamicVersion
-  implementation "com.facebook.react:react-native:+"  // From node_modules
-
-  implementation "androidx.core:core-splashscreen:1.0.0-alpha02" // Add this line
-
-  // …
-```
-
-3. Edit your `android/app/src/main/res/values/styles.xml` file:
+2. Edit your `android/app/src/main/res/values/styles.xml` file:
 
 ```xml
 <resources>
@@ -245,7 +233,7 @@ dependencies {
 </resources>
 ```
 
-4. Edit your `android/app/src/main/AndroidManifest.xml` file:
+3. Edit your `android/app/src/main/AndroidManifest.xml` file:
 
 ```xml
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
@@ -261,23 +249,23 @@ dependencies {
     android:allowBackup="false"
     android:theme="@style/BootTheme"> <!-- Replace @style/AppTheme with @style/BootTheme -->
     <activity
-    android:name=".MainActivity"
-    android:label="@string/app_name"
-    android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
-    android:launchMode="singleTask"
-    android:windowSoftInputMode="adjustResize"
-    android:exported="true"> <!-- Add android:exported="true" -->
-    <intent-filter>
-      <action android:name="android.intent.action.MAIN" />
-      <category android:name="android.intent.category.LAUNCHER" />
-    </intent-filter>
+      android:name=".MainActivity"
+      android:label="@string/app_name"
+      android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
+      android:launchMode="singleTask"
+      android:windowSoftInputMode="adjustResize"
+      android:exported="true"> <!-- Add android:exported="true", required to support API31 -->
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
     </activity>
   </application>
 </manifest>
 
 ```
 
-5. Finally edit your `android/app/src/main/java/com/yourprojectname/MainActivity.java` file:
+4. Finally edit your `android/app/src/main/java/com/yourprojectname/MainActivity.java` file:
 
 ```java
 import com.facebook.react.ReactActivity;
@@ -367,7 +355,7 @@ function App() {
 
 ### Testing with Jest
 
-Testing code which uses this library required some setup since we need to mock the native methods.
+Testing code which uses this library requires some setup since we need to mock the native methods.
 
 To add the mocks, create a file _jest/setup.js_ (or any other file name) containing the following code:
 
