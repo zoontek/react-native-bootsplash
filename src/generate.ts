@@ -225,7 +225,7 @@ export const generate = async ({
         );
       }
 
-      logWrite("✏️", colorsXmlPath);
+      logWrite("✏️ ", colorsXmlPath);
     } else {
       fs.writeFileSync(
         colorsXmlPath,
