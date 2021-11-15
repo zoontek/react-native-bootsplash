@@ -24,23 +24,11 @@ buildscript {
 +   minSdkVersion = 23
 +   compileSdkVersion = 31
 +   targetSdkVersion = 31
++   androidXSplashScreenVersion = "1.0.0-alpha02"
     ndkVersion = "21.4.7075529"
   }
 
   // …
-```
-
-For `android/app/build.gradle`:
-
-```diff
-// …
-
-dependencies {
-  implementation fileTree(dir: "libs", include: ["*.jar"])
-  //noinspection GradleDynamicVersion
-  implementation "com.facebook.react:react-native:+"  // From node_modules
-
-+ implementation "androidx.core:core-splashscreen:1.0.0-alpha02"
 ```
 
 For `android/app/src/main/res/values/styles.xml`:
