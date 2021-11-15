@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Animated, Dimensions, StyleSheet, Text, View } from "react-native";
+import { SystemBars } from "react-native-bars";
 import * as BootSplash from "react-native-bootsplash";
 
 const bootSplashLogo = require("./assets/bootsplash_logo.png");
@@ -78,6 +79,8 @@ export const App = () => {
 
   return (
     <View style={styles.container}>
+      <SystemBars barStyle="dark-content" />
+
       <Text style={styles.text}>Hello, Dave.</Text>
 
       {bootSplashIsVisible && (

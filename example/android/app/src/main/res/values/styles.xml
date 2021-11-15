@@ -8,9 +8,6 @@
         <!-- Set status bar background transparent -->
         <item name="android:statusBarColor">@android:color/transparent</item>
 
-        <!-- Status bar initial style: true = dark-content, false = light-content -->
-        <item name="android:windowLightStatusBar">true</item>
-
         <!-- Navigation bar will stay translucent on Android < 8.1 -->
         <item name="android:windowTranslucentNavigation">true</item>
     </style>

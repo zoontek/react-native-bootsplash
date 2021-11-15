@@ -24,7 +24,7 @@ public class MainActivity extends ReactActivity {
       protected void loadApp(String appKey) {
         RNBootSplash.init(MainActivity.this);
         super.loadApp(appKey);
-        RNBars.init(MainActivity.this);
+        RNBars.init(MainActivity.this, "dark-content");
       }
     };
   }
