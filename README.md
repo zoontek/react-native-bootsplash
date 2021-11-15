@@ -206,7 +206,7 @@ Set the `BootSplash.storyboard` as launch screen file:
 buildscript {
   ext {
     buildToolsVersion = "30.0.2"
-    minSdkVersion = 23 // <- AndroidX splashscreen has "theme switch only" support for 21, but 23 is best
+    minSdkVersion = 23 // <- AndroidX splashscreen has basic support for 21 (only the background color), so 23 is best
     compileSdkVersion = 31 // <- set at least 31
     targetSdkVersion = 31 // <- set at least 31
 

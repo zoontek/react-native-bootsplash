@@ -2,7 +2,7 @@
 
 ## What's new
 
-- The drop of Android < 6 and iOS < 11 (Android 5 is *possible* but the AndroidX library offers only the most basic features on Android 5)
+- The drop of Android < 6 and iOS < 11 (Android 5 is _possible_ but only displays the background color)
 - A switch to [AndroidX splashscreen library](https://developer.android.com/jetpack/androidx/releases/core#core-splashscreen-1.0.0-alpha02) to fully support Android 12
 - The removal of the `show` method
 - The `hide` method cannot reject anymore
