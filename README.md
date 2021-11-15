@@ -208,26 +208,39 @@ buildscript {
     // …
 ```
 
-2. Edit the `android/app/src/main/res/values/styles.xml` file:
+2. Then edit your `android/app/build.gradle` file:
+
+```gradle
+dependencies {
+  implementation fileTree(dir: "libs", include: ["*.jar"])
+  //noinspection GradleDynamicVersion
+  implementation "com.facebook.react:react-native:+"  // From node_modules
+
+  implementation "androidx.core:core-splashscreen:1.0.0-alpha02" // Add this line
+
+  // …
+```
+
+3. Edit your `android/app/src/main/res/values/styles.xml` file:
 
 ```xml
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
-        <!-- Your base theme customization -->
-    </style>
+  <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+      <!-- Your base theme customization -->
+  </style>
 
-    <!-- BootTheme should inherit from Theme.SplashScreen -->
-    <style name="BootTheme" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/bootsplash_background</item>
-        <item name="windowSplashScreenAnimatedIcon">@mipmap/bootsplash_logo</item>
-        <item name="postSplashScreenTheme">@style/AppTheme</item>
-    </style>
+  <!-- BootTheme should inherit from Theme.SplashScreen -->
+  <style name="BootTheme" parent="Theme.SplashScreen">
+    <item name="windowSplashScreenBackground">@color/bootsplash_background</item>
+    <item name="windowSplashScreenAnimatedIcon">@mipmap/bootsplash_logo</item>
+    <item name="postSplashScreenTheme">@style/AppTheme</item>
+  </style>
 
 </resources>
 ```
 
-3. Edit the `android/app/src/main/AndroidManifest.xml` file:
+4. Edit your `android/app/src/main/AndroidManifest.xml` file:
 
 ```xml
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
@@ -235,31 +248,31 @@ buildscript {
 
     <!-- … -->
 
-    <application
-        android:name=".MainApplication"
-        android:label="@string/app_name"
-        android:icon="@mipmap/ic_launcher"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:allowBackup="false"
-        android:theme="@style/BootTheme"> <!-- Replace @style/AppTheme with @style/BootTheme -->
-        <activity
-        android:name=".MainActivity"
-        android:label="@string/app_name"
-        android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
-        android:launchMode="singleTask"
-        android:windowSoftInputMode="adjustResize"
-        android:exported="true"> <!-- Add android:exported="true" -->
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-        </activity>
-    </application>
+  <application
+    android:name=".MainApplication"
+    android:label="@string/app_name"
+    android:icon="@mipmap/ic_launcher"
+    android:roundIcon="@mipmap/ic_launcher_round"
+    android:allowBackup="false"
+    android:theme="@style/BootTheme"> <!-- Replace @style/AppTheme with @style/BootTheme -->
+    <activity
+    android:name=".MainActivity"
+    android:label="@string/app_name"
+    android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
+    android:launchMode="singleTask"
+    android:windowSoftInputMode="adjustResize"
+    android:exported="true"> <!-- Add android:exported="true" -->
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+    </activity>
+  </application>
 </manifest>
 
 ```
 
-4. Finally edit your `android/app/src/main/java/com/yourprojectname/MainActivity.java` file:
+5. Finally edit your `android/app/src/main/java/com/yourprojectname/MainActivity.java` file:
 
 ```java
 import com.facebook.react.ReactActivity;
