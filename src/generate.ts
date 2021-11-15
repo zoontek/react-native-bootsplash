@@ -1,10 +1,12 @@
 import chalk from "chalk";
 import fs from "fs-extra";
-import jimp from "jimp";
+import Jimp from "jimp";
 import path from "path";
 
 const logoFileName = "bootsplash_logo";
 const xcassetName = "BootSplashLogo";
+// https://github.com/androidx/androidx/blob/androidx-main/core/core-splashscreen/src/main/res/values/dimens.xml#L22
+const splashScreenIconSizeNoBackground = 288;
 const androidColorName = "bootsplash_background";
 const androidColorRegex = /<color name="bootsplash_background">#\w+<\/color>/g;
 
@@ -96,17 +98,6 @@ const getStoryboard = ({
 `;
 };
 
-const bootSplashXml = `<?xml version="1.0" encoding="utf-8"?>
-
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android" android:opacity="opaque">
-    <item android:drawable="@color/${androidColorName}" />
-
-    <item>
-        <bitmap android:src="@mipmap/${logoFileName}" android:gravity="center" />
-    </item>
-</layer-list>
-`;
-
 const log = (text: string, dim = false) => {
   console.log(dim ? chalk.dim(text) : text);
 };
@@ -127,7 +118,7 @@ export const generate = async ({
   android,
   ios,
 
-  workingDirectory,
+  workingPath,
   logoPath,
   backgroundColor,
   logoWidth,
@@ -142,12 +133,13 @@ export const generate = async ({
     projectPath: string;
   } | null;
 
-  workingDirectory: string;
+  workingPath: string;
   logoPath: string;
-  backgroundColor: string;
-  logoWidth: number;
-  flavor: string;
   assetsPath?: string;
+
+  backgroundColor: string;
+  flavor: string;
+  logoWidth: number;
 }) => {
   if (!isValidHexadecimal(backgroundColor)) {
     throw new Error(
@@ -155,61 +147,48 @@ export const generate = async ({
     );
   }
 
-  const image = await jimp.read(logoPath);
+  const image = await Jimp.read(logoPath);
   const backgroundColorHex = toFullHexadecimal(backgroundColor);
-
-  const images: {
-    filePath: string;
-    width: number;
-    height: number;
-  }[] = [];
 
   const getHeight = (size: number) =>
     Math.ceil(size * (image.bitmap.height / image.bitmap.width));
 
-  const width = {
-    "@1x": logoWidth,
-    "@1,5x": logoWidth * 1.5,
-    "@2x": logoWidth * 2,
-    "@3x": logoWidth * 3,
-    "@4x": logoWidth * 4,
-  };
-
-  const height = {
-    "@1x": getHeight(width["@1x"]),
-    "@1,5x": getHeight(width["@1,5x"]),
-    "@2x": getHeight(width["@2x"]),
-    "@3x": getHeight(width["@3x"]),
-    "@4x": getHeight(width["@4x"]),
-  };
+  const logWrite = (
+    emoji: string,
+    filePath: string,
+    dimensions?: { width: number; height: number },
+  ) =>
+    log(
+      `${emoji}  ${path.relative(workingPath, filePath)}` +
+        (dimensions != null
+          ? ` (${dimensions.width}x${dimensions.height})`
+          : ""),
+      true,
+    );
 
   if (assetsPath && fs.existsSync(assetsPath)) {
-    images.push(
-      {
-        filePath: path.resolve(assetsPath, logoFileName + ".png"),
-        width: width["@1x"],
-        height: height["@1x"],
-      },
-      {
-        filePath: path.resolve(assetsPath, logoFileName + "@1,5x.png"),
-        width: width["@1,5x"],
-        height: height["@1,5x"],
-      },
-      {
-        filePath: path.resolve(assetsPath, logoFileName + "@2x.png"),
-        width: width["@2x"],
-        height: height["@2x"],
-      },
-      {
-        filePath: path.resolve(assetsPath, logoFileName + "@3x.png"),
-        width: width["@3x"],
-        height: height["@3x"],
-      },
-      {
-        filePath: path.resolve(assetsPath, logoFileName + "@4x.png"),
-        width: width["@4x"],
-        height: height["@4x"],
-      },
+    await Promise.all(
+      [
+        { ratio: 1, suffix: "" },
+        { ratio: 1.5, suffix: "@1,5x" },
+        { ratio: 2, suffix: "@2x" },
+        { ratio: 3, suffix: "@3x" },
+        { ratio: 4, suffix: "@4x" },
+      ].map(({ ratio, suffix }) => {
+        const fileName = `${logoFileName}${suffix}.png`;
+        const filePath = path.resolve(assetsPath, fileName);
+        const width = logoWidth * ratio;
+        const height = getHeight(width);
+
+        return image
+          .clone()
+          .resize(width, height)
+          .quality(100)
+          .writeAsync(filePath)
+          .then(() => {
+            logWrite("✨", filePath, { width, height });
+          });
+      }),
     );
   }
 
@@ -219,15 +198,9 @@ export const generate = async ({
       : path.resolve(android.sourceDir); // @react-native-community/cli 2.x & 3.x support
 
     const resPath = path.resolve(appPath, "src", flavor, "res");
-    const drawablePath = path.resolve(resPath, "drawable");
     const valuesPath = path.resolve(resPath, "values");
 
-    fs.ensureDirSync(drawablePath);
     fs.ensureDirSync(valuesPath);
-
-    const bootSplashXmlPath = path.resolve(drawablePath, "bootsplash.xml");
-    fs.writeFileSync(bootSplashXmlPath, bootSplashXml, "utf-8");
-    log(`✨  ${path.relative(workingDirectory, bootSplashXmlPath)}`, true);
 
     const colorsXmlPath = path.resolve(valuesPath, "colors.xml");
     const colorsXmlEntry = `<color name="${androidColorName}">${backgroundColorHex}</color>`;
@@ -252,7 +225,7 @@ export const generate = async ({
         );
       }
 
-      log(`✏️   ${path.relative(workingDirectory, colorsXmlPath)}`, true);
+      logWrite("✏️ ", colorsXmlPath);
     } else {
       fs.writeFileSync(
         colorsXmlPath,
@@ -260,39 +233,39 @@ export const generate = async ({
         "utf-8",
       );
 
-      log(`✨  ${path.relative(workingDirectory, colorsXmlPath)}`, true);
+      logWrite("✨", colorsXmlPath);
     }
 
-    images.push(
-      {
-        filePath: path.resolve(resPath, "mipmap-mdpi", logoFileName + ".png"),
-        width: width["@1x"],
-        height: height["@1x"],
-      },
-      {
-        filePath: path.resolve(resPath, "mipmap-hdpi", logoFileName + ".png"),
-        width: width["@1,5x"],
-        height: height["@1,5x"],
-      },
-      {
-        filePath: path.resolve(resPath, "mipmap-xhdpi", logoFileName + ".png"),
-        width: width["@2x"],
-        height: height["@2x"],
-      },
-      {
-        filePath: path.resolve(resPath, "mipmap-xxhdpi", logoFileName + ".png"),
-        width: width["@3x"],
-        height: height["@3x"],
-      },
-      {
-        filePath: path.resolve(
-          resPath,
-          "mipmap-xxxhdpi",
-          logoFileName + ".png",
-        ),
-        width: width["@4x"],
-        height: height["@4x"],
-      },
+    await Promise.all(
+      [
+        { ratio: 1, directory: "mipmap-mdpi" },
+        { ratio: 1.5, directory: "mipmap-hdpi" },
+        { ratio: 2, directory: "mipmap-xhdpi" },
+        { ratio: 3, directory: "mipmap-xxhdpi" },
+        { ratio: 4, directory: "mipmap-xxxhdpi" },
+      ].map(({ ratio, directory }) => {
+        const fileName = `${logoFileName}.png`;
+        const filePath = path.resolve(resPath, directory, fileName);
+        const width = logoWidth * ratio;
+        const height = getHeight(width);
+
+        const canvasSize = splashScreenIconSizeNoBackground * ratio;
+
+        // https://github.com/oliver-moran/jimp/tree/master/packages/jimp#creating-new-images
+        const canvas = new Jimp(canvasSize, canvasSize, 0xffffff00);
+        const logo = image.clone().resize(width, height);
+
+        const x = (canvasSize - width) / 2;
+        const y = (canvasSize - height) / 2;
+
+        return canvas
+          .blit(logo, x, y)
+          .quality(100)
+          .writeAsync(filePath)
+          .then(() => {
+            logWrite("✨", filePath, { width: canvasSize, height: canvasSize });
+          });
+      }),
     );
   }
 
@@ -306,14 +279,14 @@ export const generate = async ({
       fs.writeFileSync(
         storyboardPath,
         getStoryboard({
-          height: height["@1x"],
-          width: width["@1x"],
+          height: getHeight(logoWidth),
+          width: logoWidth,
           backgroundColor: backgroundColorHex,
         }),
         "utf-8",
       );
 
-      log(`✨  ${path.relative(workingDirectory, storyboardPath)}`, true);
+      log(`✨  ${path.relative(workingPath, storyboardPath)}`, true);
     } else {
       log(
         `No "${projectPath}" directory found. Skipping iOS storyboard generation…`,
@@ -330,22 +303,26 @@ export const generate = async ({
         "utf-8",
       );
 
-      images.push(
-        {
-          filePath: path.resolve(imageSetPath, logoFileName + ".png"),
-          width: width["@1x"],
-          height: height["@1x"],
-        },
-        {
-          filePath: path.resolve(imageSetPath, logoFileName + "@2x.png"),
-          width: width["@2x"],
-          height: height["@2x"],
-        },
-        {
-          filePath: path.resolve(imageSetPath, logoFileName + "@3x.png"),
-          width: width["@3x"],
-          height: height["@3x"],
-        },
+      await Promise.all(
+        [
+          { ratio: 1, suffix: "" },
+          { ratio: 2, suffix: "@2x" },
+          { ratio: 3, suffix: "@3x" },
+        ].map(({ ratio, suffix }) => {
+          const fileName = `${logoFileName}${suffix}.png`;
+          const filePath = path.resolve(imageSetPath, fileName);
+          const width = logoWidth * ratio;
+          const height = getHeight(width);
+
+          return image
+            .clone()
+            .resize(width, height)
+            .quality(100)
+            .writeAsync(filePath)
+            .then(() => {
+              logWrite("✨", filePath, { width, height });
+            });
+        }),
       );
     } else {
       log(
@@ -353,24 +330,6 @@ export const generate = async ({
       );
     }
   }
-
-  await Promise.all(
-    images.map(({ filePath, width, height }) =>
-      image
-        .clone()
-        .cover(width, height)
-        .writeAsync(filePath)
-        .then(() => {
-          log(
-            `✨  ${path.relative(
-              workingDirectory,
-              filePath,
-            )} (${width}x${height})`,
-            true,
-          );
-        }),
-    ),
-  );
 
   log(
     `✅  Done! Thanks for using ${chalk.underline("react-native-bootsplash")}.`,

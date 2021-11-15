@@ -1,13 +1,13 @@
 {
   "name": "react-native-bootsplash",
-  "version": "3.2.6",
+  "version": "4.0.0-beta.1",
   "license": "MIT",
   "description": "Display a bootsplash on your app starts. Hide it when you want.",
   "author": "Mathieu Acthernoene <zoontek@gmail.com>",
   "homepage": "https://github.com/zoontek/react-native-bootsplash",
-  "types": "dist/typescript/index.d.ts",
   "main": "dist/commonjs/index.js",
   "module": "dist/module/index.js",
+  "types": "dist/typescript/index.d.ts",
   "files": [
     "/android",
     "/dist",
@@ -37,9 +37,10 @@
   ],
   "scripts": {
     "format": "prettier '**/*.{js,json,md,ts,tsx}' --write",
-    "prepare": "bob build"
+    "setup-hooks": "git config --local core.hooksPath .hooks",
+    "prepare": "yarn setup-hooks && bob build"
   },
-  "@react-native-community/bob": {
+  "react-native-builder-bob": {
     "source": "src",
     "output": "dist",
     "targets": [
@@ -48,16 +49,14 @@
       "typescript"
     ]
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
+  "prettier": {
+    "trailingComma": "all"
   },
   "lint-staged": {
     "**/*.{js,json,md,ts,tsx}": "prettier --write"
   },
   "peerDependencies": {
-    "react-native": ">=0.60.0"
+    "react-native": ">=0.65.0"
   },
   "dependencies": {
     "chalk": "^4.1.2",
@@ -65,16 +64,15 @@
     "jimp": "^0.16.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.15.0",
-    "@react-native-community/bob": "^0.17.1",
-    "@types/fs-extra": "^9.0.12",
-    "@types/react-native": "^0.64.13",
+    "@types/fs-extra": "^9.0.13",
+    "@types/react-native": "^0.66.4",
     "bs-platform": "^9.0.2",
-    "husky": "^4.3.8",
-    "lint-staged": "^11.1.2",
-    "prettier": "^2.3.2",
-    "react": "17.0.2",
-    "react-native": "^0.63.4",
-    "typescript": "^4.3.5"
+    "lint-staged": "^11.2.6",
+    "prettier": "^2.4.1",
+    "prettier-plugin-organize-imports": "^2.3.4",
+    "react": "^17.0.2",
+    "react-native": "^0.66.3",
+    "react-native-builder-bob": "^0.18.2",
+    "typescript": "^4.4.4"
   }
 }

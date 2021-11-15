@@ -4,44 +4,47 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
-import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
 
-import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.splashscreen.SplashScreen;
+import androidx.core.splashscreen.SplashScreenViewProvider;
 
+import com.facebook.common.logging.FLog;
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.UiThreadUtil;
+import com.facebook.react.common.ReactConstants;
 import com.facebook.react.module.annotations.ReactModule;
 
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-@ReactModule(name = RNBootSplashModule.MODULE_NAME)
+@ReactModule(name = RNBootSplashModule.NAME)
 public class RNBootSplashModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
 
-  public static final String MODULE_NAME = "RNBootSplash";
+  public static final String NAME = "RNBootSplash";
   private static final int ANIMATION_DURATION = 220;
 
   private enum Status {
     VISIBLE,
     HIDDEN,
-    TRANSITIONING_TO_VISIBLE,
-    TRANSITIONING_TO_HIDDEN
+    TRANSITIONING
   }
 
-  private static int mDrawableResId = -1;
+  @Nullable
+  private static SplashScreen mSplashScreen = null;
+
   private static final ArrayList<RNBootSplashTask> mTaskQueue = new ArrayList<>();
   private static Status mStatus = Status.HIDDEN;
   private static boolean mIsAppInBackground = false;
+  private static boolean mShouldFade = false;
+  private static boolean mShouldKeepOnScreen = true;
 
   public RNBootSplashModule(ReactApplicationContext reactContext) {
     super(reactContext);
@@ -50,38 +53,46 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
 
   @Override
   public String getName() {
-    return MODULE_NAME;
+    return NAME;
   }
 
-  private static LinearLayout getLayout(@NonNull Activity activity, LayoutParams params) {
-    LinearLayout layout = new LinearLayout(activity);
-    View view = new View(activity);
+  protected static void init(@Nullable final Activity activity) {
+    if (activity == null) {
+      FLog.w(
+        ReactConstants.TAG,
+        NAME + ": Ignored initialization, current activity is null.");
+      return;
+    }
 
-    view.setBackgroundResource(mDrawableResId);
-    layout.setId(R.id.bootsplash_layout_id);
-    layout.setLayoutTransition(null);
-    layout.setOrientation(LinearLayout.VERTICAL);
-    layout.addView(view, params);
+    mSplashScreen = SplashScreen.installSplashScreen(activity);
+    mStatus = Status.VISIBLE;
 
-    return layout;
-  }
-
-  protected static void init(final @DrawableRes int drawableResId, final Activity activity) {
-    UiThreadUtil.runOnUiThread(new Runnable() {
+    mSplashScreen.setKeepVisibleCondition(new SplashScreen.KeepOnScreenCondition() {
       @Override
-      public void run() {
-        if (activity == null
-          || activity.isFinishing()
-          || activity.findViewById(R.id.bootsplash_layout_id) != null) {
-          return;
-        }
+      public boolean shouldKeepOnScreen() {
+        return mShouldKeepOnScreen;
+      }
+    });
 
-        mDrawableResId = drawableResId;
-        mStatus = Status.VISIBLE;
+    mSplashScreen.setOnExitAnimationListener(new SplashScreen.OnExitAnimationListener() {
+      @Override
+      public void onSplashScreenExit(@NonNull SplashScreenViewProvider splashScreenViewProvider) {
+        View splashScreenView = splashScreenViewProvider.getView();
 
-        LayoutParams params = new LayoutParams(
-          LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        activity.addContentView(getLayout(activity, params), params);
+        splashScreenView
+          .animate()
+          // Crappy hack to avoid automatic layout transitions
+          .setDuration(mShouldFade ? ANIMATION_DURATION: 0)
+          .setStartDelay(mShouldFade ? 0 : ANIMATION_DURATION)
+          .alpha(0.0f)
+          .setInterpolator(new AccelerateInterpolator())
+          .setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+              super.onAnimationEnd(animation);
+              splashScreenViewProvider.remove();
+            }
+          }).start();
       }
     });
   }
@@ -103,27 +114,17 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
   }
 
   private void shiftNextTask() {
-    boolean shouldSkipTick = mDrawableResId == -1
-      || mStatus == Status.TRANSITIONING_TO_VISIBLE
-      || mStatus == Status.TRANSITIONING_TO_HIDDEN
+    boolean shouldSkipTick = mStatus == Status.TRANSITIONING
       || mIsAppInBackground
       || mTaskQueue.isEmpty();
 
     if (shouldSkipTick) return;
 
     RNBootSplashTask task = mTaskQueue.remove(0);
-
-    switch (task.getType()) {
-      case SHOW:
-        show(task);
-        break;
-      case HIDE:
-        hide(task);
-        break;
-    }
+    hideWithTask(task);
   }
 
-  private void waitAndShiftNextTask() {
+  private void waitAndRetry() {
     final Timer timer = new Timer();
 
     timer.schedule(new TimerTask() {
@@ -135,128 +136,55 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
     }, 250);
   }
 
-  private void show(final RNBootSplashTask task) {
-    UiThreadUtil.runOnUiThread(new Runnable() {
-      @Override
-      public void run() {
-        final Activity activity = getReactApplicationContext().getCurrentActivity();
-        final Promise promise = task.getPromise();
+  private void hideWithTask(final RNBootSplashTask task) {
+    final Activity activity = getReactApplicationContext().getCurrentActivity();
+    final boolean fade = task.getFade();
+    final Promise promise = task.getPromise();
 
-        if (activity == null || activity.isFinishing()) {
-          waitAndShiftNextTask();
-          return;
-        }
-
-        if (activity.findViewById(R.id.bootsplash_layout_id) != null) {
-          promise.resolve(true); // splash screen is already visible
-          shiftNextTask();
-          return;
-        }
-
-        mStatus = Status.TRANSITIONING_TO_VISIBLE;
-
-        LayoutParams params = new LayoutParams(
-          LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        LinearLayout layout = getLayout(activity, params);
-
-        if (task.getFade()) {
-          layout.setAlpha(0.0f);
-          activity.addContentView(layout, params);
-
-          layout
-            .animate()
-            .setDuration(ANIMATION_DURATION)
-            .alpha(1.0f)
-            .setInterpolator(new DecelerateInterpolator())
-            .setListener(new AnimatorListenerAdapter() {
-              @Override
-              public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                mStatus = Status.VISIBLE;
-                promise.resolve(true);
-                shiftNextTask();
-              }
-            })
-            .start();
-        } else {
-          activity.addContentView(layout, params);
-          mStatus = Status.VISIBLE;
-          promise.resolve(true);
-          shiftNextTask();
-        }
-      }
-    });
-  }
-
-  private void hide(final RNBootSplashTask task) {
-    UiThreadUtil.runOnUiThread(new Runnable() {
-      @Override
-      public void run() {
-        final Activity activity = getReactApplicationContext().getCurrentActivity();
-        final Promise promise = task.getPromise();
-
-        if (activity == null || activity.isFinishing()) {
-          waitAndShiftNextTask();
-          return;
-        }
-
-        final LinearLayout layout = activity.findViewById(R.id.bootsplash_layout_id);
-
-        if (layout == null) {
-          promise.resolve(true); // splash screen is already hidden
-          shiftNextTask();
-          return;
-        }
-
-        mStatus = Status.TRANSITIONING_TO_HIDDEN;
-
-        final ViewGroup parent = (ViewGroup) layout.getParent();
-
-        if (task.getFade()) {
-          layout
-            .animate()
-            .setDuration(ANIMATION_DURATION)
-            .alpha(0.0f)
-            .setInterpolator(new AccelerateInterpolator())
-            .setListener(new AnimatorListenerAdapter() {
-              @Override
-              public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-
-                if (parent != null)
-                  parent.removeView(layout);
-
-                mStatus = Status.HIDDEN;
-                promise.resolve(true);
-                shiftNextTask();
-              }
-            }).start();
-        } else {
-          parent.removeView(layout);
-          mStatus = Status.HIDDEN;
-          promise.resolve(true);
-          shiftNextTask();
-        }
-      }
-    });
-  }
-
-  @ReactMethod
-  public void show(final boolean fade, final Promise promise) {
-    if (mDrawableResId == -1) {
-      promise.reject("uninitialized_module", "react-native-bootsplash has not been initialized");
-    } else {
-      mTaskQueue.add(new RNBootSplashTask(RNBootSplashTask.Type.SHOW, fade, promise));
+    if (mSplashScreen == null || mStatus == Status.HIDDEN) {
+      promise.resolve(true);
       shiftNextTask();
+      return;
     }
+
+    UiThreadUtil.runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        if (activity == null || activity.isFinishing()) {
+          waitAndRetry(); // Wait for activity to be ready
+          return;
+        }
+
+        if (fade) {
+          mStatus = Status.TRANSITIONING;
+        }
+
+        mShouldFade = fade;
+        mShouldKeepOnScreen = false;
+
+        final Timer timer = new Timer();
+
+        // We cannot rely on setOnExitAnimationListener
+        // See https://issuetracker.google.com/issues/197906327
+        timer.schedule(new TimerTask() {
+          @Override
+          public void run() {
+            mStatus = Status.HIDDEN;
+            promise.resolve(true);
+            timer.cancel();
+            shiftNextTask();
+          }
+        }, ANIMATION_DURATION);
+      }
+    });
   }
 
   @ReactMethod
   public void hide(final boolean fade, final Promise promise) {
-    if (mDrawableResId == -1) {
-      promise.reject("uninitialized_module", "react-native-bootsplash has not been initialized");
+    if (mSplashScreen == null || mStatus == Status.HIDDEN) {
+      promise.resolve(true);
     } else {
-      mTaskQueue.add(new RNBootSplashTask(RNBootSplashTask.Type.HIDE, fade, promise));
+      mTaskQueue.add(new RNBootSplashTask(fade, promise));
       shiftNextTask();
     }
   }
@@ -270,8 +198,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
       case HIDDEN:
         promise.resolve("hidden");
         break;
-      case TRANSITIONING_TO_VISIBLE:
-      case TRANSITIONING_TO_HIDDEN:
+      case TRANSITIONING:
         promise.resolve("transitioning");
         break;
     }

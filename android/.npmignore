@@ -3,10 +3,9 @@
 build/
 gradle/
 
-*.iml
-
 .DS_Store
 .npmignore
-gradlew.bat
 gradlew
+gradlew.bat
+*.iml
 local.properties

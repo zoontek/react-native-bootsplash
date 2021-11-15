@@ -1,19 +1,48 @@
-import React, { useEffect, useRef, useState } from "react";
+import * as React from "react";
 import { Animated, Dimensions, StyleSheet, Text, View } from "react-native";
-import BootSplash from "react-native-bootsplash";
+import { SystemBars } from "react-native-bars";
+import * as BootSplash from "react-native-bootsplash";
 
-let bootSplashLogo = require("./assets/bootsplash_logo.png");
+const bootSplashLogo = require("./assets/bootsplash_logo.png");
 
-let fakeApiCallWithoutBadNetwork = (ms) =>
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#F5FCFF",
+  },
+  text: {
+    fontSize: 24,
+    fontWeight: "700",
+    margin: 20,
+    lineHeight: 30,
+    color: "#333",
+    textAlign: "center",
+  },
+  bootsplash: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#F5FCFF",
+  },
+  logo: {
+    height: 89,
+    width: 100,
+  },
+});
+
+const fakeApiCallWithoutBadNetwork = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
-let App = () => {
-  let [bootSplashIsVisible, setBootSplashIsVisible] = useState(true);
-  let [bootSplashLogoIsLoaded, setBootSplashLogoIsLoaded] = useState(false);
-  let opacity = useRef(new Animated.Value(1));
-  let translateY = useRef(new Animated.Value(0));
+export const App = () => {
+  const [bootSplashIsVisible, setBootSplashIsVisible] = React.useState(true);
+  const [bootSplashLogoIsLoaded, setBootSplashLogoIsLoaded] =
+    React.useState(false);
+  const opacity = React.useRef(new Animated.Value(1));
+  const translateY = React.useRef(new Animated.Value(0));
 
-  let init = async () => {
+  const init = async () => {
     // You can uncomment this line to add a delay on app startup
     // await fakeApiCallWithoutBadNetwork(3000);
 
@@ -44,12 +73,14 @@ let App = () => {
     }
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     bootSplashLogoIsLoaded && init();
   }, [bootSplashLogoIsLoaded]);
 
   return (
     <View style={styles.container}>
+      <SystemBars barStyle="dark-content" />
+
       <Text style={styles.text}>Hello, Dave.</Text>
 
       {bootSplashIsVisible && (
@@ -63,6 +94,7 @@ let App = () => {
           <Animated.Image
             source={bootSplashLogo}
             fadeDuration={0}
+            resizeMode="contain"
             onLoadEnd={() => setBootSplashLogoIsLoaded(true)}
             style={[
               styles.logo,
@@ -74,32 +106,3 @@ let App = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#F5FCFF",
-  },
-  text: {
-    fontSize: 24,
-    fontWeight: "700",
-    margin: 20,
-    lineHeight: 30,
-    color: "#333",
-    textAlign: "center",
-  },
-  bootsplash: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#F5FCFF",
-  },
-  logo: {
-    height: 100,
-    width: 100,
-  },
-});
-
-export default App;
