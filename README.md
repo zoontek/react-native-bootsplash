@@ -249,7 +249,7 @@ dependencies {
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   package="com.rnbootsplashexample">
 
-    <!-- … -->
+  <!-- … -->
 
   <application
     android:name=".MainApplication"
@@ -265,10 +265,10 @@ dependencies {
     android:launchMode="singleTask"
     android:windowSoftInputMode="adjustResize"
     android:exported="true"> <!-- Add android:exported="true" -->
-      <intent-filter>
-        <action android:name="android.intent.action.MAIN" />
-        <category android:name="android.intent.category.LAUNCHER" />
-      </intent-filter>
+    <intent-filter>
+      <action android:name="android.intent.action.MAIN" />
+      <category android:name="android.intent.category.LAUNCHER" />
+    </intent-filter>
     </activity>
   </application>
 </manifest>
