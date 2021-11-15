@@ -18,6 +18,9 @@ Show a bootsplash during app startup. Hide it when you are ready.
   <img width="300" src="https://raw.githubusercontent.com/zoontek/react-native-bootsplash/HEAD/docs/android_demo.gif?raw=true" alt="android demo"></img>
 </p>
 
+**⚠️ You are currently reading the 4.x version documentation, which is still in beta.**<br>
+**For the stable version, check the [`3.2.6` tag `README.md`](https://github.com/zoontek/react-native-bootsplash/tree/3.2.6).**
+
 ## Support
 
 | version | react-native version |
@@ -28,9 +31,9 @@ Show a bootsplash during app startup. Hide it when you are ready.
 ## Installation
 
 ```bash
-$ npm install --save react-native-bootsplash
+$ npm install --save react-native-bootsplash@next
 # --- or ---
-$ yarn add react-native-bootsplash
+$ yarn add react-native-bootsplash@next
 ```
 
 Don't forget going into the `ios` directory to execute a `pod install`.
@@ -403,8 +406,6 @@ function App() {
 
 ## 🕵️‍♂️ Comparison with [react-native-splash-screen](https://github.com/crazycodeboy/react-native-splash-screen)
 
-- If `react-native-splash-screen` encourages you to display an image over your application, `react-native-bootsplash` way-to-go is to design your launch screen using platforms tools ([Xcode layout editor](https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/) and [Android drawable resource](https://developer.android.com/guide/topics/resources/drawable-resource)).
-
+- If `react-native-splash-screen` encourages you to display an image over your application, `react-native-bootsplash` way-to-go is to design your launch screen using platforms tools.
 - It should not prevent you from seeing red screen errors.
-
 - Hiding the launch screen is configurable: fade it out or hide it without any animation at all (no fade needed if you want to animate it out!).
