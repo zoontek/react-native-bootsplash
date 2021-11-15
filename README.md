@@ -359,11 +359,8 @@ Add the required css in a style tag with id `bootsplashStyle` inside the head se
     href="bootsplash_logo.png"
     imagesrcset="bootsplash_logo@2x.png 2x, bootsplash_logo@3x.png 3x, bootsplash_logo@4x.png 4x"
   />
-  <style id="bootsplashStyle">
-    :root {
-      --bootsplash-color: #ffffff;
-    }
 
+  <style>
     #bootsplash {
       position: absolute;
       display: flex;
@@ -371,20 +368,14 @@ Add the required css in a style tag with id `bootsplashStyle` inside the head se
       align-items: center;
       height: 100%;
       width: 100%;
-      z-index: 99;
-      background-color: var(--bootsplash-color);
+      z-index: 9999;
+      background-color: #fff;
     }
 
-    #bootsplash.visibleFade {
-      visibility: visible;
-      opacity: 1;
-      transition: opacity 500ms linear;
-    }
-
-    #bootsplash.hiddenFade {
+    #bootsplash.fadeOut {
       visibility: hidden;
       opacity: 0;
-      transition: visibility 0s 500ms, opacity 500ms linear;
+      transition: visibility 0s 220ms, opacity 220ms linear;
     }
 
     #bootsplash.visible {

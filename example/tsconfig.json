@@ -2,7 +2,7 @@
   "compilerOptions": {
     "jsx": "react-native",
     "target": "ESNext",
-    "lib": ["ES2017"],
+    "lib": ["DOM", "DOM.Iterable", "ES2017"],
     "moduleResolution": "Node",
 
     "allowJs": false,

@@ -395,20 +395,14 @@ export const generate = async ({
           align-items: center;
           height: 100%;
           width: 100%;
-          z-index: 99;
+          z-index: 9999;
           background-color: var(--bootsplash-color);
         }
 
-        #bootsplash.visibleFade {
-          visibility: visible;
-          opacity: 1;
-          transition: opacity 500ms linear;
-        }
-
-        #bootsplash.hiddenFade {
+        #bootsplash.fadeOut {
           visibility: hidden;
           opacity: 0;
-          transition: visibility 0s 500ms, opacity 500ms linear;
+          transition: visibility 0s 220ms, opacity 220ms linear;
         }
 
         #bootsplash.visible {
