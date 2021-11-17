@@ -294,7 +294,7 @@ public class MainActivity extends ReactActivity {
 
       @Override
       protected void loadApp(String appKey) {
-        RNBootSplash.init(R.drawable.bootsplash, MainActivity.this); // <- initialize the splash screen
+        RNBootSplash.init(MainActivity.this); // <- initialize the splash screen
         super.loadApp(appKey);
       }
     };
