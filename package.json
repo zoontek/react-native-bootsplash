@@ -14,7 +14,7 @@
     "/ios",
     "/src",
     "RNBootSplash.podspec",
-    "ReactNativeBootsplash.res",
+    "RNBootSplash.res",
     "bsconfig.json",
     "package.json",
     "react-native.config.js"
