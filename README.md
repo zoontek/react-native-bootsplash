@@ -28,9 +28,9 @@ Show a bootsplash during app startup. Hide it when you are ready.<br>
 ## Installation
 
 ```bash
-$ npm install --save react-native-bootsplash@next
+$ npm install --save react-native-bootsplash
 # --- or ---
-$ yarn add react-native-bootsplash@next
+$ yarn add react-native-bootsplash
 ```
 
 Don't forget going into the `ios` directory to execute a `pod install`.
