@@ -163,36 +163,11 @@ export const generate = async ({
         (dimensions != null
           ? ` (${dimensions.width}x${dimensions.height})`
           : ""),
-      true,
     );
-
-  if (assetsPath && fs.existsSync(assetsPath)) {
-    await Promise.all(
-      [
-        { ratio: 1, suffix: "" },
-        { ratio: 1.5, suffix: "@1,5x" },
-        { ratio: 2, suffix: "@2x" },
-        { ratio: 3, suffix: "@3x" },
-        { ratio: 4, suffix: "@4x" },
-      ].map(({ ratio, suffix }) => {
-        const fileName = `${logoFileName}${suffix}.png`;
-        const filePath = path.resolve(assetsPath, fileName);
-        const width = logoWidth * ratio;
-        const height = getHeight(width);
-
-        return image
-          .clone()
-          .resize(width, height)
-          .quality(100)
-          .writeAsync(filePath)
-          .then(() => {
-            logWrite("✨", filePath, { width, height });
-          });
-      }),
-    );
-  }
 
   if (android) {
+    log(`\n    ${chalk.underline("Android")}`);
+
     const appPath = android.appName
       ? path.resolve(android.sourceDir, android.appName)
       : path.resolve(android.sourceDir); // @react-native-community/cli 2.x & 3.x support
@@ -270,6 +245,8 @@ export const generate = async ({
   }
 
   if (ios) {
+    log(`\n    ${chalk.underline("iOS")}`);
+
     const projectPath = ios.projectPath.replace(/.xcodeproj$/, "");
     const imagesPath = path.resolve(projectPath, "Images.xcassets");
 
@@ -286,7 +263,7 @@ export const generate = async ({
         "utf-8",
       );
 
-      log(`✨  ${path.relative(workingPath, storyboardPath)}`, true);
+      logWrite("✨", storyboardPath);
     } else {
       log(
         `No "${projectPath}" directory found. Skipping iOS storyboard generation…`,
@@ -330,6 +307,48 @@ export const generate = async ({
       );
     }
   }
+
+  if (assetsPath && fs.existsSync(assetsPath)) {
+    log(`\n    ${chalk.underline("Assets")}`);
+
+    await Promise.all(
+      [
+        { ratio: 1, suffix: "" },
+        { ratio: 1.5, suffix: "@1,5x" },
+        { ratio: 2, suffix: "@2x" },
+        { ratio: 3, suffix: "@3x" },
+        { ratio: 4, suffix: "@4x" },
+      ].map(({ ratio, suffix }) => {
+        const fileName = `${logoFileName}${suffix}.png`;
+        const filePath = path.resolve(assetsPath, fileName);
+        const width = logoWidth * ratio;
+        const height = getHeight(width);
+
+        return image
+          .clone()
+          .resize(width, height)
+          .quality(100)
+          .writeAsync(filePath)
+          .then(() => {
+            logWrite("✨", filePath, { width, height });
+          });
+      }),
+    );
+  }
+
+  log(`
+ ${chalk.blue("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓")}
+ ${chalk.blue("┃")}  💖  ${chalk.bold(
+    "Love this library? Consider sponsoring!",
+  )}  ${chalk.blue("┃")}
+ ${chalk.blue("┃")}  One-time amounts are available.              ${chalk.blue(
+    "┃",
+  )}
+ ${chalk.blue("┃")}  ${chalk.underline(
+    "https://github.com/sponsors/zoontek",
+  )}          ${chalk.blue("┃")}
+ ${chalk.blue("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛")}
+`);
 
   log(
     `✅  Done! Thanks for using ${chalk.underline("react-native-bootsplash")}.`,
