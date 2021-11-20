@@ -110,7 +110,7 @@ $ yarn react-native generate-bootsplash --help
 The command can take multiple arguments:
 
 ```bash
-react-native generate-bootsplash <logoPath>
+npx react-native generate-bootsplash <logoPath>
 
 Generate a launch screen using an original logo file
 
