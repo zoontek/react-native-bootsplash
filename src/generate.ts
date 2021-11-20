@@ -165,6 +165,34 @@ export const generate = async ({
           : ""),
     );
 
+  if (assetsPath && fs.existsSync(assetsPath)) {
+    log(`\n    ${chalk.underline("Assets")}`);
+
+    await Promise.all(
+      [
+        { ratio: 1, suffix: "" },
+        { ratio: 1.5, suffix: "@1,5x" },
+        { ratio: 2, suffix: "@2x" },
+        { ratio: 3, suffix: "@3x" },
+        { ratio: 4, suffix: "@4x" },
+      ].map(({ ratio, suffix }) => {
+        const fileName = `${logoFileName}${suffix}.png`;
+        const filePath = path.resolve(assetsPath, fileName);
+        const width = logoWidth * ratio;
+        const height = getHeight(width);
+
+        return image
+          .clone()
+          .resize(width, height)
+          .quality(100)
+          .writeAsync(filePath)
+          .then(() => {
+            logWrite("✨", filePath, { width, height });
+          });
+      }),
+    );
+  }
+
   if (android) {
     log(`\n    ${chalk.underline("Android")}`);
 
@@ -306,34 +334,6 @@ export const generate = async ({
         `No "${imagesPath}" directory found. Skipping iOS images generation…`,
       );
     }
-  }
-
-  if (assetsPath && fs.existsSync(assetsPath)) {
-    log(`\n    ${chalk.underline("Assets")}`);
-
-    await Promise.all(
-      [
-        { ratio: 1, suffix: "" },
-        { ratio: 1.5, suffix: "@1,5x" },
-        { ratio: 2, suffix: "@2x" },
-        { ratio: 3, suffix: "@3x" },
-        { ratio: 4, suffix: "@4x" },
-      ].map(({ ratio, suffix }) => {
-        const fileName = `${logoFileName}${suffix}.png`;
-        const filePath = path.resolve(assetsPath, fileName);
-        const width = logoWidth * ratio;
-        const height = getHeight(width);
-
-        return image
-          .clone()
-          .resize(width, height)
-          .quality(100)
-          .writeAsync(filePath)
-          .then(() => {
-            logWrite("✨", filePath, { width, height });
-          });
-      }),
-    );
   }
 
   log(`
