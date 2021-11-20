@@ -4,12 +4,12 @@
   <img align="right" width="160" alt="This library helped you? Consider sponsoring!" src=".github/funding-octocat.svg">
 </a>
 
-Show a bootsplash during app startup. Hide it when you are ready.
+Show a bootsplash during app startup. Hide it when you are ready.<br>
+**For migration from the v3, check the [`MIGRATION.md` guide](https://github.com/zoontek/react-native-bootsplash/blob/master/MIGRATION.md).**
 
 [![npm version](https://badge.fury.io/js/react-native-bootsplash.svg)](https://www.npmjs.org/package/react-native-bootsplash)
 [![npm](https://img.shields.io/npm/dt/react-native-bootsplash.svg)](https://www.npmjs.org/package/react-native-bootsplash)
 [![MIT](https://img.shields.io/dub/l/vibe-d.svg)](https://opensource.org/licenses/MIT)
-<br>
 [![Platform - Android](https://img.shields.io/badge/platform-Android-3ddc84.svg?style=flat&logo=android)](https://www.android.com)
 [![Platform - iOS](https://img.shields.io/badge/platform-iOS-000.svg?style=flat&logo=apple)](https://developer.apple.com/ios)
 
@@ -17,11 +17,6 @@ Show a bootsplash during app startup. Hide it when you are ready.
   <img height="520" src="https://raw.githubusercontent.com/zoontek/react-native-bootsplash/HEAD/docs/ios_demo.gif?raw=true" alt="iOS demo"></img>
   <img height="500" src="https://raw.githubusercontent.com/zoontek/react-native-bootsplash/HEAD/docs/android_demo.gif?raw=true" alt="android demo"></img>
 </p>
-
-**⚠️ You are currently reading the 4.x version documentation, which is still in beta.**<br>
-**For the stable version, check the [`3.2.6` tag `README.md`](https://github.com/zoontek/react-native-bootsplash/tree/3.2.6).**
-
-**For migration from the v3, check the [`MIGRATION.md` file](https://github.com/zoontek/react-native-bootsplash/blob/master/MIGRATION.md).**
 
 ## Support
 
@@ -142,6 +137,13 @@ yarn react-native generate-bootsplash assets/bootsplash_logo_original.png \
 This tool relies on the naming conventions that are used in the `/example` project and will therefore create the following files:
 
 ```bash
+# Only if --assets-path was specified
+assets/bootsplash_logo.png
+assets/bootsplash_logo@1,5x.png
+assets/bootsplash_logo@2x.png
+assets/bootsplash_logo@3x.png
+assets/bootsplash_logo@4x.png
+
 android/app/src/main/res/values/colors.xml (creation and edition)
 android/app/src/main/res/mipmap-hdpi/bootsplash_logo.png
 android/app/src/main/res/mipmap-mdpi/bootsplash_logo.png
@@ -153,13 +155,6 @@ ios/YourProjectName/BootSplash.storyboard
 ios/YourProjectName/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo.png
 ios/YourProjectName/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo@2x.png
 ios/YourProjectName/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo@3x.png
-
-# Only if --assets-path was specified
-assets/bootsplash_logo.png
-assets/bootsplash_logo@1,5x.png
-assets/bootsplash_logo@2x.png
-assets/bootsplash_logo@3x.png
-assets/bootsplash_logo@4x.png
 ```
 
 ### iOS
@@ -410,4 +405,4 @@ function App() {
 
 - If `react-native-splash-screen` encourages you to display an image over your application, `react-native-bootsplash` way-to-go is to design your launch screen using platforms tools.
 - It should not prevent you from seeing red screen errors.
-- Hiding the launch screen is configurable: fade it out or hide it without any animation at all (no fade needed if you want to animate it out!).
+- Hiding the launch screen is configurable: fade it out or hide it without any animation.
