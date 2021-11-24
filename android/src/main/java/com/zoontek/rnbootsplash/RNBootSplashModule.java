@@ -42,7 +42,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
 
   private static final Stack<RNBootSplashTask> mTaskStack = new Stack<>();
   private static Status mStatus = Status.HIDDEN;
-  private static boolean mIsAppInBackground = false;
+  private static boolean mIsAppInForeground = true;
   private static boolean mShouldFade = false;
   private static boolean mShouldKeepOnScreen = true;
 
@@ -99,23 +99,23 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
 
   @Override
   public void onHostDestroy() {
-    mIsAppInBackground = true;
+    mIsAppInForeground = false;
   }
 
   @Override
   public void onHostPause() {
-    mIsAppInBackground = true;
+    mIsAppInForeground = false;
   }
 
   @Override
   public void onHostResume() {
-    mIsAppInBackground = false;
+    mIsAppInForeground = true;
     shiftNextTask();
   }
 
   private void shiftNextTask() {
     if (mStatus != Status.TRANSITIONING &&
-        !mIsAppInBackground &&
+        mIsAppInForeground &&
         mTaskStack.size() > 0) {
       RNBootSplashTask task = mTaskStack.pop();
       hideWithTask(task);
@@ -168,8 +168,8 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
           @Override
           public void run() {
             mStatus = Status.HIDDEN;
-            promise.resolve(true);
             timer.cancel();
+            promise.resolve(true);
             shiftNextTask();
           }
         }, ANIMATION_DURATION);
