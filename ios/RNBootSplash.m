@@ -3,7 +3,7 @@
 #import <React/RCTBridge.h>
 #import <React/RCTUtils.h>
 
-static NSMutableArray<RNBootSplashTask *> *_taskQueue = nil;
+static NSMutableArray<RNBootSplashTask *> *_taskStack = nil;
 static RCTRootView *_rootView = nil;
 static RNBootSplashStatus _status = RNBootSplashStatusHidden;
 
@@ -37,7 +37,7 @@ RCT_EXPORT_MODULE();
                   rootView:(RCTRootView * _Nonnull)rootView {
   _rootView = rootView;
   _status = RNBootSplashStatusVisible;
-  _taskQueue = [[NSMutableArray alloc] init];
+  _taskStack = [[NSMutableArray alloc] init];
 
   UIStoryboard *storyboard = [UIStoryboard storyboardWithName:storyboardName bundle:nil];
   [_rootView setLoadingView:[[storyboard instantiateInitialViewController] view]];
@@ -85,16 +85,14 @@ RCT_EXPORT_MODULE();
 }
 
 + (void)shiftNextTask {
-  bool shouldSkipTick = _status == RNBootSplashStatusTransitioning
-    || [_taskQueue count] == 0
-    || [[UIApplication sharedApplication] applicationState] == UIApplicationStateBackground;
+  if (_status != RNBootSplashStatusTransitioning &&
+      [_taskStack count] > 0 &&
+      [[UIApplication sharedApplication] applicationState] != UIApplicationStateBackground) {
+    RNBootSplashTask *task = [_taskStack objectAtIndex:0];
+    [_taskStack removeObjectAtIndex:0];
 
-  if (shouldSkipTick) return;
-
-  RNBootSplashTask *task = [_taskQueue objectAtIndex:0];
-  [_taskQueue removeObjectAtIndex:0];
-
-  return [self hideWithTask:task];
+    [self hideWithTask:task];
+  }
 }
 
 + (void)hideWithTask:(RNBootSplashTask *)task {
@@ -143,7 +141,7 @@ RCT_REMAP_METHOD(hide,
   RNBootSplashTask *task = [[RNBootSplashTask alloc] initWithFade:fade
                                                          resolver:resolve];
 
-  [_taskQueue addObject:task];
+  [_taskStack addObject:task];
   [RNBootSplash shiftNextTask];
 }
 

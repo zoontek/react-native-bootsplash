@@ -21,7 +21,7 @@ import com.facebook.react.bridge.UiThreadUtil;
 import com.facebook.react.common.ReactConstants;
 import com.facebook.react.module.annotations.ReactModule;
 
-import java.util.ArrayList;
+import java.util.Stack;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -40,7 +40,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
   @Nullable
   private static SplashScreen mSplashScreen = null;
 
-  private static final ArrayList<RNBootSplashTask> mTaskQueue = new ArrayList<>();
+  private static final Stack<RNBootSplashTask> mTaskStack = new Stack<>();
   private static Status mStatus = Status.HIDDEN;
   private static boolean mIsAppInBackground = false;
   private static boolean mShouldFade = false;
@@ -114,14 +114,12 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
   }
 
   private void shiftNextTask() {
-    boolean shouldSkipTick = mStatus == Status.TRANSITIONING
-      || mIsAppInBackground
-      || mTaskQueue.isEmpty();
-
-    if (shouldSkipTick) return;
-
-    RNBootSplashTask task = mTaskQueue.remove(0);
-    hideWithTask(task);
+    if (mStatus != Status.TRANSITIONING &&
+        !mIsAppInBackground &&
+        mTaskStack.size() > 0) {
+      RNBootSplashTask task = mTaskStack.pop();
+      hideWithTask(task);
+    }
   }
 
   private void waitAndRetry() {
@@ -184,7 +182,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
     if (mSplashScreen == null || mStatus == Status.HIDDEN) {
       promise.resolve(true);
     } else {
-      mTaskQueue.add(new RNBootSplashTask(fade, promise));
+      mTaskStack.push(new RNBootSplashTask(fade, promise));
       shiftNextTask();
     }
   }
