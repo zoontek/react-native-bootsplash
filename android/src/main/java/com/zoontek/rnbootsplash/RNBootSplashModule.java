@@ -23,7 +23,6 @@ import com.facebook.react.module.annotations.ReactModule;
 
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.LinkedBlockingQueue;
 
 @ReactModule(name = RNBootSplashModule.NAME)
 public class RNBootSplashModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
@@ -40,7 +39,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
   @Nullable
   private static SplashScreen mSplashScreen = null;
 
-  private static final LinkedBlockingQueue<RNBootSplashTask> mTaskQueue = new LinkedBlockingQueue<>();
+  private static final RNBootSplashQueue<RNBootSplashTask> mTaskQueue = new RNBootSplashQueue<>();
   private static Status mStatus = Status.HIDDEN;
   private static boolean mIsAppInForeground = true;
   private static boolean mShouldFade = false;
@@ -115,7 +114,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
 
   private void shiftNextTask() {
     if (mStatus != Status.TRANSITIONING && mIsAppInForeground) {
-      RNBootSplashTask task = mTaskQueue.poll();
+      RNBootSplashTask task = mTaskQueue.shift();
 
       if (task != null) {
         hideWithTask(task);
@@ -183,12 +182,8 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
     if (mSplashScreen == null || mStatus == Status.HIDDEN) {
       promise.resolve(true);
     } else {
-      try {
-        mTaskQueue.put(new RNBootSplashTask(fade, promise));
-        shiftNextTask();
-      } catch (InterruptedException e) {
-        promise.resolve(true);
-      }
+      mTaskQueue.push(new RNBootSplashTask(fade, promise));
+      shiftNextTask();
     }
   }
 
