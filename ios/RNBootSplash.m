@@ -39,7 +39,10 @@ RCT_EXPORT_MODULE();
 }
 
 + (void)initWithStoryboard:(NSString * _Nonnull)storyboardName
-                  rootView:(RCTRootView * _Nonnull)rootView {
+                  rootView:(RCTRootView * _Nullable)rootView {
+  if (_rootView == nil)
+    return; // initWithStoryboard has been called without rootView (ex: iOS 15 notifications)
+
   [[NSNotificationCenter defaultCenter] removeObserver:rootView
                                                   name:RCTContentDidAppearNotification
                                                 object:rootView];
