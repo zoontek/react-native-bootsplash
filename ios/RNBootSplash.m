@@ -164,10 +164,14 @@ RCT_REMAP_METHOD(getVisibilityStatus,
   if (_transitioning)
     return resolve(@"transitioning");
 
-  if (_rootView != nil && (_rootView.loadingView != nil || _rootView.loadingView.hidden == YES))
-    return resolve(@"visible");
-  else
+  bool hidden = _rootView == nil
+    || _rootView.loadingView == nil
+    || _rootView.loadingView.hidden == YES;
+
+  if (hidden)
     return resolve(@"hidden");
+  else
+    return resolve(@"visible");
 }
 
 @end
