@@ -4,8 +4,8 @@
 #import <React/RCTUtils.h>
 
 static NSMutableArray<RNBootSplashTask *> * _Nullable _taskQueue = nil;
+static bool _transitioning = false;
 static RCTRootView * _Nullable _rootView = nil;
-static RNBootSplashStatus _status = RNBootSplashStatusHidden;
 
 @implementation RNBootSplashTask
 
@@ -76,16 +76,47 @@ RCT_EXPORT_MODULE();
     _taskQueue = [[NSMutableArray alloc] init];
 
   bool shouldSkipTick = _rootView == nil
-    || _status == RNBootSplashStatusTransitioning
+    || _transitioning
     || [_taskQueue count] < 1
     || [[UIApplication sharedApplication] applicationState] == UIApplicationStateBackground;
 
-  if (!shouldSkipTick) {
-    RNBootSplashTask *task = [_taskQueue objectAtIndex:0];
-    [_taskQueue removeObjectAtIndex:0];
+  if (shouldSkipTick)
+    return;
 
-    [self hideWithTask:task];
+  RNBootSplashTask *task = [_taskQueue objectAtIndex:0];
+  [_taskQueue removeObjectAtIndex:0];
+
+  if (_rootView.loadingView == nil) {
+    [task resolve];
+    return [self shiftNextTask];
   }
+
+  if (!task.fade) {
+    _rootView.loadingView.hidden = YES;
+    [_rootView.loadingView removeFromSuperview];
+    _rootView.loadingView = nil;
+
+    [task resolve];
+    return [self shiftNextTask];
+  }
+
+  _transitioning = true;
+
+  [UIView transitionWithView:_rootView
+                    duration:0.220
+                     options:UIViewAnimationOptionTransitionCrossDissolve
+                  animations:^{
+                               _rootView.loadingView.hidden = YES;
+                             }
+                  completion:^(__unused BOOL finished) {
+                               [_rootView.loadingView removeFromSuperview];
+                               _rootView.loadingView = nil;
+
+                               [task resolve];
+                               _transitioning = false;
+
+                               return [self shiftNextTask];
+                             }];
 }
 
 + (void)createTaskWithFade:(BOOL)fade
@@ -119,42 +150,6 @@ RCT_EXPORT_MODULE();
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-+ (void)hideWithTask:(RNBootSplashTask *)task {
-  if (_status == RNBootSplashStatusHidden) {
-    [task resolve];
-    return [self shiftNextTask];
-  }
-
-  if (!task.fade) {
-    _status = RNBootSplashStatusHidden;
-
-    _rootView.loadingView.hidden = YES;
-    [_rootView.loadingView removeFromSuperview];
-    _rootView.loadingView = nil;
-
-    [task resolve];
-    return [self shiftNextTask];
-  }
-
-  _status = RNBootSplashStatusTransitioning;
-
-  [UIView transitionWithView:_rootView
-                    duration:0.220
-                     options:UIViewAnimationOptionTransitionCrossDissolve
-                  animations:^{
-                               _rootView.loadingView.hidden = YES;
-                             }
-                  completion:^(__unused BOOL finished) {
-                               _status = RNBootSplashStatusHidden;
-
-                               [_rootView.loadingView removeFromSuperview];
-                               _rootView.loadingView = nil;
-
-                               [task resolve];
-                               return [self shiftNextTask];
-                             }];
-}
-
 RCT_REMAP_METHOD(hide,
                  hideWithFade:(BOOL)fade
                  resolver:(RCTPromiseResolveBlock)resolve
@@ -166,14 +161,13 @@ RCT_REMAP_METHOD(hide,
 RCT_REMAP_METHOD(getVisibilityStatus,
                  getVisibilityStatusWithResolver:(RCTPromiseResolveBlock)resolve
                  rejecter:(RCTPromiseRejectBlock)reject) {
-  switch (_status) {
-    case RNBootSplashStatusVisible:
-      return resolve(@"visible");
-    case RNBootSplashStatusHidden:
-      return resolve(@"hidden");
-    case RNBootSplashStatusTransitioning:
-      return resolve(@"transitioning");
-  }
+  if (_transitioning)
+    return resolve(@"transitioning");
+
+  if (_rootView != nil && (_rootView.loadingView != nil || _rootView.loadingView.hidden == YES))
+    return resolve(@"visible");
+  else
+    return resolve(@"hidden");
 }
 
 @end
