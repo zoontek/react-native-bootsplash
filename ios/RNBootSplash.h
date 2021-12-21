@@ -10,10 +10,12 @@ typedef enum {
 @interface RNBootSplashTask : NSObject
 
 @property (nonatomic, readonly) BOOL fade;
-@property (nonatomic, readonly, strong) RCTPromiseResolveBlock _Nonnull resolve;
+@property (nonatomic, readonly, strong) RCTPromiseResolveBlock _Nullable resolver;
 
 - (instancetype _Nonnull)initWithFade:(BOOL)fade
-                             resolver:(RCTPromiseResolveBlock _Nonnull)resolve;
+                             resolver:(RCTPromiseResolveBlock _Nullable)resolver;
+
+- (void)resolve;
 
 @end
 
