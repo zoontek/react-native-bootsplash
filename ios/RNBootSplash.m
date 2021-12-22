@@ -40,7 +40,7 @@ RCT_EXPORT_MODULE();
 
 + (void)initWithStoryboard:(NSString * _Nonnull)storyboardName
                   rootView:(RCTRootView * _Nullable)rootView {
-  if (_rootView == nil)
+  if (rootView == nil)
     return; // initWithStoryboard has been called without rootView (ex: iOS 15 notifications)
 
   [[NSNotificationCenter defaultCenter] removeObserver:rootView
@@ -120,9 +120,9 @@ RCT_EXPORT_MODULE();
 }
 
 + (void)createTaskWithFade:(BOOL)fade
-                  resolver:(RCTPromiseResolveBlock)resolve {
+                  resolver:(RCTPromiseResolveBlock)resolver {
   RNBootSplashTask *task = [[RNBootSplashTask alloc] initWithFade:fade
-                                                         resolver:resolve];
+                                                         resolver:resolver];
 
   if (_taskQueue == nil)
     _taskQueue = [[NSMutableArray alloc] init];
