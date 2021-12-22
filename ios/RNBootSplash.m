@@ -82,7 +82,7 @@ RCT_EXPORT_MODULE();
 + (void)dequeueTask {
   [self ensureTaskQueue];
 
-  bool isForeground = [[UIApplication sharedApplication] applicationState] != UIApplicationStateActive;
+  bool isForeground = [[UIApplication sharedApplication] applicationState] == UIApplicationStateActive;
 
   bool shouldSkipTick = _rootView == nil // _rootView isn't set
     || !isForeground // the app is not in foreground
