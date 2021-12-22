@@ -1,7 +1,15 @@
 import * as React from "react";
-import { Animated, Dimensions, StyleSheet, Text, View } from "react-native";
+import {
+  Animated,
+  Button,
+  Dimensions,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { SystemBars } from "react-native-bars";
 import * as BootSplash from "react-native-bootsplash";
+import { requestNotifications } from "react-native-permissions";
 
 const bootSplashLogo = require("./assets/bootsplash_logo.png");
 
@@ -46,31 +54,27 @@ export const App = () => {
     // You can uncomment this line to add a delay on app startup
     // await fakeApiCallWithoutBadNetwork(3000);
 
-    try {
-      await BootSplash.hide();
+    await BootSplash.hide();
 
-      Animated.stagger(250, [
-        Animated.spring(translateY.current, {
-          useNativeDriver: true,
-          toValue: -50,
-        }),
-        Animated.spring(translateY.current, {
-          useNativeDriver: true,
-          toValue: Dimensions.get("window").height,
-        }),
-      ]).start();
-
-      Animated.timing(opacity.current, {
+    Animated.stagger(250, [
+      Animated.spring(translateY.current, {
         useNativeDriver: true,
-        toValue: 0,
-        duration: 150,
-        delay: 350,
-      }).start(() => {
-        setBootSplashIsVisible(false);
-      });
-    } catch (error) {
+        toValue: -50,
+      }),
+      Animated.spring(translateY.current, {
+        useNativeDriver: true,
+        toValue: Dimensions.get("window").height,
+      }),
+    ]).start();
+
+    Animated.timing(opacity.current, {
+      useNativeDriver: true,
+      toValue: 0,
+      duration: 150,
+      delay: 350,
+    }).start(() => {
       setBootSplashIsVisible(false);
-    }
+    });
   };
 
   React.useEffect(() => {
@@ -82,6 +86,13 @@ export const App = () => {
       <SystemBars barStyle="dark-content" />
 
       <Text style={styles.text}>Hello, Dave.</Text>
+
+      <Button
+        title="Activate push notifications"
+        onPress={() => {
+          requestNotifications(["alert"]);
+        }}
+      />
 
       {bootSplashIsVisible && (
         <Animated.View
