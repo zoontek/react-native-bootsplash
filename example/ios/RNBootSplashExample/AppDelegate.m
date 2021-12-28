@@ -3,6 +3,7 @@
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
+#import <React/RCTLinkingManager.h>
 
 #import "RNBootSplash.h"
 
@@ -62,6 +63,23 @@ static void InitializeFlipper(UIApplication *application) {
 #else
   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
+}
+
+- (BOOL)application:(UIApplication *)application
+    openURL:(NSURL *)url
+    options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+  return [RCTLinkingManager application:application openURL:url options:options];
+}
+
+- (void)application:(UIApplication *)application
+    didReceiveRemoteNotification:(NSDictionary *)userInfo
+    fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+  completionHandler(UIBackgroundFetchResultNoData);
+}
+
+- (void)application:(UIApplication *)application
+    performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+  completionHandler(UIBackgroundFetchResultNoData);
 }
 
 @end
