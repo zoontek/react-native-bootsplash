@@ -4,8 +4,9 @@
 #import <React/RCTUtils.h>
 
 static NSMutableArray<RNBootSplashTask *> * _Nullable _taskQueue = nil;
-static bool _isTransitioning = false;
 static RCTRootView * _Nullable _rootView = nil;
+static bool _transitioning = false;
+static bool _contentHasAppeared = false;
 
 @implementation RNBootSplashTask
 
@@ -33,22 +34,12 @@ RCT_EXPORT_MODULE();
   return dispatch_get_main_queue();
 }
 
-+ (void)initWithStoryboard:(NSString * _Nonnull)storyboardName
-                  rootView:(RCTRootView * _Nullable)rootView {
-  if (rootView == nil)
-    return; // initWithStoryboard has been called without rootView (ex: iOS 15 notifications)
++ (void)ensureModuleInit {
+  if (_taskQueue != nil || RCTRunningInAppExtension())
+    return;
 
-  [[NSNotificationCenter defaultCenter] removeObserver:rootView
-                                                  name:RCTContentDidAppearNotification
-                                                object:rootView];
-
-  UIStoryboard *storyboard = [UIStoryboard storyboardWithName:storyboardName bundle:nil];
-  UIView *view = [[storyboard instantiateInitialViewController] view];
-
-  _rootView = rootView;
-  [_rootView setLoadingView:view];
-
-  [self dequeueTask];
+  _taskQueue = [[NSMutableArray alloc] init];
+  _transitioning = false;
 
   [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(dequeueTask)
@@ -56,8 +47,8 @@ RCT_EXPORT_MODULE();
                                              object:nil];
 
   [[NSNotificationCenter defaultCenter] addObserver:self
-                                           selector:@selector(onJavaScriptDidLoad:)
-                                               name:RCTJavaScriptDidLoadNotification
+                                           selector:@selector(onContentDidAppear)
+                                               name:RCTContentDidAppearNotification
                                              object:nil];
 
   [[NSNotificationCenter defaultCenter] addObserver:self
@@ -66,48 +57,90 @@ RCT_EXPORT_MODULE();
                                              object:nil];
 }
 
-+ (void)hideLoadingView {
-  if (_rootView != nil && _rootView.loadingView != nil) {
-    _rootView.loadingView.hidden = YES;
-    [_rootView.loadingView removeFromSuperview];
-    _rootView.loadingView = nil;
-  }
++ (void)initWithStoryboard:(NSString * _Nonnull)storyboardName
+                  rootView:(RCTRootView * _Nullable)rootView {
+  if (rootView == nil || _rootView != nil || RCTRunningInAppExtension())
+    return;
+
+  _rootView = rootView;
+
+  UIStoryboard *storyboard = [UIStoryboard storyboardWithName:storyboardName bundle:nil];
+  UIView *loadingView = [[storyboard instantiateInitialViewController] view];
+
+  rootView.loadingView = loadingView;
+  loadingView.hidden = NO;
+  [rootView addSubview:loadingView];
+
+  [[NSNotificationCenter defaultCenter] removeObserver:rootView
+                                                  name:RCTContentDidAppearNotification
+                                                object:rootView];
+
+  [self ensureModuleInit];
+  [self dequeueTask];
 }
 
-+ (void)ensureTaskQueue {
-  if (_taskQueue == nil)
-    _taskQueue = [[NSMutableArray alloc] init];
++ (void)onContentDidAppear {
+  _contentHasAppeared = true;
+  [self dequeueTask];
+
+  [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                  name:RCTContentDidAppearNotification
+                                                object:nil];
+
+  [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                  name:RCTJavaScriptDidFailToLoadNotification
+                                                object:nil];
+}
+
++ (void)onJavaScriptDidFailToLoad {
+  [_taskQueue removeAllObjects];
+  [self hideLoadingView];
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
++ (bool)hidden {
+  return _rootView == nil || _rootView.loadingView == nil;
+}
+
++ (void)hideLoadingView {
+  if ([self hidden])
+    return;
+
+  _rootView.loadingView.hidden = YES;
+  [_rootView.loadingView removeFromSuperview];
+  _rootView.loadingView = nil;
+}
+
++ (bool)shouldPreventDequeuing {
+  UIApplication * _Nullable sharedApplication = RCTSharedApplication();
+
+  return sharedApplication == nil
+    || _rootView == nil
+    || _taskQueue == nil
+    || !_contentHasAppeared
+    || _transitioning
+    || [_taskQueue count] < 1
+    || [sharedApplication applicationState] != UIApplicationStateActive;
 }
 
 + (void)dequeueTask {
-  [self ensureTaskQueue];
-
-  bool isForeground = [[UIApplication sharedApplication] applicationState] == UIApplicationStateActive;
-
-  bool shouldSkipTick = _rootView == nil // _rootView isn't set
-    || !isForeground // the app is not in foreground
-    || _isTransitioning // the splash screen is currently hiding
-    || [_taskQueue count] < 1; // there is no tasks left
-
-  if (shouldSkipTick) {
-    return; // avoid dequeueing task in these
-  }
+  if ([self shouldPreventDequeuing])
+    return;
 
   RNBootSplashTask *task = [_taskQueue objectAtIndex:0];
   [_taskQueue removeObjectAtIndex:0];
 
-  if (_rootView.loadingView == nil) {
+  if ([self hidden]) {
     task.resolve(@(true));
     return [self dequeueTask];
   }
-
   if (!task.fade) {
     [self hideLoadingView];
     task.resolve(@(true));
     return [self dequeueTask];
   }
 
-  _isTransitioning = true;
+  _transitioning = true;
 
   [UIView transitionWithView:_rootView
                     duration:0.220
@@ -117,38 +150,23 @@ RCT_EXPORT_MODULE();
                   }
                   completion:^(__unused BOOL finished) {
                     [self hideLoadingView];
-                    _isTransitioning = false;
+                    _transitioning = false;
                     task.resolve(@(true));
                     return [self dequeueTask];
                   }];
-}
-
-+ (void)onJavaScriptDidLoad:(NSNotification *)notification {
-  [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                  name:RCTJavaScriptDidLoadNotification
-                                                object:nil];
-
-  [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                  name:RCTJavaScriptDidFailToLoadNotification
-                                                object:nil];
-}
-
-+ (void)onJavaScriptDidFailToLoad {
-  if (_taskQueue != nil)
-    [_taskQueue removeAllObjects];
-
-  [self hideLoadingView];
-  [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 RCT_REMAP_METHOD(hide,
                  hideWithFade:(BOOL)fade
                  resolver:(RCTPromiseResolveBlock)resolve
                  rejecter:(RCTPromiseRejectBlock)reject) {
+  if (RCTRunningInAppExtension())
+    return resolve(@(true));
+
   RNBootSplashTask *task = [[RNBootSplashTask alloc] initWithFade:fade
                                                           resolve:resolve];
 
-  [RNBootSplash ensureTaskQueue];
+  [RNBootSplash ensureModuleInit];
   [_taskQueue addObject:task];
   [RNBootSplash dequeueTask];
 }
@@ -156,9 +174,9 @@ RCT_REMAP_METHOD(hide,
 RCT_REMAP_METHOD(getVisibilityStatus,
                  getVisibilityStatusWithResolver:(RCTPromiseResolveBlock)resolve
                  rejecter:(RCTPromiseRejectBlock)reject) {
-  if (_isTransitioning)
+  if (_transitioning)
     return resolve(@"transitioning");
-  if (_rootView == nil || _rootView.loadingView == nil)
+  if ([RNBootSplash hidden])
     return resolve(@"hidden");
   else
     return resolve(@"visible");
