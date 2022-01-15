@@ -12,16 +12,16 @@
   },
   "dependencies": {
     "react": "17.0.2",
-    "react-native": "0.66.3",
-    "react-native-bars": "^1.0.4",
+    "react-native": "0.66.4",
+    "react-native-bars": "^1.1.1",
     "react-native-bootsplash": "file:../",
     "react-native-safe-area-context": "^3.3.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.16.0",
-    "@babel/runtime": "^7.16.3",
-    "@types/react-native": "^0.66.4",
+    "@babel/core": "^7.16.7",
+    "@babel/runtime": "^7.16.7",
+    "@types/react-native": "^0.66.12",
     "metro-react-native-babel-preset": "^0.66.2",
-    "typescript": "^4.4.4"
+    "typescript": "^4.5.4"
   }
 }
