@@ -66,7 +66,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
     mSplashScreen = SplashScreen.installSplashScreen(activity);
     mStatus = Status.VISIBLE;
 
-    mSplashScreen.setKeepVisibleCondition(new SplashScreen.KeepOnScreenCondition() {
+    mSplashScreen.setKeepOnScreenCondition(new SplashScreen.KeepOnScreenCondition() {
       @Override
       public boolean shouldKeepOnScreen() {
         return mShouldKeepOnScreen;

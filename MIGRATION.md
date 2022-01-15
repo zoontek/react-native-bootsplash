@@ -3,7 +3,7 @@
 ## What's new
 
 - The drop of Android < 6 and iOS < 11 (Android 5 is _possible_ but only displays the background color)
-- A switch to [AndroidX splashscreen library](https://developer.android.com/jetpack/androidx/releases/core#core-splashscreen-1.0.0-alpha02) to fully support Android 12
+- A switch to [AndroidX splashscreen library](https://developer.android.com/jetpack/androidx/releases/core#core-splashscreen-1.0.0-beta01) to fully support Android 12
 - The removal of the `show` method
 - The `hide` method cannot reject anymore
 - The switch to `RCTRootView` only on iOS (removed usage of `UIViewController`)
@@ -40,7 +40,7 @@ dependencies {
   //noinspection GradleDynamicVersion
   implementation "com.facebook.react:react-native:+"  // From node_modules
 
-+ implementation "androidx.core:core-splashscreen:1.0.0-alpha02"
++ implementation "androidx.core:core-splashscreen:1.0.0-beta01"
 ```
 
 For `android/app/src/main/res/values/styles.xml`:
