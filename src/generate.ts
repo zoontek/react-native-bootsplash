@@ -120,10 +120,87 @@ export const generate = async ({
 
   workingPath,
   logoPath,
+  darkLogoPath,
   backgroundColor,
   logoWidth,
   flavor,
   assetsPath,
+}: {
+  android: {
+    sourceDir: string;
+    appName: string;
+  } | null;
+  ios: {
+    projectPath: string;
+  } | null;
+
+  workingPath: string;
+  logoPath: string;
+  darkLogoPath?: string;
+  assetsPath?: string;
+
+  backgroundColor: string;
+  flavor: string;
+  logoWidth: number;
+}) => {
+  await generateSingle({
+    android,
+    ios,
+
+    workingPath,
+    logoPath,
+    backgroundColor,
+    logoWidth,
+    flavor,
+    assetsPath,
+    logoFileName: "bootsplash_logo",
+  });
+
+  if (darkLogoPath) {
+    await generateSingle({
+      android,
+      ios,
+
+      workingPath,
+      logoPath: darkLogoPath,
+      backgroundColor,
+      logoWidth,
+      flavor,
+      assetsPath,
+      logoFileName: "bootsplash_logo_dark",
+    });
+  }
+
+  log(`
+ ${chalk.blue("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓")}
+ ${chalk.blue("┃")}  💖  ${chalk.bold(
+    "Love this library? Consider sponsoring!",
+  )}  ${chalk.blue("┃")}
+ ${chalk.blue("┃")}  One-time amounts are available.              ${chalk.blue(
+    "┃",
+  )}
+ ${chalk.blue("┃")}  ${chalk.underline(
+    "https://github.com/sponsors/zoontek",
+  )}          ${chalk.blue("┃")}
+ ${chalk.blue("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛")}
+`);
+
+  log(
+    `✅  Done! Thanks for using ${chalk.underline("react-native-bootsplash")}.`,
+  );
+};
+
+const generateSingle = async ({
+  android,
+  ios,
+
+  workingPath,
+  logoPath,
+  backgroundColor,
+  logoWidth,
+  flavor,
+  assetsPath,
+  logoFileName,
 }: {
   android: {
     sourceDir: string;
@@ -140,6 +217,7 @@ export const generate = async ({
   backgroundColor: string;
   flavor: string;
   logoWidth: number;
+  logoFileName: string;
 }) => {
   if (!isValidHexadecimal(backgroundColor)) {
     throw new Error(
@@ -335,22 +413,4 @@ export const generate = async ({
       );
     }
   }
-
-  log(`
- ${chalk.blue("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓")}
- ${chalk.blue("┃")}  💖  ${chalk.bold(
-    "Love this library? Consider sponsoring!",
-  )}  ${chalk.blue("┃")}
- ${chalk.blue("┃")}  One-time amounts are available.              ${chalk.blue(
-    "┃",
-  )}
- ${chalk.blue("┃")}  ${chalk.underline(
-    "https://github.com/sponsors/zoontek",
-  )}          ${chalk.blue("┃")}
- ${chalk.blue("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛")}
-`);
-
-  log(
-    `✅  Done! Thanks for using ${chalk.underline("react-native-bootsplash")}.`,
-  );
 };
