@@ -122,6 +122,7 @@ export const generate = async ({
   logoPath,
   darkLogoPath,
   backgroundColor,
+  darkBackgroundColor,
   logoWidth,
   flavor,
   assetsPath,
@@ -140,6 +141,7 @@ export const generate = async ({
   assetsPath?: string;
 
   backgroundColor: string;
+  darkBackgroundColor?: string;
   flavor: string;
   logoWidth: number;
 }) => {
@@ -153,21 +155,21 @@ export const generate = async ({
     logoWidth,
     flavor,
     assetsPath,
-    logoFileName: "bootsplash_logo",
+    theme: "light",
   });
 
-  if (darkLogoPath) {
+  if (darkLogoPath && darkBackgroundColor) {
     await generateSingle({
       android,
       ios,
 
       workingPath,
       logoPath: darkLogoPath,
-      backgroundColor,
+      backgroundColor: darkBackgroundColor,
       logoWidth,
       flavor,
       assetsPath,
-      logoFileName: "bootsplash_logo_dark",
+      theme: "dark",
     });
   }
 
@@ -200,7 +202,7 @@ const generateSingle = async ({
   logoWidth,
   flavor,
   assetsPath,
-  logoFileName,
+  theme,
 }: {
   android: {
     sourceDir: string;
@@ -217,7 +219,7 @@ const generateSingle = async ({
   backgroundColor: string;
   flavor: string;
   logoWidth: number;
-  logoFileName: string;
+  theme: "light" | "dark";
 }) => {
   if (!isValidHexadecimal(backgroundColor)) {
     throw new Error(
@@ -225,6 +227,8 @@ const generateSingle = async ({
     );
   }
 
+  const logoFileName =
+    theme === "light" ? "bootsplash_logo" : "bootsplash_logo_dark";
   const image = await Jimp.read(logoPath);
   const backgroundColorHex = toFullHexadecimal(backgroundColor);
 
@@ -279,7 +283,10 @@ const generateSingle = async ({
       : path.resolve(android.sourceDir); // @react-native-community/cli 2.x & 3.x support
 
     const resPath = path.resolve(appPath, "src", flavor, "res");
-    const valuesPath = path.resolve(resPath, "values");
+    const valuesPath = path.resolve(
+      resPath,
+      theme === "light" ? "values" : "values-night",
+    );
 
     fs.ensureDirSync(valuesPath);
 
