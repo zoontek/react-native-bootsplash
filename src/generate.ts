@@ -3,36 +3,72 @@ import fs from "fs-extra";
 import Jimp from "jimp";
 import path from "path";
 
-const logoFileName = "bootsplash_logo";
+const lightLogoFileName = "bootsplash_logo";
+const darkLogoFileName = "bootsplash_logo_dark";
 const xcassetName = "BootSplashLogo";
 // https://github.com/androidx/androidx/blob/androidx-main/core/core-splashscreen/src/main/res/values/dimens.xml#L22
 const splashScreenIconSizeNoBackground = 288;
 const androidColorName = "bootsplash_background";
 const androidColorRegex = /<color name="bootsplash_background">#\w+<\/color>/g;
 
-const ContentsJson = `{
+const getContentsJson = (includeDarkLogo: boolean) => `{
   "images": [
     {
       "idiom": "universal",
-      "filename": "${logoFileName}.png",
+      "filename": "${lightLogoFileName}.png",
       "scale": "1x"
     },
     {
       "idiom": "universal",
-      "filename": "${logoFileName}@2x.png",
+      "filename": "${lightLogoFileName}@2x.png",
       "scale": "2x"
     },
     {
       "idiom": "universal",
-      "filename": "${logoFileName}@3x.png",
+      "filename": "${lightLogoFileName}@3x.png",
       "scale": "3x"
-    }
+    }${includeDarkLogo ? DarkImagesContentsJson : ""}
   ],
   "info": {
     "version": 1,
     "author": "xcode"
   }
 }
+`;
+const DarkImagesContentsJson = `,
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "idiom": "universal",
+      "filename": "${darkLogoFileName}.png",
+      "scale": "1x"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "idiom": "universal",
+      "filename": "${darkLogoFileName}@2x.png",
+      "scale": "2x"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "idiom": "universal",
+      "filename": "${darkLogoFileName}@3x.png",
+      "scale": "3x"
+    }
 `;
 
 const getStoryboard = ({
@@ -145,6 +181,10 @@ export const generate = async ({
   flavor: string;
   logoWidth: number;
 }) => {
+  if (ios) {
+    ios.projectPath = ios.projectPath.replace(/.xcodeproj$/, "");
+  }
+
   await generateSingle({
     android,
     ios,
@@ -171,6 +211,10 @@ export const generate = async ({
       assetsPath,
       theme: "dark",
     });
+  }
+
+  if (ios) {
+    createIosContentsJson(ios.projectPath, !!darkLogoPath);
   }
 
   log(`
@@ -227,8 +271,7 @@ const generateSingle = async ({
     );
   }
 
-  const logoFileName =
-    theme === "light" ? "bootsplash_logo" : "bootsplash_logo_dark";
+  const logoFileName = theme === "light" ? lightLogoFileName : darkLogoFileName;
   const image = await Jimp.read(logoPath);
   const backgroundColorHex = toFullHexadecimal(backgroundColor);
 
@@ -359,8 +402,7 @@ const generateSingle = async ({
 
   if (ios) {
     log(`\n    ${chalk.underline("iOS")}`);
-
-    const projectPath = ios.projectPath.replace(/.xcodeproj$/, "");
+    const projectPath = ios.projectPath;
     const imagesPath = path.resolve(projectPath, "Images.xcassets");
 
     if (fs.existsSync(projectPath)) {
@@ -386,12 +428,6 @@ const generateSingle = async ({
     if (fs.existsSync(imagesPath)) {
       const imageSetPath = path.resolve(imagesPath, xcassetName + ".imageset");
       fs.ensureDirSync(imageSetPath);
-
-      fs.writeFileSync(
-        path.resolve(imageSetPath, "Contents.json"),
-        ContentsJson,
-        "utf-8",
-      );
 
       await Promise.all(
         [
@@ -419,5 +455,22 @@ const generateSingle = async ({
         `No "${imagesPath}" directory found. Skipping iOS images generation…`,
       );
     }
+  }
+};
+
+const createIosContentsJson = (
+  projectPath: string,
+  includeDarkLogo: boolean,
+) => {
+  const imagesPath = path.resolve(projectPath, "Images.xcassets");
+  if (fs.existsSync(imagesPath)) {
+    const imageSetPath = path.resolve(imagesPath, xcassetName + ".imageset");
+    fs.ensureDirSync(imageSetPath);
+
+    fs.writeFileSync(
+      path.resolve(imageSetPath, "Contents.json"),
+      getContentsJson(includeDarkLogo),
+      "utf-8",
+    );
   }
 };
