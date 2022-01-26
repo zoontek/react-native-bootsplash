@@ -1,17 +1,18 @@
 import chalk from "chalk";
 import fs from "fs-extra";
-import Jimp from "jimp";
+import Jimp, { background } from "jimp";
 import path from "path";
 
 const lightLogoFileName = "bootsplash_logo";
 const darkLogoFileName = "bootsplash_logo_dark";
-const xcassetName = "BootSplashLogo";
+const logoAssetName = "BootSplashLogo";
+const colorAssetName = "SplashColor";
 // https://github.com/androidx/androidx/blob/androidx-main/core/core-splashscreen/src/main/res/values/dimens.xml#L22
 const splashScreenIconSizeNoBackground = 288;
 const androidColorName = "bootsplash_background";
 const androidColorRegex = /<color name="bootsplash_background">#\w+<\/color>/g;
 
-const getContentsJson = (includeDarkLogo: boolean) => `{
+const getLogoContentsJson = (includeDarkLogo: boolean) => `{
   "images": [
     {
       "idiom": "universal",
@@ -68,6 +69,47 @@ const DarkImagesContentsJson = `,
       "idiom": "universal",
       "filename": "${darkLogoFileName}@3x.png",
       "scale": "3x"
+    }
+`;
+
+const getColorsContentsJson = (lightColor: any, darkColor: any) => `{
+  "colors" : [
+    {
+      "color" : {
+        "color-space" : "srgb",
+        "components" : {
+          "alpha" : "1.000",
+          "blue" : "0x44",
+          "green" : "0x44",
+          "red" : "0x44"
+        }
+      },
+      "idiom" : "universal"
+    }${darkColor ? DarkImagesContentsJson : ""}
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}`;
+const getDarkColorsContentsJson = (darkColor: any) => `,
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "color" : {
+        "color-space" : "srgb",
+        "components" : {
+          "alpha" : "1.000",
+          "blue" : "0x44",
+          "green" : "0x44",
+          "red" : "0x44"
+        }
+      },
+      "idiom" : "universal"
     }
 `;
 
@@ -128,7 +170,7 @@ const getStoryboard = ({
         </scene>
     </scenes>
     <resources>
-        <image name="${xcassetName}" width="${width}" height="${height}"/>
+        <image name="${logoAssetName}" width="${width}" height="${height}"/>
     </resources>
 </document>
 `;
@@ -214,7 +256,7 @@ export const generate = async ({
   }
 
   if (ios) {
-    createIosContentsJson(ios.projectPath, !!darkLogoPath);
+    createIosAssets(ios.projectPath, !!darkLogoPath);
   }
 
   log(`
@@ -426,7 +468,10 @@ const generateSingle = async ({
     }
 
     if (fs.existsSync(imagesPath)) {
-      const imageSetPath = path.resolve(imagesPath, xcassetName + ".imageset");
+      const imageSetPath = path.resolve(
+        imagesPath,
+        logoAssetName + ".imageset",
+      );
       fs.ensureDirSync(imageSetPath);
 
       await Promise.all(
@@ -458,18 +503,24 @@ const generateSingle = async ({
   }
 };
 
-const createIosContentsJson = (
-  projectPath: string,
-  includeDarkLogo: boolean,
-) => {
+const createIosAssets = (projectPath: string, includeDarkLogo: boolean) => {
   const imagesPath = path.resolve(projectPath, "Images.xcassets");
   if (fs.existsSync(imagesPath)) {
-    const imageSetPath = path.resolve(imagesPath, xcassetName + ".imageset");
+    const imageSetPath = path.resolve(imagesPath, logoAssetName + ".imageset");
     fs.ensureDirSync(imageSetPath);
 
     fs.writeFileSync(
       path.resolve(imageSetPath, "Contents.json"),
-      getContentsJson(includeDarkLogo),
+      getLogoContentsJson(includeDarkLogo),
+      "utf-8",
+    );
+
+    const colorSetPath = path.resolve(imagesPath, colorAssetName + ".colorset");
+    fs.ensureDirSync(colorSetPath);
+
+    fs.writeFileSync(
+      path.resolve(colorSetPath, "Contents.json"),
+      getColorsContentsJson(background()),
       "utf-8",
     );
   }
