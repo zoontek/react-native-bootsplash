@@ -84,7 +84,8 @@ module.exports = {
             ? path.resolve(workingPath, assetsPath)
             : undefined,
 
-          backgroundColor: darkBackgroundColor,
+          backgroundColor,
+          darkBackgroundColor,
           flavor,
           logoWidth,
         }).catch((error) => {
