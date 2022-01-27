@@ -115,10 +115,12 @@ yarn react-native generate-bootsplash <logoPath>
 Generate a launch screen using an original logo file
 
 Options:
-  --background-color <color>  color used as launch screen background (in hexadecimal format) (default: "#fff")
-  --logo-width <width>        logo width at @1x (in dp - we recommend approximately ~100) (default: 100)
-  --assets-path [path]        path to your static assets directory (useful to require the logo file in JS)
-  --flavor <flavor>           [android only] flavor build variant (outputs in an android resource directory other than "main")
+  --background-color <color>       color used as launch screen background (in hexadecimal format) (default: "#fff")
+  --logo-width <width>             logo width at @1x (in dp - we recommend approximately ~100) (default: 100)
+  --assets-path [path]             path to your static assets directory (useful to require the logo file in JS)
+  --flavor <flavor>                [android only] flavor build variant (outputs in an android resource directory other than "main")
+  --dark-logo-path [path]          [optional] if specified, will be used for splashscreen that is shown when phone is in dark mode
+  --dark-background-color <color>  [optional] color used as launch screen background when phone is in dark mode (in hexadecimal format) (default: "#000"). Only used if --dark-logo-path is set!
   -h, --help                  output usage information
 ```
 
@@ -234,6 +236,19 @@ dependencies {
   <style name="BootTheme" parent="Theme.SplashScreen">
     <item name="windowSplashScreenBackground">@color/bootsplash_background</item>
     <item name="windowSplashScreenAnimatedIcon">@mipmap/bootsplash_logo</item>
+    <item name="postSplashScreenTheme">@style/AppTheme</item>
+  </style>
+
+</resources>
+```
+
+If you want to have different splashscreen in Dark Mode, also create/edit the `android/app/src/main/res/values-night/styles.xml`:
+
+```xml
+<resources>
+  <!-- BootTheme should inherit from Theme.SplashScreen -->
+  <style name="BootTheme" parent="Theme.SplashScreen">
+    <item name="windowSplashScreenAnimatedIcon">@mipmap/bootsplash_logo_dark</item>
     <item name="postSplashScreenTheme">@style/AppTheme</item>
   </style>
 
