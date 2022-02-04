@@ -122,6 +122,20 @@ Options:
   -h, --help                  output usage information
 ```
 
+#### Usage with SVGs
+
+Unfortunately no current node-based image manipulation libraries have first class support for SVGs (see [this discussion](https://github.com/zoontek/react-native-bootsplash/issues/313#issuecomment-1030277234)), so it may be necessary to use `librsvg`. On macOS, you can install it with `brew install librsvg`.
+
+After installation, creating a boostplash logo is simple:
+
+```bash
+# Create a large PNG with generous leeway for 4x Android xxxhdpi devices
+rsvg-convert -w 800 assets/bootsplash_logo.svg > assets/bootsplash_logo.png
+react-native generate-bootsplash assets/bootsplash_logo.png
+# Optionally, clean up the PNG
+rm assets/bootsplash_logo.png
+```
+
 #### Full command usage example
 
 ```bash
