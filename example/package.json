@@ -15,6 +15,7 @@
     "react-native": "0.66.4",
     "react-native-bars": "^1.1.1",
     "react-native-bootsplash": "file:../",
+    "react-native-permissions": "^3.2.0",
     "react-native-safe-area-context": "^3.3.2"
   },
   "devDependencies": {
