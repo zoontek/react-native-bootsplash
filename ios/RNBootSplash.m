@@ -26,7 +26,7 @@ static RNBootSplashStatus _status = RNBootSplashStatusHidden;
 RCT_EXPORT_MODULE();
 
 + (BOOL)requiresMainQueueSetup {
-  return YES;
+  return NO;
 }
 
 - (dispatch_queue_t)methodQueue {
@@ -115,23 +115,25 @@ RCT_EXPORT_MODULE();
     return [self shiftNextTask];
   }
 
-  _status = RNBootSplashStatusTransitioning;
+  dispatch_async(dispatch_get_main_queue(), ^{
+    _status = RNBootSplashStatusTransitioning;
 
-  [UIView transitionWithView:_rootView
-                    duration:0.220
-                     options:UIViewAnimationOptionTransitionCrossDissolve
-                  animations:^{
-                               _rootView.loadingView.hidden = YES;
-                             }
-                  completion:^(__unused BOOL finished) {
-                               _status = RNBootSplashStatusHidden;
+    [UIView transitionWithView:_rootView
+                      duration:0.220
+                       options:UIViewAnimationOptionTransitionCrossDissolve
+                    animations:^{
+      _rootView.loadingView.hidden = YES;
+    }
+                    completion:^(__unused BOOL finished) {
+      _status = RNBootSplashStatusHidden;
 
-                               [_rootView.loadingView removeFromSuperview];
-                               _rootView.loadingView = nil;
+      [_rootView.loadingView removeFromSuperview];
+      _rootView.loadingView = nil;
 
-                               task.resolve(@(true));
-                               return [self shiftNextTask];
-                             }];
+      task.resolve(@(true));
+      return [self shiftNextTask];
+    }];
+  });
 }
 
 RCT_REMAP_METHOD(hide,
