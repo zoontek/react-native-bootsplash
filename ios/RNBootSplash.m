@@ -39,7 +39,6 @@ RCT_EXPORT_MODULE();
     return;
 
   _rootView = rootView;
-  _taskQueue = [[NSMutableArray alloc] init];
 
   UIStoryboard *storyboard = [UIStoryboard storyboardWithName:storyboardName bundle:nil];
   [_rootView setLoadingView:[[storyboard instantiateInitialViewController] view]];
@@ -91,9 +90,16 @@ RCT_EXPORT_MODULE();
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
++ (void)ensureTaskQueue {
+  if (_taskQueue == nil)
+    _taskQueue = [[NSMutableArray alloc] init];
+}
+
 + (void)shiftNextTask {
-  if (!_isTransitioning &&
-      [_taskQueue count] > 0 &&
+  [self ensureTaskQueue];
+
+  if ([_taskQueue count] > 0 &&
+      !_isTransitioning &&
       [[UIApplication sharedApplication] applicationState] != UIApplicationStateBackground) {
     RNBootSplashTask *task = [_taskQueue objectAtIndex:0];
     [_taskQueue removeObjectAtIndex:0];
@@ -145,6 +151,7 @@ RCT_REMAP_METHOD(hide,
   RNBootSplashTask *task = [[RNBootSplashTask alloc] initWithFade:fade
                                                          resolver:resolve];
 
+  [RNBootSplash ensureTaskQueue];
   [_taskQueue addObject:task];
   [RNBootSplash shiftNextTask];
 }
