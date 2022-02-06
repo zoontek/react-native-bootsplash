@@ -100,8 +100,8 @@ RCT_REMAP_METHOD(hide,
       [_rootView.loadingView removeFromSuperview];
       _rootView.loadingView = nil;
 
-      _isTransitioning = false;
       resolve(@(true));
+      _isTransitioning = false;
     }];
   });
 }
@@ -109,11 +109,10 @@ RCT_REMAP_METHOD(hide,
 RCT_REMAP_METHOD(getVisibilityStatus,
                  getVisibilityStatusWithResolver:(RCTPromiseResolveBlock)resolve
                  rejecter:(RCTPromiseRejectBlock)reject) {
-  if (_isTransitioning)
-    return resolve(@"transitioning");
-
   if ([RNBootSplash isHidden])
     return resolve(@"hidden");
+  else if (_isTransitioning)
+    return resolve(@"transitioning");
   else
     return resolve(@"visible");
 }
