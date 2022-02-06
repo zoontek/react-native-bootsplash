@@ -34,7 +34,10 @@ RCT_EXPORT_MODULE();
 }
 
 + (void)initWithStoryboard:(NSString * _Nonnull)storyboardName
-                  rootView:(RCTRootView * _Nonnull)rootView {
+                  rootView:(RCTRootView * _Nullable)rootView {
+  if (rootView == nil || _rootView != nil || RCTRunningInAppExtension())
+    return;
+
   _rootView = rootView;
   _status = RNBootSplashStatusVisible;
   _taskQueue = [[NSMutableArray alloc] init];
@@ -135,7 +138,7 @@ RCT_REMAP_METHOD(hide,
                  hideWithFade:(BOOL)fade
                  resolver:(RCTPromiseResolveBlock)resolve
                  rejecter:(RCTPromiseRejectBlock)reject) {
-  if (_rootView == nil || _status == RNBootSplashStatusHidden)
+  if (_rootView == nil || _status == RNBootSplashStatusHidden || RCTRunningInAppExtension())
     return resolve(@(true));
 
   RNBootSplashTask *task = [[RNBootSplashTask alloc] initWithFade:fade

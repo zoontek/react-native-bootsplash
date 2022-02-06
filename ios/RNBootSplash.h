@@ -20,6 +20,6 @@ typedef enum {
 @interface RNBootSplash : NSObject <RCTBridgeModule>
 
 + (void)initWithStoryboard:(NSString * _Nonnull)storyboardName
-                  rootView:(RCTRootView * _Nonnull)rootView;
+                  rootView:(RCTRootView * _Nullable)rootView;
 
 @end
