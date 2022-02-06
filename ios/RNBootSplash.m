@@ -5,7 +5,7 @@
 
 static NSMutableArray<RNBootSplashTask *> *_taskQueue = nil;
 static RCTRootView *_rootView = nil;
-static RNBootSplashStatus _status = RNBootSplashStatusHidden;
+static bool _isTransitioning = false;
 
 @implementation RNBootSplashTask
 
@@ -39,7 +39,6 @@ RCT_EXPORT_MODULE();
     return;
 
   _rootView = rootView;
-  _status = RNBootSplashStatusVisible;
   _taskQueue = [[NSMutableArray alloc] init];
 
   UIStoryboard *storyboard = [UIStoryboard storyboardWithName:storyboardName bundle:nil];
@@ -81,8 +80,6 @@ RCT_EXPORT_MODULE();
 
 + (void)removeLoadingView {
   if (![self isHidden]) {
-    _status = RNBootSplashStatusHidden;
-
     _rootView.loadingView.hidden = YES;
     [_rootView.loadingView removeFromSuperview];
     _rootView.loadingView = nil;
@@ -95,7 +92,7 @@ RCT_EXPORT_MODULE();
 }
 
 + (void)shiftNextTask {
-  if (_status != RNBootSplashStatusTransitioning &&
+  if (!_isTransitioning &&
       [_taskQueue count] > 0 &&
       [[UIApplication sharedApplication] applicationState] != UIApplicationStateBackground) {
     RNBootSplashTask *task = [_taskQueue objectAtIndex:0];
@@ -106,7 +103,7 @@ RCT_EXPORT_MODULE();
 }
 
 + (void)hideWithTask:(RNBootSplashTask *)task {
-  if (_status == RNBootSplashStatusHidden) {
+  if ([self isHidden]) {
     task.resolve(@(true));
     return [self shiftNextTask];
   }
@@ -118,7 +115,7 @@ RCT_EXPORT_MODULE();
   }
 
   dispatch_async(dispatch_get_main_queue(), ^{
-    _status = RNBootSplashStatusTransitioning;
+    _isTransitioning = true;
 
     [UIView transitionWithView:_rootView
                       duration:0.220
@@ -127,12 +124,12 @@ RCT_EXPORT_MODULE();
       _rootView.loadingView.hidden = YES;
     }
                     completion:^(__unused BOOL finished) {
-      _status = RNBootSplashStatusHidden;
-
       [_rootView.loadingView removeFromSuperview];
       _rootView.loadingView = nil;
 
       task.resolve(@(true));
+      _isTransitioning = false;
+
       return [self shiftNextTask];
     }];
   });
@@ -142,7 +139,7 @@ RCT_REMAP_METHOD(hide,
                  hideWithFade:(BOOL)fade
                  resolver:(RCTPromiseResolveBlock)resolve
                  rejecter:(RCTPromiseRejectBlock)reject) {
-  if (_rootView == nil || _status == RNBootSplashStatusHidden || RCTRunningInAppExtension())
+  if ([RNBootSplash isHidden] || RCTRunningInAppExtension())
     return resolve(@(true));
 
   RNBootSplashTask *task = [[RNBootSplashTask alloc] initWithFade:fade
@@ -155,14 +152,12 @@ RCT_REMAP_METHOD(hide,
 RCT_REMAP_METHOD(getVisibilityStatus,
                  getVisibilityStatusWithResolver:(RCTPromiseResolveBlock)resolve
                  rejecter:(RCTPromiseRejectBlock)reject) {
-  switch (_status) {
-    case RNBootSplashStatusVisible:
-      return resolve(@"visible");
-    case RNBootSplashStatusHidden:
-      return resolve(@"hidden");
-    case RNBootSplashStatusTransitioning:
-      return resolve(@"transitioning");
-  }
+  if ([RNBootSplash isHidden])
+    return resolve(@"hidden");
+  else if (_isTransitioning)
+    return resolve(@"transitioning");
+  else
+    return resolve(@"visible");
 }
 
 @end
