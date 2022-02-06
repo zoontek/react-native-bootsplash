@@ -316,8 +316,6 @@ RNBootSplash.hide(); // immediate
 RNBootSplash.hide({ fade: true }); // fade
 ```
 
----
-
 ### getVisibilityStatus()
 
 #### Method type
@@ -360,7 +358,25 @@ function App() {
 
 **🤙 A more complex example is available in the [`/example` folder](example).**
 
-### Testing with Jest
+## Using React Navigation
+
+If you are using React Navigation, you can hide the splash screen once the navigation container and all children have finished mounting by using the `onReady` function.
+
+```js
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import RNBootSplash from "react-native-bootsplash";
+
+function App() {
+  return (
+    <NavigationContainer onReady={() => RNBootSplash.hide()}>
+      {/* content */}
+    </NavigationContainer>
+  );
+}
+```
+
+## Testing with Jest
 
 Testing code which uses this library requires some setup since we need to mock the native methods.
 
@@ -380,24 +396,6 @@ After that, we need to add the setup file in the jest config. You can add it und
 ```json
 {
   "setupFiles": ["<rootDir>/jest/setup.js"]
-}
-```
-
-### Using React Navigation
-
-If you are using React Navigation, you can hide the splash screen once the navigation container and all children have finished mounting by using the `onReady` function.
-
-```js
-import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import RNBootSplash from "react-native-bootsplash";
-
-function App() {
-  return (
-    <NavigationContainer onReady={() => RNBootSplash.hide()}>
-      {/* content */}
-    </NavigationContainer>
-  );
 }
 ```
 
