@@ -65,14 +65,14 @@
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",
-    "@types/react-native": "^0.66.12",
-    "lint-staged": "^12.1.7",
+    "@types/react-native": "^0.66.15",
+    "lint-staged": "^12.3.3",
     "prettier": "^2.5.1",
     "prettier-plugin-organize-imports": "^2.3.4",
     "react": "^17.0.2",
-    "react-native": "^0.66.4",
+    "react-native": "^0.67.2",
     "react-native-builder-bob": "^0.18.2",
     "rescript": "^9.1.4",
-    "typescript": "^4.5.4"
+    "typescript": "^4.5.5"
   }
 }

@@ -1,12 +1,6 @@
 #import <React/RCTBridgeModule.h>
 #import <React/RCTRootView.h>
 
-typedef enum {
-  RNBootSplashStatusVisible = 0,
-  RNBootSplashStatusHidden = 1,
-  RNBootSplashStatusTransitioning = 2
-} RNBootSplashStatus;
-
 @interface RNBootSplashTask : NSObject
 
 @property (nonatomic, readonly) BOOL fade;
@@ -20,6 +14,6 @@ typedef enum {
 @interface RNBootSplash : NSObject <RCTBridgeModule>
 
 + (void)initWithStoryboard:(NSString * _Nonnull)storyboardName
-                  rootView:(RCTRootView * _Nonnull)rootView;
+                  rootView:(RCTRootView * _Nullable)rootView;
 
 @end
