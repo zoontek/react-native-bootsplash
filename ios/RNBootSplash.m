@@ -91,7 +91,7 @@ RCT_REMAP_METHOD(hide,
     _isTransitioning = true;
 
     [UIView transitionWithView:_rootView
-                      duration:0.250
+                      duration:0.220
                        options:UIViewAnimationOptionTransitionCrossDissolve
                     animations:^{
       _rootView.loadingView.hidden = YES;
