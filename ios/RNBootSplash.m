@@ -6,6 +6,7 @@
 static NSMutableArray<RNBootSplashTask *> *_taskQueue = nil;
 static RCTRootView *_rootView = nil;
 static bool _isTransitioning = false;
+static bool _shouldPreventInit = false;
 
 @implementation RNBootSplashTask
 
@@ -40,12 +41,17 @@ RCT_EXPORT_MODULE();
 
   _rootView = rootView;
 
-  UIStoryboard *storyboard = [UIStoryboard storyboardWithName:storyboardName bundle:nil];
-  [_rootView setLoadingView:[[storyboard instantiateInitialViewController] view]];
-
   [[NSNotificationCenter defaultCenter] removeObserver:rootView
                                                   name:RCTContentDidAppearNotification
                                                 object:rootView];
+
+  UIStoryboard *storyboard = [UIStoryboard storyboardWithName:storyboardName bundle:nil];
+  UIView *loadingView = [[storyboard instantiateInitialViewController] view];
+
+  if (_shouldPreventInit)
+    return;
+
+  [_rootView setLoadingView:loadingView];
 
   [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(onJavaScriptDidLoad:)
@@ -73,6 +79,11 @@ RCT_EXPORT_MODULE();
                                                 object:nil];
 }
 
++ (void)onJavaScriptDidFailToLoad {
+  [self removeLoadingView];
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
 + (bool)isHidden {
   return _rootView == nil || _rootView.loadingView == nil || [_rootView.loadingView isHidden];
 }
@@ -83,11 +94,6 @@ RCT_EXPORT_MODULE();
     [_rootView.loadingView removeFromSuperview];
     _rootView.loadingView = nil;
   }
-}
-
-+ (void)onJavaScriptDidFailToLoad {
-  [self removeLoadingView];
-  [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 + (void)ensureTaskQueue {
@@ -145,6 +151,8 @@ RCT_REMAP_METHOD(hide,
                  hideWithFade:(BOOL)fade
                  resolver:(RCTPromiseResolveBlock)resolve
                  rejecter:(RCTPromiseRejectBlock)reject) {
+  _shouldPreventInit = true;
+
   if ([RNBootSplash isHidden] || RCTRunningInAppExtension())
     return resolve(@(true));
 
