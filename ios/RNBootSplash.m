@@ -54,7 +54,7 @@ RCT_EXPORT_MODULE();
   [_rootView setLoadingView:loadingView];
 
   [[NSNotificationCenter defaultCenter] addObserver:self
-                                           selector:@selector(onJavaScriptDidLoad:)
+                                           selector:@selector(onJavaScriptDidLoad)
                                                name:RCTJavaScriptDidLoadNotification
                                              object:nil];
 
@@ -69,7 +69,7 @@ RCT_EXPORT_MODULE();
                                              object:nil];
 }
 
-+ (void)onJavaScriptDidLoad:(NSNotification *)notification {
++ (void)onJavaScriptDidLoad {
   [[NSNotificationCenter defaultCenter] removeObserver:self
                                                   name:RCTJavaScriptDidLoadNotification
                                                 object:nil];
