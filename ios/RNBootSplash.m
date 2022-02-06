@@ -75,15 +75,22 @@ RCT_EXPORT_MODULE();
                                                 object:nil];
 }
 
-+ (void)onJavaScriptDidFailToLoad {
-  _status = RNBootSplashStatusHidden;
++ (bool)isHidden {
+  return _rootView == nil || _rootView.loadingView == nil || [_rootView.loadingView isHidden];
+}
 
-  if (_rootView != nil) {
++ (void)removeLoadingView {
+  if (![self isHidden]) {
+    _status = RNBootSplashStatusHidden;
+
     _rootView.loadingView.hidden = YES;
     [_rootView.loadingView removeFromSuperview];
     _rootView.loadingView = nil;
   }
+}
 
++ (void)onJavaScriptDidFailToLoad {
+  [self removeLoadingView];
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
@@ -105,12 +112,7 @@ RCT_EXPORT_MODULE();
   }
 
   if (!task.fade) {
-    _status = RNBootSplashStatusHidden;
-
-    _rootView.loadingView.hidden = YES;
-    [_rootView.loadingView removeFromSuperview];
-    _rootView.loadingView = nil;
-
+    [self removeLoadingView];
     task.resolve(@(true));
     return [self shiftNextTask];
   }
