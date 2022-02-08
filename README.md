@@ -122,17 +122,6 @@ Options:
   -h, --help                  output usage information
 ```
 
-#### Usage with SVG
-
-You might want to use SVG as input file. For that, you can install a CLI tool to convert your logo first:
-
-```shell
-$ brew install librsvg # available on macOS
-$ rsvg-convert -w 3000 bootsplash_logo.svg bootsplash_logo.png # create a large PNG with generous leeway for 4x Android xxxhdpi devices
-$ react-native generate-bootsplash bootsplash_logo.png
-$ rm bootsplash_logo.png # optionally, clean up the PNG
-```
-
 #### Full command usage example
 
 ```bash
@@ -141,6 +130,17 @@ yarn react-native generate-bootsplash assets/bootsplash_logo_original.png \
   --logo-width=100 \
   --assets-path=assets \
   --flavor=main
+```
+
+#### Using an SVG
+
+You might want to use SVG as input file. For that, you can install a CLI tool to convert your logo first:
+
+```bash
+$ brew install librsvg # available on macOS
+$ rsvg-convert -w 3000 bootsplash_logo.svg bootsplash_logo.png # create a large PNG with generous leeway for 4x Android xxxhdpi devices
+$ react-native generate-bootsplash bootsplash_logo.png
+$ rm bootsplash_logo.png # optionally, clean up the PNG
 ```
 
 ![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/master/docs/cli_tool.png?raw=true)
