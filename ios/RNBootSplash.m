@@ -6,7 +6,6 @@
 static NSMutableArray<RCTPromiseResolveBlock> *_resolverQueue = nil;
 static RCTRootView *_rootView = nil;
 static bool _isTransitioning = false;
-static bool _shouldPreventInit = false;
 
 @implementation RNBootSplash
 
@@ -34,8 +33,8 @@ RCT_EXPORT_MODULE();
   UIStoryboard *storyboard = [UIStoryboard storyboardWithName:storyboardName bundle:nil];
   UIView *loadingView = [[storyboard instantiateInitialViewController] view];
 
-  if (_shouldPreventInit)
-    return;
+  if (_resolverQueue != nil)
+    return; // hide has already been called, abort init
 
   [_rootView setLoadingView:loadingView];
 
@@ -66,19 +65,13 @@ RCT_EXPORT_MODULE();
 + (void)removeLoadingView {
   if (![self isHidden]) {
     _rootView.loadingView.hidden = YES;
+
     [_rootView.loadingView removeFromSuperview];
     _rootView.loadingView = nil;
   }
 }
 
-- (void)ensureResolverQueue {
-  if (_resolverQueue == nil)
-    _resolverQueue = [[NSMutableArray alloc] init];
-}
-
 - (void)clearResolverQueue {
-  [self ensureResolverQueue];
-
   while ([_resolverQueue count] > 0) {
     RCTPromiseResolveBlock resolve = [_resolverQueue objectAtIndex:0];
     [_resolverQueue removeObjectAtIndex:0];
@@ -91,13 +84,13 @@ RCT_REMAP_METHOD(hide,
                  hideWithFade:(BOOL)fade
                  resolver:(RCTPromiseResolveBlock)resolve
                  rejecter:(RCTPromiseRejectBlock)reject) {
-  _shouldPreventInit = true;
+  if (_resolverQueue == nil)
+    _resolverQueue = [[NSMutableArray alloc] init];
+
+  [_resolverQueue addObject:resolve];
 
   if ([RNBootSplash isHidden] || RCTRunningInAppExtension())
-    return resolve(@(true));
-
-  [self ensureResolverQueue];
-  [_resolverQueue addObject:resolve];
+    return [self clearResolverQueue];
 
   if (!fade) {
     [RNBootSplash removeLoadingView];
