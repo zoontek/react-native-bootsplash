@@ -12,7 +12,6 @@ import androidx.core.splashscreen.SplashScreen;
 import androidx.core.splashscreen.SplashScreenViewProvider;
 
 import com.facebook.common.logging.FLog;
-import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -25,7 +24,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 @ReactModule(name = RNBootSplashModule.NAME)
-public class RNBootSplashModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
+public class RNBootSplashModule extends ReactContextBaseJavaModule {
 
   public static final String NAME = "RNBootSplash";
   private static final int ANIMATION_DURATION = 220;
@@ -39,15 +38,13 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
   @Nullable
   private static SplashScreen mSplashScreen = null;
 
-  private static final RNBootSplashQueue<RNBootSplashTask> mTaskQueue = new RNBootSplashQueue<>();
+  private static final RNBootSplashQueue<Promise> mPromiseQueue = new RNBootSplashQueue<>();
   private static Status mStatus = Status.HIDDEN;
-  private static boolean mIsAppInForeground = true;
   private static boolean mShouldFade = false;
   private static boolean mShouldKeepOnScreen = true;
 
   public RNBootSplashModule(ReactApplicationContext reactContext) {
     super(reactContext);
-    reactContext.addLifecycleEventListener(this);
   }
 
   @Override
@@ -96,95 +93,66 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
     });
   }
 
-  @Override
-  public void onHostDestroy() {
-    mIsAppInForeground = false;
-  }
+  private void clearPromiseQueue() {
+    while (!mPromiseQueue.isEmpty()) {
+      Promise promise = mPromiseQueue.shift();
 
-  @Override
-  public void onHostPause() {
-    mIsAppInForeground = false;
-  }
-
-  @Override
-  public void onHostResume() {
-    mIsAppInForeground = true;
-    shiftNextTask();
-  }
-
-  private void shiftNextTask() {
-    if (mStatus != Status.TRANSITIONING && mIsAppInForeground) {
-      RNBootSplashTask task = mTaskQueue.shift();
-
-      if (task != null) {
-        hideWithTask(task);
-      }
+      if (promise != null)
+        promise.resolve(true);
     }
   }
 
-  private void waitAndRetry() {
-    final Timer timer = new Timer();
-
-    timer.schedule(new TimerTask() {
-      @Override
-      public void run() {
-        shiftNextTask();
-        timer.cancel();
-      }
-    }, 250);
-  }
-
-  private void hideWithTask(final RNBootSplashTask task) {
-    final Activity activity = getReactApplicationContext().getCurrentActivity();
-    final boolean fade = task.getFade();
-    final Promise promise = task.getPromise();
-
+  private void hideAndResolveAll(final boolean fade) {
     if (mSplashScreen == null || mStatus == Status.HIDDEN) {
-      promise.resolve(true);
-      shiftNextTask();
+      clearPromiseQueue();
       return;
     }
 
     UiThreadUtil.runOnUiThread(new Runnable() {
       @Override
       public void run() {
+        final Activity activity = getReactApplicationContext().getCurrentActivity();
+
         if (activity == null || activity.isFinishing()) {
-          waitAndRetry(); // Wait for activity to be ready
-          return;
-        }
+          // Wait for activity to be ready
+          final Timer timer = new Timer();
 
-        if (fade) {
-          mStatus = Status.TRANSITIONING;
-        }
-
-        mShouldFade = fade;
-        mShouldKeepOnScreen = false;
-
-        final Timer timer = new Timer();
-
-        // We cannot rely on setOnExitAnimationListener
-        // See https://issuetracker.google.com/issues/197906327
-        timer.schedule(new TimerTask() {
-          @Override
-          public void run() {
-            mStatus = Status.HIDDEN;
-            timer.cancel();
-            promise.resolve(true);
-            shiftNextTask();
+          timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+              hideAndResolveAll(fade);
+              timer.cancel();
+            }
+          }, 250);
+        } else {
+          if (fade) {
+            mStatus = Status.TRANSITIONING;
           }
-        }, ANIMATION_DURATION);
+
+          mShouldFade = fade;
+          mShouldKeepOnScreen = false;
+
+          final Timer timer = new Timer();
+
+          // We cannot rely on setOnExitAnimationListener
+          // See https://issuetracker.google.com/issues/197906327
+          timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+              mStatus = Status.HIDDEN;
+              timer.cancel();
+              clearPromiseQueue();
+            }
+          }, ANIMATION_DURATION);
+        }
       }
     });
   }
 
   @ReactMethod
   public void hide(final boolean fade, final Promise promise) {
-    if (mSplashScreen == null || mStatus == Status.HIDDEN) {
-      promise.resolve(true);
-    } else {
-      mTaskQueue.push(new RNBootSplashTask(fade, promise));
-      shiftNextTask();
-    }
+    mPromiseQueue.push(promise);
+    hideAndResolveAll(fade);
   }
 
   @ReactMethod
