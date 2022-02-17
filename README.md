@@ -138,7 +138,7 @@ You might want to use SVG as input file. For that, you can install a CLI tool to
 
 ```bash
 $ brew install librsvg # available on macOS
-$ rsvg-convert -w 3000 bootsplash_logo.svg bootsplash_logo.png # create a large PNG with generous leeway for 4x Android xxxhdpi devices
+$ rsvg-convert -w 3000 bootsplash_logo.svg -o bootsplash_logo.png # create a large PNG with generous leeway for 4x Android xxxhdpi devices
 $ react-native generate-bootsplash bootsplash_logo.png
 $ rm bootsplash_logo.png # optionally, clean up the PNG
 ```
