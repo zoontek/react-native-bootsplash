@@ -396,7 +396,7 @@ To add the mocks, create a file _jest/setup.js_ (or any other file name) contain
 ```js
 jest.mock("react-native-bootsplash", () => {
   return {
-    show: jest.fn().mockResolvedValueOnce(),
+    hide: jest.fn().mockResolvedValueOnce(),
     getVisibilityStatus: jest.fn().mockResolvedValue("hidden"),
   };
 });
