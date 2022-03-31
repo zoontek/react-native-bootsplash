@@ -97,7 +97,7 @@ public class MainApplication extends Application implements ReactApplication {
 
 ## Setup
 
-ℹ️ For `react-native` < `0.68` documentation, check [`4.1.3 README.md`](https://github.com/zoontek/react-native-bootsplash/blob/4.1.3/README.md)
+ℹ️ For `react-native` < `0.68` documentation, check the [`v4.1.3 README.md`](https://github.com/zoontek/react-native-bootsplash/blob/4.1.3/README.md)
 
 ### Assets generation
 
