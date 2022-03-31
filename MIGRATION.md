@@ -11,12 +11,14 @@
 
 ## Code modifications
 
+ℹ️ For `react-native` < `0.68` migration guide, check [`4.1.3 README.md`](https://github.com/zoontek/react-native-bootsplash/blob/4.1.3/MIGRATION.md)
+
 For `android/build.gradle`:
 
 ```diff
 buildscript {
   ext {
--   buildToolsVersion = "30.0.2"
+-   buildToolsVersion = "31.0.0"
 -   minSdkVersion = 21
 -   compileSdkVersion = 30
 -   targetSdkVersion = 30
@@ -36,10 +38,9 @@ For `android/app/build.gradle`:
 // …
 
 dependencies {
-  implementation fileTree(dir: "libs", include: ["*.jar"])
-  //noinspection GradleDynamicVersion
-  implementation "com.facebook.react:react-native:+"  // From node_modules
+  // …
 
+  implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 + implementation "androidx.core:core-splashscreen:1.0.0-beta01"
 ```
 
@@ -86,10 +87,10 @@ For `android/app/src/main/AndroidManifest.xml`:
     <activity
       android:name=".MainActivity"
       android:label="@string/app_name"
-      android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
+      android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
       android:launchMode="singleTask"
       android:windowSoftInputMode="adjustResize"
-      android:exported="true"> <!-- note the new "exported" element needed for API31 -->
+      android:exported="true">
 +     <intent-filter>
 +         <action android:name="android.intent.action.MAIN" />
 +         <category android:name="android.intent.category.LAUNCHER" />
@@ -105,8 +106,6 @@ For `android/app/src/main/AndroidManifest.xml`:
 -       <category android:name="android.intent.category.LAUNCHER" />
 -     </intent-filter>
 -   </activity>
-
-    <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
   </application>
 </manifest>
 ```
@@ -117,19 +116,13 @@ For `android/app/src/main/java/com/yourprojectname/MainActivity.java`:
 - import android.os.Bundle;
 
 import com.facebook.react.ReactActivity;
-+ import com.facebook.react.ReactActivityDelegate;
+import com.facebook.react.ReactActivityDelegate;
+import com.facebook.react.ReactRootView;
 import com.zoontek.rnbootsplash.RNBootSplash;
 
 public class MainActivity extends ReactActivity {
 
-  /**
-   * Returns the name of the main component registered from JavaScript. This is used to schedule
-   * rendering of the component.
-   */
-  @Override
-  protected String getMainComponentName() {
-    return "RNBootSplashExample";
-  }
+  // …
 
 - @Override
 - protected void onCreate(Bundle savedInstanceState) {
@@ -137,17 +130,25 @@ public class MainActivity extends ReactActivity {
 -   RNBootSplash.init(R.drawable.bootsplash, MainActivity.this);
 - }
 
-+ @Override
-+ protected ReactActivityDelegate createReactActivityDelegate() {
-+   return new ReactActivityDelegate(this, getMainComponentName()) {
-+
-+     @Override
-+     protected void loadApp(String appKey) {
-+       RNBootSplash.init(MainActivity.this);
-+       super.loadApp(appKey);
-+     }
-+   };
-+ }
+  public static class MainActivityDelegate extends ReactActivityDelegate {
+    public MainActivityDelegate(ReactActivity activity, String mainComponentName) {
+      super(activity, mainComponentName);
+    }
+
+    @Override
+    protected ReactRootView createRootView() {
+      ReactRootView reactRootView = new ReactRootView(getContext());
+      // If you opted-in for the New Architecture, we enable the Fabric Renderer.
+      reactRootView.setIsFabric(BuildConfig.IS_NEW_ARCHITECTURE_ENABLED);
+      return reactRootView;
+    }
+
++   @Override
++   protected void loadApp(String appKey) {
++     RNBootSplash.init(getPlainActivity());
++     super.loadApp(appKey);
++   }
+  }
 }
 ```
 

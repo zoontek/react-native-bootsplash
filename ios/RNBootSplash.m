@@ -20,11 +20,14 @@ RCT_EXPORT_MODULE();
 }
 
 + (void)initWithStoryboard:(NSString * _Nonnull)storyboardName
-                  rootView:(RCTRootView * _Nullable)rootView {
-  if (rootView == nil || _rootView != nil || RCTRunningInAppExtension())
+                  rootView:(UIView * _Nullable)rootView {
+  if (rootView == nil ||
+      ![rootView isKindOfClass:[RCTRootView class]] ||
+      _rootView != nil ||
+      RCTRunningInAppExtension())
     return;
 
-  _rootView = rootView;
+  _rootView = (RCTRootView *)rootView;
 
   [[NSNotificationCenter defaultCenter] removeObserver:rootView
                                                   name:RCTContentDidAppearNotification
