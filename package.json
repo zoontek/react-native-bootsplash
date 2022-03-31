@@ -1,6 +1,6 @@
 {
   "name": "react-native-bootsplash",
-  "version": "4.1.3",
+  "version": "4.1.4",
   "license": "MIT",
   "description": "Display a bootsplash on your app starts. Hide it when you want.",
   "author": "Mathieu Acthernoene <zoontek@gmail.com>",
@@ -60,19 +60,22 @@
   },
   "dependencies": {
     "chalk": "^4.1.2",
-    "fs-extra": "^10.0.0",
+    "fs-extra": "^10.0.1",
     "jimp": "^0.16.1"
+  },
+  "resolutions": {
+    "@types/react": "^17"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",
-    "@types/react-native": "^0.66.15",
-    "lint-staged": "^12.3.3",
-    "prettier": "^2.5.1",
+    "@types/react-native": "^0.67.3",
+    "lint-staged": "^12.3.7",
+    "prettier": "^2.6.1",
     "prettier-plugin-organize-imports": "^2.3.4",
     "react": "^17.0.2",
-    "react-native": "^0.67.2",
+    "react-native": "^0.68.0",
     "react-native-builder-bob": "^0.18.2",
     "rescript": "^9.1.4",
-    "typescript": "^4.5.5"
+    "typescript": "^4.6.3"
   }
 }
