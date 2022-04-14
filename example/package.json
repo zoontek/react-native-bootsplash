@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "react": "17.0.2",
-    "react-native": "0.68.0",
+    "react-native": "0.68.1",
     "react-native-bars": "^1.1.3",
     "react-native-bootsplash": "file:../",
     "react-native-permissions": "^3.3.1",
@@ -24,7 +24,7 @@
   "devDependencies": {
     "@babel/core": "^7.17.8",
     "@babel/runtime": "^7.12.5",
-    "@types/react-native": "^0.67.3",
+    "@types/react-native": "^0.67.4",
     "metro-react-native-babel-preset": "^0.67.0",
     "typescript": "^4.6.3"
   }

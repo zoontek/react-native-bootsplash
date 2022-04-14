@@ -26,7 +26,6 @@ buildscript {
 +   minSdkVersion = 23
 +   compileSdkVersion = 31
 +   targetSdkVersion = 31
-    ndkVersion = "21.4.7075529"
   }
 
   // …
