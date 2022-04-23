@@ -22,9 +22,9 @@
     "@types/react": "^17"
   },
   "devDependencies": {
-    "@babel/core": "^7.17.8",
-    "@babel/runtime": "^7.12.5",
-    "@types/react-native": "^0.67.4",
+    "@babel/core": "^7.17.9",
+    "@babel/runtime": "^7.17.9",
+    "@types/react-native": "^0.67.6",
     "metro-react-native-babel-preset": "^0.67.0",
     "typescript": "^4.6.3"
   }
