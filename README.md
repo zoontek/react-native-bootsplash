@@ -172,7 +172,9 @@ ios/YourProjectName/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo@3x.p
 
 ### iOS
 
-_⚠️ Only `.storyboard` files are supported ([Apple has deprecated other methods in April 2020](https://developer.apple.com/news/?id=01132020b))._
+_⚠️  Only `.storyboard` files are supported ([Apple has deprecated other methods in April 2020](https://developer.apple.com/news/?id=01132020b))._
+
+---
 
 Edit the `ios/YourProjectName/AppDelegate.mm` file:
 
@@ -205,6 +207,10 @@ Set the `BootSplash.storyboard` as launch screen file:
 | ![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/master/docs/xcode-1.png?raw=true) | ![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/master/docs/xcode-2.png?raw=true) | ![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/master/docs/xcode-3.png?raw=true) |
 
 ### Android
+
+_⚠️  On Android 12, the splash screen will not appear if you start your app from the terminal / Android Studio. To see it, kill your app and restart it in normal conditions (tap on your app icon in the app launcher)._
+
+---
 
 1. As this library only support Android 6+, you probably have to edit your `android/build.gradle` file:
 
