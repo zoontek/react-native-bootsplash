@@ -1,9 +1,5 @@
 # 🚀 react-native-bootsplash
 
-<a href="https://github.com/sponsors/zoontek">
-  <img align="right" width="160" alt="This library helped you? Consider sponsoring!" src=".github/funding-octocat.svg">
-</a>
-
 Show a bootsplash during app startup. Hide it when you are ready.<br>
 **For migration from the v3, check the [`MIGRATION.md` guide](https://github.com/zoontek/react-native-bootsplash/blob/master/MIGRATION.md).**
 
@@ -18,6 +14,16 @@ Show a bootsplash during app startup. Hide it when you are ready.<br>
   <img height="500" src="https://raw.githubusercontent.com/zoontek/react-native-bootsplash/HEAD/docs/android_demo.gif?raw=true" alt="android demo"></img>
 </p>
 
+## Funding
+
+<a href="https://github.com/sponsors/zoontek">
+  <img align="right" width="110" alt="This library helped you? Consider sponsoring!" src=".github/funding-octocat.svg">
+</a>
+
+This module is provided **as is**, I work on it in my free time.
+
+If your company uses it in a production app, consider sponsoring this project 💰. You also can contact me for **premium** enterprise support, help with issues, prioritize bugfixes, feature requests, etc.
+
 ## Support
 
 | version | react-native version |
@@ -25,7 +31,7 @@ Show a bootsplash during app startup. Hide it when you are ready.<br>
 | 4.0.0+  | 0.65.0+              |
 | 3.0.0+  | 0.63.0+              |
 
-## Installation
+## Setup
 
 ```bash
 $ npm install --save react-native-bootsplash
