@@ -3810,17 +3810,17 @@ react-devtools-core@4.24.0:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
-react-native-bars@^1.1.5:
-  version "1.1.5"
-  resolved "https://registry.yarnpkg.com/react-native-bars/-/react-native-bars-1.1.5.tgz#226258b066af47cf620a217ec4a056607c32fb8d"
-  integrity sha512-JTk0c3Inp7Loz7kOJtSFd1MU6GL6wz/IAL7ZZ2F613KkR5Xs6h+JsmYk9xTNDCcCcP+/QLt7XEGGmQtu0J1x4w==
+react-native-bars@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/react-native-bars/-/react-native-bars-1.2.0.tgz#0a240d3fbe349c2596b04edf647c3ef87aa69c01"
+  integrity sha512-2pXnT6zimIg7wCniZKd3kYgP7Zz0RDhUYSi0cdFANSSyv7BiqyvRNrFpkMXbaz/zfEnYiSfSe7XjT/L4MfdaSQ==
 
 "react-native-bootsplash@file:..":
-  version "4.1.6"
+  version "4.2.0"
   dependencies:
-    chalk "^4.1.2"
     fs-extra "^10.1.0"
     jimp "^0.16.1"
+    picocolors "^1.0.0"
 
 react-native-codegen@^0.69.1:
   version "0.69.1"

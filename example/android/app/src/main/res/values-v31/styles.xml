@@ -12,8 +12,8 @@
         <item name="android:navigationBarColor">@android:color/transparent</item>
 
         <!-- Disable auto contrasted system bars background -->
-        <item name="android:enforceStatusBarContrast" tools:targetApi="q">false</item>
-        <item name="android:enforceNavigationBarContrast" tools:targetApi="q">false</item>
+        <item name="android:enforceStatusBarContrast">false</item>
+        <item name="android:enforceNavigationBarContrast">false</item>
     </style>
 
     <!-- BootTheme should inherit from Theme.SplashScreen -->
@@ -21,10 +21,6 @@
         <item name="windowSplashScreenBackground">@color/bootsplash_background</item>
         <item name="windowSplashScreenAnimatedIcon">@mipmap/bootsplash_logo</item>
         <item name="postSplashScreenTheme">@style/AppTheme</item>
-
-        <!-- Bars initial styles: true = dark-content, false = light-content -->
-        <item name="android:windowLightStatusBar">true</item>
-        <item name="android:windowLightNavigationBar">true</item>
     </style>
 
 </resources>
