@@ -49,5 +49,5 @@ repositories {
 dependencies {
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+" // From node_modules
-    implementation "androidx.core:core-splashscreen:${safeExtGet("androidXSplashScreenVersion", "1.0.0-beta01")}"
+    implementation "androidx.core:core-splashscreen:${safeExtGet("androidXSplashScreenVersion", "1.0.0-rc01")}"
 }

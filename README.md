@@ -238,7 +238,7 @@ dependencies {
   // …
 
   implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
-  implementation "androidx.core:core-splashscreen:1.0.0-beta01" // Add this line
+  implementation "androidx.core:core-splashscreen:1.0.0-rc01" // Add this line
 
   // …
 ```
