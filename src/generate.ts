@@ -1,7 +1,7 @@
-import chalk from "chalk";
 import fs from "fs-extra";
 import Jimp from "jimp";
 import path from "path";
+import pc from "picocolors";
 
 const logoFileName = "bootsplash_logo";
 const xcassetName = "BootSplashLogo";
@@ -99,7 +99,7 @@ const getStoryboard = ({
 };
 
 const log = (text: string, dim = false) => {
-  console.log(dim ? chalk.dim(text) : text);
+  console.log(dim ? pc.dim(text) : text);
 };
 
 const isValidHexadecimal = (value: string) =>
@@ -166,7 +166,7 @@ export const generate = async ({
     );
 
   if (assetsPath && fs.existsSync(assetsPath)) {
-    log(`\n    ${chalk.underline("Assets")}`);
+    log(`\n    ${pc.underline("Assets")}`);
 
     await Promise.all(
       [
@@ -194,7 +194,7 @@ export const generate = async ({
   }
 
   if (android) {
-    log(`\n    ${chalk.underline("Android")}`);
+    log(`\n    ${pc.underline("Android")}`);
 
     const appPath = android.appName
       ? path.resolve(android.sourceDir, android.appName)
@@ -273,9 +273,9 @@ export const generate = async ({
   }
 
   if (ios) {
-    log(`\n    ${chalk.underline("iOS")}`);
+    log(`\n    ${pc.underline("iOS")}`);
 
-    const projectPath = ios.projectPath.replace(/.xcodeproj$/, "");
+    const { projectPath } = ios;
     const imagesPath = path.resolve(projectPath, "Images.xcassets");
 
     if (fs.existsSync(projectPath)) {
@@ -337,20 +337,16 @@ export const generate = async ({
   }
 
   log(`
- ${chalk.blue("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓")}
- ${chalk.blue("┃")}  💖  ${chalk.bold(
+ ${pc.blue("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓")}
+ ${pc.blue("┃")}  💖  ${pc.bold(
     "Love this library? Consider sponsoring!",
-  )}  ${chalk.blue("┃")}
- ${chalk.blue("┃")}  One-time amounts are available.              ${chalk.blue(
-    "┃",
-  )}
- ${chalk.blue("┃")}  ${chalk.underline(
+  )}  ${pc.blue("┃")}
+ ${pc.blue("┃")}  One-time amounts are available.              ${pc.blue("┃")}
+ ${pc.blue("┃")}  ${pc.underline(
     "https://github.com/sponsors/zoontek",
-  )}          ${chalk.blue("┃")}
- ${chalk.blue("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛")}
+  )}          ${pc.blue("┃")}
+ ${pc.blue("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛")}
 `);
 
-  log(
-    `✅  Done! Thanks for using ${chalk.underline("react-native-bootsplash")}.`,
-  );
+  log(`✅  Done! Thanks for using ${pc.underline("react-native-bootsplash")}.`);
 };

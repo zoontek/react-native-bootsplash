@@ -59,9 +59,9 @@
     "react-native": ">=0.65.0"
   },
   "dependencies": {
-    "chalk": "^4.1.2",
     "fs-extra": "^10.1.0",
-    "jimp": "^0.16.1"
+    "jimp": "^0.16.1",
+    "picocolors": "^1.0.0"
   },
   "overrides": {
     "jpeg-js": "0.4.4"
