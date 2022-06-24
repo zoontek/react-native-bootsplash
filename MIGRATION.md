@@ -18,11 +18,11 @@ For `android/build.gradle`:
 ```diff
 buildscript {
   ext {
--   buildToolsVersion = "31.0.0"
+-   buildToolsVersion = "30.0.2"
 -   minSdkVersion = 21
 -   compileSdkVersion = 30
 -   targetSdkVersion = 30
-+   buildToolsVersion = "30.0.2"
++   buildToolsVersion = "31.0.0"
 +   minSdkVersion = 23
 +   compileSdkVersion = 31
 +   targetSdkVersion = 31
