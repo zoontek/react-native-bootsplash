@@ -1,6 +1,6 @@
 # 🚀 react-native-bootsplash
 
-Show a bootsplash during app startup. Hide it when you are ready.<br>
+Show a splash screen during app startup. Hide it when you are ready.<br>
 **For migration from the v3, check the [`MIGRATION.md` guide](https://github.com/zoontek/react-native-bootsplash/blob/master/MIGRATION.md).**
 
 [![npm version](https://badge.fury.io/js/react-native-bootsplash.svg)](https://www.npmjs.org/package/react-native-bootsplash)
