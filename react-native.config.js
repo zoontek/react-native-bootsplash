@@ -60,7 +60,7 @@ module.exports = {
             projectPath: (ios.xcodeProject
               ? path.resolve(ios.sourceDir, ios.xcodeProject.name)
               : ios.projectPath
-            ).replace(/\.xc(xcodeproj|workspace)$/, ""),
+            ).replace(/\.(xcodeproj|xcworkspace)$/, ""),
           },
 
           workingPath,
