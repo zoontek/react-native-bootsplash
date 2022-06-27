@@ -3,8 +3,10 @@ package com.zoontek.rnbootsplash;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
+import android.os.Build;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
+import android.window.SplashScreenView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -86,7 +88,13 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule {
             @Override
             public void onAnimationEnd(Animator animation) {
               super.onAnimationEnd(animation);
-              splashScreenViewProvider.remove();
+
+              if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+                splashScreenViewProvider.remove();
+              } else {
+                // Avoid calling applyThemesSystemBarAppearance
+                ((SplashScreenView) splashScreenView).remove();
+              }
             }
           }).start();
       }
