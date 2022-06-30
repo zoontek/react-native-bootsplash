@@ -75,7 +75,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule {
     mSplashScreen.setOnExitAnimationListener(new SplashScreen.OnExitAnimationListener() {
       @Override
       public void onSplashScreenExit(@NonNull final SplashScreenViewProvider splashScreenViewProvider) {
-        View splashScreenView = splashScreenViewProvider.getView();
+        final View splashScreenView = splashScreenViewProvider.getView();
 
         splashScreenView
           .animate()
