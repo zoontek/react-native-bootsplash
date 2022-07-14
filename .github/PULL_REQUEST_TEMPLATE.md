@@ -17,7 +17,7 @@ Explain the **motivation** for making this change: here are some points to help 
 
 ### What's required for testing (prerequisites)?
 
-### What are the steps to reproduce (after prerequisites)?
+### What are the steps to test it (after prerequisites)?
 
 ## Compatibility
 
