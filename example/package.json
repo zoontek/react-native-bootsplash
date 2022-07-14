@@ -5,6 +5,7 @@
   "scripts": {
     "clean-modules": "rm -rf ./node_modules/react-native-bootsplash/{example,node_modules}",
     "clean": "rm -rf ./node_modules ./ios/Pods",
+    "preinstall": "cd .. && yarn prepack && cd example",
     "pod-update": "cd ./ios && pod update && cd ..",
     "postinstall": "yarn clean-modules && yarn pod-update",
     "start": "react-native start",
