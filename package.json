@@ -37,8 +37,8 @@
   ],
   "scripts": {
     "format": "prettier '**/*' -u -w",
-    "setup-hooks": "git config --local core.hooksPath .hooks",
-    "prepack": "yarn setup-hooks && bob build"
+    "postinstall": "git config --local core.hooksPath .hooks",
+    "prepack": "bob build"
   },
   "react-native-builder-bob": {
     "source": "src",
