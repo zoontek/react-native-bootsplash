@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "react": "18.0.0",
-    "react-native": "0.69.1",
+    "react-native": "0.69.2",
     "react-native-bars": "^1.2.0",
     "react-native-bootsplash": "file:../",
     "react-native-permissions": "^3.5.0",
