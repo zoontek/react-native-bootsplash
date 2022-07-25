@@ -75,7 +75,7 @@ PODS:
   - glog (0.3.5)
   - libevent (2.1.12)
   - OpenSSL-Universal (1.1.1100)
-  - Permission-Notifications (3.5.0):
+  - Permission-Notifications (3.6.0):
     - RNPermissions
   - RCT-Folly (2021.06.28.00-v2):
     - boost
@@ -360,7 +360,7 @@ PODS:
     - React-perflogger (= 0.69.2)
   - RNBootSplash (4.2.3):
     - React-Core
-  - RNPermissions (3.5.0):
+  - RNPermissions (3.6.0):
     - React-Core
   - SocketRocket (0.6.0)
   - Yoga (1.14.0)
@@ -540,7 +540,7 @@ SPEC CHECKSUMS:
   glog: 3d02b25ca00c2d456734d0bcff864cbc62f6ae1a
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
-  Permission-Notifications: 57dee37a4b5d465d9ac02e7ea959de3b6c0b2e7e
+  Permission-Notifications: 7f2a467ab97a130a847519705340830d52cfc5f0
   RCT-Folly: b9d9fe1fc70114b751c076104e52f3b1b5e5a95a
   RCTRequired: b723d4d6da2795df58189a01f92856b6912cf256
   RCTTypeSafety: 3973d2fcf39f43f7819e840d56ea6b2fe45996a0
@@ -569,7 +569,7 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: 8030b9cf9b9e87b878d92da680b55b5e74c58e70
   ReactCommon: a9414b91f0d19de002b55d9f4f6cb176d6dd8452
   RNBootSplash: e8a36a88f8c868769ec998c5afe3082032e82fc2
-  RNPermissions: e5b6373c08831dc4b6b13a2b798143fac20bb100
+  RNPermissions: de7b7c3fe1680d974ac7a85e3e97aa539c0e68ea
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   Yoga: 236056dd74cda4d9d76c20306fd8c20bb087614d
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
