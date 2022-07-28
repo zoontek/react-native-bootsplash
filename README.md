@@ -32,7 +32,7 @@ If your company uses it in a production app, consider sponsoring this project ðŸ
 | 4.0.0+  | 0.65.0+              |
 | 3.0.0+  | 0.63.0+              |
 
-## Install
+## Installation
 
 ```bash
 $ npm install --save react-native-bootsplash
