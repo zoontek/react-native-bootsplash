@@ -3,6 +3,10 @@
 #import <React/RCTBridge.h>
 #import <React/RCTUtils.h>
 
+#ifdef RCT_NEW_ARCH_ENABLED
+#import "RNBootSplashSpec.h"
+#endif
+
 static NSMutableArray<RCTPromiseResolveBlock> *_resolverQueue = nil;
 static RCTRootView *_rootView = nil;
 static bool _isTransitioning = false;
@@ -130,5 +134,13 @@ RCT_REMAP_METHOD(getVisibilityStatus,
   else
     return resolve(@"visible");
 }
+
+#ifdef RCT_NEW_ARCH_ENABLED
+- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
+    (const facebook::react::ObjCTurboModule::InitParams &)params
+{
+    return std::make_shared<facebook::react::NativeBootSplashSpecJSI>(params);
+}
+#endif
 
 @end

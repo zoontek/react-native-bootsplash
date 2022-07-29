@@ -19,35 +19,131 @@ buildscript {
 
 apply plugin: "com.android.library"
 
+def isNewArchitectureEnabled() {
+    return rootProject.hasProperty("newArchEnabled") &&  rootProject.getProperty("newArchEnabled") == "true"
+}
+
+if (isNewArchitectureEnabled()) {
+    apply plugin: 'com.facebook.react'
+}
+
+def getExtOrDefault(name) {
+    return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties['Turbo_' + name]
+}
+
+def getExtOrIntegerDefault(name) {
+    return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties['Turbo_' + name]).toInteger()
+}
+
 android {
     compileSdkVersion safeExtGet("compileSdkVersion", 31)
     buildToolsVersion safeExtGet("buildToolsVersion", "31.0.0")
     defaultConfig {
         minSdkVersion safeExtGet("minSdkVersion", 23)
         targetSdkVersion safeExtGet("targetSdkVersion", 31)
+        buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
     }
     lintOptions {
         abortOnError false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    sourceSets {
+        main {
+            if (isNewArchitectureEnabled()) {
+                java.srcDirs += ['src/turbo']
+            } else {
+                java.srcDirs += ['src/legacy']
+            }
+        }
     }
 }
 
 repositories {
     mavenCentral()
-    mavenLocal()
-    maven {
-        // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
-        url("$rootDir/../node_modules/react-native/android")
-    }
-    maven {
-        // Android JSC is installed from npm
-        url("$rootDir/../node_modules/jsc-android/dist")
-    }
     google()
-    maven { url "https://www.jitpack.io" }
+
+    def found = false
+    def defaultDir = null
+    def androidSourcesName = 'React Native sources'
+
+    if (rootProject.ext.has('reactNativeAndroidRoot')) {
+        defaultDir = rootProject.ext.get('reactNativeAndroidRoot')
+    } else {
+        defaultDir = new File(
+            projectDir,
+            '/../../../node_modules/react-native/android'
+        )
+    }
+
+    if (defaultDir.exists()) {
+        maven {
+            url defaultDir.toString()
+            name androidSourcesName
+        }
+
+        logger.info(":${project.name}:reactNativeAndroidRoot ${defaultDir.canonicalPath}")
+        found = true
+    } else {
+        def parentDir = rootProject.projectDir
+
+        1.upto(5, {
+            if (found) return true
+            parentDir = parentDir.parentFile
+
+            def androidSourcesDir = new File(
+                parentDir,
+                'node_modules/react-native'
+            )
+
+            def androidPrebuiltBinaryDir = new File(
+                parentDir,
+                'node_modules/react-native/android'
+            )
+
+            if (androidPrebuiltBinaryDir.exists()) {
+                maven {
+                    url androidPrebuiltBinaryDir.toString()
+                    name androidSourcesName
+                }
+
+                logger.info(":${project.name}:reactNativeAndroidRoot ${androidPrebuiltBinaryDir.canonicalPath}")
+                found = true
+            } else if (androidSourcesDir.exists()) {
+                maven {
+                    url androidSourcesDir.toString()
+                    name androidSourcesName
+                }
+
+                logger.info(":${project.name}:reactNativeAndroidRoot ${androidSourcesDir.canonicalPath}")
+                found = true
+            }
+        })
+    }
+
+    if (!found) {
+        throw new GradleException(
+            "${project.name}: unable to locate React Native android sources. " +
+                "Ensure you have you installed React Native as a dependency in your project and try again."
+        )
+    }
 }
 
 dependencies {
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+" // From node_modules
     implementation "androidx.core:core-splashscreen:${safeExtGet("androidXSplashScreenVersion", "1.0.0-rc01")}"
+}
+
+
+if (isNewArchitectureEnabled()) {
+    react {
+        jsRootDir = file("../src/")
+        libraryName = "Turbo"
+        codegenJavaPackageName = "com.reactnativeturbo"
+    }
 }

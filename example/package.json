@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "clean-modules": "rm -rf ./node_modules/react-native-bootsplash/{example,node_modules}",
+    "clean-modules": "rm -rf ./node_modules/react-native-bootsplash/{example,node_modules,TurboExample}",
     "clean": "rm -rf ./node_modules ./ios/Pods",
     "preinstall": "cd .. && yarn prepack && cd example",
     "pod-update": "cd ./ios && pod update && cd ..",

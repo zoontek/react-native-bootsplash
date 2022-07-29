@@ -1,12 +1,12 @@
 import { NativeModules } from "react-native";
+import { Config, RNBootSplashType, VisibilityStatus } from "./type";
 
-export type VisibilityStatus = "visible" | "hidden" | "transitioning";
-export type Config = { fade?: boolean };
+// @ts-ignore
+const isTurboModuleEnabled = global.__turboModuleProxy != null;
 
-const NativeModule: {
-  hide: (fade: boolean) => Promise<true>;
-  getVisibilityStatus: () => Promise<VisibilityStatus>;
-} = NativeModules.RNBootSplash;
+const NativeModule: RNBootSplashType = isTurboModuleEnabled
+  ? require("./NativeBootSplash").default
+  : NativeModules.RNBootSplash;
 
 export function hide(config: Config = {}): Promise<void> {
   return NativeModule.hide({ fade: false, ...config }.fade).then(() => {});
@@ -20,3 +20,5 @@ export default {
   hide,
   getVisibilityStatus,
 };
+
+export * from "./type";

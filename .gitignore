@@ -75,3 +75,6 @@ dist/
 **/lib/ocaml
 *.bs.js
 .bsb.lock
+Pods/
+build/
+vendor/

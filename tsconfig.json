@@ -4,6 +4,9 @@
     "target": "ES2015",
     "lib": ["ES2015"],
     "moduleResolution": "Node",
+    "paths": {
+      "react-native-bootsplash": ["./src/index"]
+    },
 
     "allowJs": false,
     "strict": true,
