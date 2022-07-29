@@ -8,6 +8,7 @@
   "main": "dist/commonjs/index.js",
   "module": "dist/module/index.js",
   "types": "dist/typescript/index.d.ts",
+  "source": "src/index",
   "files": [
     "/android",
     "/dist",
@@ -80,5 +81,14 @@
     "react-native-builder-bob": "^0.18.3",
     "rescript": "^9.1.4",
     "typescript": "^4.7.4"
+  },
+  "codegenConfig": {
+    "libraries": [
+      {
+        "name": "RNBootSplashSpec",
+        "type": "modules",
+        "jsSrcsDir": "./src"
+      }
+    ]
   }
 }

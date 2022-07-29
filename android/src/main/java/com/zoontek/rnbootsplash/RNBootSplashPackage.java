@@ -1,27 +1,44 @@
 package com.zoontek.rnbootsplash;
 
-import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
-import com.facebook.react.ReactPackage;
+import com.facebook.react.TurboReactPackage;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.uimanager.ViewManager;
+import com.facebook.react.module.model.ReactModuleInfo;
+import com.facebook.react.module.model.ReactModuleInfoProvider;
+import java.util.HashMap;
+import java.util.Map;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+public class RNBootSplashPackage extends TurboReactPackage {
 
-public class RNBootSplashPackage implements ReactPackage {
-
-  @NonNull
+  @Nullable
   @Override
-  public List<NativeModule> createNativeModules(@NonNull ReactApplicationContext reactContext) {
-    return Arrays.<NativeModule>asList(new RNBootSplashModule(reactContext));
+  public NativeModule getModule(String name, ReactApplicationContext reactContext) {
+    if (name.equals(RNBootSplashImpl.NAME)) {
+      return new RNBootSplashModule(reactContext);
+    } else {
+      return null;
+    }
   }
 
-  @NonNull
   @Override
-  public List<ViewManager> createViewManagers(@NonNull ReactApplicationContext reactContext) {
-    return Collections.emptyList();
+  public ReactModuleInfoProvider getReactModuleInfoProvider() {
+    return () -> {
+      final Map<String, ReactModuleInfo> moduleInfos = new HashMap<>();
+      boolean isTurboModule = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
+      moduleInfos.put(
+        RNBootSplashImpl.NAME,
+        new ReactModuleInfo(
+          RNBootSplashImpl.NAME,
+          RNBootSplashImpl.NAME,
+          false, // canOverrideExistingModule
+          false, // needsEagerInit
+          true, // hasConstants
+          false, // isCxxModule
+          isTurboModule // isTurboModule
+        ));
+      return moduleInfos;
+    };
   }
 }

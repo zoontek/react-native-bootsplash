@@ -1,0 +1,49 @@
+diff --git a/node_modules/react-native/scripts/generate-artifacts.js b/node_modules/react-native/scripts/generate-artifacts.js
+index d0d8a00..f0cc68d 100644
+--- a/node_modules/react-native/scripts/generate-artifacts.js
++++ b/node_modules/react-native/scripts/generate-artifacts.js
+@@ -121,6 +121,44 @@ function main(appRootDir, outputPath) {
+       `\n\n[Codegen] >>>>> Searching for codegen-enabled libraries in ${confifDir}`,
+     );
+
++    let rnConfig;
++
++    try {
++      rnConfig = require(path.join(appRootDir, 'react-native.config.js'));
++    } catch (e) {
++      // Ignore
++    }
++
++    if (rnConfig && rnConfig.dependencies) {
++      Object.keys(rnConfig.dependencies).forEach(name => {
++        const dependency = rnConfig.dependencies[name];
++
++        if (dependency.root) {
++          const configFilePath = path.join(
++            dependency.root,
++            CODEGEN_CONFIG_FILENAME,
++          );
++          if (fs.existsSync(configFilePath)) {
++            const configFile = JSON.parse(fs.readFileSync(configFilePath));
++            if (
++              configFile[CODEGEN_CONFIG_KEY] != null &&
++              configFile[CODEGEN_CONFIG_KEY].libraries != null
++            ) {
++              console.log(`[Codegen] Found ${name} in 'react-native-config.js'`);
++              configFile[CODEGEN_CONFIG_KEY].libraries.forEach(config => {
++                const libraryConfig = {
++                  library: { name, path: dependency.root },
++                  config,
++                  libraryPath: dependency.root,
++                };
++                libraries.push(libraryConfig);
++              });
++            }
++          }
++        }
++      });
++    }
++
+     // Handle third-party libraries
+     Object.keys(dependencies).forEach(dependency => {
+       if (dependency === REACT_NATIVE_DEPENDENCY_NAME) {
