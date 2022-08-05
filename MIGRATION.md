@@ -151,6 +151,10 @@ public class MainActivity extends ReactActivity {
 }
 ```
 
+All above is okay but run this command in your terminal:
+cd android 
+./gradlew clean
+
 ## Generated files
 
 You **must** re-generate your assets.
