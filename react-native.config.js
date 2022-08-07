@@ -54,14 +54,17 @@ module.exports = {
 
         return generate({
           android,
-          ios: {
-            ...ios,
-            // Fix to support previous CLI versions
-            projectPath: (ios.xcodeProject
-              ? path.resolve(ios.sourceDir, ios.xcodeProject.name)
-              : ios.projectPath
-            ).replace(/\.(xcodeproj|xcworkspace)$/, ""),
-          },
+
+          ios: ios
+            ? {
+                ...ios,
+                // Fix to support previous CLI versions
+                projectPath: (ios.xcodeProject
+                  ? path.resolve(ios.sourceDir, ios.xcodeProject.name)
+                  : ios.projectPath
+                ).replace(/\.(xcodeproj|xcworkspace)$/, ""),
+              }
+            : null,
 
           workingPath,
           logoPath: path.resolve(workingPath, logoPath),
