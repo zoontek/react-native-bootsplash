@@ -104,8 +104,6 @@ public class MainApplication extends Application implements ReactApplication {
 
 ## Setup
 
-ℹ️ For `react-native` < `0.68` setup, follow the [`v4.1.3 README.md`](https://github.com/zoontek/react-native-bootsplash/blob/4.1.3/README.md) (it will works with the latest `react-native-bootsplash` version too).
-
 ### Assets generation
 
 In order to speed up the setup, we provide a **CLI** to generate assets, create the Android Drawable XML file and the iOS Storyboard file automatically ✨.
@@ -183,7 +181,7 @@ _⚠️  Only `.storyboard` files are supported ([Apple has deprecated other m
 
 ---
 
-Edit the `ios/YourProjectName/AppDelegate.mm` file:
+Edit the `ios/YourProjectName/AppDelegate.m(m)` file:
 
 ```obj-c
 #import "AppDelegate.h"
@@ -287,24 +285,20 @@ dependencies {
 5. Finally edit your `android/app/src/main/java/com/yourprojectname/MainActivity.java` file:
 
 ```java
-import com.facebook.react.ReactActivity;
-import com.facebook.react.ReactActivityDelegate;
-import com.facebook.react.ReactRootView;
-import com.zoontek.rnbootsplash.RNBootSplash; // <- add this necessary import
+// …
+
+// Add this required imports:
+import android.os.Bundle;
+import com.zoontek.rnbootsplash.RNBootSplash;
 
 public class MainActivity extends ReactActivity {
 
   // …
 
-  public static class MainActivityDelegate extends ReactActivityDelegate {
-
-    // …
-
-    @Override
-    protected void loadApp(String appKey) {
-      RNBootSplash.init(getPlainActivity()); // <- initialize the splash screen
-      super.loadApp(appKey);
-    }
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    RNBootSplash.init(this); // <- initialize the splash screen
+    super.onCreate(savedInstanceState); // or super.onCreate(null) with react-native-screens
   }
 }
 ```
