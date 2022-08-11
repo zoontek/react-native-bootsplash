@@ -287,7 +287,7 @@ dependencies {
 ```java
 // …
 
-// Add this required imports:
+// Add these required imports:
 import android.os.Bundle;
 import com.zoontek.rnbootsplash.RNBootSplash;
 
