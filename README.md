@@ -412,5 +412,4 @@ After that, we need to add the setup file in the jest config. You can add it und
 ## 🕵️‍♂️ Comparison with [react-native-splash-screen](https://github.com/crazycodeboy/react-native-splash-screen)
 
 - If `react-native-splash-screen` encourages you to display an image over your application, `react-native-bootsplash` way-to-go is to design your launch screen using platforms tools.
-- It should not prevent you from seeing red screen errors.
 - Hiding the launch screen is configurable: fade it out or hide it without any animation.
