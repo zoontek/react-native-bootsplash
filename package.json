@@ -1,6 +1,6 @@
 {
   "name": "react-native-bootsplash",
-  "version": "4.3.1",
+  "version": "4.3.2",
   "license": "MIT",
   "description": "Display a bootsplash on your app starts. Hide it when you want.",
   "author": "Mathieu Acthernoene <zoontek@gmail.com>",
@@ -37,7 +37,7 @@
   ],
   "scripts": {
     "format": "prettier '**/*' -u -w",
-    "postinstall": "git config --local core.hooksPath .hooks",
+    "setup-hooks": "git config --local core.hooksPath .hooks",
     "prepack": "bob build"
   },
   "react-native-builder-bob": {
