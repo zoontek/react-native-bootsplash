@@ -60,14 +60,9 @@
   },
   "dependencies": {
     "fs-extra": "^10.1.0",
-    "jimp": "^0.16.1",
-    "picocolors": "^1.0.0"
-  },
-  "overrides": {
-    "jpeg-js": "0.4.4"
-  },
-  "resolutions": {
-    "jpeg-js": "0.4.4"
+    "jimp": "^0.16.2",
+    "picocolors": "^1.0.0",
+    "yarn": "^1.22.19"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",
