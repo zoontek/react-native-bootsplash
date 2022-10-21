@@ -61,8 +61,7 @@
   "dependencies": {
     "fs-extra": "^10.1.0",
     "jimp": "^0.16.2",
-    "picocolors": "^1.0.0",
-    "yarn": "^1.22.19"
+    "picocolors": "^1.0.0"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",
