@@ -213,7 +213,7 @@ Set the `BootSplash.storyboard` as launch screen file:
 
 ### Android
 
-_⚠️  On Android 12, the splash screen will not appear if you start your app from the terminal / Android Studio. To see it, kill your app and restart it in normal conditions (tap on your app icon in the app launcher)._
+_⚠️  On Android >= 12, the splash screen will not appear if you start your app from the terminal / Android Studio. To see it, kill your app and restart it in normal conditions (tap on your app icon in the app launcher)._
 
 ---
 
