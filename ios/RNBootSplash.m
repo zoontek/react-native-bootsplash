@@ -85,6 +85,7 @@ RCT_EXPORT_MODULE();
 
 RCT_REMAP_METHOD(hide,
                  hideWithFade:(BOOL)fade
+                 fadeWithDuration:(NSInteger)fadeDuration
                  resolver:(RCTPromiseResolveBlock)resolve
                  rejecter:(RCTPromiseRejectBlock)reject) {
   if (_resolverQueue == nil)
@@ -104,7 +105,7 @@ RCT_REMAP_METHOD(hide,
     _isTransitioning = true;
 
     [UIView transitionWithView:_rootView
-                      duration:0.220
+                      duration:fadeDuration / 1000.0
                        options:UIViewAnimationOptionTransitionCrossDissolve
                     animations:^{
       _rootView.loadingView.hidden = YES;

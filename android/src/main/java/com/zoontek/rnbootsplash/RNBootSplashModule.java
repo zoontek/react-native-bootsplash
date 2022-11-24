@@ -29,7 +29,6 @@ import java.util.TimerTask;
 public class RNBootSplashModule extends ReactContextBaseJavaModule {
 
   public static final String NAME = "RNBootSplash";
-  private static final int ANIMATION_DURATION = 220;
 
   private enum Status {
     VISIBLE,
@@ -44,6 +43,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule {
   private static Status mStatus = Status.HIDDEN;
   private static boolean mShouldFade = false;
   private static boolean mShouldKeepOnScreen = true;
+  private static int mAnimationDuration;
 
   public RNBootSplashModule(ReactApplicationContext reactContext) {
     super(reactContext);
@@ -80,8 +80,8 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule {
         splashScreenView
           .animate()
           // Crappy hack to avoid automatic layout transitions
-          .setDuration(mShouldFade ? ANIMATION_DURATION: 0)
-          .setStartDelay(mShouldFade ? 0 : ANIMATION_DURATION)
+          .setDuration(mShouldFade ? mAnimationDuration: 0)
+          .setStartDelay(mShouldFade ? 0 : mAnimationDuration)
           .alpha(0.0f)
           .setInterpolator(new AccelerateInterpolator())
           .setListener(new AnimatorListenerAdapter() {
@@ -151,14 +151,15 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule {
               timer.cancel();
               clearPromiseQueue();
             }
-          }, ANIMATION_DURATION);
+          }, mAnimationDuration);
         }
       }
     });
   }
 
   @ReactMethod
-  public void hide(final boolean fade, final Promise promise) {
+  public void hide(final boolean fade, final int fadeDuration, final Promise promise) {
+    mAnimationDuration = fadeDuration;
     mPromiseQueue.push(promise);
     hideAndResolveAll(fade);
   }
