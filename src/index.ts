@@ -8,11 +8,11 @@ const NativeModule: {
   getVisibilityStatus: () => Promise<VisibilityStatus>;
 } = NativeModules.RNBootSplash;
 
+const DEFAULT_DURATION = 220;
+
 export function hide(config: Config = {}): Promise<void> {
-  return NativeModule.hide(
-    { fade: false, ...config }.fade,
-    { duration: 220, ...config }.duration,
-  ).then(() => {});
+  const { fade = false, duration = DEFAULT_DURATION } = config;
+  return NativeModule.hide(fade, Math.max(duration, DEFAULT_DURATION)).then(() => {});
 }
 
 export function getVisibilityStatus(): Promise<VisibilityStatus> {
