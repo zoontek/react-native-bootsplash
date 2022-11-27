@@ -276,6 +276,7 @@ dependencies {
     android:roundIcon="@mipmap/ic_launcher_round"
     android:allowBackup="false"
     android:theme="@style/BootTheme"> <!-- Replace @style/AppTheme with @style/BootTheme -->
+    <!-- if you have other activities apart from .MainActivity, test the features associated to them, because you might need to set `android:theme="@style/AppTheme"` for these activities -->
     <!-- … -->
   </application>
 </manifest>
