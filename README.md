@@ -310,8 +310,10 @@ public class MainActivity extends ReactActivity {
 #### Method type
 
 ```ts
-type hide = (config?: { fade?: boolean }) => Promise<void>;
+type hide = (config?: { fade?: boolean, duration?: boolean }) => Promise<void>;
 ```
+
+Note: Only durations above 220ms are visually noticeable. Smaller values will be ignored and the default duration will be used.
 
 #### Usage
 
@@ -319,7 +321,8 @@ type hide = (config?: { fade?: boolean }) => Promise<void>;
 import RNBootSplash from "react-native-bootsplash";
 
 RNBootSplash.hide(); // immediate
-RNBootSplash.hide({ fade: true }); // fade
+RNBootSplash.hide({ fade: true }); // fade with 220ms default duration
+RNBootSplash.hide({ fade: true, duration: 500 }); // fade with custom duration
 ```
 
 ### getVisibilityStatus()
@@ -353,7 +356,7 @@ function App() {
     };
 
     init().finally(async () => {
-      await RNBootSplash.hide({ fade: true });
+      await RNBootSplash.hide({ fade: true, duration: 500 });
       console.log("Bootsplash has been hidden successfully");
     });
   }, []);
