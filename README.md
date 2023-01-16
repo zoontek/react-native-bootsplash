@@ -312,7 +312,7 @@ public class MainActivity extends ReactActivity {
 #### Method type
 
 ```ts
-type hide = (config?: { fade?: boolean, duration?: number }) => Promise<void>;
+type hide = (config?: { fade?: boolean; duration?: number }) => Promise<void>;
 ```
 
 Note: Only durations above 220ms are visually noticeable. Smaller values will be ignored and the default duration will be used.
