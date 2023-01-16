@@ -104,6 +104,8 @@ public class MainApplication extends Application implements ReactApplication {
 
 ## Setup
 
+ℹ️ For `react-native` < `0.71` setup, follow the [`v4.4.0 README.md`](https://github.com/zoontek/react-native-bootsplash/blob/4.4.0/README.md).
+
 ### Assets generation
 
 In order to speed up the setup, we provide a **CLI** to generate assets, create the Android Drawable XML file and the iOS Storyboard file automatically ✨.
@@ -181,7 +183,7 @@ _⚠️  Only `.storyboard` files are supported ([Apple has deprecated other m
 
 ---
 
-Edit the `ios/YourProjectName/AppDelegate.m(m)` file:
+Edit the `ios/YourProjectName/AppDelegate.mm` file:
 
 ```obj-c
 #import "AppDelegate.h"
@@ -193,13 +195,10 @@ Edit the `ios/YourProjectName/AppDelegate.m(m)` file:
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  // …
+  self.moduleName = @"RNBootSplashExample";
+  [super application:application didFinishLaunchingWithOptions:launchOptions];
 
-  rootViewController.view = rootView;
-  self.window.rootViewController = rootViewController;
-  [self.window makeKeyAndVisible];
-
-  [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView]; // <- initialization using the storyboard file name
+  [RNBootSplash initWithStoryboard:@"BootSplash" rootView:self.window.rootViewController.view]; // <- initialization using the storyboard file name
 
   return YES;
 }
@@ -217,34 +216,21 @@ _⚠️  On Android >= 12, the splash screen will not appear if you start your
 
 ---
 
-1. As this library only support Android 6+, you probably have to edit your `android/build.gradle` file:
-
-```gradle
-buildscript {
-  ext {
-    buildToolsVersion = "31.0.0"
-    minSdkVersion = 23 // <- AndroidX splashscreen has basic support for 21 (only the background color), so 23 is best
-    compileSdkVersion = 31 // <- set at least 31
-    targetSdkVersion = 31 // <- set at least 31
-
-    // …
-```
-
-2. Then edit your `android/app/build.gradle` file:
+1. Edit your `android/app/build.gradle` file:
 
 ```gradle
 dependencies {
   // …
 
-  implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
-  implementation "androidx.core:core-splashscreen:1.0.0" // Add this line
+  implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.0.0")
+  implementation("androidx.core:core-splashscreen:1.0.0") // Add this line
 
   // …
 ```
 
 _⚠️  Don't forget going into the `android` directory to execute a `./gradlew clean && ./gradlew build` (or perform a Gradle sync in Android Studio)._
 
-3. Edit your `android/app/src/main/res/values/styles.xml` file:
+2. Edit your `android/app/src/main/res/values/styles.xml` file:
 
 ```xml
 <resources>
@@ -263,7 +249,7 @@ _⚠️  Don't forget going into the `android` directory to execute a `./gradl
 </resources>
 ```
 
-4. Edit your `android/app/src/main/AndroidManifest.xml` file:
+3. Edit your `android/app/src/main/AndroidManifest.xml` file:
 
 ```xml
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
@@ -284,7 +270,7 @@ _⚠️  Don't forget going into the `android` directory to execute a `./gradl
 
 ```
 
-5. Finally edit your `android/app/src/main/java/com/yourprojectname/MainActivity.java` file:
+4. Finally edit your `android/app/src/main/java/com/yourprojectname/MainActivity.java` file:
 
 ```java
 // …

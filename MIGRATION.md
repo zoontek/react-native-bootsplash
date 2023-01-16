@@ -37,8 +37,8 @@ For `android/app/build.gradle`:
 dependencies {
   // …
 
-  implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
-+ implementation "androidx.core:core-splashscreen:1.0.0"
+  implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.0.0")
++ implementation("androidx.core:core-splashscreen:1.0.0")
 ```
 
 For `android/app/src/main/res/values/styles.xml`:
