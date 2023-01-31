@@ -41,9 +41,8 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule {
 
   private static final RNBootSplashQueue<Promise> mPromiseQueue = new RNBootSplashQueue<>();
   private static Status mStatus = Status.HIDDEN;
-  private static boolean mShouldFade = false;
+  private static int mFadeDuration = 0;
   private static boolean mShouldKeepOnScreen = true;
-  private static int mAnimationDuration;
 
   public RNBootSplashModule(ReactApplicationContext reactContext) {
     super(reactContext);
@@ -79,9 +78,9 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule {
 
         splashScreenView
           .animate()
+          .setDuration(mFadeDuration)
           // Crappy hack to avoid automatic layout transitions
-          .setDuration(mShouldFade ? mAnimationDuration: 0)
-          .setStartDelay(mShouldFade ? 0 : mAnimationDuration)
+          .setStartDelay(Math.min(0, mFadeDuration))
           .alpha(0.0f)
           .setInterpolator(new AccelerateInterpolator())
           .setListener(new AnimatorListenerAdapter() {
@@ -110,7 +109,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule {
     }
   }
 
-  private void hideAndResolveAll(final boolean fade) {
+  private void hideAndResolveAll() {
     if (mSplashScreen == null || mStatus == Status.HIDDEN) {
       clearPromiseQueue();
       return;
@@ -128,16 +127,15 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule {
           timer.schedule(new TimerTask() {
             @Override
             public void run() {
-              hideAndResolveAll(fade);
+              hideAndResolveAll();
               timer.cancel();
             }
           }, 250);
         } else {
-          if (fade) {
+          if (mFadeDuration > 0) {
             mStatus = Status.TRANSITIONING;
           }
 
-          mShouldFade = fade;
           mShouldKeepOnScreen = false;
 
           final Timer timer = new Timer();
@@ -151,17 +149,17 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule {
               timer.cancel();
               clearPromiseQueue();
             }
-          }, mAnimationDuration);
+          }, mFadeDuration);
         }
       }
     });
   }
 
   @ReactMethod
-  public void hide(final boolean fade, final int fadeDuration, final Promise promise) {
-    mAnimationDuration = fadeDuration;
+  public void hide(final double duration, final Promise promise) {
+    mFadeDuration = (int) Math.round(duration);
     mPromiseQueue.push(promise);
-    hideAndResolveAll(fade);
+    hideAndResolveAll();
   }
 
   @ReactMethod

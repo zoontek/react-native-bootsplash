@@ -84,8 +84,7 @@ RCT_EXPORT_MODULE();
 }
 
 RCT_REMAP_METHOD(hide,
-                 hideWithFade:(BOOL)fade
-                 duration:(NSInteger)duration
+                 hideWithDuration:(double)duration
                  resolver:(RCTPromiseResolveBlock)resolve
                  rejecter:(RCTPromiseRejectBlock)reject) {
   if (_resolverQueue == nil)
@@ -96,7 +95,9 @@ RCT_REMAP_METHOD(hide,
   if ([RNBootSplash isHidden] || RCTRunningInAppExtension())
     return [self clearResolverQueue];
 
-  if (!fade) {
+  float roundedDuration = lroundf((float)duration);
+
+  if (roundedDuration <= 0) {
     [RNBootSplash removeLoadingView];
     return [self clearResolverQueue];
   }
@@ -105,7 +106,7 @@ RCT_REMAP_METHOD(hide,
     _isTransitioning = true;
 
     [UIView transitionWithView:_rootView
-                      duration:duration / 1000.0
+                      duration:roundedDuration / 1000.0
                        options:UIViewAnimationOptionTransitionCrossDissolve
                     animations:^{
       _rootView.loadingView.hidden = YES;

@@ -4,13 +4,13 @@ export type VisibilityStatus = "visible" | "hidden" | "transitioning";
 export type Config = { fade?: boolean; duration?: number };
 
 const NativeModule: {
-  hide: (fade: boolean, duration: number) => Promise<true>;
+  hide: (duration: number) => Promise<true>;
   getVisibilityStatus: () => Promise<VisibilityStatus>;
 } = NativeModules.RNBootSplash;
 
 export function hide(config: Config = {}): Promise<void> {
   const { fade = false, duration = 0 } = config;
-  return NativeModule.hide(fade, Math.max(duration, 220)).then(() => {});
+  return NativeModule.hide(fade ? Math.max(duration, 220) : 0).then(() => {});
 }
 
 export function getVisibilityStatus(): Promise<VisibilityStatus> {
