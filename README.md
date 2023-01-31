@@ -196,6 +196,7 @@ Edit the `ios/YourProjectName/AppDelegate.mm` file:
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   self.moduleName = @"RNBootSplashExample";
+  self.initialProps = @{};
   [super application:application didFinishLaunchingWithOptions:launchOptions];
 
   [RNBootSplash initWithStoryboard:@"BootSplash" rootView:self.window.rootViewController.view]; // <- initialization using the storyboard file name
