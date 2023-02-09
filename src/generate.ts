@@ -147,6 +147,7 @@ export const generate = async ({
   }
 
   const image = sharp(logoPath);
+  const backgroundColorHex = toFullHexadecimal(backgroundColor);
   const { format } = await image.metadata();
 
   if (format !== "png" && format !== "svg") {
@@ -163,11 +164,9 @@ export const generate = async ({
 
   if (logoWidth > 288) {
     log.error("Logo width must not exceed 288dp (Android will crop it).");
-
     process.exit(1);
   } else if (logoHeight > 288) {
     log.error("Logo height must not exceed 288dp (Android will crop it).");
-
     process.exit(1);
   } else if (logoWidth > 192) {
     log.warn("⚠️   Logo width exceed 192dp. It might be cropped on Android.");
@@ -212,8 +211,6 @@ export const generate = async ({
       }),
     );
   }
-
-  const backgroundColorHex = toFullHexadecimal(backgroundColor);
 
   if (android) {
     log.text(`\n    ${pc.underline("Android")}`);
