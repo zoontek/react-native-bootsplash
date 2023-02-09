@@ -60,11 +60,12 @@
   },
   "dependencies": {
     "fs-extra": "^11.1.0",
-    "jimp": "^0.16.2",
+    "sharp": "^0.31.3",
     "picocolors": "^1.0.0"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.1",
+    "@types/sharp": "^0.31.1",
     "lint-staged": "^13.1.0",
     "prettier": "^2.8.3",
     "prettier-plugin-organize-imports": "^3.2.2",
