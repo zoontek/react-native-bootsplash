@@ -121,7 +121,7 @@ The command can take multiple arguments:
 ```bash
 yarn react-native generate-bootsplash <logoPath>
 
-Generate a launch screen using an original logo file
+Generate a launch screen using an original logo file (PNG or SVG)
 
 Options:
   --background-color <color>  color used as launch screen background (in hexadecimal format) (default: "#fff")
@@ -139,17 +139,6 @@ yarn react-native generate-bootsplash assets/bootsplash_logo_original.png \
   --logo-width=100 \
   --assets-path=assets \
   --flavor=main
-```
-
-#### Using an SVG
-
-You might want to use SVG as input file. For that, you can install a CLI tool to convert your logo first:
-
-```bash
-$ brew install librsvg # available on macOS
-$ rsvg-convert -w 3000 bootsplash_logo.svg -o bootsplash_logo.png # create a large PNG with generous leeway for 4x Android xxxhdpi devices
-$ react-native generate-bootsplash bootsplash_logo.png
-$ rm bootsplash_logo.png # optionally, clean up the PNG
 ```
 
 ![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/master/docs/cli_tool.png?raw=true)

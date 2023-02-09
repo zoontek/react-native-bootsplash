@@ -5,7 +5,8 @@ module.exports = {
   commands: [
     {
       name: "generate-bootsplash <logoPath>",
-      description: "Generate a launch screen using an original logo file",
+      description:
+        "Generate a launch screen using an original logo file (PNG or SVG)",
       options: [
         {
           name: "--background-color <color>",
