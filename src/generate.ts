@@ -1,12 +1,10 @@
 import fs from "fs-extra";
-import Jimp from "jimp";
 import path from "path";
 import pc from "picocolors";
+import sharp from "sharp";
 
 const logoFileName = "bootsplash_logo";
 const xcassetName = "BootSplashLogo";
-// https://github.com/androidx/androidx/blob/androidx-main/core/core-splashscreen/src/main/res/values/dimens.xml#L22
-const splashScreenIconSizeNoBackground = 288;
 const androidColorName = "bootsplash_background";
 const androidColorRegex = /<color name="bootsplash_background">#\w+<\/color>/g;
 
@@ -98,8 +96,10 @@ const getStoryboard = ({
 `;
 };
 
-const log = (text: string, dim = false) => {
-  console.log(dim ? pc.dim(text) : text);
+const log = {
+  error: (text: string) => console.log(pc.red(text)),
+  text: (text: string) => console.log(text),
+  warn: (text: string) => console.log(pc.yellow(text)),
 };
 
 const isValidHexadecimal = (value: string) =>
@@ -142,23 +142,44 @@ export const generate = async ({
   logoWidth: number;
 }) => {
   if (!isValidHexadecimal(backgroundColor)) {
-    throw new Error(
-      "--background-color value is not a valid hexadecimal color.",
-    );
+    log.error("--background-color value is not a valid hexadecimal color.");
+    process.exit(1);
   }
 
-  const image = await Jimp.read(logoPath);
+  const image = sharp(logoPath);
   const backgroundColorHex = toFullHexadecimal(backgroundColor);
+  const { format } = await image.metadata();
 
-  const getHeight = (size: number) =>
-    Math.ceil(size * (image.bitmap.height / image.bitmap.width));
+  if (format !== "png" && format !== "svg") {
+    log.error("Input file is an unsupported image format");
+    process.exit(1);
+  }
+
+  const logoHeight = await image
+    .clone()
+    .resize(logoWidth)
+    .toBuffer()
+    .then((buffer) => sharp(buffer).metadata())
+    .then(({ height = 0 }) => height);
+
+  if (logoWidth > 288) {
+    log.error("Logo width must not exceed 288dp (Android will crop it).");
+    process.exit(1);
+  } else if (logoHeight > 288) {
+    log.error("Logo height must not exceed 288dp (Android will crop it).");
+    process.exit(1);
+  } else if (logoWidth > 192) {
+    log.warn("⚠️   Logo width exceed 192dp. It might be cropped on Android.");
+  } else if (logoHeight > 192) {
+    log.warn("⚠️   Logo height exceed 192dp. It might be cropped on Android.");
+  }
 
   const logWrite = (
     emoji: string,
     filePath: string,
     dimensions?: { width: number; height: number },
   ) =>
-    log(
+    log.text(
       `${emoji}  ${path.relative(workingPath, filePath)}` +
         (dimensions != null
           ? ` (${dimensions.width}x${dimensions.height})`
@@ -166,7 +187,7 @@ export const generate = async ({
     );
 
   if (assetsPath && fs.existsSync(assetsPath)) {
-    log(`\n    ${pc.underline("Assets")}`);
+    log.text(`\n    ${pc.underline("Assets")}`);
 
     await Promise.all(
       [
@@ -178,15 +199,13 @@ export const generate = async ({
       ].map(({ ratio, suffix }) => {
         const fileName = `${logoFileName}${suffix}.png`;
         const filePath = path.resolve(assetsPath, fileName);
-        const width = logoWidth * ratio;
-        const height = getHeight(width);
 
         return image
           .clone()
-          .resize(width, height)
-          .quality(100)
-          .writeAsync(filePath)
-          .then(() => {
+          .resize(logoWidth * ratio)
+          .png({ quality: 100 })
+          .toFile(filePath)
+          .then(({ width, height }) => {
             logWrite("✨", filePath, { width, height });
           });
       }),
@@ -194,7 +213,7 @@ export const generate = async ({
   }
 
   if (android) {
-    log(`\n    ${pc.underline("Android")}`);
+    log.text(`\n    ${pc.underline("Android")}`);
 
     const appPath = android.appName
       ? path.resolve(android.sourceDir, android.appName)
@@ -249,22 +268,34 @@ export const generate = async ({
       ].map(({ ratio, directory }) => {
         const fileName = `${logoFileName}.png`;
         const filePath = path.resolve(resPath, directory, fileName);
-        const width = logoWidth * ratio;
-        const height = getHeight(width);
+        // https://github.com/androidx/androidx/blob/androidx-main/core/core-splashscreen/src/main/res/values/dimens.xml#L22
+        const canvasSize = 288 * ratio;
 
-        const canvasSize = splashScreenIconSizeNoBackground * ratio;
+        // https://sharp.pixelplumbing.com/api-constructor
+        const canvas = sharp({
+          create: {
+            width: canvasSize,
+            height: canvasSize,
+            channels: 4,
+            background: {
+              r: 255,
+              g: 255,
+              b: 255,
+              alpha: 0,
+            },
+          },
+        });
 
-        // https://github.com/oliver-moran/jimp/tree/master/packages/jimp#creating-new-images
-        const canvas = new Jimp(canvasSize, canvasSize, 0xffffff00);
-        const logo = image.clone().resize(width, height);
-
-        const x = (canvasSize - width) / 2;
-        const y = (canvasSize - height) / 2;
-
-        return canvas
-          .blit(logo, x, y)
-          .quality(100)
-          .writeAsync(filePath)
+        return image
+          .clone()
+          .resize(logoWidth * ratio)
+          .toBuffer()
+          .then((input) =>
+            canvas
+              .composite([{ input }])
+              .png({ quality: 100 })
+              .toFile(filePath),
+          )
           .then(() => {
             logWrite("✨", filePath, { width: canvasSize, height: canvasSize });
           });
@@ -273,7 +304,7 @@ export const generate = async ({
   }
 
   if (ios) {
-    log(`\n    ${pc.underline("iOS")}`);
+    log.text(`\n    ${pc.underline("iOS")}`);
 
     const { projectPath } = ios;
     const imagesPath = path.resolve(projectPath, "Images.xcassets");
@@ -284,7 +315,7 @@ export const generate = async ({
       fs.writeFileSync(
         storyboardPath,
         getStoryboard({
-          height: getHeight(logoWidth),
+          height: logoHeight,
           width: logoWidth,
           backgroundColor: backgroundColorHex,
         }),
@@ -293,7 +324,7 @@ export const generate = async ({
 
       logWrite("✨", storyboardPath);
     } else {
-      log(
+      log.text(
         `No "${projectPath}" directory found. Skipping iOS storyboard generation…`,
       );
     }
@@ -316,37 +347,36 @@ export const generate = async ({
         ].map(({ ratio, suffix }) => {
           const fileName = `${logoFileName}${suffix}.png`;
           const filePath = path.resolve(imageSetPath, fileName);
-          const width = logoWidth * ratio;
-          const height = getHeight(width);
 
           return image
             .clone()
-            .resize(width, height)
-            .quality(100)
-            .writeAsync(filePath)
-            .then(() => {
+            .resize(logoWidth * ratio)
+            .png({ quality: 100 })
+            .toFile(filePath)
+            .then(({ width, height }) => {
               logWrite("✨", filePath, { width, height });
             });
         }),
       );
     } else {
-      log(
+      log.text(
         `No "${imagesPath}" directory found. Skipping iOS images generation…`,
       );
     }
   }
 
-  log(`
+  log.text(`
  ${pc.blue("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓")}
  ${pc.blue("┃")}  💖  ${pc.bold(
     "Love this library? Consider sponsoring!",
   )}  ${pc.blue("┃")}
- ${pc.blue("┃")}  One-time amounts are available.              ${pc.blue("┃")}
  ${pc.blue("┃")}  ${pc.underline(
     "https://github.com/sponsors/zoontek",
   )}          ${pc.blue("┃")}
  ${pc.blue("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛")}
 `);
 
-  log(`✅  Done! Thanks for using ${pc.underline("react-native-bootsplash")}.`);
+  log.text(
+    `✅  Done! Thanks for using ${pc.underline("react-native-bootsplash")}.`,
+  );
 };

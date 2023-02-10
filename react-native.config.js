@@ -5,7 +5,8 @@ module.exports = {
   commands: [
     {
       name: "generate-bootsplash <logoPath>",
-      description: "Generate a launch screen using an original logo file",
+      description:
+        "Generate a launch screen using an original logo file (PNG or SVG)",
       options: [
         {
           name: "--background-color <color>",
@@ -39,18 +40,6 @@ module.exports = {
       ) => {
         const workingPath =
           process.env.INIT_CWD || process.env.PWD || process.cwd();
-
-        if (logoWidth > 288) {
-          console.log(
-            "❌  Logo width can't be superior to 288dp as it will be cropped on Android. Exiting…\n",
-          );
-
-          process.exit(1);
-        } else if (logoWidth > 192) {
-          console.log(
-            "⚠️   As logo width is superior to 192dp, it might be cropped on Android.\n",
-          );
-        }
 
         return generate({
           android,
