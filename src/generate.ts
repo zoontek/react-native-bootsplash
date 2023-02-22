@@ -163,11 +163,9 @@ export const generate = async ({
     .then(({ height = 0 }) => height);
 
   if (logoWidth > 288) {
-    log.error("Logo width must not exceed 288dp (Android will crop it).");
-    process.exit(1);
+    log.warn("⚠️   Logo width exceed 288dp. It will be cropped on Android.");
   } else if (logoHeight > 288) {
-    log.error("Logo height must not exceed 288dp (Android will crop it).");
-    process.exit(1);
+    log.warn("⚠️   Logo height exceed 288dp. It will be cropped on Android.");
   } else if (logoWidth > 192) {
     log.warn("⚠️   Logo width exceed 192dp. It might be cropped on Android.");
   } else if (logoHeight > 192) {
