@@ -421,7 +421,7 @@ PODS:
     - React-jsi (= 0.71.3)
     - React-logger (= 0.71.3)
     - React-perflogger (= 0.71.3)
-  - RNBootSplash (4.5.1):
+  - RNBootSplash (4.5.2):
     - React-Core
   - RNPermissions (3.6.1):
     - React-Core
@@ -640,7 +640,7 @@ SPEC CHECKSUMS:
   React-RCTVibration: 5199a180d04873366a83855de55ac33ce60fe4d5
   React-runtimeexecutor: 7bf0dafc7b727d93c8cb94eb00a9d3753c446c3e
   ReactCommon: 6f65ea5b7d84deb9e386f670dd11ce499ded7b40
-  RNBootSplash: ea37e3083eb546d2bc1c29e25f1d4dc627901b0d
+  RNBootSplash: b721af380c81622b03fd67d800675919ee0d8269
   RNPermissions: dcdb7b99796bbeda6975a6e79ad519c41b251b1c
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   Yoga: 5ed1699acbba8863755998a4245daa200ff3817b
