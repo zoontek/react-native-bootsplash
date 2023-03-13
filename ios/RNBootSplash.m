@@ -21,10 +21,10 @@ RCT_EXPORT_MODULE();
 
 + (void)initWithStoryboard:(NSString * _Nonnull)storyboardName
                   rootView:(UIView * _Nullable)rootView {
-  if (rootView == nil ||
-      ![rootView isKindOfClass:[RCTRootView class]] ||
-      _rootView != nil ||
-      RCTRunningInAppExtension())
+  if (rootView == nil
+      || ![rootView isKindOfClass:[RCTRootView class]]
+      || _rootView != nil
+      || RCTRunningInAppExtension())
     return;
 
   _rootView = (RCTRootView *)rootView;
