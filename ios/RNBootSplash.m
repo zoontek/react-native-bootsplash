@@ -76,6 +76,7 @@ RCT_EXPORT_MODULE();
   if (rootView == nil
       || ![rootView isKindOfClass:[RCTRootView class]]
       || _rootView != nil
+      || [self hasResolverQueue] // hide has already been called, abort init
       || RCTRunningInAppExtension())
     return;
 
@@ -87,9 +88,6 @@ RCT_EXPORT_MODULE();
 
   UIStoryboard *storyboard = [UIStoryboard storyboardWithName:storyboardName bundle:nil];
   UIView *loadingView = [[storyboard instantiateInitialViewController] view];
-
-  if ([self hasResolverQueue])
-    return; // hide has already been called, abort init
 
   [_rootView setLoadingView:loadingView];
 
