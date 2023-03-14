@@ -5,7 +5,9 @@
 
 static NSMutableArray<RCTPromiseResolveBlock> *_resolverQueue = nil;
 static RCTRootView *_rootView = nil;
-static bool _isTransitioning = false;
+static float _duration = 0;
+static bool _nativeHidden = false;
+static bool _transitioning = false;
 
 @implementation RNBootSplash
 
@@ -17,6 +19,56 @@ RCT_EXPORT_MODULE();
 
 - (dispatch_queue_t)methodQueue {
   return dispatch_get_main_queue();
+}
+
++ (bool)isLoadingViewHidden {
+  return _rootView == nil || _rootView.loadingView == nil || [_rootView.loadingView isHidden];
+}
+
++ (bool)hasResolverQueue {
+  return _resolverQueue != nil;
+}
+
++ (void)clearResolverQueue {
+  if (![self hasResolverQueue])
+    return;
+
+  while ([_resolverQueue count] > 0) {
+    RCTPromiseResolveBlock resolve = [_resolverQueue objectAtIndex:0];
+    [_resolverQueue removeObjectAtIndex:0];
+    resolve(@(true));
+  }
+}
+
++ (void)hideLoadingView {
+  if ([self isLoadingViewHidden])
+    return [RNBootSplash clearResolverQueue];
+
+  if (_duration <= 0) {
+    _rootView.loadingView.hidden = YES;
+    [_rootView.loadingView removeFromSuperview];
+    _rootView.loadingView = nil;
+
+    return [RNBootSplash clearResolverQueue];
+  } else {
+    dispatch_async(dispatch_get_main_queue(), ^{
+      _transitioning = true;
+
+      [UIView transitionWithView:_rootView
+                        duration:_duration / 1000.0
+                         options:UIViewAnimationOptionTransitionCrossDissolve
+                      animations:^{
+        _rootView.loadingView.hidden = YES;
+      }
+                      completion:^(__unused BOOL finished) {
+        [_rootView.loadingView removeFromSuperview];
+        _rootView.loadingView = nil;
+
+        _transitioning = false;
+        return [RNBootSplash clearResolverQueue];
+      }];
+    });
+  }
 }
 
 + (void)initWithStoryboard:(NSString * _Nonnull)storyboardName
@@ -36,10 +88,21 @@ RCT_EXPORT_MODULE();
   UIStoryboard *storyboard = [UIStoryboard storyboardWithName:storyboardName bundle:nil];
   UIView *loadingView = [[storyboard instantiateInitialViewController] view];
 
-  if (_resolverQueue != nil)
+  if ([self hasResolverQueue])
     return; // hide has already been called, abort init
 
   [_rootView setLoadingView:loadingView];
+
+  [NSTimer scheduledTimerWithTimeInterval:0.35
+                                  repeats:NO
+                                    block:^(NSTimer * _Nonnull timer) {
+    // wait for native iOS launch screen to fade out
+    _nativeHidden = true;
+
+    // hide has been called before native launch screen fade out
+    if ([self hasResolverQueue])
+      [self hideLoadingView];
+  }];
 
   [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(onJavaScriptDidLoad)
@@ -57,30 +120,8 @@ RCT_EXPORT_MODULE();
 }
 
 + (void)onJavaScriptDidFailToLoad {
-  [self removeLoadingView];
+  [self hideLoadingView];
   [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
-+ (bool)isHidden {
-  return _rootView == nil || _rootView.loadingView == nil || [_rootView.loadingView isHidden];
-}
-
-+ (void)removeLoadingView {
-  if (![self isHidden]) {
-    _rootView.loadingView.hidden = YES;
-
-    [_rootView.loadingView removeFromSuperview];
-    _rootView.loadingView = nil;
-  }
-}
-
-- (void)clearResolverQueue {
-  while ([_resolverQueue count] > 0) {
-    RCTPromiseResolveBlock resolve = [_resolverQueue objectAtIndex:0];
-    [_resolverQueue removeObjectAtIndex:0];
-
-    resolve(@(true));
-  }
 }
 
 RCT_REMAP_METHOD(hide,
@@ -92,42 +133,21 @@ RCT_REMAP_METHOD(hide,
 
   [_resolverQueue addObject:resolve];
 
-  if ([RNBootSplash isHidden] || RCTRunningInAppExtension())
-    return [self clearResolverQueue];
+  if ([RNBootSplash isLoadingViewHidden] || RCTRunningInAppExtension())
+    return [RNBootSplash clearResolverQueue];
 
-  float roundedDuration = lroundf((float)duration);
+  _duration = lroundf((float)duration);
 
-  if (roundedDuration <= 0) {
-    [RNBootSplash removeLoadingView];
-    return [self clearResolverQueue];
-  }
-
-  dispatch_async(dispatch_get_main_queue(), ^{
-    _isTransitioning = true;
-
-    [UIView transitionWithView:_rootView
-                      duration:roundedDuration / 1000.0
-                       options:UIViewAnimationOptionTransitionCrossDissolve
-                    animations:^{
-      _rootView.loadingView.hidden = YES;
-    }
-                    completion:^(__unused BOOL finished) {
-      [_rootView.loadingView removeFromSuperview];
-      _rootView.loadingView = nil;
-
-      _isTransitioning = false;
-
-      return [self clearResolverQueue];
-    }];
-  });
+  if (_nativeHidden)
+    return [RNBootSplash hideLoadingView];
 }
 
 RCT_REMAP_METHOD(getVisibilityStatus,
                  getVisibilityStatusWithResolver:(RCTPromiseResolveBlock)resolve
                  rejecter:(RCTPromiseRejectBlock)reject) {
-  if ([RNBootSplash isHidden])
+  if ([RNBootSplash isLoadingViewHidden])
     return resolve(@"hidden");
-  else if (_isTransitioning)
+  else if (_transitioning)
     return resolve(@"transitioning");
   else
     return resolve(@"visible");
