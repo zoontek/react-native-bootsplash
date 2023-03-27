@@ -43,9 +43,6 @@ target 'RNBootSplashExample' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  permissions_path = '../node_modules/react-native-permissions/ios'
-  pod 'Permission-Notifications', :path => "#{permissions_path}/Notifications"
-
   post_install do |installer|
     react_native_post_install(
       installer,
