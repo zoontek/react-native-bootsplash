@@ -32,19 +32,29 @@ module.exports = {
             '[android only] flavor build variant (outputs in an android resource directory other than "main")',
           default: "main",
         },
+        {
+          name: "--android-only",
+          description:
+            "generate icons for Android only (useful if you use a custom iOS launch screen)",
+        },
+                {
+          name: "--ios-only",
+          description:
+            "generate icons for iOS only (useful if you use a custom Android launch screen)",
+        },
       ],
       func: (
         [logoPath],
         { project: { android, ios } },
-        { backgroundColor, logoWidth, assetsPath, flavor },
+        { backgroundColor, logoWidth, assetsPath, flavor, androidOnly, iosOnly },
       ) => {
         const workingPath =
           process.env.INIT_CWD || process.env.PWD || process.cwd();
 
         return generate({
-          android,
+          android: android && !iosOnly ? android : null,
 
-          ios: ios
+          ios: ios && !androidOnly
             ? {
                 ...ios,
                 // Fix to support previous CLI versions
