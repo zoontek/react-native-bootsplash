@@ -128,8 +128,7 @@ Options:
   --logo-width <width>        logo width at @1x (in dp - we recommend approximately ~100) (default: 100)
   --assets-path [path]        path to your static assets directory (useful to require the logo file in JS)
   --flavor <flavor>           [android only] flavor build variant (outputs in an android resource directory other than "main")
-  --android-only              generate icons for Android only (useful if you use a custom iOS launch screen)
-  --ios-only                  generate icons for iOS only (useful if you use a custom Android launch screen)
+  --platforms [platforms]     platforms to generate assets for (comma separated) (default: "android,ios")
   -h, --help                  output usage information
 ```
 
@@ -140,7 +139,8 @@ yarn react-native generate-bootsplash assets/bootsplash_logo_original.png \
   --background-color=F5FCFF \
   --logo-width=100 \
   --assets-path=assets \
-  --flavor=main
+  --flavor=main \
+  --platforms=android,ios
 ```
 
 ![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/master/docs/cli_tool.png?raw=true)

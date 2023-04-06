@@ -33,28 +33,27 @@ module.exports = {
           default: "main",
         },
         {
-          name: "--android-only",
-          description:
-            "generate icons for Android only (useful if you use a custom iOS launch screen)",
-        },
-                {
-          name: "--ios-only",
-          description:
-            "generate icons for iOS only (useful if you use a custom Android launch screen)",
-        },
+          name: '--platforms [platforms]',
+          description: 'platforms to generate the splash screen for (android, ios)',
+          default: 'android,ios',
+          parse: (value) => value.split(','),
+        }
       ],
       func: (
         [logoPath],
         { project: { android, ios } },
-        { backgroundColor, logoWidth, assetsPath, flavor, androidOnly, iosOnly },
+        { backgroundColor, logoWidth, assetsPath, flavor, platforms },
       ) => {
         const workingPath =
           process.env.INIT_CWD || process.env.PWD || process.cwd();
 
-        return generate({
-          android: android && !iosOnly ? android : null,
+        const iosOnly = platforms.includes('ios');
+        const androidOnly = platforms.includes('android');
 
-          ios: ios && !androidOnly
+        return generate({
+          android: android && androidOnly ? android : null,
+
+          ios: ios && iosOnly
             ? {
                 ...ios,
                 // Fix to support previous CLI versions
