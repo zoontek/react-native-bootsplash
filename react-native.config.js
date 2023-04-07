@@ -32,19 +32,28 @@ module.exports = {
             '[android only] flavor build variant (outputs in an android resource directory other than "main")',
           default: "main",
         },
+        {
+          name: '--platforms [platforms]',
+          description: 'platforms to generate the splash screen for (android, ios)',
+          default: 'android,ios',
+          parse: (value) => value.split(','),
+        }
       ],
       func: (
         [logoPath],
         { project: { android, ios } },
-        { backgroundColor, logoWidth, assetsPath, flavor },
+        { backgroundColor, logoWidth, assetsPath, flavor, platforms },
       ) => {
         const workingPath =
           process.env.INIT_CWD || process.env.PWD || process.cwd();
 
-        return generate({
-          android,
+        const iosOnly = platforms.includes('ios');
+        const androidOnly = platforms.includes('android');
 
-          ios: ios
+        return generate({
+          android: android && androidOnly ? android : null,
+
+          ios: ios && iosOnly
             ? {
                 ...ios,
                 // Fix to support previous CLI versions
