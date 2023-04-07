@@ -33,11 +33,12 @@ module.exports = {
           default: "main",
         },
         {
-          name: '--platforms [platforms]',
-          description: 'platforms to generate the splash screen for (android, ios)',
-          default: 'android,ios',
-          parse: (value) => value.split(','),
-        }
+          name: "--platforms <platforms>",
+          description:
+            "platforms to generate the splash screen for (android, ios)",
+          default: "android,ios",
+          parse: (value) => value.split(","),
+        },
       ],
       func: (
         [logoPath],
@@ -47,22 +48,20 @@ module.exports = {
         const workingPath =
           process.env.INIT_CWD || process.env.PWD || process.cwd();
 
-        const iosOnly = platforms.includes('ios');
-        const androidOnly = platforms.includes('android');
-
         return generate({
-          android: android && androidOnly ? android : null,
+          android: platforms.includes("android") && android ? android : null,
 
-          ios: ios && iosOnly
-            ? {
-                ...ios,
-                // Fix to support previous CLI versions
-                projectPath: (ios.xcodeProject
-                  ? path.resolve(ios.sourceDir, ios.xcodeProject.name)
-                  : ios.projectPath
-                ).replace(/\.(xcodeproj|xcworkspace)$/, ""),
-              }
-            : null,
+          ios:
+            platforms.includes("ios") && ios
+              ? {
+                  ...ios,
+                  // Fix to support previous CLI versions
+                  projectPath: (ios.xcodeProject
+                    ? path.resolve(ios.sourceDir, ios.xcodeProject.name)
+                    : ios.projectPath
+                  ).replace(/\.(xcodeproj|xcworkspace)$/, ""),
+                }
+              : null,
 
           workingPath,
           logoPath: path.resolve(workingPath, logoPath),

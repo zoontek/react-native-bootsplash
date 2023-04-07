@@ -141,6 +141,13 @@ export const generate = async ({
   flavor: string;
   logoWidth: number;
 }) => {
+  if (!android && !ios) {
+    log.error(
+      "--platforms value does not include at least one supported platform.",
+    );
+    process.exit(1);
+  }
+
   if (!isValidHexadecimal(backgroundColor)) {
     log.error("--background-color value is not a valid hexadecimal color.");
     process.exit(1);

@@ -128,7 +128,7 @@ Options:
   --logo-width <width>        logo width at @1x (in dp - we recommend approximately ~100) (default: 100)
   --assets-path [path]        path to your static assets directory (useful to require the logo file in JS)
   --flavor <flavor>           [android only] flavor build variant (outputs in an android resource directory other than "main")
-  --platforms [platforms]     platforms to generate assets for (comma separated) (default: "android,ios")
+  --platforms <platforms>     platforms to generate assets for (comma separated) (default: "android,ios")
   -h, --help                  output usage information
 ```
 
