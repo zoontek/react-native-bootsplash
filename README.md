@@ -81,7 +81,7 @@ dependencies {
 3. Add the import and link the package in `MainApplication.java`:
 
 ```java
-import com.zoontek.rnbootsplash.RNBootSplashPackage; // <- add the RNBootSplashPackage import
+import com.zoontek.rnbootsplash.RNBootSplashPackage; // ⬅️ add the RNBootSplashPackage import
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -178,7 +178,7 @@ Edit the `ios/YourProjectName/AppDelegate.mm` file:
 
 ```obj-c
 #import "AppDelegate.h"
-#import "RNBootSplash.h" // <- add the header import
+#import "RNBootSplash.h" // ⬅️ add the header import
 
 // …
 
@@ -186,11 +186,10 @@ Edit the `ios/YourProjectName/AppDelegate.mm` file:
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  self.moduleName = @"RNBootSplashExample";
-  self.initialProps = @{};
-  [super application:application didFinishLaunchingWithOptions:launchOptions];
-
-  [RNBootSplash initWithStoryboard:@"BootSplash" rootView:self.window.rootViewController.view]; // <- initialization using the storyboard file name
+  // …
+  // add these lines just before the function return:
+  UIView *rootView = self.window.rootViewController.view; // ⬅️ ❗️ only required for react-native >= 0.71
+  [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView]; // ⬅️ initialize the splash screen
 
   return YES;
 }
@@ -215,7 +214,7 @@ dependencies {
   // …
 
   implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.0.0")
-  implementation("androidx.core:core-splashscreen:1.0.0") // Add this line
+  implementation("androidx.core:core-splashscreen:1.0.0") // add this line
 
   // …
 ```
@@ -267,7 +266,7 @@ _⚠️  Don't forget going into the `android` directory to execute a `./gradl
 ```java
 // …
 
-// Add these required imports:
+// add these required imports:
 import android.os.Bundle;
 import com.zoontek.rnbootsplash.RNBootSplash;
 
@@ -277,7 +276,7 @@ public class MainActivity extends ReactActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    RNBootSplash.init(this); // <- initialize the splash screen
+    RNBootSplash.init(this); // ⬅️ initialize the splash screen
     super.onCreate(savedInstanceState); // or super.onCreate(null) with react-native-screens
   }
 }
