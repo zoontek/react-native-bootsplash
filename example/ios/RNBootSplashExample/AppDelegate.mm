@@ -13,7 +13,8 @@
   self.initialProps = @{};
   [super application:application didFinishLaunchingWithOptions:launchOptions];
 
-  [RNBootSplash initWithStoryboard:@"BootSplash" rootView:self.window.rootViewController.view];
+  UIView *rootView = self.window.rootViewController.view;
+  [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView];
 
   return YES;
 }
