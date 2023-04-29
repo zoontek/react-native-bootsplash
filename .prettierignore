@@ -2,5 +2,7 @@ dist/
 node_modules/
 Pods/
 
+example/android/.idea/
 example/android/app/build/
 example/ios/build/
+example/vendor/bundle/
