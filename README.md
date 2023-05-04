@@ -188,6 +188,7 @@ Edit the `ios/YourProjectName/AppDelegate.mm` file:
 {
   // …
   // add these lines just before the function return:
+  [super application:application didFinishLaunchingWithOptions:launchOptions]; // ⬅️ move here original return expression
   UIView *rootView = self.window.rootViewController.view; // ⬅️ ❗️ only required for react-native >= 0.71
   [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView]; // ⬅️ initialize the splash screen
 
