@@ -11,12 +11,7 @@
   // You can add your custom initial props in the dictionary below.
   // They will be passed down to the ViewController used by React Native.
   self.initialProps = @{};
-  [super application:application didFinishLaunchingWithOptions:launchOptions];
-
-  UIView *rootView = self.window.rootViewController.view;
-  [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView];
-
-  return YES;
+  return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
@@ -36,6 +31,17 @@
 - (BOOL)concurrentRootEnabled
 {
   return true;
+}
+
+- (UIView *)createRootViewWithBridge:(RCTBridge *)bridge
+                          moduleName:(NSString *)moduleName
+                           initProps:(NSDictionary *)initProps {
+  UIView *rootView = [super createRootViewWithBridge:bridge
+                                          moduleName:moduleName
+                                           initProps:initProps];
+
+  [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView];
+  return rootView;
 }
 
 @end

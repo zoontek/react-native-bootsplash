@@ -1,11 +1,17 @@
 #import "RNBootSplash.h"
 
-#import <React/RCTRootView.h>
 #import <React/RCTUtils.h>
+
+#if RCT_NEW_ARCH_ENABLED
+#import <React/RCTFabricSurfaceHostingProxyRootView.h>
+#import <React/RCTSurfaceHostingView.h>
+#else
+#import <React/RCTRootView.h>
+#endif
 
 static NSMutableArray<RCTPromiseResolveBlock> *_resolveQueue = nil;
 static UIView *_loadingView = nil;
-static RCTRootView *_rootView = nil;
+static UIView *_rootView = nil;
 static float _duration = 0;
 static bool _nativeHidden = false;
 static bool _transitioning = false;
@@ -71,19 +77,27 @@ RCT_EXPORT_MODULE();
 + (void)initWithStoryboard:(NSString * _Nonnull)storyboardName
                   rootView:(UIView * _Nullable)rootView {
   if (rootView == nil
+#ifdef RCT_NEW_ARCH_ENABLED
+      || ![rootView isKindOfClass:[RCTFabricSurfaceHostingProxyRootView class]]
+#else
       || ![rootView isKindOfClass:[RCTRootView class]]
+#endif
       || _rootView != nil
       || [self hasResolveQueue] // hide has already been called, abort init
       || RCTRunningInAppExtension())
     return;
 
+#ifdef RCT_NEW_ARCH_ENABLED
+  RCTFabricSurfaceHostingProxyRootView *proxy = (RCTFabricSurfaceHostingProxyRootView *)rootView;
+  _rootView = (RCTSurfaceHostingView *)proxy.surface.view;
+#else
   _rootView = (RCTRootView *)rootView;
+#endif
 
   UIStoryboard *storyboard = [UIStoryboard storyboardWithName:storyboardName bundle:nil];
 
   _loadingView = [[storyboard instantiateInitialViewController] view];
   _loadingView.hidden = NO;
-  _loadingView.center = (CGPoint){CGRectGetMidX(_rootView.bounds), CGRectGetMidY(_rootView.bounds)};
 
   [_rootView addSubview:_loadingView];
 
