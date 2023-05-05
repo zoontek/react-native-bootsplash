@@ -104,8 +104,6 @@ public class MainApplication extends Application implements ReactApplication {
 
 ## Setup
 
-ℹ️ For `react-native` < `0.71` setup, follow the [`v4.4.0 README.md`](https://github.com/zoontek/react-native-bootsplash/blob/4.4.0/README.md).
-
 ### Assets generation
 
 In order to speed up the setup, we provide a **CLI** to generate assets, create the Android Drawable XML file and the iOS Storyboard file automatically ✨.
@@ -174,6 +172,8 @@ _⚠️  Only `.storyboard` files are supported ([Apple has deprecated other m
 
 ---
 
+ℹ️ For `react-native` < `0.71` setup, follow the [`v4.4.0 README.md`](https://github.com/zoontek/react-native-bootsplash/blob/4.4.0/README.md).
+
 Edit the `ios/YourProjectName/AppDelegate.mm` file:
 
 ```obj-c
@@ -187,9 +187,12 @@ Edit the `ios/YourProjectName/AppDelegate.mm` file:
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   // …
-  // add these lines just before the function return:
-  UIView *rootView = self.window.rootViewController.view; // ⬅️ ❗️ only required for react-native >= 0.71
-  [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView]; // ⬅️ initialize the splash screen
+  // return [super application:application didFinishLaunchingWithOptions:launchOptions]; ⬅️ replace this
+
+ // with this ⬇️
+  [super application:application didFinishLaunchingWithOptions:launchOptions];
+  UIView *rootView = self.window.rootViewController.view;
+  [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView];
 
   return YES;
 }
