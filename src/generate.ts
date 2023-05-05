@@ -42,9 +42,9 @@ const getStoryboard = ({
   width: number;
   backgroundColor: string;
 }) => {
-  const r = (parseInt(hex[1] + hex[2], 16) / 255).toPrecision(15);
-  const g = (parseInt(hex[3] + hex[4], 16) / 255).toPrecision(15);
-  const b = (parseInt(hex[5] + hex[6], 16) / 255).toPrecision(15);
+  const r = (parseInt("" + hex[1] + hex[2], 16) / 255).toPrecision(15);
+  const g = (parseInt("" + hex[3] + hex[4], 16) / 255).toPrecision(15);
+  const b = (parseInt("" + hex[5] + hex[6], 16) / 255).toPrecision(15);
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
@@ -102,16 +102,18 @@ const log = {
   warn: (text: string) => console.log(pc.yellow(text)),
 };
 
-const isValidHexadecimal = (value: string) =>
-  /^#?([0-9A-F]{3}){1,2}$/i.test(value);
-
 const toFullHexadecimal = (hex: string) => {
-  const prefixed = hex[0] === "#" ? hex : `#${hex}`;
-  const up = prefixed.toUpperCase();
+  const up = hex.toUpperCase().replace(/[^0-9A-F]/g, "");
 
-  return up.length === 4
-    ? "#" + up[1] + up[1] + up[2] + up[2] + up[3] + up[3]
-    : up;
+  if (up.length === 6) {
+    return "#" + up;
+  }
+  if (up.length === 3) {
+    return "#" + up[0] + up[0] + up[1] + up[1] + up[2] + up[2];
+  }
+
+  log.error("--background-color value is not a valid hexadecimal color.");
+  process.exit(1);
 };
 
 export const generate = async ({
@@ -148,13 +150,8 @@ export const generate = async ({
     process.exit(1);
   }
 
-  if (!isValidHexadecimal(backgroundColor)) {
-    log.error("--background-color value is not a valid hexadecimal color.");
-    process.exit(1);
-  }
-
-  const image = sharp(logoPath);
   const backgroundColorHex = toFullHexadecimal(backgroundColor);
+  const image = sharp(logoPath);
   const { format } = await image.metadata();
 
   if (format !== "png" && format !== "svg") {

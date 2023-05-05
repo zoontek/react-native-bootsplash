@@ -1,9 +1,9 @@
 #import "RNBootSplash.h"
 
-#import <React/RCTBridge.h>
 #import <React/RCTUtils.h>
 
-static NSMutableArray<RCTPromiseResolveBlock> *_resolverQueue = nil;
+static NSMutableArray<RCTPromiseResolveBlock> *_resolveQueue = nil;
+static UIView *_loadingView = nil;
 static RCTRootView *_rootView = nil;
 static float _duration = 0;
 static bool _nativeHidden = false;
@@ -13,44 +13,34 @@ static bool _transitioning = false;
 
 RCT_EXPORT_MODULE();
 
-+ (BOOL)requiresMainQueueSetup {
-  return NO;
-}
-
 - (dispatch_queue_t)methodQueue {
   return dispatch_get_main_queue();
 }
 
 + (bool)isLoadingViewHidden {
-  return _rootView == nil || _rootView.loadingView == nil || [_rootView.loadingView isHidden];
+  return _loadingView == nil || [_loadingView isHidden];
 }
 
-+ (bool)hasResolverQueue {
-  return _resolverQueue != nil;
++ (bool)hasResolveQueue {
+  return _resolveQueue != nil;
 }
 
-+ (void)clearResolverQueue {
-  if (![self hasResolverQueue])
++ (void)clearResolveQueue {
+  if (![self hasResolveQueue])
     return;
 
-  while ([_resolverQueue count] > 0) {
-    RCTPromiseResolveBlock resolve = [_resolverQueue objectAtIndex:0];
-    [_resolverQueue removeObjectAtIndex:0];
+  while ([_resolveQueue count] > 0) {
+    RCTPromiseResolveBlock resolve = [_resolveQueue objectAtIndex:0];
+    [_resolveQueue removeObjectAtIndex:0];
     resolve(@(true));
   }
 }
 
 + (void)hideLoadingView {
   if ([self isLoadingViewHidden])
-    return [RNBootSplash clearResolverQueue];
+    return [RNBootSplash clearResolveQueue];
 
-  if (_duration <= 0) {
-    _rootView.loadingView.hidden = YES;
-    [_rootView.loadingView removeFromSuperview];
-    _rootView.loadingView = nil;
-
-    return [RNBootSplash clearResolverQueue];
-  } else {
+  if (_duration > 0) {
     dispatch_async(dispatch_get_main_queue(), ^{
       _transitioning = true;
 
@@ -58,16 +48,22 @@ RCT_EXPORT_MODULE();
                         duration:_duration / 1000.0
                          options:UIViewAnimationOptionTransitionCrossDissolve
                       animations:^{
-        _rootView.loadingView.hidden = YES;
+        _loadingView.hidden = YES;
       }
                       completion:^(__unused BOOL finished) {
-        [_rootView.loadingView removeFromSuperview];
-        _rootView.loadingView = nil;
+        [_loadingView removeFromSuperview];
+        _loadingView = nil;
 
         _transitioning = false;
-        return [RNBootSplash clearResolverQueue];
+        return [RNBootSplash clearResolveQueue];
       }];
     });
+  } else {
+    _loadingView.hidden = YES;
+    [_loadingView removeFromSuperview];
+    _loadingView = nil;
+
+    return [RNBootSplash clearResolveQueue];
   }
 }
 
@@ -76,20 +72,17 @@ RCT_EXPORT_MODULE();
   if (rootView == nil
       || ![rootView isKindOfClass:[RCTRootView class]]
       || _rootView != nil
-      || [self hasResolverQueue] // hide has already been called, abort init
+      || [self hasResolveQueue] // hide has already been called, abort init
       || RCTRunningInAppExtension())
     return;
 
   _rootView = (RCTRootView *)rootView;
 
-  [[NSNotificationCenter defaultCenter] removeObserver:rootView
-                                                  name:RCTContentDidAppearNotification
-                                                object:rootView];
-
   UIStoryboard *storyboard = [UIStoryboard storyboardWithName:storyboardName bundle:nil];
-  UIView *loadingView = [[storyboard instantiateInitialViewController] view];
 
-  [_rootView setLoadingView:loadingView];
+  _loadingView = [[storyboard instantiateInitialViewController] view];
+  _loadingView.hidden = NO;
+  [_rootView addSubview:_loadingView];
 
   [NSTimer scheduledTimerWithTimeInterval:0.35
                                   repeats:NO
@@ -98,7 +91,7 @@ RCT_EXPORT_MODULE();
     _nativeHidden = true;
 
     // hide has been called before native launch screen fade out
-    if ([self hasResolverQueue])
+    if ([self hasResolveQueue])
       [self hideLoadingView];
   }];
 
@@ -122,17 +115,16 @@ RCT_EXPORT_MODULE();
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-RCT_REMAP_METHOD(hide,
-                 hideWithDuration:(double)duration
-                 resolver:(RCTPromiseResolveBlock)resolve
-                 rejecter:(RCTPromiseRejectBlock)reject) {
-  if (_resolverQueue == nil)
-    _resolverQueue = [[NSMutableArray alloc] init];
+- (void)hide:(double)duration
+     resolve:(RCTPromiseResolveBlock)resolve
+      reject:(RCTPromiseRejectBlock)reject {
+  if (_resolveQueue == nil)
+    _resolveQueue = [[NSMutableArray alloc] init];
 
-  [_resolverQueue addObject:resolve];
+  [_resolveQueue addObject:resolve];
 
   if ([RNBootSplash isLoadingViewHidden] || RCTRunningInAppExtension())
-    return [RNBootSplash clearResolverQueue];
+    return [RNBootSplash clearResolveQueue];
 
   _duration = lroundf((float)duration);
 
@@ -140,9 +132,8 @@ RCT_REMAP_METHOD(hide,
     return [RNBootSplash hideLoadingView];
 }
 
-RCT_REMAP_METHOD(getVisibilityStatus,
-                 getVisibilityStatusWithResolver:(RCTPromiseResolveBlock)resolve
-                 rejecter:(RCTPromiseRejectBlock)reject) {
+- (void)getVisibilityStatus:(RCTPromiseResolveBlock)resolve
+                     reject:(RCTPromiseRejectBlock)reject {
   if ([RNBootSplash isLoadingViewHidden])
     return resolve(@"hidden");
   else if (_transitioning)
@@ -150,5 +141,31 @@ RCT_REMAP_METHOD(getVisibilityStatus,
   else
     return resolve(@"visible");
 }
+
+#ifdef RCT_NEW_ARCH_ENABLED
+
+- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:(const facebook::react::ObjCTurboModule::InitParams &)params {
+  return std::make_shared<facebook::react::NativeRNBootSplashSpecJSI>(params);
+}
+
+#else
+
+RCT_REMAP_METHOD(hide,
+                 hideWithDuration:(double)duration
+                 resolve:(RCTPromiseResolveBlock)resolve
+                 rejecte:(RCTPromiseRejectBlock)reject) {
+  [self hide:duration
+     resolve:resolve
+      reject:reject];
+}
+
+RCT_REMAP_METHOD(getVisibilityStatus,
+                 getVisibilityStatusWithResolve:(RCTPromiseResolveBlock)resolve
+                 rejecte:(RCTPromiseRejectBlock)reject) {
+  [self getVisibilityStatus:resolve
+                     reject:reject];
+}
+
+#endif
 
 @end

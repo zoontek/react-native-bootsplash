@@ -18,14 +18,14 @@
     "@babel/highlight" "^7.18.6"
 
 "@babel/compat-data@^7.17.7", "@babel/compat-data@^7.20.5", "@babel/compat-data@^7.21.5":
-  version "7.21.5"
-  resolved "https://registry.yarnpkg.com/@babel/compat-data/-/compat-data-7.21.5.tgz#887a54ebe20c9f21edf27caf4ffcf8da6fdd5bd2"
-  integrity sha512-M+XAiQ7GzQ3FDPf0KOLkugzptnIypt0X0ma0wmlTKPR3IchgNFdx2JXxZdvd18JY5s7QkaFD/qyX0dsMpog/Ug==
+  version "7.21.7"
+  resolved "https://registry.yarnpkg.com/@babel/compat-data/-/compat-data-7.21.7.tgz#61caffb60776e49a57ba61a88f02bedd8714f6bc"
+  integrity sha512-KYMqFYTaenzMK4yUtf4EW9wc4N9ef80FsbMtkwool5zpwl4YrT1SdWYSTRcT94KO4hannogdS+LxY7L+arP3gA==
 
 "@babel/core@^7.13.16", "@babel/core@^7.20.0":
-  version "7.21.5"
-  resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.21.5.tgz#92f753e8b9f96e15d4b398dbe2f25d1408c9c426"
-  integrity sha512-9M398B/QH5DlfCOTKDZT1ozXr0x8uBEeFd+dJraGUZGiaNpGCDVGCc14hZexsMblw3XxltJ+6kSvogp9J+5a9g==
+  version "7.21.8"
+  resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.21.8.tgz#2a8c7f0f53d60100ba4c32470ba0281c92aa9aa4"
+  integrity sha512-YeM22Sondbo523Sz0+CirSPnbj9bG3P0CdHcBZdqUuaeOaYEFbOLoGU7lebvGP6P5J/WE9wOn7u7C4J9HvS1xQ==
   dependencies:
     "@ampproject/remapping" "^2.2.0"
     "@babel/code-frame" "^7.21.4"
@@ -33,7 +33,7 @@
     "@babel/helper-compilation-targets" "^7.21.5"
     "@babel/helper-module-transforms" "^7.21.5"
     "@babel/helpers" "^7.21.5"
-    "@babel/parser" "^7.21.5"
+    "@babel/parser" "^7.21.8"
     "@babel/template" "^7.20.7"
     "@babel/traverse" "^7.21.5"
     "@babel/types" "^7.21.5"
@@ -79,9 +79,9 @@
     semver "^6.3.0"
 
 "@babel/helper-create-class-features-plugin@^7.18.6", "@babel/helper-create-class-features-plugin@^7.21.0":
-  version "7.21.5"
-  resolved "https://registry.yarnpkg.com/@babel/helper-create-class-features-plugin/-/helper-create-class-features-plugin-7.21.5.tgz#09a259305467d2020bd2492119ee1c1bc55029e9"
-  integrity sha512-yNSEck9SuDvPTEUYm4BSXl6ZVC7yO5ZLEMAhG3v3zi7RDxyL/nQDemWWZmw4L0stPWwhpnznRRyJHPRcbXR2jw==
+  version "7.21.8"
+  resolved "https://registry.yarnpkg.com/@babel/helper-create-class-features-plugin/-/helper-create-class-features-plugin-7.21.8.tgz#205b26330258625ef8869672ebca1e0dee5a0f02"
+  integrity sha512-+THiN8MqiH2AczyuZrnrKL6cAxFRRQDKW9h1YkBvbgKmAm6mwiacig1qT73DHIWMGo40GRnsEfN3LA+E6NtmSw==
   dependencies:
     "@babel/helper-annotate-as-pure" "^7.18.6"
     "@babel/helper-environment-visitor" "^7.21.5"
@@ -94,9 +94,9 @@
     semver "^6.3.0"
 
 "@babel/helper-create-regexp-features-plugin@^7.18.6", "@babel/helper-create-regexp-features-plugin@^7.20.5":
-  version "7.21.5"
-  resolved "https://registry.yarnpkg.com/@babel/helper-create-regexp-features-plugin/-/helper-create-regexp-features-plugin-7.21.5.tgz#4ce6ffaf497a241aa6c62192416b273987a8daa3"
-  integrity sha512-1+DPMcln46eNAta/rPIqQYXYRGvQ/LRy6bRKnSt9Dzt/yLjNUbbsh+6yzD6fUHmtzc9kWvVnAhtcMSMyziHmUA==
+  version "7.21.8"
+  resolved "https://registry.yarnpkg.com/@babel/helper-create-regexp-features-plugin/-/helper-create-regexp-features-plugin-7.21.8.tgz#a7886f61c2e29e21fd4aaeaf1e473deba6b571dc"
+  integrity sha512-zGuSdedkFtsFHGbexAvNuipg1hbtitDLo2XE8/uf6Y9sOQV1xsYX/2pNbtedp/X0eU1pIt+kGvaqHCowkRbS5g==
   dependencies:
     "@babel/helper-annotate-as-pure" "^7.18.6"
     regexpu-core "^5.3.1"
@@ -260,10 +260,10 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@babel/parser@^7.13.16", "@babel/parser@^7.14.0", "@babel/parser@^7.20.0", "@babel/parser@^7.20.7", "@babel/parser@^7.21.5":
-  version "7.21.5"
-  resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.21.5.tgz#821bb520118fd25b982eaf8d37421cf5c64a312b"
-  integrity sha512-J+IxH2IsxV4HbnTrSWgMAQj0UEo61hDA4Ny8h8PCX0MLXiibqHbqIOVneqdocemSBc22VpBKxt4J6FQzy9HarQ==
+"@babel/parser@^7.13.16", "@babel/parser@^7.14.0", "@babel/parser@^7.20.0", "@babel/parser@^7.20.7", "@babel/parser@^7.21.5", "@babel/parser@^7.21.8":
+  version "7.21.8"
+  resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.21.8.tgz#642af7d0333eab9c0ad70b14ac5e76dbde7bfdf8"
+  integrity sha512-6zavDGdzG3gUqAdWvlLFfk+36RilI+Pwyuuh7HItyeScCWP3k6i8vKclAQ0bM/0y/Kz/xiwvxhMv9MgTJP5gmA==
 
 "@babel/plugin-bugfix-safari-id-destructuring-collision-in-function-expression@^7.18.6":
   version "7.18.6"
@@ -1401,19 +1401,19 @@
     "@types/istanbul-lib-report" "*"
 
 "@types/node@*":
-  version "18.16.3"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.16.3.tgz#6bda7819aae6ea0b386ebc5b24bdf602f1b42b01"
-  integrity sha512-OPs5WnnT1xkCBiuQrZA4+YAV4HEJejmHneyraIaxsbev5yCEr6KMwINNFP9wQeFIw8FWcoTqF3vQsa5CDaI+8Q==
+  version "20.0.0"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.0.0.tgz#081d9afd28421be956c1a47ced1c9a0034b467e2"
+  integrity sha512-cD2uPTDnQQCVpmRefonO98/PPijuOnnEy5oytWJFPY1N9aJCz2wJ5kSGWO+zJoed2cY2JxQh6yBuUq4vIn61hw==
 
 "@types/prop-types@*":
   version "15.7.5"
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.5.tgz#5f19d2b85a98e9558036f6a3cacc8819420f05cf"
   integrity sha512-JCB8C6SnDoQf0cNycqd/35A7MjcnK+ZTqE7judS6o7utxUCg6imJg3QK2qzHKszlTjcj2cn+NwMB2i96ubpj7w==
 
-"@types/react@^18.2.0":
-  version "18.2.0"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.0.tgz#15cda145354accfc09a18d2f2305f9fc099ada21"
-  integrity sha512-0FLj93y5USLHdnhIhABk83rm8XEGA7kH3cr+YUlvxoUGp1xNt/DINUMvqPxLyOQMzLmZe8i4RTHbvb8MC7NmrA==
+"@types/react@^18.2.5":
+  version "18.2.5"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.5.tgz#f9403e1113b12b53f7edcdd9a900c10dd4b49a59"
+  integrity sha512-RuoMedzJ5AOh23Dvws13LU9jpZHIc/k90AgmK7CecAYeWmSr3553L4u5rk4sWAPBuQosfT7HmTfG4Rg5o4nGEA==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -1810,9 +1810,9 @@ camelcase@^6.0.0:
   integrity sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==
 
 caniuse-lite@^1.0.30001449:
-  version "1.0.30001481"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001481.tgz#f58a717afe92f9e69d0e35ff64df596bfad93912"
-  integrity sha512-KCqHwRnaa1InZBtqXzP98LPg0ajCVujMKjqKDhZEthIpAsJl/YEIa3YvXjGXPVqzZVguccuu7ga9KOE1J9rKPQ==
+  version "1.0.30001482"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001482.tgz#8b3fad73dc35b2674a5c96df2d4f9f1c561435de"
+  integrity sha512-F1ZInsg53cegyjroxLNW9DmrEQ1SuGRTO1QlpA0o2/6OpQ0gFeDRoq1yFmnr8Sakn9qwwt9DmbxHB6w167OSuQ==
 
 chalk@^2.0.0:
   version "2.4.2"
@@ -1864,9 +1864,9 @@ cli-cursor@^3.1.0:
     restore-cursor "^3.1.0"
 
 cli-spinners@^2.5.0:
-  version "2.8.0"
-  resolved "https://registry.yarnpkg.com/cli-spinners/-/cli-spinners-2.8.0.tgz#e97a3e2bd00e6d85aa0c13d7f9e3ce236f7787fc"
-  integrity sha512-/eG5sJcvEIwxcdYM86k5tPwn0MUzkX5YY3eImTGpJOZgVe4SdTMY14vQpcxgBzJ0wXwAYrS8E+c3uHeK4JNyzQ==
+  version "2.9.0"
+  resolved "https://registry.yarnpkg.com/cli-spinners/-/cli-spinners-2.9.0.tgz#5881d0ad96381e117bbe07ad91f2008fe6ffd8db"
+  integrity sha512-4/aL9X3Wh0yiMQlE+eeRhWP6vclO3QRtw1JHKIT0FFUs5FjpFmESqtMvYZ0+lbzBw900b95mS0hohy+qn2VK/g==
 
 cliui@^6.0.0:
   version "6.0.0"
@@ -2176,9 +2176,9 @@ ee-first@1.1.1:
   integrity sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==
 
 electron-to-chromium@^1.4.284:
-  version "1.4.377"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.377.tgz#7f326a0b2c1b96eca6bb65907addc505d0d15989"
-  integrity sha512-H3BYG6DW5Z+l0xcfXaicJGxrpA4kMlCxnN71+iNX+dBLkRMOdVJqFJiAmbNZZKA1zISpRg17JR03qGifXNsJtw==
+  version "1.4.384"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.384.tgz#5c23b5579930dec9af2a93edafddbe991542eace"
+  integrity sha512-I97q0MmRAAqj53+a8vZsDkEXBZki+ehYAOPzwtQzALip52aEp2+BJqHFtTlsfjoqVZYwPpHC8wM6MbsSZQ/Eqw==
 
 emoji-regex@^8.0.0:
   version "8.0.0"
@@ -2401,9 +2401,9 @@ find-up@^5.0.0:
     path-exists "^4.0.0"
 
 flow-parser@0.*:
-  version "0.205.0"
-  resolved "https://registry.yarnpkg.com/flow-parser/-/flow-parser-0.205.0.tgz#8756173b6488dedc31ab838e80c8f008d7a44e05"
-  integrity sha512-ZJ6VuLe/BoqeI4GsF+ZuzlpfGi3FCnBrb4xDYhgEJxRt7SAj3ibRuRSsuJSRcY+lQhPZRPNbNWiQqFMxramUzw==
+  version "0.205.1"
+  resolved "https://registry.yarnpkg.com/flow-parser/-/flow-parser-0.205.1.tgz#337464aaf027b00b2514610386cf21a5f7c94137"
+  integrity sha512-+RF/e1Et6ZX2I/UG7SGAz3Z8+ulj9xKYLu5AD7Wi8H2llzncU8ZpdKfLR50pPvj4g2a/FbZWkXYL7qHc+zXJNA==
 
 flow-parser@^0.185.0:
   version "0.185.2"
@@ -3827,13 +3827,6 @@ pkg-dir@^3.0.0:
   dependencies:
     find-up "^3.0.0"
 
-pkg-dir@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/pkg-dir/-/pkg-dir-5.0.0.tgz#a02d6aebe6ba133a928f74aec20bafdfe6b8e760"
-  integrity sha512-NPE8TDbzl/3YQYY7CSS228s3g2ollTFnc+Qi3tqmqJp9Vg2ovUpixcJEo2HJScN2Ez+kEaal6y70c0ehqJBJeA==
-  dependencies:
-    find-up "^5.0.0"
-
 pod-install@^0.1.38:
   version "0.1.38"
   resolved "https://registry.yarnpkg.com/pod-install/-/pod-install-0.1.38.tgz#1c16a800a5fc1abea0cafcc0e190f376368c76ab"
@@ -3983,18 +3976,10 @@ react-native-gradle-plugin@^0.71.17:
   resolved "https://registry.yarnpkg.com/react-native-gradle-plugin/-/react-native-gradle-plugin-0.71.17.tgz#cf780a27270f0a32dca8184eff91555d7627dd00"
   integrity sha512-OXXYgpISEqERwjSlaCiaQY6cTY5CH6j73gdkWpK0hedxtiWMWgH+i5TOi4hIGYitm9kQBeyDu+wim9fA8ROFJA==
 
-react-native-permissions@^3.8.0:
-  version "3.8.0"
-  resolved "https://registry.yarnpkg.com/react-native-permissions/-/react-native-permissions-3.8.0.tgz#7c1f75ae126c7d0b863eec9d2f5cd93ff8ad8310"
-  integrity sha512-BfZ7ksgdpGchHZH8M/kxCGZbWeACANbnPmb3hNjVOMDQusc4PWlPpobX3eBqYMSKbpi7bMECeV9BVU4QuwAf9A==
-  dependencies:
-    picocolors "^1.0.0"
-    pkg-dir "^5.0.0"
-
-react-native-safe-area-context@^4.5.1:
-  version "4.5.1"
-  resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-4.5.1.tgz#6651d216b86ce84a8e9399220a1010d3902d7a2e"
-  integrity sha512-bKcwk6zZvyz+VLoG6Uia1oiYU1jSbv1ysjEKSRLsLtPcDsbixsTc0UgfrPqjZxNTPzvYLMcr8ufA90UQauN4mw==
+react-native-safe-area-context@^4.5.2:
+  version "4.5.2"
+  resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-4.5.2.tgz#38438c7a52ce2a6a05fc4de6cd3ee47f78a9366e"
+  integrity sha512-oH4/Dm7/PWOOZtFRiA4HE08lsfA948BRq8Fn7TEndYjoDXFoNdbjQRahXzCV8JGP/tv3qrVNeaDE8rmdRRUOlA==
 
 react-native@0.71.7:
   version "0.71.7"

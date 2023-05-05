@@ -16,17 +16,13 @@ import androidx.core.splashscreen.SplashScreenViewProvider;
 import com.facebook.common.logging.FLog;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactContextBaseJavaModule;
-import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.UiThreadUtil;
 import com.facebook.react.common.ReactConstants;
-import com.facebook.react.module.annotations.ReactModule;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
-@ReactModule(name = RNBootSplashModule.NAME)
-public class RNBootSplashModule extends ReactContextBaseJavaModule {
+public class RNBootSplashModuleImpl {
 
   public static final String NAME = "RNBootSplash";
 
@@ -43,15 +39,6 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule {
   private static Status mStatus = Status.HIDDEN;
   private static int mFadeDuration = 0;
   private static boolean mShouldKeepOnScreen = true;
-
-  public RNBootSplashModule(ReactApplicationContext reactContext) {
-    super(reactContext);
-  }
-
-  @Override
-  public String getName() {
-    return NAME;
-  }
 
   protected static void init(@Nullable final Activity activity) {
     if (activity == null) {
@@ -100,7 +87,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule {
     });
   }
 
-  private void clearPromiseQueue() {
+  private static void clearPromiseQueue() {
     while (!mPromiseQueue.isEmpty()) {
       Promise promise = mPromiseQueue.shift();
 
@@ -109,7 +96,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule {
     }
   }
 
-  private void hideAndResolveAll() {
+  private static void hideAndResolveAll(final ReactApplicationContext reactContext) {
     if (mSplashScreen == null || mStatus == Status.HIDDEN) {
       clearPromiseQueue();
       return;
@@ -118,7 +105,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule {
     UiThreadUtil.runOnUiThread(new Runnable() {
       @Override
       public void run() {
-        final Activity activity = getReactApplicationContext().getCurrentActivity();
+        final Activity activity = reactContext.getCurrentActivity();
 
         if (activity == null || activity.isFinishing()) {
           // Wait for activity to be ready
@@ -127,7 +114,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule {
           timer.schedule(new TimerTask() {
             @Override
             public void run() {
-              hideAndResolveAll();
+              hideAndResolveAll(reactContext);
               timer.cancel();
             }
           }, 250);
@@ -155,15 +142,15 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule {
     });
   }
 
-  @ReactMethod
-  public void hide(final double duration, final Promise promise) {
+  public static void hide(final ReactApplicationContext reactContext,
+                          final double duration,
+                          final Promise promise) {
     mFadeDuration = (int) Math.round(duration);
     mPromiseQueue.push(promise);
-    hideAndResolveAll();
+    hideAndResolveAll(reactContext);
   }
 
-  @ReactMethod
-  public void getVisibilityStatus(final Promise promise) {
+  public static void getVisibilityStatus(final Promise promise) {
     switch (mStatus) {
       case VISIBLE:
         promise.resolve("visible");
