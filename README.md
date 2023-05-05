@@ -168,11 +168,9 @@ ios/YourProjectName/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo@3x.p
 
 ### iOS
 
-_⚠️  Only `.storyboard` files are supported ([Apple has deprecated other methods in April 2020](https://developer.apple.com/news/?id=01132020b))._
+_ℹ️ For `react-native` < `0.71` setup, follow the [`v4.4.0 README.md`](https://github.com/zoontek/react-native-bootsplash/blob/4.4.0/README.md)._
 
 ---
-
-ℹ️ For `react-native` < `0.71` setup, follow the [`v4.4.0 README.md`](https://github.com/zoontek/react-native-bootsplash/blob/4.4.0/README.md).
 
 Edit the `ios/YourProjectName/AppDelegate.mm` file:
 
@@ -184,18 +182,22 @@ Edit the `ios/YourProjectName/AppDelegate.mm` file:
 
 @implementation AppDelegate
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{
-  // …
-  // return [super application:application didFinishLaunchingWithOptions:launchOptions]; ⬅️ replace this
+// …
 
-  // with this ⬇️
-  [super application:application didFinishLaunchingWithOptions:launchOptions];
-  UIView *rootView = self.window.rootViewController.view;
-  [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView];
+// ⬇️ Add this before file @end
+- (UIView *)createRootViewWithBridge:(RCTBridge *)bridge
+                          moduleName:(NSString *)moduleName
+                           initProps:(NSDictionary *)initProps {
+  UIView *rootView = [super createRootViewWithBridge:bridge
+                                          moduleName:moduleName
+                                           initProps:initProps];
 
-  return YES;
+  [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView]; // ⬅️ initialize the splash screen
+
+  return rootView;
 }
+
+@end
 ```
 
 Set the `BootSplash.storyboard` as launch screen file:
@@ -339,7 +341,7 @@ function App() {
 
     init().finally(async () => {
       await RNBootSplash.hide({ fade: true, duration: 500 });
-      console.log("Bootsplash has been hidden successfully");
+      console.log("BootSplash has been hidden successfully");
     });
   }, []);
 
