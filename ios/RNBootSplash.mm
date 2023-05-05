@@ -82,6 +82,8 @@ RCT_EXPORT_MODULE();
 
   _loadingView = [[storyboard instantiateInitialViewController] view];
   _loadingView.hidden = NO;
+  _loadingView.center = (CGPoint){CGRectGetMidX(_rootView.bounds), CGRectGetMidY(_rootView.bounds)};
+
   [_rootView addSubview:_loadingView];
 
   [NSTimer scheduledTimerWithTimeInterval:0.35
