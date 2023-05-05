@@ -339,7 +339,7 @@ function App() {
 
     init().finally(async () => {
       await RNBootSplash.hide({ fade: true, duration: 500 });
-      console.log("Bootsplash has been hidden successfully");
+      console.log("BootSplash has been hidden successfully");
     });
   }, []);
 

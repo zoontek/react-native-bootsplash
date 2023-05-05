@@ -12,13 +12,13 @@ external getVisibilityStatus: unit => Js.Promise.t<visibilityStatus> = "getVisib
 ## Usage
 
 ```rescript
- RNBootsplash.hide({fade: true})->ignore
+ RNBootSplash.hide({fade: true})->ignore
 ```
 
 Or
 
  ```rescript
-RNBootsplash.hide({fade: true})->Js.Promise.then_(() => {
+RNBootSplash.hide({fade: true})->Js.Promise.then_(() => {
   Js.log("RN BootSplash: fading is over")
   Js.Promise.resolve()
 }, _)->Js.Promise.catch(error => {
