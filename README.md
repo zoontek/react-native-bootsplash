@@ -193,6 +193,7 @@ Edit the `ios/YourProjectName/AppDelegate.mm` file:
                                            initProps:initProps];
 
   [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView]; // ⬅️ initialize the splash screen
+
   return rootView;
 }
 

@@ -41,6 +41,7 @@
                                            initProps:initProps];
 
   [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView];
+
   return rootView;
 }
 
