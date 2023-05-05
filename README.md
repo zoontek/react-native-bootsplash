@@ -189,7 +189,7 @@ Edit the `ios/YourProjectName/AppDelegate.mm` file:
   // …
   // return [super application:application didFinishLaunchingWithOptions:launchOptions]; ⬅️ replace this
 
- // with this ⬇️
+  // with this ⬇️
   [super application:application didFinishLaunchingWithOptions:launchOptions];
   UIView *rootView = self.window.rootViewController.view;
   [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView];
