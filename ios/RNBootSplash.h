@@ -1,5 +1,3 @@
-#import <React/RCTRootView.h>
-
 #ifdef RCT_NEW_ARCH_ENABLED
 
 #import <RNBootSplashSpec/RNBootSplashSpec.h>

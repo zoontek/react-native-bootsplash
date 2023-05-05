@@ -1,5 +1,6 @@
 #import "RNBootSplash.h"
 
+#import <React/RCTRootView.h>
 #import <React/RCTUtils.h>
 
 static NSMutableArray<RCTPromiseResolveBlock> *_resolveQueue = nil;
