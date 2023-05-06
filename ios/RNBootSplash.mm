@@ -97,7 +97,6 @@ RCT_EXPORT_MODULE();
   UIStoryboard *storyboard = [UIStoryboard storyboardWithName:storyboardName bundle:nil];
 
   _loadingView = [[storyboard instantiateInitialViewController] view];
-
   _loadingView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
   _loadingView.frame = _rootView.bounds;
   _loadingView.center = (CGPoint){CGRectGetMidX(_rootView.bounds), CGRectGetMidY(_rootView.bounds)};
