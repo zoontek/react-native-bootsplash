@@ -386,8 +386,12 @@ After that, we need to add the setup file in the jest config. You can add it und
 }
 ```
 
+
 ## Sponsors
 
-This module is provided **as is**, I work on it in my free time. If you or your company uses it, consider sponsoring this project. You also can contact me for premium enterprise support: help with issues, prioritize bugfixes, feature requests, etc.
+This module is provided **as is**, I work on it in my free time.
+
+If you or your company uses it in a production app, consider sponsoring this project 💰. You also can contact me for **premium** enterprise support: help with issues, prioritize bugfixes, feature requests, etc.
 
 <a href="https://github.com/sponsors/zoontek"><img align="center" alt="Sponsors list" src="https://raw.githubusercontent.com/zoontek/sponsors/main/sponsorkit/sponsors.svg"></a>
+
