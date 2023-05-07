@@ -15,16 +15,6 @@ Show a splash screen during app startup. Hide it when you are ready.<br>
   <img height="500" width="259" src="https://raw.githubusercontent.com/zoontek/react-native-bootsplash/HEAD/docs/android_demo.gif?raw=true" alt="android demo"></img>
 </p>
 
-## Funding
-
-<a href="https://github.com/sponsors/zoontek">
-  <img align="right" width="150" alt="This library helped you? Consider sponsoring!" src=".github/funding-octocat.svg">
-</a>
-
-This module is provided **as is**, I work on it in my free time.
-
-If your company uses it in a production app, consider sponsoring this project 💰. You also can contact me for **premium** enterprise support, help with issues, prioritize bugfixes, feature requests, etc.
-
 ## Support
 
 | version | react-native version |
@@ -396,7 +386,9 @@ After that, we need to add the setup file in the jest config. You can add it und
 }
 ```
 
-## 🕵️‍♂️ Comparison with [react-native-splash-screen](https://github.com/crazycodeboy/react-native-splash-screen)
+## Sponsors
 
-- If `react-native-splash-screen` encourages you to display an image over your application, `react-native-bootsplash` way-to-go is to design your launch screen using platforms tools.
-- Hiding the launch screen is configurable: fade it out or hide it without any animation.
+This module is provided **as is**, I work on it in my free time. If you or your company uses it, consider sponsoring this project.<br />
+You also can contact me for premium enterprise support: help with issues, prioritize bugfixes, feature requests, etc.
+
+<a href="https://github.com/sponsors/zoontek"><img align="center" alt="Sponsors list" src="https://raw.githubusercontent.com/zoontek/sponsors/main/sponsorkit/sponsors.svg"></a>
