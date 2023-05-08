@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		DD611D5622B80FED00D03EA8 /* RNBootSplash.m in Sources */ = {isa = PBXBuildFile; fileRef = DD611D5422B80FED00D03EA8 /* RNBootSplash.m */; };
+		DD3987E82A091969007E27CF /* RNBootSplash.mm in Sources */ = {isa = PBXBuildFile; fileRef = DD3987E72A091969007E27CF /* RNBootSplash.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libRNBootSplash.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNBootSplash.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		DD611D5422B80FED00D03EA8 /* RNBootSplash.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNBootSplash.m; sourceTree = "<group>"; };
+		DD3987E72A091969007E27CF /* RNBootSplash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RNBootSplash.mm; sourceTree = "<group>"; };
 		DD611D5522B80FED00D03EA8 /* RNBootSplash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNBootSplash.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -29,7 +29,7 @@
 			isa = PBXGroup;
 			children = (
 				DD611D5522B80FED00D03EA8 /* RNBootSplash.h */,
-				DD611D5422B80FED00D03EA8 /* RNBootSplash.m */,
+				DD3987E72A091969007E27CF /* RNBootSplash.mm */,
 				134814211AA4EA7D00B7C361 /* Products */,
 			);
 			indentWidth = 2;
@@ -91,7 +91,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DD611D5622B80FED00D03EA8 /* RNBootSplash.m in Sources */,
+				DD3987E82A091969007E27CF /* RNBootSplash.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
