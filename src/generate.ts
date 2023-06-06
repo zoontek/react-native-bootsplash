@@ -122,10 +122,12 @@ export const generate = async ({
 
   workingPath,
   logoPath,
-  backgroundColor,
-  logoWidth,
-  flavor,
   assetsPath,
+
+  backgroundColor,
+  flavor,
+  logoWidth,
+  platforms,
 }: {
   android: {
     sourceDir: string;
@@ -142,8 +144,12 @@ export const generate = async ({
   backgroundColor: string;
   flavor: string;
   logoWidth: number;
+  platforms: string[];
 }) => {
-  if (!android && !ios) {
+  const platformsIncludesAndroid = platforms.includes("android");
+  const platformsIncludesIOS = platforms.includes("ios");
+
+  if (!platformsIncludesAndroid && !platformsIncludesIOS) {
     log.error(
       "--platforms value does not include at least one supported platform.",
     );
@@ -226,7 +232,7 @@ export const generate = async ({
     );
   }
 
-  if (android && !shouldSkipAndroid) {
+  if (platformsIncludesAndroid && android && !shouldSkipAndroid) {
     log.text(`\n    ${pc.underline("Android")}`);
 
     const appPath = android.appName
@@ -317,7 +323,7 @@ export const generate = async ({
     );
   }
 
-  if (ios) {
+  if (platformsIncludesIOS && ios) {
     log.text(`\n    ${pc.underline("iOS")}`);
 
     const { projectPath } = ios;

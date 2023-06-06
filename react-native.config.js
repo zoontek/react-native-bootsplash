@@ -49,19 +49,18 @@ module.exports = {
           process.env.INIT_CWD || process.env.PWD || process.cwd();
 
         return generate({
-          android: platforms.includes("android") && android ? android : null,
+          android,
 
-          ios:
-            platforms.includes("ios") && ios
-              ? {
-                  ...ios,
-                  // Fix to support previous CLI versions
-                  projectPath: (ios.xcodeProject
-                    ? path.resolve(ios.sourceDir, ios.xcodeProject.name)
-                    : ios.projectPath
-                  ).replace(/\.(xcodeproj|xcworkspace)$/, ""),
-                }
-              : null,
+          ios: ios
+            ? {
+                ...ios,
+                // Fix to support previous CLI versions
+                projectPath: (ios.xcodeProject
+                  ? path.resolve(ios.sourceDir, ios.xcodeProject.name)
+                  : ios.projectPath
+                ).replace(/\.(xcodeproj|xcworkspace)$/, ""),
+              }
+            : null,
 
           workingPath,
           logoPath: path.resolve(workingPath, logoPath),
@@ -72,6 +71,7 @@ module.exports = {
           backgroundColor,
           flavor,
           logoWidth,
+          platforms,
         }).catch((error) => {
           console.error(error);
         });
