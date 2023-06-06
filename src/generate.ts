@@ -206,8 +206,10 @@ export const generate = async ({
           : ""),
     );
 
-  if (assetsPath && fs.existsSync(assetsPath)) {
+  if (assetsPath) {
     log.text(`\n    ${pc.underline("Assets")}`);
+
+    fs.ensureDirSync(assetsPath);
 
     await Promise.all(
       [
