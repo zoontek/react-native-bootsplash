@@ -22,8 +22,9 @@ if (isNewArchitectureEnabled()) {
 }
 
 android {
-    compileSdkVersion safeExtGet("compileSdkVersion", 33)
+    namespace = "com.zoontek.rnbootsplash"
     buildToolsVersion safeExtGet("buildToolsVersion", "33.0.0")
+    compileSdkVersion safeExtGet("compileSdkVersion", 33)
     defaultConfig {
         buildConfigField("boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString())
         minSdkVersion safeExtGet("minSdkVersion", 21)
