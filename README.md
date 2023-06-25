@@ -17,10 +17,8 @@ Show a splash screen during app startup. Hide it when you are ready.<br>
 
 ## Support
 
-| version | react-native version |
-| ------- | -------------------- |
-| 4.0.0+  | 0.65.0+              |
-| 3.0.0+  | 0.63.0+              |
+This library follows the React Native [releases support policy](https://github.com/reactwg/react-native-releases#releases-support-policy).<br>
+It is supporting the **latest version**, and the **two previous minor series**.
 
 ## Installation
 
@@ -34,7 +32,7 @@ _⚠️  Don't forget going into the `ios` directory to execute a `pod install
 
 ## 🆘 Manual linking
 
-Because this package targets React Native 0.65.0+, you probably don't need to link it manually. But if you have a special case, follow these additional instructions:
+Because this package targets recent React Native versions, you probably don't need to link it manually. But if you have a special case, follow these additional instructions:
 
 <details>
   <summary><b>👀 See manual linking instructions</b></summary>
@@ -386,7 +384,6 @@ After that, we need to add the setup file in the jest config. You can add it und
 }
 ```
 
-
 ## Sponsors
 
 This module is provided **as is**, I work on it in my free time.
@@ -394,4 +391,3 @@ This module is provided **as is**, I work on it in my free time.
 If you or your company uses it in a production app, consider sponsoring this project 💰. You also can contact me for **premium** enterprise support: help with issues, prioritize bugfixes, feature requests, etc.
 
 <a href="https://github.com/sponsors/zoontek"><img align="center" alt="Sponsors list" src="https://raw.githubusercontent.com/zoontek/sponsors/main/sponsorkit/sponsors.svg"></a>
-
