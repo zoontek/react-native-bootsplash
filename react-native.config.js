@@ -1,6 +1,3 @@
-const path = require("path");
-const { generate } = require("./dist/commonjs/generate");
-
 module.exports = {
   commands: [
     {
@@ -45,6 +42,9 @@ module.exports = {
         { project: { android, ios } },
         { backgroundColor, logoWidth, assetsPath, flavor, platforms },
       ) => {
+        const path = require("path");
+        const { generate } = require("./dist/commonjs/generate");
+
         const workingPath =
           process.env.INIT_CWD || process.env.PWD || process.cwd();
 
