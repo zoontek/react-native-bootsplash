@@ -204,9 +204,8 @@ _⚠️  On Android >= 12, the splash screen will not appear if you start your
 
 ```gradle
 dependencies {
-  // …
-
-  implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.0.0")
+  // The version of react-native is set by the React Native Gradle Plugin
+  implementation("com.facebook.react:react-android")
   implementation("androidx.core:core-splashscreen:1.0.0") // add this line
 
   // …
