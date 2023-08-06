@@ -15,7 +15,6 @@
     "/src",
     "RNBootSplash.podspec",
     "RNBootSplash.res",
-    "bsconfig.json",
     "package.json",
     "react-native.config.js"
   ],
@@ -39,6 +38,7 @@
     "format": "prettier '**/*' -u -w",
     "setup-hooks": "git config --local core.hooksPath .hooks",
     "prepack": "bob build",
+    "lint": "eslint --ext ts,tsx ./src",
     "typecheck": "tsc --project ./ --noEmit"
   },
   "react-native-builder-bob": {
@@ -57,25 +57,31 @@
     "*": "prettier -u -w"
   },
   "peerDependencies": {
-    "react-native": ">=0.65.0"
+    "react-native": ">=0.70.0"
   },
   "dependencies": {
     "fs-extra": "^11.1.1",
-    "sharp": "^0.32.1",
-    "picocolors": "^1.0.0"
+    "picocolors": "^1.0.0",
+    "sharp": "^0.32.4"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "@babel/preset-env": "^7.20.0",
+    "@react-native-community/cli-types": "11.3.5",
     "@types/fs-extra": "^11.0.1",
-    "@types/react": "^18.2.14",
+    "@types/node": "^20.4.7",
+    "@types/react": "^18.2.18",
     "@types/sharp": "^0.31.1",
+    "@typescript-eslint/eslint-plugin": "^6.2.1",
+    "@typescript-eslint/parser": "^6.2.1",
+    "eslint": "^8.46.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "lint-staged": "^13.2.3",
     "prettier": "^2.8.8",
-    "prettier-plugin-organize-imports": "^3.2.2",
+    "prettier-plugin-organize-imports": "^3.2.3",
     "react": "18.2.0",
-    "react-native": "0.72.1",
-    "react-native-builder-bob": "^0.21.2",
-    "rescript": "^10.1.4",
+    "react-native": "0.72.3",
+    "react-native-builder-bob": "^0.21.3",
     "typescript": "^5.1.6"
   },
   "codegenConfig": {

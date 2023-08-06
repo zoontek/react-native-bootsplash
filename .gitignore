@@ -72,9 +72,5 @@ example/vendor/bundle/
 # Bob
 dist/
 
-# OCaml / Reason
-**/.merlin
-**/lib/bs
-**/lib/ocaml
-*.bs.js
-.bsb.lock
+# CLI paid options
+src/cli/addon.ts
