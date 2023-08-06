@@ -1,0 +1,29 @@
+<resources>
+    <style name="BootSplashNoAnimation">
+        <item name="android:windowEnterAnimation">@null</item>
+        <item name="android:windowExitAnimation">@null</item>
+    </style>
+
+    <style name="BootSplashFadeInAnimation">
+        <item name="android:windowEnterAnimation">@anim/bootsplash_fade_in</item>
+        <item name="android:windowExitAnimation">@null</item>
+    </style>
+
+    <style name="BootSplashFadeOutAnimation">
+        <item name="android:windowEnterAnimation">@null</item>
+        <item name="android:windowExitAnimation">@anim/bootsplash_fade_out</item>
+    </style>
+
+    <style name="Theme.BootSplash.Common" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:navigationBarColor">?attr/bootSplashBackground</item>
+        <item name="android:statusBarColor">?attr/bootSplashBackground</item>
+        <item name="android:windowBackground">@drawable/compat_splash_screen</item>
+    </style>
+
+    <style name="Theme.BootSplash" parent="Theme.BootSplash.Common">
+        <item name="bootSplashBackground">?android:colorBackground</item>
+        <item name="bootSplashLogo">@android:drawable/sym_def_app_icon</item>
+        <item name="bootSplashBrand">@null</item>
+        <item name="postBootSplashTheme">?android:attr/theme</item>
+    </style>
+</resources>

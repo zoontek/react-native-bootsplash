@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "module": "ESNext",
+    "target": "ES2017",
     "lib": ["ES2017"],
     "jsx": "react-native",
     "moduleResolution": "Node",

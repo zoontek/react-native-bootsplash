@@ -1,81 +1,79 @@
-module.exports = {
-  commands: [
+/** @type {import("@react-native-community/cli-types").Command} */
+const generateBootSplash = {
+  name: "generate-bootsplash <logo>",
+  description: "Generate a launch screen using a logo file path (PNG or SVG)",
+  options: [
     {
-      name: "generate-bootsplash <logoPath>",
+      name: "--background <string>",
+      description: "Background color (in hexadecimal format)",
+      default: "#fff",
+    },
+    {
+      name: "--logo-width <number>",
       description:
-        "Generate a launch screen using an original logo file (PNG or SVG)",
-      options: [
-        {
-          name: "--background-color <color>",
-          description:
-            "color used as launch screen background (in hexadecimal format)",
-          default: "#fff",
-        },
-        {
-          name: "--logo-width <width>",
-          description:
-            "logo width at @1x (in dp - we recommend approximately ~100)",
-          default: 100,
-          parse: (value) => parseInt(value, 10),
-        },
-        {
-          name: "--assets-path [path]",
-          description:
-            "path to your static assets directory (useful to require the logo file in JS)",
-        },
-        {
-          name: "--flavor <flavor>",
-          description:
-            '[android only] flavor build variant (outputs in an android resource directory other than "main")',
-          default: "main",
-        },
-        {
-          name: "--platforms <platforms>",
-          description:
-            "platforms to generate the splash screen for (android, ios)",
-          default: "android,ios",
-          parse: (value) => value.split(","),
-        },
-      ],
-      func: (
-        [logoPath],
-        { project: { android, ios } },
-        { backgroundColor, logoWidth, assetsPath, flavor, platforms },
-      ) => {
-        const path = require("path");
-        const { generate } = require("./dist/commonjs/generate");
-
-        const workingPath =
-          process.env.INIT_CWD || process.env.PWD || process.cwd();
-
-        return generate({
-          android,
-
-          ios: ios
-            ? {
-                ...ios,
-                // Fix to support previous CLI versions
-                projectPath: (ios.xcodeProject
-                  ? path.resolve(ios.sourceDir, ios.xcodeProject.name)
-                  : ios.projectPath
-                ).replace(/\.(xcodeproj|xcworkspace)$/, ""),
-              }
-            : null,
-
-          workingPath,
-          logoPath: path.resolve(workingPath, logoPath),
-          assetsPath: assetsPath
-            ? path.resolve(workingPath, assetsPath)
-            : undefined,
-
-          backgroundColor,
-          flavor,
-          logoWidth,
-          platforms,
-        }).catch((error) => {
-          console.error(error);
-        });
-      },
+        "Logo width at @1x (in dp - we recommend approximately ~100)",
+      default: 100,
+      parse: (value) => parseInt(value, 10),
+    },
+    {
+      name: "--assets-output <string>",
+      description: "Assets output directory path",
+    },
+    {
+      name: "--platforms <list>",
+      description: "Platforms to generate for, separated by a comma",
+      default: "android,ios",
+      parse: (value) =>
+        value
+          .toLowerCase()
+          .split(",")
+          .map((platform) => platform.trim()),
+    },
+    {
+      name: "--flavor <string>",
+      description:
+        "Android flavor build variant (where your resource directory is)",
+      default: "main",
+    },
+    {
+      name: "--license-key <string>",
+      description:
+        "License key to enable brand and dark mode assets generation",
+    },
+    {
+      name: "--brand <string>",
+      description: "Brand file path (PNG or SVG)",
+    },
+    {
+      name: "--brand-width <number>",
+      description:
+        "Brand width at @1x (in dp - we recommend approximately ~80)",
+      default: 80,
+      parse: (value) => parseInt(value, 10),
+    },
+    {
+      name: "--dark-background <string>",
+      description: "[dark mode] Background color (in hexadecimal format)",
+    },
+    {
+      name: "--dark-logo <string>",
+      description: "[dark mode] Logo file path (PNG or SVG)",
+    },
+    {
+      name: "--dark-brand <string>",
+      description: "[dark mode] Brand file path (PNG or SVG)",
     },
   ],
+  func: (argv, ctx, args) => {
+    const { generate } = require("./dist/commonjs/cli");
+
+    generate(argv, ctx, args).catch((error) => {
+      console.error(error);
+      process.exit(1);
+    });
+  },
+};
+
+module.exports = {
+  commands: [generateBootSplash],
 };
