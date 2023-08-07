@@ -65,7 +65,7 @@ const generateBootSplash = {
     },
   ],
   func: (argv, ctx, args) => {
-    const { generate } = require("./dist/commonjs/cli");
+    const { generate } = require("./dist/commonjs/generate");
 
     generate(argv, ctx, args).catch((error) => {
       console.error(error);

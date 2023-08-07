@@ -8,7 +8,7 @@ import path from "path";
 import pc from "picocolors";
 import type { Sharp } from "sharp";
 import sharp from "sharp";
-import type { Manifest } from "..";
+import type { Manifest } from ".";
 
 export type Color = {
   hex: string;
@@ -17,26 +17,6 @@ export type Color = {
     G: string;
     B: string;
   };
-};
-
-export type AddonConfig = {
-  licenseKey: string;
-
-  androidResPath: string | undefined;
-  iosProjectPath: string | undefined;
-  assetsOutputPath: string | undefined;
-
-  logoHeight: number;
-  logoWidth: number;
-  brandHeight: number;
-  brandWidth: number;
-
-  background: Color;
-  brand: Sharp | undefined;
-
-  darkBackground: Color | undefined;
-  darkLogo: Sharp | undefined;
-  darkBrand: Sharp | undefined;
 };
 
 export const androidColorRegex =
@@ -246,6 +226,37 @@ const getIOSProjectPath = (ios: IOSProjectConfig): string | undefined => {
     );
   } else {
     return iosProjectPath;
+  }
+};
+
+export type AddonConfig = {
+  licenseKey: string;
+
+  androidResPath: string | undefined;
+  iosProjectPath: string | undefined;
+  assetsOutputPath: string | undefined;
+
+  logoHeight: number;
+  logoWidth: number;
+  brandHeight: number;
+  brandWidth: number;
+
+  background: Color;
+  brand: Sharp | undefined;
+
+  darkBackground: Color | undefined;
+  darkLogo: Sharp | undefined;
+  darkBrand: Sharp | undefined;
+};
+
+const requireAddon = ():
+  | { execute: (config: AddonConfig) => Promise<void> }
+  | undefined => {
+  try {
+    // eslint-disable-next-line
+    return require("./addon");
+  } catch {
+    return;
   }
 };
 
@@ -537,8 +548,8 @@ export const generate: CommandFunction<{
     const manifest: Manifest = {
       background: background.hex,
       logo: {
-        height: logoHeight,
         width: logoWidth,
+        height: logoHeight,
       },
     };
 
@@ -580,17 +591,10 @@ export const generate: CommandFunction<{
     );
   }
 
-  if (
-    licenseKey != null &&
-    executeAddon &&
-    fs.existsSync(path.join(__dirname, "addon.js"))
-  ) {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const { execute } = require("./addon") as {
-      execute: (config: AddonConfig) => Promise<void>;
-    };
+  if (licenseKey != null && executeAddon) {
+    const addon = requireAddon();
 
-    await execute({
+    await addon?.execute({
       licenseKey,
 
       androidResPath,
