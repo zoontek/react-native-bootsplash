@@ -1,7 +1,7 @@
 # 🚀 react-native-bootsplash
 
 Show a splash screen during app startup. Hide it when you are ready.<br>
-**For migration from the v3, check the [`MIGRATION.md` guide](https://github.com/zoontek/react-native-bootsplash/blob/master/MIGRATION.md).**
+**For migration from the v4, check the [`MIGRATION.md` guide](./MIGRATION.md).**
 
 [![mit licence](https://img.shields.io/dub/l/vibe-d.svg?style=for-the-badge)](https://github.com/zoontek/react-native-bootsplash/blob/main/LICENSE)
 [![npm version](https://img.shields.io/npm/v/react-native-bootsplash?style=for-the-badge)](https://www.npmjs.org/package/react-native-bootsplash)
@@ -18,7 +18,7 @@ Show a splash screen during app startup. Hide it when you are ready.<br>
 ## Support
 
 This library follows the React Native [releases support policy](https://github.com/reactwg/react-native-releases#releases-support-policy).<br>
-It is supporting the **latest version**, and the **two previous minor series**.
+It is supporting the **latest version** and the **two previous minor series**.
 
 ## Installation
 
@@ -135,7 +135,7 @@ yarn react-native generate-bootsplash svgs/light_logo.svg \
   --platforms=android,ios \
   --flavor=main
 
-# With license key
+# With license key 🔑
 yarn react-native generate-bootsplash svgs/light_logo.svg \
   --background=F5FCFF \
   --logo-width=100 \
@@ -150,11 +150,12 @@ yarn react-native generate-bootsplash svgs/light_logo.svg \
   --dark-brand=svgs/dark_brand.svg
 ```
 
-![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/master/docs/cli_tool.png?raw=true)
+![](./docs/cli_tool.png)
 
 This tool relies on the naming conventions that are used in the `/example` project and will therefore create the following files:
 
 ```bash
+# Without license key
 android/app/src/main/res/values/colors.xml
 android/app/src/main/res/drawable-mdpi/bootsplash_logo.png
 android/app/src/main/res/drawable-hdpi/bootsplash_logo.png
@@ -186,6 +187,8 @@ ios/YourProjectName/BootSplash.storyboard
 ios/YourProjectName/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo.png
 ios/YourProjectName/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo@2x.png
 ios/YourProjectName/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo@3x.png
+
+# + 31 files with license key 🔑 (brand images, dark mode versions…)
 ```
 
 ### iOS
@@ -303,37 +306,12 @@ type hide = (config?: { fade?: boolean }) => Promise<void>;
 
 #### Usage
 
-```js
-import BootSplash from "react-native-bootsplash";
-
-BootSplash.hide(); // immediate
-BootSplash.hide({ fade: true }); // fade
-```
-
-### isVisible()
-
-#### Method type
-
-```ts
-type isVisible = () => Promise<boolean>;
-```
-
-#### Usage
-
-```js
-import BootSplash from "react-native-bootsplash";
-
-RNBootSplash.isVisible().then((value) => console.log(value));
-```
-
-## Real world example
-
-```js
-import React, { useEffect } from "react";
+```tsx
+import { useEffect } from "react";
 import { Text } from "react-native";
 import BootSplash from "react-native-bootsplash";
 
-function App() {
+const App = () => {
   useEffect(() => {
     const init = async () => {
       // …do multiple sync or async tasks
@@ -346,16 +324,125 @@ function App() {
   }, []);
 
   return <Text>My awesome app</Text>;
-}
+};
 ```
 
-**🤙 A more complex example is available in the [`/example` folder](example).**
+### isVisible()
+
+#### Method type
+
+```ts
+type isVisible = () => Promise<boolean>;
+```
+
+#### Usage
+
+```ts
+import BootSplash from "react-native-bootsplash";
+
+RNBootSplash.isVisible().then((value) => console.log(value));
+```
+
+### useHideAnimation()
+
+#### Method type
+
+```ts
+type UseHideAnimationConfig = {
+  manifest: Manifest; // the manifest file is generated when --assets-output is specified
+
+  logo: ImageRequireSource;
+  darkLogo?: ImageRequireSource;
+  brand?: ImageRequireSource;
+  darkBrand?: ImageRequireSource;
+
+  // specify if you are using translucent status / navigation bars
+  // in order to avoid a shift between the native and JS splash screen
+  statusBarTranslucent?: boolean;
+  navigationBarTranslucent?: boolean;
+
+  animate: () => void;
+};
+
+type UseHideAnimation = {
+  container: ViewProps;
+  logo: ImageProps;
+  brand?: ImageProps;
+};
+```
+
+#### Usage
+
+```tsx
+import { useState } from "react";
+import { Animated, Image } from "react-native";
+import BootSplash from "react-native-bootsplash";
+
+type Props = {
+  onAnimationEnd: () => void;
+};
+
+const AnimatedBootSplash = ({ onAnimationEnd }: Props) => {
+  const [opacity] = useState(() => new Animated.Value(1));
+
+  const { container, logo /*, brand */ } = BootSplash.useHideAnimation({
+    manifest: require("../assets/bootsplash_manifest.json"),
+
+    logo: require("../assets/bootsplash_logo.png"),
+    // darkLogo: require("../assets/bootsplash_dark_logo.png"),
+    // brand: require("../assets/bootsplash_brand.png"),
+    // darkBrand: require("../assets/bootsplash_dark_brand.png"),
+
+    statusBarTranslucent: true,
+    navigationBarTranslucent: false,
+
+    animate: () => {
+      // Perform any animations and call onAnimationEnd()
+      Animated.timing(opacity, {
+        useNativeDriver: true,
+        toValue: 0,
+        duration: 500,
+      }).start(() => {
+        onAnimationEnd();
+      });
+    },
+  });
+
+  return (
+    <Animated.View {...container} style={[container.style, { opacity }]}>
+      <Image {...logo} style={logo.style} />
+      {/* {brand && <Image {...brand} style={brand.style} />} */}
+    </Animated.View>
+  );
+};
+
+const App = () => {
+  const [visible, setVisible] = useState(true);
+
+  return (
+    <View style={{ flex: 1 }}>
+      <Text>My awesome app</Text>
+
+      {visible && (
+        <AnimatedBootSplash
+          onAnimationEnd={() => {
+            setVisible(false);
+          }}
+        />
+      )}
+    </View>
+  );
+};
+```
+
+**🤙 This example is really simple for documentation purpose (we only animate the container).**<br>
+**A more complex example is available in the [`/example` folder](./example/src/AnimatedBootSplash.tsx).**
 
 ## With React Navigation
 
 If you are using React Navigation, you can hide the splash screen once the navigation container and all children have finished mounting by using the `onReady` function.
 
-```js
+```ts
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import BootSplash from "react-native-bootsplash";
@@ -375,7 +462,7 @@ Testing code which uses this library requires some setup since we need to mock t
 
 To add the mocks, create a file _jest/setup.js_ (or any other file name) containing the following code:
 
-```js
+```ts
 jest.mock("react-native-bootsplash", () => {
   return {
     hide: jest.fn().mockResolvedValue(),
