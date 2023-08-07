@@ -72,5 +72,5 @@ example/vendor/bundle/
 # Bob
 dist/
 
-# CLI paid options
-src/cli/addon.ts
+# CLI paid addon
+src/addon
