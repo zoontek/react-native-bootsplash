@@ -8,7 +8,7 @@ type Props = {
 
 export const AnimatedBootSplash = ({ onAnimationEnd }: Props) => {
   const [opacity] = useState(() => new Animated.Value(1));
-  const [logoTranslateY] = useState(() => new Animated.Value(0));
+  const [translateY] = useState(() => new Animated.Value(0));
 
   const { container, logo /* brand */ } = BootSplash.useHideAnimation({
     manifest: require("../assets/bootsplash_manifest.json"),
@@ -25,11 +25,11 @@ export const AnimatedBootSplash = ({ onAnimationEnd }: Props) => {
       const { height } = Dimensions.get("window");
 
       Animated.stagger(250, [
-        Animated.spring(logoTranslateY, {
+        Animated.spring(translateY, {
           useNativeDriver: true,
           toValue: -50,
         }),
-        Animated.spring(logoTranslateY, {
+        Animated.spring(translateY, {
           useNativeDriver: true,
           toValue: height,
         }),
@@ -50,7 +50,7 @@ export const AnimatedBootSplash = ({ onAnimationEnd }: Props) => {
     <Animated.View {...container} style={[container.style, { opacity }]}>
       <Animated.Image
         {...logo}
-        style={[logo.style, { transform: [{ translateY: logoTranslateY }] }]}
+        style={[logo.style, { transform: [{ translateY }] }]}
       />
 
       {/* {brand && (
