@@ -11,8 +11,8 @@ Show a splash screen during app startup. Hide it when you are ready.<br>
 [![platform - ios](https://img.shields.io/badge/platform-iOS-000.svg?logo=apple&style=for-the-badge)](https://developer.apple.com/ios)
 
 <p>
-  <img width="393" height="490" src="./docs/demo_static.png" alt="Demo">
-  <img width="255" height="500" src="./docs/demo.gif" alt="Demo">
+  <img width="393" src="./docs/demo_static.png" alt="Demo">
+  <img width="255" src="./docs/demo.gif" alt="Demo">
 </p>
 
 ## Support
@@ -131,7 +131,7 @@ In order to use the `--brand`, `--brand-width` and `--dark-*` options, you must 
 With it, the generator is able to output over **50 files** (logo and brand images generated in all pixel densities, dark mode versions, etc.), saving you (and your company!) a massive amount of time not only at creation, but also at each adjustment ⏱️
 
 <a href="https://zoontek.gumroad.com/l/bootsplash-generator">
-  <img width="280" height="52" src="./docs/gumroad_button.png" alt="Gumroad button">
+  <img width="280" src="./docs/gumroad_button.png" alt="Gumroad button">
 </a>
 
 #### Full command usage example
