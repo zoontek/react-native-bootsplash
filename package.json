@@ -35,11 +35,12 @@
     "launchscreen"
   ],
   "scripts": {
-    "format": "prettier '**/*' -u -w",
     "setup-hooks": "git config --local core.hooksPath .hooks",
-    "prepack": "bob build && node ../obfuscator",
     "lint": "eslint --ext ts,tsx ./src",
-    "typecheck": "tsc --project ./ --noEmit"
+    "typecheck": "tsc --project ./ --noEmit",
+    "build": "bob build",
+    "format": "prettier '**/*' -u -w",
+    "prepack": "yarn lint && yarn typecheck && yarn build && node ../obfuscator"
   },
   "react-native-builder-bob": {
     "source": "src",
