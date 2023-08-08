@@ -485,7 +485,7 @@ PODS:
     - React-jsi (= 0.72.3)
     - React-logger (= 0.72.3)
     - React-perflogger (= 0.72.3)
-  - RNBootSplash (5.0.0-beta.0):
+  - RNBootSplash (5.0.0-beta.1):
     - React-Core
   - SocketRocket (0.6.1)
   - Yoga (1.14.0)
