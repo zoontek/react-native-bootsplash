@@ -2,10 +2,10 @@
 
 ## What's new
 
-- Brand image support for Android (5+, compared to 12+ for the AndroidX SplashScreen library ✨) **and** iOS.
+- Brand image support
 - Dark mode support 🌚
 - A new hook, `useHideAnimation`, allowing you to easily animate all splash screen elements using `Animated` or `react-native-reanimated`. Create something nicer than a simple fade 🚀
-- An improved CLI generator, now able to edit / output **57** files (light and dark logos + light and dark brand images, config files…for all pixel densities!). Note that the new options require a [license key 🔑](https://zoontek.gumroad.com/l/bootsplash-generator).
+- An improved CLI generator, now able to edit / output **57** files (light and dark logos + light and dark brand images, config files…for all pixel densities!). Note that the new options require a [license key 🔑](https://zoontek.gumroad.com/l/bootsplash-generator)
 
 ## What else?
 
