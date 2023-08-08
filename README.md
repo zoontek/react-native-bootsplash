@@ -261,6 +261,7 @@ _ℹ️ For `react-native` < `0.71` setup, follow the [`v4.4.0 README.md`](https
   <style name="BootTheme" parent="Theme.BootSplash">
     <item name="bootSplashBackground">@color/bootsplash_background</item>
     <item name="bootSplashLogo">@drawable/bootsplash_logo</item>
+    <item name="bootSplashBrand">@drawable/bootsplash_brand</item> <!-- Only if you have a brand image -->
     <item name="postBootSplashTheme">@style/AppTheme</item>
   </style>
 
