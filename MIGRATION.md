@@ -50,7 +50,8 @@ dependencies {
 +   <item name="bootSplashBackground">@color/bootsplash_background</item>
 -   <item name="windowSplashScreenAnimatedIcon">@mipmap/bootsplash_logo</item>
 +   <item name="bootSplashLogo">@drawable/bootsplash_logo</item>
-    <item name="postSplashScreenTheme">@style/AppTheme</item>
+-   <item name="postSplashScreenTheme">@style/AppTheme</item>
++   <item name="postBootSplashTheme">@style/AppTheme</item>
   </style>
 ```
 
