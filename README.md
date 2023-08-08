@@ -128,7 +128,7 @@ Options:
 
 In order to use the `--brand`, `--brand-width` and `--dark-*` options, you must specify a `--license-key`.
 
-With it, the generator is able to output over **50 files** (logo and brand images generated in all pixel densities, dark mode versions, etc.), saving you (and your company!) a massive amount of time not only at creation, but also at each future adjustment ⏱️
+With it, the generator is able to output over **50 files** (logo and brand images generated in all pixel densities, dark mode versions, etc.), saving you (and your company!) a massive amount of time not only at creation, but also at each adjustment ⏱️
 
 <a href="https://zoontek.gumroad.com/l/bootsplash-generator">
   <img width="280" height="52" src="./docs/gumroad_button.png" alt="Gumroad button">
