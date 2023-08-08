@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   },
   "scripts": {
     "clean-modules": "rm -rf ./node_modules/react-native-bootsplash/{example,node_modules}",
