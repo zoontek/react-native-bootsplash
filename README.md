@@ -234,7 +234,7 @@ _ℹ️ For `react-native` < `0.71` setup, follow the [`v4.4.0 README.md`](https
 @end
 ```
 
-2. Drag and drop the generated `BootSplash.storyboard` (and `Colors.xcassets`, if when using dark mode):
+2. Drag and drop the generated `BootSplash.storyboard` (and `Colors.xcassets`, when using dark mode):
 
 ![](./docs/xcode_1.png)
 
@@ -452,7 +452,7 @@ const App = () => {
 };
 ```
 
-**🤙 This example is really simple for documentation purpose (we only animate the container).**<br>
+**🤙 This example is simple for documentation purpose (we only animate the container).**<br>
 **A more complex example is available in the [`/example` folder](./example/src/AnimatedBootSplash.tsx).**
 
 ## With React Navigation
