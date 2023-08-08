@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useState } from "react";
 import { StatusBar, StyleSheet, Text, View } from "react-native";
 import { AnimatedBootSplash } from "./AnimatedBootSplash";
 
@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
 });
 
 export const App = () => {
-  const [visible, setVisible] = React.useState(true);
+  const [visible, setVisible] = useState(true);
 
   return (
     <>
