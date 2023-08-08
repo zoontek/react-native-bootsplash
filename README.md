@@ -124,10 +124,11 @@ Options:
   -h, --help                  display help for command
 ```
 
-#### Unlock the CLI full potential
+#### 💪 Unlock the CLI full potential
 
-In order to use the `--brand-*` and `--dark-*` options, you must specify a `--license-key`.
-By doing go, the generator will output **more than 50 files** 💪 (logo, brand in all sizes, dark mode versions, etc.)!
+In order to use the `--brand`, `--brand-width` and `--dark-*` options, you must specify a `--license-key`.
+
+With it, the generator is able to output over **50 files** (logo and brand images generated in all pixel densities, dark mode versions, etc.), saving you (and your company!) a massive amount of time not only at creation, but also at each future adjustment ⏱️
 
 <a href="https://zoontek.gumroad.com/l/bootsplash-generator">
   <img width="280" height="52" src="./docs/gumroad_button.png" alt="Gumroad button">
@@ -314,6 +315,8 @@ public class MainActivity extends ReactActivity {
 
 ### hide()
 
+Hide the splash screen (immediately, or with a fade out).
+
 #### Method type
 
 ```ts
@@ -345,6 +348,8 @@ const App = () => {
 
 ### isVisible()
 
+Return the current visibility status of the native splash screen.
+
 #### Method type
 
 ```ts
@@ -360,6 +365,9 @@ RNBootSplash.isVisible().then((value) => console.log(value));
 ```
 
 ### useHideAnimation()
+
+A hook to easily creation a hide custom hide animation, by animating all splash screen elements using `Animated`, `react-native-reanimated` or else (similar as the video on top of this documentation).<br>
+To use it, don't forget to set the `--assets-output` option of the generator as it requires the manifest and assets images files.
 
 #### Method type
 
@@ -438,7 +446,7 @@ const App = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      <Text>My awesome app</Text>
+      {/* content */}
 
       {visible && (
         <AnimatedBootSplash
@@ -452,8 +460,8 @@ const App = () => {
 };
 ```
 
-**🤙 This example is simple for documentation purpose (we only animate the container).**<br>
-**A more complex example is available in the [`/example` folder](./example/src/AnimatedBootSplash.tsx).**
+**This example is simple for documentation purpose (we only animate the container).**<br>
+**🤙 A more complex example is available in the [`/example` folder](./example/src/AnimatedBootSplash.tsx).**
 
 ## With React Navigation
 
