@@ -613,6 +613,16 @@ export const generate: CommandFunction<{
       darkLogo,
       darkBrand,
     });
+  } else {
+    log.text(`
+${pc.blue("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓")}
+${pc.blue("┃")}  🔑  ${pc.bold(
+      "Get a license key for brand image / dark mode support",
+    )}  ${pc.blue("┃")}
+${pc.blue("┃")}      ${pc.underline(
+      "https://zoontek.gumroad.com/l/bootsplash-generator",
+    )}     ${pc.blue("┃")}
+${pc.blue("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛")}`);
   }
 
   log.text(`\n💖  Thanks for using ${pc.underline("react-native-bootsplash")}`);

@@ -11,8 +11,8 @@ Show a splash screen during app startup. Hide it when you are ready.<br>
 [![platform - ios](https://img.shields.io/badge/platform-iOS-000.svg?logo=apple&style=for-the-badge)](https://developer.apple.com/ios)
 
 <p>
-  <img height="520" width="256" src="https://raw.githubusercontent.com/zoontek/react-native-bootsplash/HEAD/docs/ios_demo.gif?raw=true" alt="iOS demo"></img>
-  <img height="500" width="259" src="https://raw.githubusercontent.com/zoontek/react-native-bootsplash/HEAD/docs/android_demo.gif?raw=true" alt="android demo"></img>
+  <img width="393" height="490" src="./docs/demo_static.png" alt="Demo">
+  <img width="255" height="500" src="./docs/demo.gif" alt="Demo">
 </p>
 
 ## Support
@@ -124,6 +124,15 @@ Options:
   -h, --help                  display help for command
 ```
 
+#### Unlock the CLI full potential
+
+In order to use the `--brand-*` and `--dark-*` options, you must specify a `--license-key`.
+By doing go, the generator will output **more than 50 files** 💪 (logo, brand in all sizes, dark mode versions, etc.)!
+
+<a href="https://zoontek.gumroad.com/l/bootsplash-generator">
+  <img width="280" height="52" src="./docs/gumroad_button.png" alt="Gumroad button">
+</a>
+
 #### Full command usage example
 
 ```bash
@@ -149,8 +158,6 @@ yarn react-native generate-bootsplash svgs/light_logo.svg \
   --dark-logo=svgs/dark_logo.svg \
   --dark-brand=svgs/dark_brand.svg
 ```
-
-![](./docs/cli_tool.png)
 
 This tool relies on the naming conventions that are used in the `/example` project and will therefore create the following files:
 
@@ -191,13 +198,15 @@ ios/YourProjectName/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo@3x.p
 # + 31 files with license key 🔑 (brand images, dark mode versions…)
 ```
 
+![](./docs/cli_generator.png)
+
 ### iOS
 
 _ℹ️ For `react-native` < `0.71` setup, follow the [`v4.4.0 README.md`](https://github.com/zoontek/react-native-bootsplash/blob/4.4.0/README.md)._
 
 ---
 
-Edit the `ios/YourProjectName/AppDelegate.mm` file:
+1. Edit the `ios/YourProjectName/AppDelegate.mm` file:
 
 ```obj-c
 #import "AppDelegate.h"
@@ -225,11 +234,17 @@ Edit the `ios/YourProjectName/AppDelegate.mm` file:
 @end
 ```
 
-Set the `BootSplash.storyboard` as launch screen file:
+2. Drag and drop the generated `BootSplash.storyboard` (and `Colors.xcassets`, if when using dark mode):
 
-| Drag and drop the file                                                                                  | Create folder reference                                                                                 | Set as Launch Screen File                                                                               |
-| ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| ![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/master/docs/xcode-1.png?raw=true) | ![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/master/docs/xcode-2.png?raw=true) | ![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/master/docs/xcode-3.png?raw=true) |
+![](./docs/xcode_1.png)
+
+3. Create folder references:
+
+![](./docs/xcode_2.png)
+
+4. Set `BootSplash.storyboard` as Launch Screen File:
+
+![](./docs/xcode_3.png)
 
 ### Android
 
@@ -351,6 +366,7 @@ RNBootSplash.isVisible().then((value) => console.log(value));
 type UseHideAnimationConfig = {
   manifest: Manifest; // the manifest file is generated when --assets-output is specified
 
+  // require() the generated assets
   logo: ImageRequireSource;
   darkLogo?: ImageRequireSource;
   brand?: ImageRequireSource;
@@ -397,7 +413,7 @@ const AnimatedBootSplash = ({ onAnimationEnd }: Props) => {
     navigationBarTranslucent: false,
 
     animate: () => {
-      // Perform any animations and call onAnimationEnd()
+      // Perform animations and call onAnimationEnd()
       Animated.timing(opacity, {
         useNativeDriver: true,
         toValue: 0,
@@ -442,18 +458,19 @@ const App = () => {
 
 If you are using React Navigation, you can hide the splash screen once the navigation container and all children have finished mounting by using the `onReady` function.
 
-```ts
-import React from "react";
+```tsx
 import { NavigationContainer } from "@react-navigation/native";
 import BootSplash from "react-native-bootsplash";
 
-function App() {
-  return (
-    <NavigationContainer onReady={() => BootSplash.hide()}>
-      {/* content */}
-    </NavigationContainer>
-  );
-}
+const App = () => (
+  <NavigationContainer
+    onReady={() => {
+      BootSplash.hide();
+    }}
+  >
+    {/* content */}
+  </NavigationContainer>
+);
 ```
 
 ## Testing with Jest
