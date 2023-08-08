@@ -372,10 +372,10 @@ To use it, don't forget to set the `--assets-output` option of the generator as 
 #### Method type
 
 ```ts
-type UseHideAnimationConfig = {
+type useHideAnimation = (config: {
   manifest: Manifest; // the manifest file is generated when --assets-output is specified
 
-  // require() the generated assets
+  // the required generated assets
   logo: ImageRequireSource;
   darkLogo?: ImageRequireSource;
   brand?: ImageRequireSource;
@@ -387,9 +387,7 @@ type UseHideAnimationConfig = {
   navigationBarTranslucent?: boolean;
 
   animate: () => void;
-};
-
-type UseHideAnimation = {
+}) => {
   container: ViewProps;
   logo: ImageProps;
   brand?: ImageProps;
@@ -422,7 +420,7 @@ const AnimatedBootSplash = ({ onAnimationEnd }: Props) => {
     navigationBarTranslucent: false,
 
     animate: () => {
-      // Perform animations and call onAnimationEnd()
+      // Perform animations and call onAnimationEnd
       Animated.timing(opacity, {
         useNativeDriver: true,
         toValue: 0,
