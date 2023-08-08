@@ -165,8 +165,8 @@ This tool relies on the naming conventions that are used in the `/example` proje
 ```bash
 # Without license key
 android/app/src/main/res/values/colors.xml
-android/app/src/main/res/drawable-mdpi/bootsplash_logo.png
 android/app/src/main/res/drawable-hdpi/bootsplash_logo.png
+android/app/src/main/res/drawable-mdpi/bootsplash_logo.png
 android/app/src/main/res/drawable-xhdpi/bootsplash_logo.png
 android/app/src/main/res/drawable-xxhdpi/bootsplash_logo.png
 android/app/src/main/res/drawable-xxxhdpi/bootsplash_logo.png
@@ -183,18 +183,6 @@ assets/bootsplash_logo@1,5x.png
 assets/bootsplash_logo@2x.png
 assets/bootsplash_logo@3x.png
 assets/bootsplash_logo@4x.png
-
-android/app/src/main/res/values/colors.xml (creation and edition)
-android/app/src/main/res/drawable-hdpi/bootsplash_logo.png
-android/app/src/main/res/drawable-mdpi/bootsplash_logo.png
-android/app/src/main/res/drawable-xhdpi/bootsplash_logo.png
-android/app/src/main/res/drawable-xxhdpi/bootsplash_logo.png
-android/app/src/main/res/drawable-xxxhdpi/bootsplash_logo.png
-
-ios/YourProjectName/BootSplash.storyboard
-ios/YourProjectName/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo.png
-ios/YourProjectName/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo@2x.png
-ios/YourProjectName/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo@3x.png
 
 # + 31 files with license key 🔑 (brand images, dark mode versions…)
 ```
