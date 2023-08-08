@@ -1,6 +1,6 @@
 {
   "name": "react-native-bootsplash",
-  "version": "5.0.0-beta.0",
+  "version": "5.0.0-beta.1",
   "license": "MIT",
   "description": "Display a bootsplash on your app starts. Hide it when you want.",
   "author": "Mathieu Acthernoene <zoontek@gmail.com>",
@@ -14,7 +14,6 @@
     "/ios",
     "/src",
     "RNBootSplash.podspec",
-    "RNBootSplash.res",
     "package.json",
     "react-native.config.js"
   ],
