@@ -278,6 +278,14 @@ export const generate: CommandFunction<{
   { project: { android, ios } },
   { flavor, platforms, licenseKey, ...args },
 ) => {
+  const [nodeStringVersion = ""] = process.versions.node.split(".");
+  const nodeVersion = parseInt(nodeStringVersion, 10);
+
+  if (!isNaN(nodeVersion) && nodeVersion < 18) {
+    log.error("Requires Node 18 (or higher)");
+    process.exit(1);
+  }
+
   if (argsLogo == null) {
     log.error("Missing required argument 'logo'");
     process.exit(1);
