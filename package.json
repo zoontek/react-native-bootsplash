@@ -9,12 +9,16 @@
   "module": "dist/module/index.js",
   "types": "dist/typescript/index.d.ts",
   "files": [
-    "/android",
-    "/dist",
-    "/ios",
-    "/src",
+    "dist",
+    "android",
+    "ios",
+    "src",
+    "!android/build",
+    "!android/.cxx",
+    "!android/.gradle",
+    "!ios/build",
+    "!src/addon",
     "RNBootSplash.podspec",
-    "package.json",
     "react-native.config.js"
   ],
   "repository": {
