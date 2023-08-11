@@ -42,30 +42,8 @@ const parseColor = (value: string): Color => {
   return { hex, rgb };
 };
 
-const ContentsJson = `{
-  "images": [
-    {
-      "idiom": "universal",
-      "filename": "bootsplash_logo.png",
-      "scale": "1x"
-    },
-    {
-      "idiom": "universal",
-      "filename": "bootsplash_logo@2x.png",
-      "scale": "2x"
-    },
-    {
-      "idiom": "universal",
-      "filename": "bootsplash_logo@3x.png",
-      "scale": "3x"
-    }
-  ],
-  "info": {
-    "author": "xcode",
-    "version": 1
-  }
-}
-`;
+export const writeJSON = (file: string, json: object) =>
+  fs.writeFileSync(file, JSON.stringify(json, null, 2) + "\n", "utf-8");
 
 const getStoryboard = ({
   logoHeight,
@@ -519,11 +497,33 @@ export const generate: CommandFunction<{
 
     fs.ensureDirSync(imageSetPath);
 
-    fs.writeFileSync(
-      path.resolve(imageSetPath, "Contents.json"),
-      ContentsJson,
-      "utf-8",
-    );
+    const contentsJsonPath = path.resolve(imageSetPath, "Contents.json");
+
+    writeJSON(contentsJsonPath, {
+      images: [
+        {
+          idiom: "universal",
+          filename: "bootsplash_logo.png",
+          scale: "1x",
+        },
+        {
+          idiom: "universal",
+          filename: "bootsplash_logo@2x.png",
+          scale: "2x",
+        },
+        {
+          idiom: "universal",
+          filename: "bootsplash_logo@3x.png",
+          scale: "3x",
+        },
+      ],
+      info: {
+        author: "xcode",
+        version: 1,
+      },
+    });
+
+    logWrite(contentsJsonPath);
 
     await Promise.all(
       [
@@ -553,24 +553,18 @@ export const generate: CommandFunction<{
 
     fs.ensureDirSync(assetsOutputPath);
 
-    const manifest: Manifest = {
-      background: background.hex,
-      logo: {
-        width: logoWidth,
-        height: logoHeight,
-      },
-    };
-
     const manifestPath = path.resolve(
       assetsOutputPath,
       "bootsplash_manifest.json",
     );
 
-    fs.writeFileSync(
-      manifestPath,
-      JSON.stringify(manifest, null, 2) + "\n",
-      "utf-8",
-    );
+    writeJSON(manifestPath, {
+      background: background.hex,
+      logo: {
+        width: logoWidth,
+        height: logoHeight,
+      },
+    } satisfies Manifest);
 
     logWrite(manifestPath);
 
