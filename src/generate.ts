@@ -3,26 +3,24 @@ import {
   CommandFunction,
   IOSProjectConfig,
 } from "@react-native-community/cli-types";
+import detectIndent from "detect-indent";
 import fs from "fs-extra";
 import path from "path";
 import pc from "picocolors";
 import type { Sharp } from "sharp";
 import sharp from "sharp";
+import xmlFormat, { XMLFormatterOptions } from "xml-formatter";
 import type { Manifest } from ".";
 
-export type Color = {
-  hex: string;
-  rgb: {
-    R: string;
-    G: string;
-    B: string;
-  };
-};
+const workingPath = process.env.INIT_CWD ?? process.env.PWD ?? process.cwd();
 
 export const androidColorRegex =
   /<color name="bootsplash_background">#\w+<\/color>/g;
 
-const workingPath = process.env.INIT_CWD ?? process.env.PWD ?? process.cwd();
+export type Color = {
+  hex: string;
+  rgb: { R: string; G: string; B: string };
+};
 
 const parseColor = (value: string): Color => {
   const up = value.toUpperCase().replace(/[^0-9A-F]/g, "");
@@ -41,9 +39,6 @@ const parseColor = (value: string): Color => {
 
   return { hex, rgb };
 };
-
-export const writeJSON = (file: string, json: object) =>
-  fs.writeFileSync(file, JSON.stringify(json, null, 2) + "\n", "utf-8");
 
 const getStoryboard = ({
   logoHeight,
@@ -120,6 +115,38 @@ export const logWrite = (
     `    ${path.relative(workingPath, filePath)}` +
       (dimensions != null ? ` (${dimensions.width}x${dimensions.height})` : ""),
   );
+
+export const writeJson = (file: string, json: object) => {
+  const amount = fs.existsSync(file)
+    ? detectIndent(fs.readFileSync(file, "utf-8")).amount || 2
+    : 2;
+
+  fs.writeFileSync(file, JSON.stringify(json, null, amount) + "\n", "utf-8");
+  logWrite(file);
+};
+
+export const writeXml = (
+  file: string,
+  xml: string,
+  options?: XMLFormatterOptions,
+) => {
+  const indentation = fs.existsSync(file)
+    ? detectIndent(fs.readFileSync(file, "utf-8")).indent || "    "
+    : "    ";
+
+  fs.writeFileSync(
+    file,
+    xmlFormat(xml, {
+      collapseContent: true,
+      ...options,
+      indentation,
+      lineSeparator: "\n",
+    }) + "\n",
+    "utf-8",
+  );
+
+  logWrite(file);
+};
 
 const ensureSupportedFormat = async (
   name: string,
@@ -388,31 +415,14 @@ export const generate: CommandFunction<{
     if (fs.existsSync(colorsXmlPath)) {
       const colorsXml = fs.readFileSync(colorsXmlPath, "utf-8");
 
-      if (colorsXml.match(androidColorRegex)) {
-        fs.writeFileSync(
-          colorsXmlPath,
-          colorsXml.replace(androidColorRegex, colorsXmlEntry),
-          "utf-8",
-        );
-      } else {
-        fs.writeFileSync(
-          colorsXmlPath,
-          colorsXml.replace(
-            /<\/resources>/g,
-            `    ${colorsXmlEntry}\n</resources>`,
-          ),
-          "utf-8",
-        );
-      }
-    } else {
-      fs.writeFileSync(
-        colorsXmlPath,
-        `<resources>\n    ${colorsXmlEntry}\n</resources>\n`,
-        "utf-8",
-      );
-    }
+      const nextXml = colorsXml.match(androidColorRegex)
+        ? colorsXml.replace(androidColorRegex, colorsXmlEntry)
+        : colorsXml.replace(/<\/resources>/g, `${colorsXmlEntry}</resources>`);
 
-    logWrite(colorsXmlPath);
+      writeXml(colorsXmlPath, nextXml);
+    } else {
+      writeXml(colorsXmlPath, `<resources>${colorsXmlEntry}</resources>`);
+    }
 
     await Promise.all(
       [
@@ -497,9 +507,7 @@ export const generate: CommandFunction<{
 
     fs.ensureDirSync(imageSetPath);
 
-    const contentsJsonPath = path.resolve(imageSetPath, "Contents.json");
-
-    writeJSON(contentsJsonPath, {
+    writeJson(path.resolve(imageSetPath, "Contents.json"), {
       images: [
         {
           idiom: "universal",
@@ -522,8 +530,6 @@ export const generate: CommandFunction<{
         version: 1,
       },
     });
-
-    logWrite(contentsJsonPath);
 
     await Promise.all(
       [
@@ -553,20 +559,13 @@ export const generate: CommandFunction<{
 
     fs.ensureDirSync(assetsOutputPath);
 
-    const manifestPath = path.resolve(
-      assetsOutputPath,
-      "bootsplash_manifest.json",
-    );
-
-    writeJSON(manifestPath, {
+    writeJson(path.resolve(assetsOutputPath, "bootsplash_manifest.json"), {
       background: background.hex,
       logo: {
         width: logoWidth,
         height: logoHeight,
       },
     } satisfies Manifest);
-
-    logWrite(manifestPath);
 
     await Promise.all(
       [

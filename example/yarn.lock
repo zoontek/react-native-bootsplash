@@ -2174,6 +2174,11 @@ destroy@1.2.0:
   resolved "https://registry.yarnpkg.com/destroy/-/destroy-1.2.0.tgz#4803735509ad8be552934c67df614f94e66fa015"
   integrity sha512-2sJGJTaXIIaR1w4iJSNoN0hnMY7Gpc/n8D4qSCJw8QqFWXf7cuAgnEHxBpweaVcPevC2l3KpjYCx3NypQQgaJg==
 
+detect-indent@^6.1.0:
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/detect-indent/-/detect-indent-6.1.0.tgz#592485ebbbf6b3b1ab2be175c8393d04ca0d57e6"
+  integrity sha512-reYkTUJAZb9gUuZ2RvVCNhVHdg62RHnJ7WJl8ftMi4diZ6NWlciOzQN88pUhSELEwflJht4oQDv0F0BMlwaYtA==
+
 detect-libc@^2.0.0, detect-libc@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/detect-libc/-/detect-libc-2.0.2.tgz#8ccf2ba9315350e1241b88d0ac3b0e1fbd99605d"
@@ -3674,11 +3679,13 @@ react-is@^17.0.1:
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
 "react-native-bootsplash@file:..":
-  version "4.7.5"
+  version "5.0.0-beta.2"
   dependencies:
+    detect-indent "^6.1.0"
     fs-extra "^11.1.1"
     picocolors "^1.0.0"
     sharp "^0.32.4"
+    xml-formatter "^3.5.0"
 
 react-native@0.72.3:
   version "0.72.3"
@@ -4466,6 +4473,18 @@ ws@^7, ws@^7.5.1:
   version "7.5.9"
   resolved "https://registry.yarnpkg.com/ws/-/ws-7.5.9.tgz#54fa7db29f4c7cec68b1ddd3a89de099942bb591"
   integrity sha512-F+P9Jil7UiSKSkppIiD94dN07AwvFixvLIj1Og1Rl9GGMuNipJnV9JzjD6XuqmAeiswGvUmNLjr5cFuXwNS77Q==
+
+xml-formatter@^3.5.0:
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/xml-formatter/-/xml-formatter-3.5.0.tgz#3be010082f58dea17f9dc860f1f5e6e92e81c2ec"
+  integrity sha512-9ij/f2PLIPv+YDywtdztq7U82kYMDa5yPYwpn0TnXnqJRH6Su8RC/oaw91erHe3aSEbfgBaA1hDzReDFb1SVXw==
+  dependencies:
+    xml-parser-xo "^4.1.0"
+
+xml-parser-xo@^4.1.0:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/xml-parser-xo/-/xml-parser-xo-4.1.1.tgz#7434d990f442e06ed96286c813c02e921f14fc50"
+  integrity sha512-Ggf2y90+Y6e9IK5hoPuembVHJ03PhDSdhldEmgzbihzu9k0XBo0sfcFxaSi4W1PlUSSI1ok+MJ0JCXUn+U4Ilw==
 
 xtend@~4.0.1:
   version "4.0.2"
