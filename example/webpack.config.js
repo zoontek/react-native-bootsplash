@@ -1,4 +1,4 @@
-// https://necolas.github.io/react-native-web/docs/multi-platform
+// https://necolas.github.io/react-native-web/docs/multi-platform/#compiling-and-bundling
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
