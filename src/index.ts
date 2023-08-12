@@ -158,7 +158,7 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
             source: brandFinalSrc,
             style: {
               position: "absolute",
-              bottom: brandBottom,
+              bottom: Platform.OS === "web" ? 60 : brandBottom,
               width: brandWidth,
               height: brandHeight,
             },
