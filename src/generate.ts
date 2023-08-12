@@ -117,11 +117,7 @@ export const logWrite = (
   );
 
 export const writeJson = (file: string, json: object) => {
-  const amount = fs.existsSync(file)
-    ? detectIndent(fs.readFileSync(file, "utf-8")).amount || 2
-    : 2;
-
-  fs.writeFileSync(file, JSON.stringify(json, null, amount) + "\n", "utf-8");
+  fs.writeFileSync(file, JSON.stringify(json, null, 2) + "\n", "utf-8");
   logWrite(file);
 };
 
