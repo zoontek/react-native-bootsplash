@@ -121,26 +121,36 @@ export const writeJson = (file: string, json: object) => {
   logWrite(file);
 };
 
+export const readXml = (file: string) => {
+  const xml = fs.readFileSync(file, "utf-8");
+
+  const minified = xmlFormat(xml, {
+    collapseContent: true,
+    forceSelfClosingEmptyTag: true,
+    indentation: "",
+    lineSeparator: "",
+    whiteSpaceAtEndOfSelfclosingTag: true,
+  });
+
+  const indentation = detectIndent(xml).indent || "    ";
+  return { minified, indentation };
+};
+
 export const writeXml = (
   file: string,
   xml: string,
   options?: XMLFormatterOptions,
 ) => {
-  const indentation = fs.existsSync(file)
-    ? detectIndent(fs.readFileSync(file, "utf-8")).indent || "    "
-    : "    ";
+  const formatted = xmlFormat(xml, {
+    collapseContent: true,
+    forceSelfClosingEmptyTag: true,
+    indentation: "    ",
+    lineSeparator: "\n",
+    whiteSpaceAtEndOfSelfclosingTag: true,
+    ...options,
+  });
 
-  fs.writeFileSync(
-    file,
-    xmlFormat(xml, {
-      collapseContent: true,
-      ...options,
-      indentation,
-      lineSeparator: "\n",
-    }) + "\n",
-    "utf-8",
-  );
-
+  fs.writeFileSync(file, formatted + "\n", "utf-8");
   logWrite(file);
 };
 
@@ -409,13 +419,13 @@ export const generate: CommandFunction<{
     const colorsXmlEntry = `<color name="bootsplash_background">${background.hex}</color>`;
 
     if (fs.existsSync(colorsXmlPath)) {
-      const colorsXml = fs.readFileSync(colorsXmlPath, "utf-8");
+      const { minified: colorsXml, indentation } = readXml(colorsXmlPath);
 
       const nextXml = colorsXml.match(androidColorRegex)
         ? colorsXml.replace(androidColorRegex, colorsXmlEntry)
         : colorsXml.replace(/<\/resources>/g, `${colorsXmlEntry}</resources>`);
 
-      writeXml(colorsXmlPath, nextXml);
+      writeXml(colorsXmlPath, nextXml, { indentation });
     } else {
       writeXml(colorsXmlPath, `<resources>${colorsXmlEntry}</resources>`);
     }
