@@ -22,6 +22,7 @@ export type Manifest = {
     height: number;
   };
   brand?: {
+    bottom: number;
     width: number;
     height: number;
   };
@@ -74,6 +75,7 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
   const hasBrand = manifest.brand != null && brandSrc != null;
   const logoWidth = manifest.logo.width;
   const logoHeight = manifest.logo.height;
+  const brandBottom = manifest.brand?.bottom;
   const brandWidth = manifest.brand?.width;
   const brandHeight = manifest.brand?.height;
 
@@ -156,7 +158,7 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
             source: brandFinalSrc,
             style: {
               position: "absolute",
-              bottom: 60,
+              bottom: brandBottom,
               width: brandWidth,
               height: brandHeight,
             },
@@ -193,6 +195,7 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
 
     logoWidth,
     logoHeight,
+    brandBottom,
     brandWidth,
     brandHeight,
 
