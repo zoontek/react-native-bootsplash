@@ -345,33 +345,37 @@ export const generate: CommandFunction<{
     process.exit(1);
   }
 
+  const logoPath = path.resolve(workingPath, argsLogo);
+
+  const darkLogoPath =
+    args.darkLogo != null
+      ? path.resolve(workingPath, args.darkLogo)
+      : undefined;
+
+  const brandPath =
+    args.brand != null ? path.resolve(workingPath, args.brand) : undefined;
+
+  const darkBrandPath =
+    args.darkBrand != null
+      ? path.resolve(workingPath, args.darkBrand)
+      : undefined;
+
+  const logo = sharp(logoPath);
+  const darkLogo = darkLogoPath != null ? sharp(darkLogoPath) : undefined;
+  const brand = brandPath != null ? sharp(brandPath) : undefined;
+  const darkBrand = darkBrandPath != null ? sharp(darkBrandPath) : undefined;
+
   const assetsOutputPath =
     args.assetsOutput != null
       ? path.resolve(workingPath, args.assetsOutput)
       : undefined;
 
   const background = parseColor(args.background);
-  const logo = sharp(path.resolve(workingPath, argsLogo));
   const logoWidth = args.logoWidth - (args.logoWidth % 2);
   const brandWidth = args.brandWidth - (args.brandWidth % 2);
 
-  const brand =
-    args.brand != null
-      ? sharp(path.resolve(workingPath, args.brand))
-      : undefined;
-
   const darkBackground =
     args.darkBackground != null ? parseColor(args.darkBackground) : undefined;
-
-  const darkLogo =
-    args.darkLogo != null
-      ? sharp(path.resolve(workingPath, args.darkLogo))
-      : undefined;
-
-  const darkBrand =
-    args.darkBrand != null
-      ? sharp(path.resolve(workingPath, args.darkBrand))
-      : undefined;
 
   const executeAddon =
     brand != null ||
@@ -615,13 +619,18 @@ export const generate: CommandFunction<{
     log.title("🌐", "Web");
 
     const { root, formatOptions } = readHtml(htmlTemplatePath);
+    const { format } = await logo.metadata();
     const prevStyle = root.querySelector("#bootsplash-style");
 
-    const buffer = await logo
-      .clone()
-      .resize(Math.round(logoWidth * 2))
-      .png({ quality: 100 })
-      .toBuffer();
+    const base64 = (
+      format === "svg"
+        ? fs.readFileSync(logoPath)
+        : await logo
+            .clone()
+            .resize(Math.round(logoWidth * 2))
+            .png({ quality: 100 })
+            .toBuffer()
+    ).toString("base64");
 
     const nextStyle = parseHtml(dedent`
       <style id="bootsplash-style">
@@ -638,7 +647,9 @@ export const generate: CommandFunction<{
           right: 0;
         }
         #bootsplash-logo {
-          content: url("data:image/png;base64,${buffer.toString("base64")}");
+          content: url("data:image/${
+            format ? "svg+xml" : "png"
+          };base64,${base64}");
           width: ${logoWidth}px;
           height: ${logoHeight}px;
         }
