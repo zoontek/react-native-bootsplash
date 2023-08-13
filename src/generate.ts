@@ -5,17 +5,18 @@ import {
 } from "@react-native-community/cli-types";
 import detectIndent from "detect-indent";
 import fs from "fs-extra";
+import { parse as parseHtml } from "node-html-parser";
 import path from "path";
 import pc from "picocolors";
-import type { Sharp } from "sharp";
-import sharp from "sharp";
-import xmlFormat, { XMLFormatterOptions } from "xml-formatter";
-import type { Manifest } from ".";
+import { Options as PrettierOptions } from "prettier";
+import htmlPlugin from "prettier/parser-html";
+import prettier from "prettier/standalone";
+import sharp, { Sharp } from "sharp";
+import { dedent } from "ts-dedent";
+import formatXml, { XMLFormatterOptions } from "xml-formatter";
+import { Manifest } from ".";
 
 const workingPath = process.env.INIT_CWD ?? process.env.PWD ?? process.cwd();
-
-export const androidColorRegex =
-  /<color name="bootsplash_background">#\w+<\/color>/g;
 
 export type Color = {
   hex: string;
@@ -54,7 +55,8 @@ const getStoryboard = ({
   const logoX = (frameWidth - logoWidth) / 2;
   const logoY = (frameHeight - logoHeight) / 2;
 
-  return `<?xml version="1.0" encoding="UTF-8"?>
+  return dedent`
+<?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
@@ -123,17 +125,13 @@ export const writeJson = (file: string, json: object) => {
 
 export const readXml = (file: string) => {
   const xml = fs.readFileSync(file, "utf-8");
+  const { indent } = detectIndent(xml);
 
-  const minified = xmlFormat(xml, {
-    collapseContent: true,
-    forceSelfClosingEmptyTag: true,
-    indentation: "",
-    lineSeparator: "",
-    whiteSpaceAtEndOfSelfclosingTag: true,
-  });
+  const formatOptions: XMLFormatterOptions = {
+    indentation: indent || "    ",
+  };
 
-  const indentation = detectIndent(xml).indent || "    ";
-  return { minified, indentation };
+  return { root: parseHtml(xml), formatOptions };
 };
 
 export const writeXml = (
@@ -141,7 +139,7 @@ export const writeXml = (
   xml: string,
   options?: XMLFormatterOptions,
 ) => {
-  const formatted = xmlFormat(xml, {
+  const formatted = formatXml(xml, {
     collapseContent: true,
     forceSelfClosingEmptyTag: true,
     indentation: "    ",
@@ -151,6 +149,35 @@ export const writeXml = (
   });
 
   fs.writeFileSync(file, formatted + "\n", "utf-8");
+  logWrite(file);
+};
+
+export const readHtml = (file: string) => {
+  const html = fs.readFileSync(file, "utf-8");
+  const { type, amount } = detectIndent(html);
+
+  const formatOptions: PrettierOptions = {
+    useTabs: type === "tab",
+    tabWidth: amount || 2,
+  };
+
+  return { root: parseHtml(html), formatOptions };
+};
+
+export const writeHtml = (
+  file: string,
+  html: string,
+  options?: Omit<PrettierOptions, "parser" | "plugins">,
+) => {
+  const formatted = prettier.format(html, {
+    parser: "html",
+    plugins: [htmlPlugin],
+    tabWidth: 2,
+    useTabs: false,
+    ...options,
+  });
+
+  fs.writeFileSync(file, formatted, "utf-8");
   logWrite(file);
 };
 
@@ -240,6 +267,21 @@ const getIOSProjectPath = (ios: IOSProjectConfig): string | undefined => {
   }
 };
 
+const getHtmlTemplatePath = (html: string): string | undefined => {
+  const htmlTemplatePath = path.resolve(workingPath, html);
+
+  if (!fs.existsSync(htmlTemplatePath)) {
+    log.warn(
+      `No ${path.relative(
+        workingPath,
+        htmlTemplatePath,
+      )} file found. Skipping HTML + CSS generation…`,
+    );
+  } else {
+    return htmlTemplatePath;
+  }
+};
+
 export type AddonConfig = {
   licenseKey: string;
 
@@ -276,6 +318,7 @@ export const generate: CommandFunction<{
   background: string;
   assetsOutput?: string;
   flavor: string;
+  html: string;
   platforms: string[];
 
   licenseKey?: string;
@@ -287,7 +330,7 @@ export const generate: CommandFunction<{
 }> = async (
   [argsLogo],
   { project: { android, ios } },
-  { flavor, platforms, licenseKey, ...args },
+  { flavor, html, platforms, licenseKey, ...args },
 ) => {
   const [nodeStringVersion = ""] = process.versions.node.split(".");
   const nodeVersion = parseInt(nodeStringVersion, 10);
@@ -409,6 +452,10 @@ export const generate: CommandFunction<{
       ? getIOSProjectPath(ios)
       : undefined;
 
+  const htmlTemplatePath = platforms.includes("web")
+    ? getHtmlTemplatePath(html)
+    : undefined;
+
   if (androidResPath != null) {
     log.title("🤖", "Android");
 
@@ -419,13 +466,19 @@ export const generate: CommandFunction<{
     const colorsXmlEntry = `<color name="bootsplash_background">${background.hex}</color>`;
 
     if (fs.existsSync(colorsXmlPath)) {
-      const { minified: colorsXml, indentation } = readXml(colorsXmlPath);
+      const { root, formatOptions } = readXml(colorsXmlPath);
+      const nextColor = parseHtml(colorsXmlEntry);
+      const prevColor = root.querySelector(
+        'color[name="bootsplash_background"]',
+      );
 
-      const nextXml = colorsXml.match(androidColorRegex)
-        ? colorsXml.replace(androidColorRegex, colorsXmlEntry)
-        : colorsXml.replace(/<\/resources>/g, `${colorsXmlEntry}</resources>`);
+      if (prevColor != null) {
+        prevColor.replaceWith(nextColor);
+      } else {
+        root.querySelector("resources")?.appendChild(nextColor);
+      }
 
-      writeXml(colorsXmlPath, nextXml, { indentation });
+      writeXml(colorsXmlPath, root.toString(), formatOptions);
     } else {
       writeXml(colorsXmlPath, `<resources>${colorsXmlEntry}</resources>`);
     }
@@ -493,17 +546,15 @@ export const generate: CommandFunction<{
       "BootSplash.storyboard",
     );
 
-    fs.writeFileSync(
+    writeXml(
       storyboardPath,
       getStoryboard({
         logoHeight,
         logoWidth,
         background: background.rgb,
       }),
-      "utf-8",
+      { whiteSpaceAtEndOfSelfclosingTag: false },
     );
-
-    logWrite(storyboardPath);
 
     const imageSetPath = path.resolve(
       iosProjectPath,
@@ -558,6 +609,63 @@ export const generate: CommandFunction<{
           });
       }),
     );
+  }
+
+  if (htmlTemplatePath != null) {
+    log.title("🌐", "Web");
+
+    const { root, formatOptions } = readHtml(htmlTemplatePath);
+    const prevStyle = root.querySelector("#bootsplash-style");
+
+    const buffer = await logo
+      .clone()
+      .resize(Math.round(logoWidth * 2))
+      .png({ quality: 100 })
+      .toBuffer();
+
+    const nextStyle = parseHtml(dedent`
+      <style id="bootsplash-style">
+        #bootsplash {
+          display: flex;
+          background-color: ${background.hex};
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          left: 0;
+          right: 0;
+        }
+        #bootsplash-logo {
+          content: url("data:image/png;base64,${buffer.toString("base64")}");
+          width: ${logoWidth}px;
+          height: ${logoHeight}px;
+        }
+      </style>
+    `);
+
+    if (prevStyle != null) {
+      prevStyle.replaceWith(nextStyle);
+    } else {
+      root.querySelector("head")?.appendChild(nextStyle);
+    }
+
+    const prevDiv = root.querySelector("#bootsplash");
+
+    const nextDiv = parseHtml(dedent`
+      <div id="bootsplash">
+        <div id="bootsplash-logo"></div>
+      </div>
+    `);
+
+    if (prevDiv != null) {
+      prevDiv.replaceWith(nextDiv);
+    } else {
+      root.querySelector("body")?.appendChild(nextDiv);
+    }
+
+    writeHtml(htmlTemplatePath, root.toString(), formatOptions);
   }
 
   if (assetsOutputPath != null) {

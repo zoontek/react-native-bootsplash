@@ -66,8 +66,11 @@
   "dependencies": {
     "detect-indent": "^6.1.0",
     "fs-extra": "^11.1.1",
+    "node-html-parser": "^6.1.5",
     "picocolors": "^1.0.0",
+    "prettier": "^2.8.8",
     "sharp": "^0.32.4",
+    "ts-dedent": "^2.2.0",
     "xml-formatter": "^3.5.0"
   },
   "devDependencies": {
@@ -76,6 +79,7 @@
     "@react-native-community/cli-types": "11.3.5",
     "@types/fs-extra": "^11.0.1",
     "@types/node": "^20.4.7",
+    "@types/prettier": "^2.7.3",
     "@types/react": "^18.2.18",
     "@types/sharp": "^0.31.1",
     "@typescript-eslint/eslint-plugin": "^6.2.1",
@@ -83,7 +87,6 @@
     "eslint": "^8.46.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "lint-staged": "^13.2.3",
-    "prettier": "^2.8.8",
     "prettier-plugin-organize-imports": "^3.2.3",
     "react": "18.2.0",
     "react-native": "0.72.3",

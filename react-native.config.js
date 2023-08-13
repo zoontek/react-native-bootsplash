@@ -20,20 +20,25 @@ const generateBootSplash = {
       description: "Assets output directory path",
     },
     {
+      name: "--flavor <string>",
+      description:
+        "Android flavor build variant (where your resource directory is)",
+      default: "main",
+    },
+    {
+      name: "--html <string>",
+      description: "HTML template file path (your web app entry point)",
+      default: "index.html",
+    },
+    {
       name: "--platforms <list>",
       description: "Platforms to generate for, separated by a comma",
-      default: "android,ios",
+      default: "android,ios,web",
       parse: (value) =>
         value
           .toLowerCase()
           .split(",")
           .map((platform) => platform.trim()),
-    },
-    {
-      name: "--flavor <string>",
-      description:
-        "Android flavor build variant (where your resource directory is)",
-      default: "main",
     },
     {
       name: "--license-key <string>",

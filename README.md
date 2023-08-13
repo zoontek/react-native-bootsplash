@@ -113,8 +113,9 @@ Options:
   --background <string>       Background color (in hexadecimal format) (default: "#fff")
   --logo-width <number>       Logo width at @1x (in dp - we recommend approximately ~100) (default: 100)
   --assets-output <string>    Assets output directory path
-  --platforms <list>          Platforms to generate for, separated by a comma (default: "android,ios")
   --flavor <string>           Android flavor build variant (where your resource directory is) (default: "main")
+  --html <string>             HTML template file path (your web app entry point) (default: "index.html")
+  --platforms <list>          Platforms to generate for, separated by a comma (default: "android,ios,web")
   --license-key <string>      License key to enable brand and dark mode assets generation
   --brand <string>            Brand file path (PNG or SVG)
   --brand-width <number>      Brand width at @1x (in dp - we recommend approximately ~80) (default: 80)
@@ -142,16 +143,18 @@ yarn react-native generate-bootsplash svgs/light_logo.svg \
   --background=F5FCFF \
   --logo-width=100 \
   --assets-output=assets \
-  --platforms=android,ios \
-  --flavor=main
+  --flavor=main \
+  --html=index.html \
+  --platforms=android,ios,web
 
 # With license key 🔑
 yarn react-native generate-bootsplash svgs/light_logo.svg \
   --background=F5FCFF \
   --logo-width=100 \
   --assets-output=assets \
-  --platforms=android,ios \
   --flavor=main \
+  --html=index.html \
+  --platforms=android,ios,web \
   --license-key=xxxxx \
   --brand=svgs/light_brand.svg \
   --brand-width=80 \
