@@ -28,10 +28,15 @@ module.exports = {
         include: [fromRoot("index.js"), fromRoot("src")],
       },
       {
-        test: /\.(jpe?g|png|svg)$/,
+        test: /\.(png|jpe?g|gif)$/,
+        loader: "react-native-web-image-loader",
+        options: { esModule: false, scalings: { "@2x": 2, "@3x": 3 } },
+      },
+      {
+        test: /\.(svg)$/,
         use: {
           loader: "url-loader",
-          options: { name: "[name].[ext]", esModule: false },
+          options: { esModule: false },
         },
       },
     ],
