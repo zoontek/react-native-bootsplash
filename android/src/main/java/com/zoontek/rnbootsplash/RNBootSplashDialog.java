@@ -1,7 +1,7 @@
 package com.zoontek.rnbootsplash;
 
+import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
@@ -11,18 +11,22 @@ import androidx.annotation.StyleRes;
 
 public class RNBootSplashDialog extends Dialog {
 
+  @NonNull
+  private final Activity mActivity;
+
   @StyleRes
   private int mWindowAnimationsResId = -1;
 
-  public RNBootSplashDialog(@NonNull Context context, @StyleRes int themeResId) {
-    super(context, themeResId);
+  public RNBootSplashDialog(@NonNull Activity activity, @StyleRes int themeResId) {
+    super(activity, themeResId);
+    mActivity = activity;
     setCancelable(false);
     setCanceledOnTouchOutside(false);
   }
 
   @Override
   public void onBackPressed() {
-    // Prevent default behavior
+    mActivity.moveTaskToBack(true);
   }
 
   @Override

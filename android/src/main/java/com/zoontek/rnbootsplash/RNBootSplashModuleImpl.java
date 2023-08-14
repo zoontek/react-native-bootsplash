@@ -38,6 +38,7 @@ public class RNBootSplashModuleImpl {
   @StyleRes
   private static int mThemeResId = -1;
 
+  @SuppressLint("StaticFieldLeak")
   @Nullable
   private static RNBootSplashDialog mDialog = null;
 
