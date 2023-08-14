@@ -322,12 +322,12 @@ const requireAddon = ():
 };
 
 export const generate: CommandFunction<{
-  logoWidth: number;
-  background: string;
-  assetsOutput?: string;
-  flavor: string;
-  html: string;
   platforms: string[];
+  background: string;
+  logoWidth: number;
+  assetsOutput?: string;
+  html: string;
+  flavor: string;
 
   licenseKey?: string;
   brand?: string;
@@ -338,7 +338,7 @@ export const generate: CommandFunction<{
 }> = async (
   [argsLogo],
   { project: { android, ios } },
-  { flavor, html, platforms, licenseKey, ...args },
+  { platforms, html, flavor, licenseKey, ...args },
 ) => {
   const [nodeStringVersion = ""] = process.versions.node.split(".");
   const nodeVersion = parseInt(nodeStringVersion, 10);

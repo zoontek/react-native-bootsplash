@@ -110,12 +110,12 @@ Usage: react-native generate-bootsplash [options] <logo>
 Generate a launch screen using a logo file path (PNG or SVG)
 
 Options:
+  --platforms <list>          Platforms to generate for, separated by a comma (default: "android,ios,web")
   --background <string>       Background color (in hexadecimal format) (default: "#fff")
   --logo-width <number>       Logo width at @1x (in dp - we recommend approximately ~100) (default: 100)
   --assets-output <string>    Assets output directory path
   --flavor <string>           Android flavor build variant (where your resource directory is) (default: "main")
   --html <string>             HTML template file path (your web app entry point) (default: "index.html")
-  --platforms <list>          Platforms to generate for, separated by a comma (default: "android,ios,web")
   --license-key <string>      License key to enable brand and dark mode assets generation
   --brand <string>            Brand file path (PNG or SVG)
   --brand-width <number>      Brand width at @1x (in dp - we recommend approximately ~80) (default: 80)
@@ -140,21 +140,21 @@ With it, the generator is able to output over **50 files** (logo and brand image
 ```bash
 # Without license key
 yarn react-native generate-bootsplash svgs/light_logo.svg \
+  --platforms=android,ios,web \
   --background=F5FCFF \
   --logo-width=100 \
   --assets-output=assets \
   --flavor=main \
-  --html=index.html \
-  --platforms=android,ios,web
+  --html=index.html
 
 # With license key 🔑
 yarn react-native generate-bootsplash svgs/light_logo.svg \
+  --platforms=android,ios,web \
   --background=F5FCFF \
   --logo-width=100 \
   --assets-output=assets \
   --flavor=main \
   --html=index.html \
-  --platforms=android,ios,web \
   --license-key=xxxxx \
   --brand=svgs/light_brand.svg \
   --brand-width=80 \

@@ -4,6 +4,16 @@ const generateBootSplash = {
   description: "Generate a launch screen using a logo file path (PNG or SVG)",
   options: [
     {
+      name: "--platforms <list>",
+      description: "Platforms to generate for, separated by a comma",
+      default: "android,ios,web",
+      parse: (value) =>
+        value
+          .toLowerCase()
+          .split(",")
+          .map((platform) => platform.trim()),
+    },
+    {
       name: "--background <string>",
       description: "Background color (in hexadecimal format)",
       default: "#fff",
@@ -29,16 +39,6 @@ const generateBootSplash = {
       name: "--html <string>",
       description: "HTML template file path (your web app entry point)",
       default: "index.html",
-    },
-    {
-      name: "--platforms <list>",
-      description: "Platforms to generate for, separated by a comma",
-      default: "android,ios,web",
-      parse: (value) =>
-        value
-          .toLowerCase()
-          .split(",")
-          .map((platform) => platform.trim()),
     },
     {
       name: "--license-key <string>",
