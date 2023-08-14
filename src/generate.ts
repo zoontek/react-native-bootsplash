@@ -10,6 +10,7 @@ import path from "path";
 import pc from "picocolors";
 import { Options as PrettierOptions } from "prettier";
 import htmlPlugin from "prettier/parser-html";
+import cssPlugin from "prettier/parser-postcss";
 import prettier from "prettier/standalone";
 import sharp, { Sharp } from "sharp";
 import { dedent } from "ts-dedent";
@@ -171,7 +172,7 @@ export const writeHtml = (
 ) => {
   const formatted = prettier.format(html, {
     parser: "html",
-    plugins: [htmlPlugin],
+    plugins: [htmlPlugin, cssPlugin],
     tabWidth: 2,
     useTabs: false,
     ...options,
@@ -287,7 +288,13 @@ export type AddonConfig = {
 
   androidResPath: string | undefined;
   iosProjectPath: string | undefined;
+  htmlTemplatePath: string | undefined;
   assetsOutputPath: string | undefined;
+
+  logoPath: string;
+  darkLogoPath: string | undefined;
+  brandPath: string | undefined;
+  darkBrandPath: string | undefined;
 
   logoHeight: number;
   logoWidth: number;
@@ -295,6 +302,7 @@ export type AddonConfig = {
   brandWidth: number;
 
   background: Color;
+  logo: Sharp;
   brand: Sharp | undefined;
 
   darkBackground: Color | undefined;
@@ -360,15 +368,15 @@ export const generate: CommandFunction<{
       ? path.resolve(workingPath, args.darkBrand)
       : undefined;
 
-  const logo = sharp(logoPath);
-  const darkLogo = darkLogoPath != null ? sharp(darkLogoPath) : undefined;
-  const brand = brandPath != null ? sharp(brandPath) : undefined;
-  const darkBrand = darkBrandPath != null ? sharp(darkBrandPath) : undefined;
-
   const assetsOutputPath =
     args.assetsOutput != null
       ? path.resolve(workingPath, args.assetsOutput)
       : undefined;
+
+  const logo = sharp(logoPath);
+  const darkLogo = darkLogoPath != null ? sharp(darkLogoPath) : undefined;
+  const brand = brandPath != null ? sharp(brandPath) : undefined;
+  const darkBrand = darkBrandPath != null ? sharp(darkBrandPath) : undefined;
 
   const background = parseColor(args.background);
   const logoWidth = args.logoWidth - (args.logoWidth % 2);
@@ -632,24 +640,24 @@ export const generate: CommandFunction<{
             .toBuffer()
     ).toString("base64");
 
+    const dataURI = `data:image/${format ? "svg+xml" : "png"};base64,${base64}`;
+
     const nextStyle = parseHtml(dedent`
       <style id="bootsplash-style">
         #bootsplash {
-          display: flex;
-          background-color: ${background.hex};
-          align-items: center;
-          justify-content: center;
-          overflow: hidden;
           position: absolute;
           top: 0;
           bottom: 0;
           left: 0;
           right: 0;
+          overflow: hidden;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background-color: ${background.hex};
         }
         #bootsplash-logo {
-          content: url("data:image/${
-            format ? "svg+xml" : "png"
-          };base64,${base64}");
+          content: url("${dataURI}");
           width: ${logoWidth}px;
           height: ${logoHeight}px;
         }
@@ -725,6 +733,7 @@ export const generate: CommandFunction<{
 
       androidResPath,
       iosProjectPath,
+      htmlTemplatePath,
       assetsOutputPath,
 
       logoHeight,
@@ -732,7 +741,13 @@ export const generate: CommandFunction<{
       brandHeight,
       brandWidth,
 
+      logoPath,
+      darkLogoPath,
+      brandPath,
+      darkBrandPath,
+
       background,
+      logo,
       brand,
 
       darkBackground,
