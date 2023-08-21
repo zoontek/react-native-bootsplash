@@ -509,7 +509,7 @@ For the sake of simplicity. Since the light and dark versions of your assets are
 
 ### How can I make my splash screen status bar transparent?
 
-Edit your `values/styles.xml`:
+Edit your `values/styles.xml` to set `android:statusBarColor` and `android:windowLightStatusBar` values:
 
 ```diff
 - <resources>
