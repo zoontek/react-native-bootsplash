@@ -3,9 +3,6 @@
 <resources>
     <style name="Theme.BootSplash.BarColors" parent="Theme.BootSplash.Common">
         <item name="android:statusBarColor">?attr/bootSplashBackground</item>
-    </style>
-
-    <style name="Theme.BootSplash.Brand" parent="Theme.BootSplash.BarColors">
-        <item name="bootSplashBrand">@null</item>
+        <item name="android:navigationBarColor">?attr/bootSplashBackground</item>
     </style>
 </resources>
