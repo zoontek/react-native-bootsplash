@@ -10,8 +10,9 @@ const generateBootSplash = {
       parse: (value) =>
         value
           .toLowerCase()
-          .split(",")
-          .map((platform) => platform.trim()),
+          .split(/[ ,;|]/)
+          .map((platform) => platform.trim())
+          .filter((platform) => platform !== ""),
     },
     {
       name: "--background <string>",
