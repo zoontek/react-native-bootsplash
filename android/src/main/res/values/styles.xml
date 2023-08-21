@@ -23,7 +23,7 @@
     <style name="Theme.BootSplash" parent="Theme.BootSplash.Common">
         <item name="bootSplashBackground">?android:colorBackground</item>
         <item name="bootSplashLogo">@android:drawable/sym_def_app_icon</item>
-        <item name="bootSplashBrand">@null</item>
+        <item name="bootSplashBrand">@drawable/transparent_pixel</item>
         <item name="postBootSplashTheme">?android:attr/theme</item>
     </style>
 </resources>
