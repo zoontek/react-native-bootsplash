@@ -190,7 +190,7 @@ assets/bootsplash_logo@2x.png
 assets/bootsplash_logo@3x.png
 assets/bootsplash_logo@4x.png
 
-# + 46 files with license key 🔑 (brand images, dark mode versions…)
+# + Over 40 files with license key 🔑 (brand images, dark mode versions…)
 ```
 
 ![](./docs/cli_generator.png)
