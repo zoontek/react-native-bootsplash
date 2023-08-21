@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
-    <style name="Theme.BootSplash.BarColors" parent="Theme.BootSplash.Common">
-        <item name="android:statusBarColor">?attr/bootSplashBackground</item>
-    </style>
-
-    <style name="Theme.BootSplash.Brand" parent="Theme.BootSplash.BarColors">
+    <style name="Theme.BootSplash.WithBrand" parent="Theme.BootSplash.Common">
         <item name="bootSplashBrand">@null</item>
     </style>
 </resources>

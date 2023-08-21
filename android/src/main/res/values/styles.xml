@@ -21,14 +21,11 @@
         <item name="android:windowBackground">@drawable/compat_splash_screen</item>
     </style>
 
-    <style name="Theme.BootSplash.BarColors" parent="Theme.BootSplash.Common">
-    </style>
-
-    <style name="Theme.BootSplash.Brand" parent="Theme.BootSplash.BarColors">
+    <style name="Theme.BootSplash.WithBrand" parent="Theme.BootSplash.Common">
         <item name="bootSplashBrand">@drawable/transparent_pixel</item>
     </style>
 
-    <style name="Theme.BootSplash" parent="Theme.BootSplash.Brand">
+    <style name="Theme.BootSplash" parent="Theme.BootSplash.WithBrand">
         <item name="bootSplashBackground">?android:colorBackground</item>
         <item name="bootSplashLogo">@android:drawable/sym_def_app_icon</item>
         <item name="postBootSplashTheme">?android:attr/theme</item>
