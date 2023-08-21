@@ -454,7 +454,9 @@ const App = () => {
 **This example is simple for documentation purpose (we only animate the container).**<br>
 **🤙 A more complex example is available in the [`/example` folder](./example/src/AnimatedBootSplash.tsx).**
 
-## With React Navigation
+## FAQ
+
+### How should I use it with React Navigation?
 
 If you are using React Navigation, you can hide the splash screen once the navigation container and all children have finished mounting by using the `onReady` function.
 
@@ -473,11 +475,11 @@ const App = () => (
 );
 ```
 
-## Testing with Jest
+### How can I mock the module in my tests?
 
 Testing code which uses this library requires some setup since we need to mock the native methods.
 
-To add the mocks, create a file _jest/setup.js_ (or any other file name) containing the following code:
+To add the mocks, create a file `jest/setup.js` (or any other file name) containing the following code:
 
 ```ts
 jest.mock("react-native-bootsplash", () => {
@@ -499,6 +501,36 @@ After that, we need to add the setup file in the jest config. You can add it und
 {
   "setupFiles": ["<rootDir>/jest/setup.js"]
 }
+```
+
+### Why are both light and dark assets inlined in my index.html?
+
+For the sake of simplicity. Since the light and dark versions of your assets are likely identical (except for the colors), if your `index.html` file is compressed with **gzip**, the size difference will be negligible.
+
+### How can I make my splash screen status bar transparent?
+
+Edit your `values/styles.xml`:
+
+```diff
+- <resources>
++ <resources xmlns:tools="http://schemas.android.com/tools">
+
+  <style name="BootTheme" parent="Theme.BootSplash">
+    <!-- … -->
+
++   <!-- Apply color + style to the status bar (true = dark-content, false = light-content) -->
++   <item name="android:statusBarColor" tools:targetApi="m">@color/bootsplash_background</item>
++   <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+  </style>
+```
+
+### How can I apply [edge-to-edge layout](https://developer.android.com/develop/ui/views/layout/edge-to-edge) to my splash screen?
+
+Edit your `values/styles.xml` file to use `Theme.BootSplash.EdgeToEdge` instead of `Theme.BootSplash`:
+
+```diff
+- <style name="BootTheme" parent="Theme.BootSplash">
++ <style name="BootTheme" parent="Theme.BootSplash.EdgeToEdge">
 ```
 
 ## Sponsors
