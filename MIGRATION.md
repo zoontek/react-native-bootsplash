@@ -15,7 +15,7 @@
 - Android generated assets has been migrated from `mipmap-*` directories to `drawable-*` ones.
 - To avoid conflicts, Android provided theme / properties has been renamed `Theme.BootSplash` / `Theme.BootSplash.EdgeToEdge`, `bootSplashBackground`, `bootSplashLogo`, `bootSplashBrand` and `postBootSplashTheme`.
 - The `duration` argument has been removed from `fade()` options.
-- `getVisibilityStatus()` has been replaced with `isVisible()` (which returns a `Promise<boolean>`). The `transitioning` does not exists anymore (when the splash screen is fading, it stays `visible` until complete disappearance).
+- `getVisibilityStatus()` has been replaced with `isVisible()` (which returns a `Promise<boolean>`). The `transitioning` status does not exists anymore (when the splash screen is fading, it stays `visible` until complete disappearance).
 - The CLI now output a `bootsplash_manifest.json` file to share image sizes + colors with the JS thread (used by `useHideAnimation`).
 - `--assets-path` CLI option has been renamed `--assets-output`.
 - React Native < 0.70 and iOS < 12.4 support has been dropped.
