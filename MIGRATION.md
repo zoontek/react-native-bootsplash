@@ -4,20 +4,22 @@
 
 - Brand image support
 - Dark mode support 🌚
+- Web support 🌐
 - A new hook, `useHideAnimation`, allowing you to easily animate all splash screen elements using `Animated` or `react-native-reanimated`. Create something nicer than a simple fade 🚀
-- An improved CLI generator, now able to edit / output **57** files (light and dark logos + light and dark brand images, config files…for all pixel densities!). Note that the new options require a [license key 🔑](https://zoontek.gumroad.com/l/bootsplash-generator)
+- An improved CLI generator, now able to edit / output more than **60** files (light and dark logos + light and dark brand images, config files…for all pixel densities!). Note that the new options require a [license key 🔑](https://zoontek.gumroad.com/l/bootsplash-generator)
 
 ## What else?
 
 - [AndroidX SplashScreen library](https://developer.android.com/jetpack/androidx/releases/core#core-splashscreen-1.0.0) has been replaced in order to solve a lot of known issues with it ([#381](https://github.com/zoontek/react-native-bootsplash/issues/381), [#418](https://github.com/zoontek/react-native-bootsplash/issues/418), [#440](https://github.com/zoontek/react-native-bootsplash/issues/440), [#456](https://github.com/zoontek/react-native-bootsplash/issues/456), etc). `react-native-bootsplash` now uses its own polyfill, compatible with Android 5+ (without any degraded mode).
+- Your Android theme status / navigation bar styles are not overwritten anymore. Guides for transparent status bar and edge-to-edge layouts have been added in the brand new FAQ.
 - Android generated assets has been migrated from `mipmap-*` directories to `drawable-*` ones.
 - To avoid conflicts, Android provided theme / properties has been renamed `Theme.BootSplash` / `Theme.BootSplash.EdgeToEdge`, `bootSplashBackground`, `bootSplashLogo`, `bootSplashBrand` and `postBootSplashTheme`.
 - The `duration` argument has been removed from `fade()` options.
 - `getVisibilityStatus()` has been replaced with `isVisible()` (which returns a `Promise<boolean>`). The `transitioning` does not exists anymore (when the splash screen is fading, it stays `visible` until complete disappearance).
 - The CLI now output a `bootsplash_manifest.json` file to share image sizes + colors with the JS thread (used by `useHideAnimation`).
 - `--assets-path` CLI option has been renamed `--assets-output`.
-- React native < 0.70 support has been dropped, iOS < 12.4 support too.
-- ReScript support has been removed as I don't know how to write bindings for it. Feels free to open a PR to add it back.
+- React Native < 0.70 and iOS < 12.4 support has been dropped.
+- ReScript bindings has been removed as I don't know how to write them. Feels free to open a PR to add it back.
 
 ## How to update
 
