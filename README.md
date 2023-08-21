@@ -263,8 +263,7 @@ _ℹ️ For `react-native` < `0.71` setup, follow the [`v4.4.0 README.md`](https
 2. Edit your `android/app/src/main/AndroidManifest.xml` file:
 
 ```xml
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.rnbootsplashexample">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
   <!-- … -->
 
