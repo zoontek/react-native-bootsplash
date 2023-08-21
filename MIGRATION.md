@@ -11,7 +11,7 @@
 
 - [AndroidX SplashScreen library](https://developer.android.com/jetpack/androidx/releases/core#core-splashscreen-1.0.0) has been replaced in order to solve a lot of known issues with it ([#381](https://github.com/zoontek/react-native-bootsplash/issues/381), [#418](https://github.com/zoontek/react-native-bootsplash/issues/418), [#440](https://github.com/zoontek/react-native-bootsplash/issues/440), [#456](https://github.com/zoontek/react-native-bootsplash/issues/456), etc). `react-native-bootsplash` now uses its own polyfill, compatible with Android 5+ (without any degraded mode).
 - Android generated assets has been migrated from `mipmap-*` directories to `drawable-*` ones.
-- To avoid conflicts, Android provided theme / properties has been renamed `Theme.BootSplash`, `bootSplashBackground`, `bootSplashLogo`, `bootSplashBrand` and `postBootSplashTheme`.
+- To avoid conflicts, Android provided theme / properties has been renamed `Theme.BootSplash` / `Theme.BootSplash.EdgeToEdge`, `bootSplashBackground`, `bootSplashLogo`, `bootSplashBrand` and `postBootSplashTheme`.
 - The `duration` argument has been removed from `fade()` options.
 - `getVisibilityStatus()` has been replaced with `isVisible()` (which returns a `Promise<boolean>`). The `transitioning` does not exists anymore (when the splash screen is fading, it stays `visible` until complete disappearance).
 - The CLI now output a `bootsplash_manifest.json` file to share image sizes + colors with the JS thread (used by `useHideAnimation`).
@@ -43,7 +43,7 @@ dependencies {
 
 ```diff
 - <!-- BootTheme should inherit from Theme.SplashScreen -->
-+ <!-- BootTheme should inherit from Theme.BootSplash -->
++ <!-- BootTheme should inherit from Theme.BootSplash or Theme.BootSplash.EdgeToEdge -->
 - <style name="BootTheme" parent="Theme.SplashScreen">
 + <style name="BootTheme" parent="Theme.BootSplash">
 -   <item name="windowSplashScreenBackground">@color/bootsplash_background</item>

@@ -249,7 +249,7 @@ _ℹ️ For `react-native` < `0.71` setup, follow the [`v4.4.0 README.md`](https
       <!-- Your base theme customization -->
   </style>
 
-  <!-- BootTheme should inherit from Theme.BootSplash -->
+  <!-- BootTheme should inherit from Theme.BootSplash or Theme.BootSplash.EdgeToEdge -->
   <style name="BootTheme" parent="Theme.BootSplash">
     <item name="bootSplashBackground">@color/bootsplash_background</item>
     <item name="bootSplashLogo">@drawable/bootsplash_logo</item>

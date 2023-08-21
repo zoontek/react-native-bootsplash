@@ -21,13 +21,23 @@
         <item name="android:windowBackground">@drawable/compat_splash_screen</item>
     </style>
 
-    <style name="Theme.BootSplash.WithBrand" parent="Theme.BootSplash.Common">
+    <style name="Theme.BootSplash.Branded" parent="Theme.BootSplash.Common">
         <item name="bootSplashBrand">@drawable/transparent_pixel</item>
     </style>
 
-    <style name="Theme.BootSplash" parent="Theme.BootSplash.WithBrand">
+    <style name="Theme.BootSplash" parent="Theme.BootSplash.Branded">
         <item name="bootSplashBackground">?android:colorBackground</item>
         <item name="bootSplashLogo">@android:drawable/sym_def_app_icon</item>
         <item name="postBootSplashTheme">?android:attr/theme</item>
+    </style>
+
+    <style name="Theme.BootSplash.EdgeToEdge.Common" parent="Theme.BootSplash">
+        <item name="android:fitsSystemWindows">false</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+    </style>
+
+    <style name="Theme.BootSplash.EdgeToEdge" parent="Theme.BootSplash.EdgeToEdge.Common">
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
     </style>
 </resources>
