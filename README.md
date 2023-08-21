@@ -175,9 +175,12 @@ android/app/src/main/res/drawable-xxhdpi/bootsplash_logo.png
 android/app/src/main/res/drawable-xxxhdpi/bootsplash_logo.png
 
 ios/RNBootSplashExample/BootSplash.storyboard
+ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/Contents.json
 ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo.png
 ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo@2x.png
 ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo@3x.png
+
+index.html
 
 # Only if --assets-output was specified
 assets/bootsplash_manifest.json
@@ -187,7 +190,7 @@ assets/bootsplash_logo@2x.png
 assets/bootsplash_logo@3x.png
 assets/bootsplash_logo@4x.png
 
-# + 31 files with license key 🔑 (brand images, dark mode versions…)
+# + 46 files with license key 🔑 (brand images, dark mode versions…)
 ```
 
 ![](./docs/cli_generator.png)
