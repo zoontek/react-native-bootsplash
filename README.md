@@ -1,7 +1,7 @@
 # 🚀 react-native-bootsplash
 
 Show a splash screen during app startup. Hide it when you are ready.<br>
-**For migration from the v3, check the [`MIGRATION.md` guide](https://github.com/zoontek/react-native-bootsplash/blob/master/MIGRATION.md).**
+**For migration from the v4, check the [`MIGRATION.md` guide](./MIGRATION.md).**
 
 [![mit licence](https://img.shields.io/dub/l/vibe-d.svg?style=for-the-badge)](https://github.com/zoontek/react-native-bootsplash/blob/main/LICENSE)
 [![npm version](https://img.shields.io/npm/v/react-native-bootsplash?style=for-the-badge)](https://www.npmjs.org/package/react-native-bootsplash)
@@ -11,14 +11,14 @@ Show a splash screen during app startup. Hide it when you are ready.<br>
 [![platform - ios](https://img.shields.io/badge/platform-iOS-000.svg?logo=apple&style=for-the-badge)](https://developer.apple.com/ios)
 
 <p>
-  <img height="520" width="256" src="https://raw.githubusercontent.com/zoontek/react-native-bootsplash/HEAD/docs/ios_demo.gif?raw=true" alt="iOS demo"></img>
-  <img height="500" width="259" src="https://raw.githubusercontent.com/zoontek/react-native-bootsplash/HEAD/docs/android_demo.gif?raw=true" alt="android demo"></img>
+  <img width="393" src="./docs/demo_static.png" alt="Demo">
+  <img width="255" src="./docs/demo.gif" alt="Demo">
 </p>
 
 ## Support
 
 This library follows the React Native [releases support policy](https://github.com/reactwg/react-native-releases#releases-support-policy).<br>
-It is supporting the **latest version**, and the **two previous minor series**.
+It is supporting the **latest version** and the **two previous minor series**.
 
 ## Installation
 
@@ -105,54 +105,95 @@ $ yarn react-native generate-bootsplash --help
 The command can take multiple arguments:
 
 ```bash
-yarn react-native generate-bootsplash <logoPath>
+Usage: react-native generate-bootsplash [options] <logo>
 
-Generate a launch screen using an original logo file (PNG or SVG)
+Generate a launch screen using a logo file path (PNG or SVG)
 
 Options:
-  --background-color <color>  color used as launch screen background (in hexadecimal format) (default: "#fff")
-  --logo-width <width>        logo width at @1x (in dp - we recommend approximately ~100) (default: 100)
-  --assets-path [path]        path to your static assets directory (useful to require the logo file in JS)
-  --flavor <flavor>           [android only] flavor build variant (outputs in an android resource directory other than "main")
-  --platforms <platforms>     platforms to generate assets for (comma separated) (default: "android,ios")
-  -h, --help                  output usage information
+  --platforms <list>          Platforms to generate for, separated by a comma (default: "android,ios,web")
+  --background <string>       Background color (in hexadecimal format) (default: "#fff")
+  --logo-width <number>       Logo width at @1x (in dp - we recommend approximately ~100) (default: 100)
+  --assets-output <string>    Assets output directory path
+  --flavor <string>           Android flavor build variant (where your resource directory is) (default: "main")
+  --html <string>             HTML template file path (your web app entry point) (default: "index.html")
+  --license-key <string>      License key to enable brand and dark mode assets generation
+  --brand <string>            Brand file path (PNG or SVG)
+  --brand-width <number>      Brand width at @1x (in dp - we recommend approximately ~80) (default: 80)
+  --dark-background <string>  [dark mode] Background color (in hexadecimal format)
+  --dark-logo <string>        [dark mode] Logo file path (PNG or SVG)
+  --dark-brand <string>       [dark mode] Brand file path (PNG or SVG)
+  -h, --help                  display help for command
 ```
+
+#### 💪 Unlock the CLI full potential
+
+In order to use the `--brand`, `--brand-width` and `--dark-*` options, you must specify a `--license-key`.
+
+With it, the generator is able to output over **50 files** (logo and brand images generated in all pixel densities, dark mode versions, etc.), saving you (and your company!) a massive amount of time not only at creation, but also at each adjustment ⏱️
+
+<a href="https://zoontek.gumroad.com/l/bootsplash-generator">
+  <img width="280" src="./docs/gumroad_button.png" alt="Gumroad button">
+</a>
 
 #### Full command usage example
 
 ```bash
-yarn react-native generate-bootsplash assets/bootsplash_logo_original.png \
-  --background-color=F5FCFF \
+# Without license key
+yarn react-native generate-bootsplash svgs/light_logo.svg \
+  --platforms=android,ios,web \
+  --background=F5FCFF \
   --logo-width=100 \
-  --assets-path=assets \
+  --assets-output=assets \
   --flavor=main \
-  --platforms=android,ios
-```
+  --html=index.html
 
-![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/master/docs/cli_tool.png?raw=true)
+# With license key 🔑
+yarn react-native generate-bootsplash svgs/light_logo.svg \
+  --platforms=android,ios,web \
+  --background=F5FCFF \
+  --logo-width=100 \
+  --assets-output=assets \
+  --flavor=main \
+  --html=index.html \
+  --license-key=xxxxx \
+  --brand=svgs/light_brand.svg \
+  --brand-width=80 \
+  --dark-background=00090A \
+  --dark-logo=svgs/dark_logo.svg \
+  --dark-brand=svgs/dark_brand.svg
+```
 
 This tool relies on the naming conventions that are used in the `/example` project and will therefore create the following files:
 
 ```bash
-# Only if --assets-path was specified
+# Without license key
+android/app/src/main/res/values/colors.xml
+android/app/src/main/res/drawable-hdpi/bootsplash_logo.png
+android/app/src/main/res/drawable-mdpi/bootsplash_logo.png
+android/app/src/main/res/drawable-xhdpi/bootsplash_logo.png
+android/app/src/main/res/drawable-xxhdpi/bootsplash_logo.png
+android/app/src/main/res/drawable-xxxhdpi/bootsplash_logo.png
+
+ios/RNBootSplashExample/BootSplash.storyboard
+ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/Contents.json
+ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo.png
+ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo@2x.png
+ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo@3x.png
+
+index.html
+
+# Only if --assets-output was specified
+assets/bootsplash_manifest.json
 assets/bootsplash_logo.png
 assets/bootsplash_logo@1,5x.png
 assets/bootsplash_logo@2x.png
 assets/bootsplash_logo@3x.png
 assets/bootsplash_logo@4x.png
 
-android/app/src/main/res/values/colors.xml (creation and edition)
-android/app/src/main/res/mipmap-hdpi/bootsplash_logo.png
-android/app/src/main/res/mipmap-mdpi/bootsplash_logo.png
-android/app/src/main/res/mipmap-xhdpi/bootsplash_logo.png
-android/app/src/main/res/mipmap-xxhdpi/bootsplash_logo.png
-android/app/src/main/res/mipmap-xxxhdpi/bootsplash_logo.png
-
-ios/YourProjectName/BootSplash.storyboard
-ios/YourProjectName/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo.png
-ios/YourProjectName/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo@2x.png
-ios/YourProjectName/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo@3x.png
+# + 46 files with license key 🔑 (brand images, dark mode versions…)
 ```
+
+![](./docs/cli_generator.png)
 
 ### iOS
 
@@ -160,7 +201,7 @@ _ℹ️ For `react-native` < `0.71` setup, follow the [`v4.4.0 README.md`](https
 
 ---
 
-Edit the `ios/YourProjectName/AppDelegate.mm` file:
+1. Edit the `ios/YourProjectName/AppDelegate.mm` file:
 
 ```obj-c
 #import "AppDelegate.h"
@@ -188,32 +229,21 @@ Edit the `ios/YourProjectName/AppDelegate.mm` file:
 @end
 ```
 
-Set the `BootSplash.storyboard` as launch screen file:
+2. Drag and drop the generated `BootSplash.storyboard` (and `Colors.xcassets`, when using dark mode):
 
-| Drag and drop the file                                                                                  | Create folder reference                                                                                 | Set as Launch Screen File                                                                               |
-| ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| ![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/master/docs/xcode-1.png?raw=true) | ![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/master/docs/xcode-2.png?raw=true) | ![](https://raw.githubusercontent.com/zoontek/react-native-bootsplash/master/docs/xcode-3.png?raw=true) |
+![](./docs/xcode_1.png)
+
+3. Create folder references:
+
+![](./docs/xcode_2.png)
+
+4. Set `BootSplash.storyboard` as Launch Screen File:
+
+![](./docs/xcode_3.png)
 
 ### Android
 
-_⚠️  On Android >= 12, the splash screen will not appear if you start your app from the terminal / Android Studio. To see it, kill your app and restart it in normal conditions (tap on your app icon in the app launcher)._
-
----
-
-1. Edit your `android/app/build.gradle` file:
-
-```gradle
-dependencies {
-  // The version of react-native is set by the React Native Gradle Plugin
-  implementation("com.facebook.react:react-android")
-  implementation("androidx.core:core-splashscreen:1.0.0") // add this line
-
-  // …
-```
-
-_⚠️  Don't forget going into the `android` directory to execute a `./gradlew clean && ./gradlew build` (or perform a Gradle sync in Android Studio)._
-
-2. Edit your `android/app/src/main/res/values/styles.xml` file:
+1. Edit your `android/app/src/main/res/values/styles.xml` file:
 
 ```xml
 <resources>
@@ -222,21 +252,21 @@ _⚠️  Don't forget going into the `android` directory to execute a `./gradl
       <!-- Your base theme customization -->
   </style>
 
-  <!-- BootTheme should inherit from Theme.SplashScreen -->
-  <style name="BootTheme" parent="Theme.SplashScreen">
-    <item name="windowSplashScreenBackground">@color/bootsplash_background</item>
-    <item name="windowSplashScreenAnimatedIcon">@mipmap/bootsplash_logo</item>
-    <item name="postSplashScreenTheme">@style/AppTheme</item>
+  <!-- BootTheme should inherit from Theme.BootSplash or Theme.BootSplash.EdgeToEdge -->
+  <style name="BootTheme" parent="Theme.BootSplash">
+    <item name="bootSplashBackground">@color/bootsplash_background</item>
+    <item name="bootSplashLogo">@drawable/bootsplash_logo</item>
+    <item name="bootSplashBrand">@drawable/bootsplash_brand</item> <!-- Only if you have a brand image -->
+    <item name="postBootSplashTheme">@style/AppTheme</item>
   </style>
 
 </resources>
 ```
 
-3. Edit your `android/app/src/main/AndroidManifest.xml` file:
+2. Edit your `android/app/src/main/AndroidManifest.xml` file:
 
 ```xml
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.rnbootsplashexample">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
   <!-- … -->
 
@@ -253,7 +283,7 @@ _⚠️  Don't forget going into the `android` directory to execute a `./gradl
 
 ```
 
-4. Finally edit your `android/app/src/main/java/com/yourprojectname/MainActivity.java` file:
+3. Finally edit your `android/app/src/main/java/com/yourprojectname/MainActivity.java` file:
 
 ```java
 // …
@@ -268,7 +298,7 @@ public class MainActivity extends ReactActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    RNBootSplash.init(this); // ⬅️ initialize the splash screen
+    RNBootSplash.init(this, R.style.BootTheme); // ⬅️ initialize the splash screen
     super.onCreate(savedInstanceState); // or super.onCreate(null) with react-native-screens
   }
 }
@@ -278,99 +308,189 @@ public class MainActivity extends ReactActivity {
 
 ### hide()
 
-#### Method type
-
-```ts
-type hide = (config?: { fade?: boolean; duration?: number }) => Promise<void>;
-```
-
-Note: Only durations above 220ms are visually noticeable. Smaller values will be ignored and the default duration will be used.
-
-#### Usage
-
-```js
-import RNBootSplash from "react-native-bootsplash";
-
-RNBootSplash.hide(); // immediate
-RNBootSplash.hide({ fade: true }); // fade with 220ms default duration
-RNBootSplash.hide({ fade: true, duration: 500 }); // fade with custom duration
-```
-
-### getVisibilityStatus()
+Hide the splash screen (immediately, or with a fade out).
 
 #### Method type
 
 ```ts
-type VisibilityStatus = "visible" | "hidden" | "transitioning";
-type getVisibilityStatus = () => Promise<VisibilityStatus>;
+type hide = (config?: { fade?: boolean }) => Promise<void>;
 ```
 
 #### Usage
 
-```js
-import RNBootSplash from "react-native-bootsplash";
-
-RNBootSplash.getVisibilityStatus().then((status) => console.log(status));
-```
-
-## Real world example
-
-```js
-import React, { useEffect } from "react";
+```tsx
+import { useEffect } from "react";
 import { Text } from "react-native";
-import RNBootSplash from "react-native-bootsplash";
+import BootSplash from "react-native-bootsplash";
 
-function App() {
+const App = () => {
   useEffect(() => {
     const init = async () => {
       // …do multiple sync or async tasks
     };
 
     init().finally(async () => {
-      await RNBootSplash.hide({ fade: true, duration: 500 });
+      await BootSplash.hide({ fade: true });
       console.log("BootSplash has been hidden successfully");
     });
   }, []);
 
   return <Text>My awesome app</Text>;
-}
+};
 ```
 
-**🤙 A more complex example is available in the [`/example` folder](example).**
+### isVisible()
 
-## With React Navigation
+Return the current visibility status of the native splash screen.
+
+#### Method type
+
+```ts
+type isVisible = () => Promise<boolean>;
+```
+
+#### Usage
+
+```ts
+import BootSplash from "react-native-bootsplash";
+
+RNBootSplash.isVisible().then((value) => console.log(value));
+```
+
+### useHideAnimation()
+
+A hook to easily creation a hide custom hide animation, by animating all splash screen elements using `Animated`, `react-native-reanimated` or else (similar as the video on top of this documentation).<br>
+To use it, don't forget to set the `--assets-output` option of the generator as it requires the manifest and assets images files.
+
+#### Method type
+
+```ts
+type useHideAnimation = (config: {
+  manifest: Manifest; // the manifest file is generated when --assets-output is specified
+
+  // the required generated assets
+  logo: ImageRequireSource;
+  darkLogo?: ImageRequireSource;
+  brand?: ImageRequireSource;
+  darkBrand?: ImageRequireSource;
+
+  // specify if you are using translucent status / navigation bars
+  // in order to avoid a shift between the native and JS splash screen
+  statusBarTranslucent?: boolean;
+  navigationBarTranslucent?: boolean;
+
+  animate: () => void;
+}) => {
+  container: ViewProps;
+  logo: ImageProps;
+  brand?: ImageProps;
+};
+```
+
+#### Usage
+
+```tsx
+import { useState } from "react";
+import { Animated, Image } from "react-native";
+import BootSplash from "react-native-bootsplash";
+
+type Props = {
+  onAnimationEnd: () => void;
+};
+
+const AnimatedBootSplash = ({ onAnimationEnd }: Props) => {
+  const [opacity] = useState(() => new Animated.Value(1));
+
+  const { container, logo /*, brand */ } = BootSplash.useHideAnimation({
+    manifest: require("../assets/bootsplash_manifest.json"),
+
+    logo: require("../assets/bootsplash_logo.png"),
+    // darkLogo: require("../assets/bootsplash_dark_logo.png"),
+    // brand: require("../assets/bootsplash_brand.png"),
+    // darkBrand: require("../assets/bootsplash_dark_brand.png"),
+
+    statusBarTranslucent: true,
+    navigationBarTranslucent: false,
+
+    animate: () => {
+      // Perform animations and call onAnimationEnd
+      Animated.timing(opacity, {
+        useNativeDriver: true,
+        toValue: 0,
+        duration: 500,
+      }).start(() => {
+        onAnimationEnd();
+      });
+    },
+  });
+
+  return (
+    <Animated.View {...container} style={[container.style, { opacity }]}>
+      <Image {...logo} style={logo.style} />
+      {/* {brand && <Image {...brand} style={brand.style} />} */}
+    </Animated.View>
+  );
+};
+
+const App = () => {
+  const [visible, setVisible] = useState(true);
+
+  return (
+    <View style={{ flex: 1 }}>
+      {/* content */}
+
+      {visible && (
+        <AnimatedBootSplash
+          onAnimationEnd={() => {
+            setVisible(false);
+          }}
+        />
+      )}
+    </View>
+  );
+};
+```
+
+**This example is simple for documentation purpose (we only animate the container).**<br>
+**🤙 A more complex example is available in the [`/example` folder](./example/src/AnimatedBootSplash.tsx).**
+
+## FAQ
+
+### How should I use it with React Navigation?
 
 If you are using React Navigation, you can hide the splash screen once the navigation container and all children have finished mounting by using the `onReady` function.
 
-```js
-import React from "react";
+```tsx
 import { NavigationContainer } from "@react-navigation/native";
-import RNBootSplash from "react-native-bootsplash";
+import BootSplash from "react-native-bootsplash";
 
-function App() {
-  return (
-    <NavigationContainer onReady={() => RNBootSplash.hide()}>
-      {/* content */}
-    </NavigationContainer>
-  );
-}
+const App = () => (
+  <NavigationContainer
+    onReady={() => {
+      BootSplash.hide();
+    }}
+  >
+    {/* content */}
+  </NavigationContainer>
+);
 ```
 
-## With react-native-bars
-
-In order to keep fully transparent status and navigation bars on Android once the splash screen is hidden (and control them), this library play nicely with [react-native-bars](https://github.com/zoontek/react-native-bars). Check its [README](https://github.com/zoontek/react-native-bars/blob/main/README.md#with-react-native-bootsplash) for more informations.
-
-## Testing with Jest
+### How can I mock the module in my tests?
 
 Testing code which uses this library requires some setup since we need to mock the native methods.
 
-To add the mocks, create a file _jest/setup.js_ (or any other file name) containing the following code:
+To add the mocks, create a file `jest/setup.js` (or any other file name) containing the following code:
 
-```js
+```ts
 jest.mock("react-native-bootsplash", () => {
   return {
-    hide: jest.fn().mockResolvedValueOnce(),
-    getVisibilityStatus: jest.fn().mockResolvedValue("hidden"),
+    hide: jest.fn().mockResolvedValue(),
+    isVisible: jest.fn().mockResolvedValue(false),
+    useHideAnimation: jest.fn().mockReturnValue({
+      container: {},
+      logo: { source: 0 },
+      brand: { source: 0 },
+    }),
   };
 });
 ```
@@ -381,6 +501,36 @@ After that, we need to add the setup file in the jest config. You can add it und
 {
   "setupFiles": ["<rootDir>/jest/setup.js"]
 }
+```
+
+### Why are both light and dark assets inlined in my index.html?
+
+For the sake of simplicity. Since the light and dark versions of your assets are likely identical (except for the colors), if your `index.html` file is compressed with **gzip**, the size difference will be negligible.
+
+### How can I make my splash screen status bar transparent?
+
+Edit your `values/styles.xml`:
+
+```diff
+- <resources>
++ <resources xmlns:tools="http://schemas.android.com/tools">
+
+  <style name="BootTheme" parent="Theme.BootSplash">
+    <!-- … -->
+
++   <!-- Apply color + style to the status bar (true = dark-content, false = light-content) -->
++   <item name="android:statusBarColor" tools:targetApi="m">@color/bootsplash_background</item>
++   <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+  </style>
+```
+
+### How can I apply [edge-to-edge layout](https://developer.android.com/develop/ui/views/layout/edge-to-edge) to my splash screen?
+
+Edit your `values/styles.xml` file to use `Theme.BootSplash.EdgeToEdge` instead of `Theme.BootSplash`:
+
+```diff
+- <style name="BootTheme" parent="Theme.BootSplash">
++ <style name="BootTheme" parent="Theme.BootSplash.EdgeToEdge">
 ```
 
 ## Sponsors

@@ -1,6 +1,6 @@
 {
   "name": "react-native-bootsplash",
-  "version": "4.7.5",
+  "version": "5.0.0",
   "license": "MIT",
   "description": "Display a bootsplash on your app starts. Hide it when you want.",
   "author": "Mathieu Acthernoene <zoontek@gmail.com>",
@@ -9,14 +9,16 @@
   "module": "dist/module/index.js",
   "types": "dist/typescript/index.d.ts",
   "files": [
-    "/android",
-    "/dist",
-    "/ios",
-    "/src",
+    "dist",
+    "android",
+    "ios",
+    "src",
+    "!android/build",
+    "!android/.cxx",
+    "!android/.gradle",
+    "!ios/build",
+    "!src/addon",
     "RNBootSplash.podspec",
-    "RNBootSplash.res",
-    "bsconfig.json",
-    "package.json",
     "react-native.config.js"
   ],
   "repository": {
@@ -36,10 +38,12 @@
     "launchscreen"
   ],
   "scripts": {
-    "format": "prettier '**/*' -u -w",
     "setup-hooks": "git config --local core.hooksPath .hooks",
-    "prepack": "bob build",
-    "typecheck": "tsc --project ./ --noEmit"
+    "lint": "eslint --ext ts,tsx ./src",
+    "typecheck": "tsc --project ./ --noEmit",
+    "build": "bob build",
+    "format": "prettier '**/*' -u -w",
+    "prepack": "yarn lint && yarn typecheck && yarn build && node ../obfuscator"
   },
   "react-native-builder-bob": {
     "source": "src",
@@ -57,25 +61,36 @@
     "*": "prettier -u -w"
   },
   "peerDependencies": {
-    "react-native": ">=0.65.0"
+    "react-native": ">=0.70.0"
   },
   "dependencies": {
+    "detect-indent": "^6.1.0",
     "fs-extra": "^11.1.1",
-    "sharp": "^0.32.1",
-    "picocolors": "^1.0.0"
+    "node-html-parser": "^6.1.6",
+    "picocolors": "^1.0.0",
+    "prettier": "^2.8.8",
+    "sharp": "^0.32.5",
+    "ts-dedent": "^2.2.0",
+    "xml-formatter": "^3.5.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "@babel/preset-env": "^7.20.0",
+    "@react-native-community/cli-types": "11.3.7",
     "@types/fs-extra": "^11.0.1",
-    "@types/react": "^18.2.14",
+    "@types/node": "^20.5.1",
+    "@types/prettier": "^2.7.3",
+    "@types/react": "^18.2.20",
     "@types/sharp": "^0.31.1",
-    "lint-staged": "^13.2.3",
-    "prettier": "^2.8.8",
-    "prettier-plugin-organize-imports": "^3.2.2",
+    "@typescript-eslint/eslint-plugin": "^6.4.0",
+    "@typescript-eslint/parser": "^6.4.0",
+    "eslint": "^8.47.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "lint-staged": "^14.0.0",
+    "prettier-plugin-organize-imports": "^3.2.3",
     "react": "18.2.0",
-    "react-native": "0.72.1",
-    "react-native-builder-bob": "^0.21.2",
-    "rescript": "^10.1.4",
+    "react-native": "0.72.4",
+    "react-native-builder-bob": "^0.21.3",
     "typescript": "^5.1.6"
   },
   "codegenConfig": {

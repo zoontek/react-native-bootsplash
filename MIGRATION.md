@@ -1,35 +1,34 @@
-# Migration from v3
+# Migration from v4
 
 ## What's new
 
-- The drop of Android < 6 and iOS < 11 (Android 5 is _possible_ but only displays the background color)
-- A switch to [AndroidX splashscreen library](https://developer.android.com/jetpack/androidx/releases/core#core-splashscreen-1.0.0) to fully support Android 12
-- The removal of the `show` method
-- The `hide` method cannot reject anymore
-- The switch to `RCTRootView` only on iOS (removed usage of `UIViewController`)
-- An integration with [react-native-bars](https://github.com/zoontek/react-native-bars) for fully transparent system bars on Android
+- Brand image support
+- Dark mode support 🌚
+- A new hook, `useHideAnimation`, allowing you to easily animate all splash screen elements using `Animated` or `react-native-reanimated`. Create something nicer than a simple fade 🚀
+- An improved CLI generator, now able to edit / output **57** files (light and dark logos + light and dark brand images, config files…for all pixel densities!). Note that the new options require a [license key 🔑](https://zoontek.gumroad.com/l/bootsplash-generator)
 
-## Code modifications
+## What else?
 
-For `android/build.gradle`:
+- [AndroidX SplashScreen library](https://developer.android.com/jetpack/androidx/releases/core#core-splashscreen-1.0.0) has been replaced in order to solve a lot of known issues with it ([#381](https://github.com/zoontek/react-native-bootsplash/issues/381), [#418](https://github.com/zoontek/react-native-bootsplash/issues/418), [#440](https://github.com/zoontek/react-native-bootsplash/issues/440), [#456](https://github.com/zoontek/react-native-bootsplash/issues/456), etc). `react-native-bootsplash` now uses its own polyfill, compatible with Android 5+ (without any degraded mode).
+- Android generated assets has been migrated from `mipmap-*` directories to `drawable-*` ones.
+- To avoid conflicts, Android provided theme / properties has been renamed `Theme.BootSplash` / `Theme.BootSplash.EdgeToEdge`, `bootSplashBackground`, `bootSplashLogo`, `bootSplashBrand` and `postBootSplashTheme`.
+- The `duration` argument has been removed from `fade()` options.
+- `getVisibilityStatus()` has been replaced with `isVisible()` (which returns a `Promise<boolean>`). The `transitioning` does not exists anymore (when the splash screen is fading, it stays `visible` until complete disappearance).
+- The CLI now output a `bootsplash_manifest.json` file to share image sizes + colors with the JS thread (used by `useHideAnimation`).
+- `--assets-path` CLI option has been renamed `--assets-output`.
+- React native < 0.70 support has been dropped, iOS < 12.4 support too.
+- ReScript support has been removed as I don't know how to write bindings for it. Feels free to open a PR to add it back.
 
-```diff
-buildscript {
-  ext {
--   buildToolsVersion = "30.0.2"
--   minSdkVersion = 21
--   compileSdkVersion = 30
--   targetSdkVersion = 30
-+   buildToolsVersion = "31.0.0"
-+   minSdkVersion = 23
-+   compileSdkVersion = 31
-+   targetSdkVersion = 31
-  }
+## How to update
 
-  // …
-```
+👉 First, run the CLI to generate assets in updated locations!<br>
+It will also update your `BootSplash.storyboard`, the only change to perform on iOS.
 
-For `android/app/build.gradle`:
+### Android
+
+1. Delete all `android/app/src/main/res/mipmap-*/bootsplash_logo.png` files.
+
+2. Edit your `android/app/build.gradle` file:
 
 ```diff
 // …
@@ -37,115 +36,32 @@ For `android/app/build.gradle`:
 dependencies {
   // The version of react-native is set by the React Native Gradle Plugin
   implementation("com.facebook.react:react-android")
-+ implementation("androidx.core:core-splashscreen:1.0.0")
+- implementation("androidx.core:core-splashscreen:1.0.0")
 ```
 
-For `android/app/src/main/res/values/styles.xml`:
+3. Edit your `values/styles.xml` file:
 
 ```diff
-<resources>
-
-  <!-- … -->
-
-- <!-- BootTheme should inherit from AppTheme -->
-- <style name="BootTheme" parent="AppTheme">
--   <!-- set bootsplash.xml as background -->
--   <item name="android:background">@drawable/bootsplash</item>
-- </style>
-
-+ <!-- BootTheme should inherit from Theme.SplashScreen -->
-+ <style name="BootTheme" parent="Theme.SplashScreen">
-+   <item name="windowSplashScreenBackground">@color/bootsplash_background</item>
-+   <item name="windowSplashScreenAnimatedIcon">@mipmap/bootsplash_logo</item>
-+   <item name="postSplashScreenTheme">@style/AppTheme</item>
-+ </style>
-
-</resources>
+- <!-- BootTheme should inherit from Theme.SplashScreen -->
++ <!-- BootTheme should inherit from Theme.BootSplash or Theme.BootSplash.EdgeToEdge -->
+- <style name="BootTheme" parent="Theme.SplashScreen">
++ <style name="BootTheme" parent="Theme.BootSplash">
+-   <item name="windowSplashScreenBackground">@color/bootsplash_background</item>
++   <item name="bootSplashBackground">@color/bootsplash_background</item>
+-   <item name="windowSplashScreenAnimatedIcon">@mipmap/bootsplash_logo</item>
++   <item name="bootSplashLogo">@drawable/bootsplash_logo</item>
+-   <item name="postSplashScreenTheme">@style/AppTheme</item>
++   <item name="postBootSplashTheme">@style/AppTheme</item>
+  </style>
 ```
 
-For `android/app/src/main/AndroidManifest.xml`:
+4. Edit your `MainActivity.java` file:
 
 ```diff
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.rnbootsplashexample">
-
-  <uses-permission android:name="android.permission.INTERNET" />
-
-  <application
-    android:name=".MainApplication"
-    android:label="@string/app_name"
-    android:icon="@mipmap/ic_launcher"
-    android:roundIcon="@mipmap/ic_launcher_round"
-    android:allowBackup="false"
--   android:theme="@style/AppTheme">
-+   android:theme="@style/BootTheme">
-
-    <activity
-      android:name=".MainActivity"
-      android:label="@string/app_name"
-      android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
-      android:launchMode="singleTask"
-      android:windowSoftInputMode="adjustResize"
-      android:exported="true">
-+     <intent-filter>
-+         <action android:name="android.intent.action.MAIN" />
-+         <category android:name="android.intent.category.LAUNCHER" />
-+     </intent-filter>
-    </activity>
-
--   <activity
--     android:name="com.zoontek.rnbootsplash.RNBootSplashActivity"
--     android:theme="@style/BootTheme"
--     android:launchMode="singleTask">
--     <intent-filter>
--       <action android:name="android.intent.action.MAIN" />
--       <category android:name="android.intent.category.LAUNCHER" />
--     </intent-filter>
--   </activity>
-  </application>
-</manifest>
-```
-
-For `android/app/src/main/java/com/yourprojectname/MainActivity.java`:
-
-```diff
-import android.os.Bundle;
-
-import com.facebook.react.ReactActivity;
-import com.facebook.react.ReactActivityDelegate;
-import com.facebook.react.ReactRootView;
-import com.zoontek.rnbootsplash.RNBootSplash;
-
-public class MainActivity extends ReactActivity {
-
-  // …
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-+   RNBootSplash.init(this);
-    super.onCreate(savedInstanceState); // or super.onCreate(null) with react-native-screens
--   RNBootSplash.init(R.drawable.bootsplash, this);
+-   RNBootSplash.init(this);
++   RNBootSplash.init(this, R.style.BootTheme);
+    super.onCreate(savedInstanceState);
   }
-
-  public static class MainActivityDelegate extends ReactActivityDelegate {
-    public MainActivityDelegate(ReactActivity activity, String mainComponentName) {
-      super(activity, mainComponentName);
-    }
-
-    @Override
-    protected ReactRootView createRootView() {
-      ReactRootView reactRootView = new ReactRootView(getContext());
-      // If you opted-in for the New Architecture, we enable the Fabric Renderer.
-      reactRootView.setIsFabric(BuildConfig.IS_NEW_ARCHITECTURE_ENABLED);
-      return reactRootView;
-    }
-  }
-}
 ```
-
-## Generated files
-
-You **must** re-generate your assets.
-
-- You can delete `android/app/src/main/res/drawable/bootsplash.xml` (now unused).
-- All Android related assets now include padding.

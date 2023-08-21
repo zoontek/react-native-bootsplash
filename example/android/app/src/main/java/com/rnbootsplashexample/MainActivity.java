@@ -6,7 +6,6 @@ import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactActivityDelegate;
-import com.zoontek.rnbars.RNBars;
 import com.zoontek.rnbootsplash.RNBootSplash;
 
 public class MainActivity extends ReactActivity {
@@ -22,9 +21,8 @@ public class MainActivity extends ReactActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    RNBootSplash.init(this);
+    RNBootSplash.init(this, R.style.BootTheme);
     super.onCreate(savedInstanceState);
-    RNBars.init(this, "dark-content");
   }
 
   /**

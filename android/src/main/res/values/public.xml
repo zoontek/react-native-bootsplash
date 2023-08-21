@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <public name="bootSplashBackground" type="attr" />
+    <public name="bootSplashLogo" type="attr" />
+    <public name="bootSplashBrand" type="attr" />
+    <public name="postBootSplashTheme" type="attr" />
+    <public name="Theme.BootSplash" type="style" />
+    <public name="Theme.BootSplash.EdgeToEdge" type="style" />
+</resources>
