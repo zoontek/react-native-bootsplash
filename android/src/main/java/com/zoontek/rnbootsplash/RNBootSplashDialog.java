@@ -13,13 +13,14 @@ public class RNBootSplashDialog extends Dialog {
 
   @NonNull
   private final Activity mActivity;
+  public final boolean mFade;
 
-  @StyleRes
-  private int mWindowAnimationsResId = -1;
-
-  public RNBootSplashDialog(@NonNull Activity activity, @StyleRes int themeResId) {
+  public RNBootSplashDialog(@NonNull Activity activity, @StyleRes int themeResId, boolean fade) {
     super(activity, themeResId);
+
     mActivity = activity;
+    mFade = fade;
+
     setCancelable(false);
     setCanceledOnTouchOutside(false);
   }
@@ -39,15 +40,15 @@ public class RNBootSplashDialog extends Dialog {
         WindowManager.LayoutParams.MATCH_PARENT
       );
 
-      if (mWindowAnimationsResId != -1) {
-        window.setWindowAnimations(mWindowAnimationsResId);
+      if (mFade) {
+        window.setWindowAnimations(R.style.BootSplashFadeOutAnimation);
       }
     }
 
     super.onCreate(savedInstanceState);
   }
 
-  public void setWindowAnimations(@StyleRes int windowAnimationsResId) {
-    mWindowAnimationsResId = windowAnimationsResId;
+  public boolean hasFade() {
+    return mFade;
   }
 }

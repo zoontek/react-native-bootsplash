@@ -108,7 +108,7 @@ public class RNBootSplashModuleImpl {
         .setOnExitAnimationListener(listener);
     }
 
-    mDialog = new RNBootSplashDialog(activity, mThemeResId);
+    mDialog = new RNBootSplashDialog(activity, mThemeResId, false);
 
     mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
       @Override
@@ -142,7 +142,7 @@ public class RNBootSplashModuleImpl {
       public void run() {
         final Activity activity = reactContext.getCurrentActivity();
 
-        if (mShouldKeepOnScreen ||  activity == null || activity.isFinishing()) {
+        if (mShouldKeepOnScreen || activity == null || activity.isFinishing()) {
           final Timer timer = new Timer();
 
           timer.schedule(new TimerTask() {
@@ -152,14 +152,24 @@ public class RNBootSplashModuleImpl {
               hideAndClearPromiseQueue(reactContext, fade);
             }
           }, 100);
-        } else if (mDialog == null) {
+
+          return;
+        }
+
+        if (mDialog == null) {
           clearPromiseQueue();
-        } else if (fade) {
+          return;
+        }
+
+        if (mDialog.hasFade()) {
+          return; // wait until fade is ended
+        }
+
+        if (fade) {
           // Create a new Dialog instance with fade out animation
           final RNBootSplashDialog[] tmp = {mDialog};
 
-          mDialog = new RNBootSplashDialog(activity, mThemeResId);
-          mDialog.setWindowAnimations(R.style.BootSplashFadeOutAnimation);
+          mDialog = new RNBootSplashDialog(activity, mThemeResId, true);
 
           mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
