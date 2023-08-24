@@ -110,7 +110,6 @@ public class RNBootSplashModuleImpl {
     }
 
     mInitialDialog = new RNBootSplashDialog(activity, mThemeResId, false);
-    mInitialDialog.setOwnerActivity(activity);
 
     mInitialDialog.setOnShowListener(new DialogInterface.OnShowListener() {
       @Override
@@ -170,7 +169,6 @@ public class RNBootSplashModuleImpl {
         if (fade) {
           // Create a new Dialog instance with fade out animation
           mFadeOutDialog = new RNBootSplashDialog(activity, mThemeResId, true);
-          mFadeOutDialog.setOwnerActivity(activity);
 
           mFadeOutDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
