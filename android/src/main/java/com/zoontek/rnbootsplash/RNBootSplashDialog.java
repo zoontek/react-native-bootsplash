@@ -11,28 +11,30 @@ import androidx.annotation.StyleRes;
 
 public class RNBootSplashDialog extends Dialog {
 
-  @NonNull
-  private final Activity mActivity;
   public final boolean mFade;
 
   public RNBootSplashDialog(@NonNull Activity activity, @StyleRes int themeResId, boolean fade) {
     super(activity, themeResId);
 
-    mActivity = activity;
     mFade = fade;
 
+    setOwnerActivity(activity);
     setCancelable(false);
     setCanceledOnTouchOutside(false);
   }
 
   @Override
   public void onBackPressed() {
-    mActivity.moveTaskToBack(true);
+    Activity activity = getOwnerActivity();
+
+    if (activity != null) {
+      activity.moveTaskToBack(true);
+    }
   }
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    final Window window = this.getWindow();
+    final Window window = getWindow();
 
     if (window != null) {
       window.setLayout(
@@ -46,9 +48,5 @@ public class RNBootSplashDialog extends Dialog {
     }
 
     super.onCreate(savedInstanceState);
-  }
-
-  public boolean hasFade() {
-    return mFade;
   }
 }

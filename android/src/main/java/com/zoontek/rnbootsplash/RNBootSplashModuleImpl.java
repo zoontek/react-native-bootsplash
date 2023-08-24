@@ -38,9 +38,10 @@ public class RNBootSplashModuleImpl {
   @StyleRes
   private static int mThemeResId = -1;
 
-  @SuppressLint("StaticFieldLeak")
   @Nullable
-  private static RNBootSplashDialog mDialog = null;
+  private static RNBootSplashDialog mInitialDialog = null;
+  @Nullable
+  private static RNBootSplashDialog mFadeOutDialog = null;
 
   protected static void init(@Nullable final Activity activity, @StyleRes int themeResId) {
     if (mThemeResId != -1) {
@@ -108,9 +109,10 @@ public class RNBootSplashModuleImpl {
         .setOnExitAnimationListener(listener);
     }
 
-    mDialog = new RNBootSplashDialog(activity, mThemeResId, false);
+    mInitialDialog = new RNBootSplashDialog(activity, mThemeResId, false);
+    mInitialDialog.setOwnerActivity(activity);
 
-    mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+    mInitialDialog.setOnShowListener(new DialogInterface.OnShowListener() {
       @Override
       public void onShow(DialogInterface dialog) {
         mShouldKeepOnScreen = false;
@@ -120,7 +122,7 @@ public class RNBootSplashModuleImpl {
     UiThreadUtil.runOnUiThread(new Runnable() {
       @Override
       public void run() {
-        mDialog.show();
+        mInitialDialog.show();
       }
     });
   }
@@ -156,55 +158,54 @@ public class RNBootSplashModuleImpl {
           return;
         }
 
-        if (mDialog == null) {
+        if (mInitialDialog == null && mFadeOutDialog == null) {
           clearPromiseQueue();
           return;
         }
 
-        if (mDialog.hasFade()) {
-          return; // wait until fade is ended
+        if (mFadeOutDialog != null) {
+          return; // wait until fade out end, as it will run clearPromiseQueue
         }
 
         if (fade) {
           // Create a new Dialog instance with fade out animation
-          final RNBootSplashDialog[] tmp = {mDialog};
+          mFadeOutDialog = new RNBootSplashDialog(activity, mThemeResId, true);
+          mFadeOutDialog.setOwnerActivity(activity);
 
-          mDialog = new RNBootSplashDialog(activity, mThemeResId, true);
-
-          mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+          mFadeOutDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
-              tmp[0].dismiss();
+              mInitialDialog.dismiss();
             }
           });
 
-          tmp[0].setOnDismissListener(new DialogInterface.OnDismissListener() {
+          mInitialDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-              tmp[0] = null;
-              mDialog.dismiss();
+              mInitialDialog = null;
+              mFadeOutDialog.dismiss();
             }
           });
 
-          mDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+          mFadeOutDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-              mDialog = null;
+              mFadeOutDialog = null;
               clearPromiseQueue();
             }
           });
 
-          mDialog.show();
+          mFadeOutDialog.show();
         } else {
-          mDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+          mInitialDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-              mDialog = null;
+              mInitialDialog = null;
               clearPromiseQueue();
             }
           });
 
-          mDialog.dismiss();
+          mInitialDialog.dismiss();
         }
       }
     });
@@ -242,6 +243,6 @@ public class RNBootSplashModuleImpl {
   }
 
   public static void isVisible(final Promise promise) {
-    promise.resolve(mShouldKeepOnScreen || mDialog != null);
+    promise.resolve(mShouldKeepOnScreen || mInitialDialog != null || mFadeOutDialog != null);
   }
 }
