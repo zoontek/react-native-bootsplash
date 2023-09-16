@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StatusBar, StyleSheet, Text, View } from "react-native";
 import { AnimatedBootSplash } from "./AnimatedBootSplash";
 
@@ -22,14 +22,15 @@ const styles = StyleSheet.create({
 export const App = () => {
   const [visible, setVisible] = useState(true);
 
+  useEffect(() => {
+    // set transparent status bar
+    StatusBar.setBackgroundColor("transparent");
+    StatusBar.setBarStyle("dark-content");
+    StatusBar.setTranslucent(true);
+  }, []);
+
   return (
     <>
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor="transparent"
-        translucent={true}
-      />
-
       <View style={styles.container}>
         <Text style={styles.text}>Hello, Dave.</Text>
 
