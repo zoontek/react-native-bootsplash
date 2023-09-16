@@ -43,7 +43,56 @@ public class RNBootSplashModuleImpl {
   @Nullable
   private static RNBootSplashDialog mFadeOutDialog = null;
 
-  protected static void init(@Nullable final Activity activity, @StyleRes int themeResId) {
+  private static void showDialog(
+    @NonNull final RNBootSplashDialog dialog,
+    @NonNull final Runnable callback
+  ) {
+    if (dialog.isShowing()) {
+      callback.run();
+      return;
+    }
+
+    dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+      @Override
+      public void onShow(DialogInterface dialog) {
+        callback.run();
+      }
+    });
+
+    try {
+      dialog.show();
+    } catch (Exception exception) {
+      callback.run();
+    }
+  }
+
+  private static void dismissDialog(
+    @Nullable final RNBootSplashDialog dialog,
+    @NonNull final Runnable callback
+  ) {
+    if (dialog == null || !dialog.isShowing()) {
+      callback.run();
+      return;
+    }
+
+    dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+      @Override
+      public void onDismiss(DialogInterface dialog) {
+        callback.run();
+      }
+    });
+
+    try {
+      dialog.dismiss();
+    } catch (Exception exception) {
+      callback.run();
+    }
+  }
+
+  protected static void init(
+    @Nullable final Activity activity,
+    @StyleRes int themeResId
+  ) {
     if (mThemeResId != -1) {
       FLog.w(ReactConstants.TAG, NAME + ": Ignored initialization, module is already initialized.");
       return;
@@ -111,17 +160,15 @@ public class RNBootSplashModuleImpl {
 
     mInitialDialog = new RNBootSplashDialog(activity, mThemeResId, false);
 
-    mInitialDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-      @Override
-      public void onShow(DialogInterface dialog) {
-        mShouldKeepOnScreen = false;
-      }
-    });
-
     UiThreadUtil.runOnUiThread(new Runnable() {
       @Override
       public void run() {
-        mInitialDialog.show();
+        showDialog(mInitialDialog, new Runnable() {
+          @Override
+          public void run() {
+            mShouldKeepOnScreen = false;
+          }
+        });
       }
     });
   }
@@ -136,14 +183,20 @@ public class RNBootSplashModuleImpl {
     }
   }
 
-  private static void hideAndClearPromiseQueue(final ReactApplicationContext reactContext,
-                                               final boolean fade) {
+  private static void hideAndClearPromiseQueue(
+    final ReactApplicationContext reactContext,
+    final boolean fade
+  ) {
     UiThreadUtil.runOnUiThread(new Runnable() {
       @Override
       public void run() {
         final Activity activity = reactContext.getCurrentActivity();
 
-        if (mShouldKeepOnScreen || activity == null || activity.isFinishing()) {
+        if (mShouldKeepOnScreen
+          || activity == null
+          || activity.isFinishing()
+          || activity.isDestroyed()
+        ) {
           final Timer timer = new Timer();
 
           timer.schedule(new TimerTask() {
@@ -157,54 +210,51 @@ public class RNBootSplashModuleImpl {
           return;
         }
 
-        if (mInitialDialog == null && mFadeOutDialog == null) {
+        if (mFadeOutDialog != null) {
+          return; // wait until fade out end for clearPromiseQueue
+        }
+
+        if (mInitialDialog == null) {
           clearPromiseQueue();
+          return; // both initial and fade out dialog are hidden
+        }
+
+        if (!fade) {
+          dismissDialog(mInitialDialog, new Runnable() {
+            @Override
+            public void run() {
+              mInitialDialog = null;
+              clearPromiseQueue();
+            }
+          });
+
           return;
         }
 
-        if (mFadeOutDialog != null) {
-          return; // wait until fade out end, as it will run clearPromiseQueue
-        }
+        // Create a new Dialog instance with fade out animation
+        mFadeOutDialog = new RNBootSplashDialog(activity, mThemeResId, true);
 
-        if (fade) {
-          // Create a new Dialog instance with fade out animation
-          mFadeOutDialog = new RNBootSplashDialog(activity, mThemeResId, true);
+        showDialog(mFadeOutDialog, new Runnable() {
 
-          mFadeOutDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
-              mInitialDialog.dismiss();
-            }
-          });
+          @Override
+          public void run() {
+            dismissDialog(mInitialDialog, new Runnable() {
 
-          mInitialDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-              mInitialDialog = null;
-              mFadeOutDialog.dismiss();
-            }
-          });
+              @Override
+              public void run() {
+                mInitialDialog = null;
 
-          mFadeOutDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-              mFadeOutDialog = null;
-              clearPromiseQueue();
-            }
-          });
-
-          mFadeOutDialog.show();
-        } else {
-          mInitialDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-              mInitialDialog = null;
-              clearPromiseQueue();
-            }
-          });
-
-          mInitialDialog.dismiss();
-        }
+                dismissDialog(mFadeOutDialog, new Runnable() {
+                  @Override
+                  public void run() {
+                    mFadeOutDialog = null;
+                    clearPromiseQueue();
+                  }
+                });
+              }
+            });
+          }
+        });
       }
     });
   }
@@ -233,9 +283,11 @@ public class RNBootSplashModuleImpl {
     return constants;
   }
 
-  public static void hide(final ReactApplicationContext reactContext,
-                          final boolean fade,
-                          final Promise promise) {
+  public static void hide(
+    final ReactApplicationContext reactContext,
+    final boolean fade,
+    final Promise promise
+  ) {
     mPromiseQueue.push(promise);
     hideAndClearPromiseQueue(reactContext, fade);
   }
