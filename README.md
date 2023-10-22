@@ -371,7 +371,7 @@ type useHideAnimation = (config: {
   manifest: Manifest; // the manifest file is generated when --assets-output is specified
 
   // the required generated assets
-  logo: ImageRequireSource;
+  logo?: ImageRequireSource;
   darkLogo?: ImageRequireSource;
   brand?: ImageRequireSource;
   darkBrand?: ImageRequireSource;
@@ -384,7 +384,7 @@ type useHideAnimation = (config: {
   animate: () => void;
 }) => {
   container: ViewProps;
-  logo: ImageProps;
+  logo?: ImageProps;
   brand?: ImageProps;
 };
 ```
@@ -428,8 +428,8 @@ const AnimatedBootSplash = ({ onAnimationEnd }: Props) => {
 
   return (
     <Animated.View {...container} style={[container.style, { opacity }]}>
-      <Image {...logo} style={logo.style} />
-      {/* {brand && <Image {...brand} style={brand.style} />} */}
+      <Image {...logo} />
+      {/* {brand && <Image {...brand} />} */}
     </Animated.View>
   );
 };
