@@ -1,0 +1,5 @@
+<resources>
+    <item type="id" name="bootsplash_layout" />
+    <item type="id" name="bootsplash_logo" />
+    <item type="id" name="bootsplash_brand" />
+</resources>

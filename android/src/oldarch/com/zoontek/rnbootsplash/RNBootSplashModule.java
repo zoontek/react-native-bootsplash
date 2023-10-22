@@ -37,6 +37,6 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void isVisible(Promise promise) {
-    RNBootSplashModuleImpl.isVisible(promise);
+    RNBootSplashModuleImpl.isVisible(getReactApplicationContext(), promise);
   }
 }
