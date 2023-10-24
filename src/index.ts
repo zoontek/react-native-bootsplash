@@ -42,12 +42,11 @@ export type UseHideAnimationConfig = {
   navigationBarTranslucent?: boolean;
 };
 
-export type UseHideAnimation<Logo extends ImageProps | undefined = ImageProps> =
-  {
-    container: ViewProps;
-    logo: Logo;
-    brand: ImageProps | undefined;
-  };
+export type UseHideAnimation = {
+  container: ViewProps;
+  logo: ImageProps;
+  brand: ImageProps;
+};
 
 export function hide(config: Config = {}): Promise<void> {
   const { fade = false } = config;
@@ -58,12 +57,7 @@ export function isVisible(): Promise<boolean> {
   return NativeModule.isVisible();
 }
 
-export function useHideAnimation<
-  Config extends UseHideAnimationConfig,
-  Logo extends Config["logo"] extends ImageRequireSource
-    ? ImageProps
-    : undefined,
->(config: Config): UseHideAnimation<Logo> {
+export function useHideAnimation(config: UseHideAnimationConfig) {
   const {
     manifest,
 
@@ -131,7 +125,7 @@ export function useHideAnimation<
     }
   }, []);
 
-  return useMemo<UseHideAnimation<Logo>>(() => {
+  return useMemo<UseHideAnimation>(() => {
     const containerStyle: ViewStyle = {
       ...StyleSheet.absoluteFillObject,
       backgroundColor,
@@ -147,9 +141,10 @@ export function useHideAnimation<
       },
     };
 
-    const _logo: ImageProps | undefined =
-      logoFinalSrc != null
-        ? {
+    const logo: ImageProps =
+      logoFinalSrc == null
+        ? { source: -1 }
+        : {
             fadeDuration: 0,
             resizeMode: "contain",
             source: logoFinalSrc,
@@ -161,14 +156,12 @@ export function useHideAnimation<
               logoReady.current = true;
               maybeRunAnimate();
             },
-          }
-        : undefined;
+          };
 
-    const logo = _logo as Logo;
-
-    const brand: ImageProps | undefined =
-      brandFinalSrc != null
-        ? {
+    const brand: ImageProps =
+      brandFinalSrc == null
+        ? { source: -1 }
+        : {
             fadeDuration: 0,
             resizeMode: "contain",
             source: brandFinalSrc,
@@ -182,8 +175,7 @@ export function useHideAnimation<
               brandReady.current = true;
               maybeRunAnimate();
             },
-          }
-        : undefined;
+          };
 
     if (Platform.OS !== "android") {
       return { container, logo, brand };

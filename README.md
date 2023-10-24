@@ -384,8 +384,8 @@ type useHideAnimation = (config: {
   animate: () => void;
 }) => {
   container: ViewProps;
-  logo?: ImageProps;
-  brand?: ImageProps;
+  logo: ImageProps;
+  brand: ImageProps;
 };
 ```
 
@@ -429,7 +429,7 @@ const AnimatedBootSplash = ({ onAnimationEnd }: Props) => {
   return (
     <Animated.View {...container} style={[container.style, { opacity }]}>
       <Image {...logo} />
-      {/* {brand && <Image {...brand} />} */}
+      {/* <Image {...brand} /> */}
     </Animated.View>
   );
 };
