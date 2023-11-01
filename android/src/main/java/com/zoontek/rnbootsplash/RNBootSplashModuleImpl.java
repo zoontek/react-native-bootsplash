@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.window.SplashScreen;
 import android.window.SplashScreenView;
 
+import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StyleRes;
@@ -29,6 +30,7 @@ import com.facebook.react.bridge.UiThreadUtil;
 import com.facebook.react.common.ReactConstants;
 import com.facebook.react.uimanager.PixelUtil;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
@@ -79,6 +81,19 @@ public class RNBootSplashModuleImpl {
       if (promise != null) {
         promise.resolve(true);
       }
+    }
+  }
+
+  // From https://stackoverflow.com/a/61062773
+  public static boolean isSamsungOneUI4() {
+    String name = "SEM_PLATFORM_INT";
+
+    try {
+      Field field = Build.VERSION.class.getDeclaredField(name);
+      int version = (field.getInt(null) - 90000) / 10000;
+      return version == 4;
+    } catch (Exception ignored) {
+      return false;
     }
   }
 
@@ -176,7 +191,11 @@ public class RNBootSplashModuleImpl {
         });
     }
 
-    View splashScreenView = FrameLayout.inflate(activity, R.layout.splash_screen_view, null);
+    @LayoutRes int layout = isSamsungOneUI4()
+      ? R.layout.splash_screen_view_samsung_oneui_4
+      : R.layout.splash_screen_view;
+
+    View splashScreenView = FrameLayout.inflate(activity, layout, null);
 
     if (backgroundResId != null && backgroundResId != Resources.ID_NULL) {
       splashScreenView.setBackgroundResource(backgroundResId);
@@ -276,8 +295,9 @@ public class RNBootSplashModuleImpl {
       ? PixelUtil.toDIPFromPixel(resources.getDimensionPixelSize(navigationBarHeightResId))
       : 0;
 
-    constants.put("statusBarHeight", statusBarHeight);
+    constants.put("logoSizeRatio", isSamsungOneUI4() ? 0.5 : 1);
     constants.put("navigationBarHeight", navigationBarHeight);
+    constants.put("statusBarHeight", statusBarHeight);
 
     return constants;
   }

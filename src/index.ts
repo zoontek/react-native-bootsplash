@@ -181,7 +181,7 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
       return { container, logo, brand };
     }
 
-    const { statusBarHeight, navigationBarHeight } =
+    const { logoSizeRatio, navigationBarHeight, statusBarHeight } =
       NativeModule.getConstants();
 
     return {
@@ -195,7 +195,13 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
             : -navigationBarHeight,
         },
       },
-      logo,
+      logo: {
+        ...logo,
+        style: {
+          width: logoWidth * logoSizeRatio,
+          height: logoHeight * logoSizeRatio,
+        },
+      },
       brand,
     };
   }, [
