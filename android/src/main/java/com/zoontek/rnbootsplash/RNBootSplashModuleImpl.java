@@ -162,20 +162,18 @@ public class RNBootSplashModuleImpl {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
       // This is not called on Android 12 when activity is started using intent
       // (Android studio / CLI / notification / widget…)
-      SplashScreen.OnExitAnimationListener listener = new SplashScreen.OnExitAnimationListener() {
-        @Override
-        public void onSplashScreenExit(@NonNull SplashScreenView view) {
-          view.remove(); // Remove it immediately, without animation
-
-          activity
-            .getSplashScreen()
-            .clearOnExitAnimationListener();
-        }
-      };
-
       activity
         .getSplashScreen()
-        .setOnExitAnimationListener(listener);
+        .setOnExitAnimationListener(new SplashScreen.OnExitAnimationListener() {
+          @Override
+          public void onSplashScreenExit(@NonNull SplashScreenView view) {
+            view.remove(); // Remove it immediately, without animation
+
+            activity
+              .getSplashScreen()
+              .clearOnExitAnimationListener();
+          }
+        });
     }
 
     View splashScreenView = FrameLayout.inflate(activity, R.layout.splash_screen_view, null);
