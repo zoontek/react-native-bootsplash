@@ -295,7 +295,11 @@ public class RNBootSplashModuleImpl {
     final ReactApplicationContext reactContext,
     final Promise promise
   ) {
-    final Activity activity = reactContext.getCurrentActivity();
-    promise.resolve(mShouldKeepOnScreen || (activity != null && getSplashScreenView(activity) != null));
+    if (mShouldKeepOnScreen) {
+      promise.resolve(true);
+    } else {
+      final Activity activity = reactContext.getCurrentActivity();
+      promise.resolve(activity != null && getSplashScreenView(activity) != null);
+    }
   }
 }
