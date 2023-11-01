@@ -9,9 +9,9 @@ import { parse as parseHtml } from "node-html-parser";
 import path from "path";
 import pc from "picocolors";
 import { Options as PrettierOptions } from "prettier";
-import htmlPlugin from "prettier/parser-html";
-import cssPlugin from "prettier/parser-postcss";
-import prettier from "prettier/standalone";
+import * as htmlPlugin from "prettier/plugins/html";
+import * as cssPlugin from "prettier/plugins/postcss";
+import * as prettier from "prettier/standalone";
 import sharp, { Sharp } from "sharp";
 import { dedent } from "ts-dedent";
 import formatXml, { XMLFormatterOptions } from "xml-formatter";
@@ -165,12 +165,12 @@ export const readHtml = (file: string) => {
   return { root: parseHtml(html), formatOptions };
 };
 
-export const writeHtml = (
+export const writeHtml = async (
   file: string,
   html: string,
   options?: Omit<PrettierOptions, "parser" | "plugins">,
 ) => {
-  const formatted = prettier.format(html, {
+  const formatted = await prettier.format(html, {
     parser: "html",
     plugins: [htmlPlugin, cssPlugin],
     tabWidth: 2,
@@ -684,7 +684,7 @@ export const generate: CommandFunction<{
       root.querySelector("body")?.appendChild(nextDiv);
     }
 
-    writeHtml(htmlTemplatePath, root.toString(), formatOptions);
+    await writeHtml(htmlTemplatePath, root.toString(), formatOptions);
   }
 
   if (assetsOutputPath != null) {
