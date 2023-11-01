@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
+    <style name="Theme.BootSplash.DayNight" parent="Theme.BootSplash.Common">
+        <item name="android:forceDarkAllowed">false</item>
+    </style>
+
     <style name="Theme.BootSplash.EdgeToEdge" parent="Theme.BootSplash.EdgeToEdge.Common">
         <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
         <item name="android:statusBarColor">@android:color/transparent</item>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
-    <style name="Theme.BootSplash.Branded" parent="Theme.BootSplash.Common">
+    <style name="Theme.BootSplash.Branded" parent="Theme.BootSplash.DayNight">
         <item name="bootSplashBrand">@null</item>
     </style>
 

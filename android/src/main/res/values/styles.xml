@@ -6,7 +6,10 @@
         <item name="android:windowBackground">@drawable/compat_splash_screen</item>
     </style>
 
-    <style name="Theme.BootSplash.Branded" parent="Theme.BootSplash.Common">
+    <style name="Theme.BootSplash.DayNight" parent="Theme.BootSplash.Common">
+    </style>
+
+    <style name="Theme.BootSplash.Branded" parent="Theme.BootSplash.DayNight">
         <item name="bootSplashBrand">@drawable/transparent_pixel</item>
     </style>
 
