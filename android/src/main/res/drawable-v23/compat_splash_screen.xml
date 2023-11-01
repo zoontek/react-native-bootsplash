@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" android:opacity="opaque">
+    <item android:gravity="fill">
+        <color android:color="?attr/bootSplashBackground" />
+    </item>
+
+    <item
+        android:drawable="?bootSplashLogo"
+        android:width="288dp"
+        android:height="288dp"
+        android:gravity="center" />
+
+    <item
+        android:drawable="?bootSplashBrand"
+        android:width="200dp"
+        android:height="80dp"
+        android:gravity="bottom|center_horizontal"
+        android:bottom="60dp" />
+</layer-list>
