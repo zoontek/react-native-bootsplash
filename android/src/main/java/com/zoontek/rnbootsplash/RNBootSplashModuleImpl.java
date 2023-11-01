@@ -145,19 +145,19 @@ public class RNBootSplashModuleImpl {
     contentView
       .getViewTreeObserver()
       .addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-      @Override
-      public boolean onPreDraw() {
-        if (mShouldKeepOnScreen) {
-          return false;
+        @Override
+        public boolean onPreDraw() {
+          if (mShouldKeepOnScreen) {
+            return false;
+          }
+
+          contentView
+            .getViewTreeObserver()
+            .removeOnPreDrawListener(this);
+
+          return true;
         }
-
-        contentView
-          .getViewTreeObserver()
-          .removeOnPreDrawListener(this);
-
-        return true;
-      }
-    });
+      });
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
       // This is not called on Android 12 when activity is started using intent
@@ -166,8 +166,8 @@ public class RNBootSplashModuleImpl {
         .getSplashScreen()
         .setOnExitAnimationListener(new SplashScreen.OnExitAnimationListener() {
           @Override
-          public void onSplashScreenExit(@NonNull SplashScreenView view) {
-            view.remove(); // Remove it immediately, without animation
+          public void onSplashScreenExit(@NonNull SplashScreenView splashScreenView) {
+            splashScreenView.remove(); // Remove it immediately, without animation
 
             activity
               .getSplashScreen()
@@ -296,7 +296,6 @@ public class RNBootSplashModuleImpl {
     final Promise promise
   ) {
     final Activity activity = reactContext.getCurrentActivity();
-    final boolean hasView = activity != null && getSplashScreenView(activity) != null;
-    promise.resolve(mShouldKeepOnScreen || hasView);
+    promise.resolve(mShouldKeepOnScreen || (activity != null && getSplashScreenView(activity) != null));
   }
 }
