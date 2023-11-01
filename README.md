@@ -356,7 +356,7 @@ type isVisible = () => Promise<boolean>;
 ```ts
 import BootSplash from "react-native-bootsplash";
 
-RNBootSplash.isVisible().then((value) => console.log(value));
+BootSplash.isVisible().then((value) => console.log(value));
 ```
 
 ### useHideAnimation()
