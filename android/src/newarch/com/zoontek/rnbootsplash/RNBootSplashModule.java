@@ -33,6 +33,6 @@ public class RNBootSplashModule extends NativeRNBootSplashSpec {
 
   @Override
   public void isVisible(Promise promise) {
-    RNBootSplashModuleImpl.isVisible(getReactApplicationContext(), promise);
+    RNBootSplashModuleImpl.isVisible( promise);
   }
 }

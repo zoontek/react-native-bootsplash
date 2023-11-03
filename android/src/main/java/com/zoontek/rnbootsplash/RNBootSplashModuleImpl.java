@@ -1,24 +1,17 @@
 package com.zoontek.rnbootsplash;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.animation.AccelerateInterpolator;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.window.SplashScreen;
 import android.window.SplashScreenView;
 
-import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StyleRes;
@@ -46,54 +39,54 @@ public class RNBootSplashModuleImpl {
   @StyleRes
   private static int mThemeResId = -1;
 
-  @NonNull
-  private static View getContentView(@NonNull Activity activity) {
-    return activity.findViewById(android.R.id.content);
-  }
-
   @Nullable
-  private static ViewGroup getRootView(@NonNull Activity activity) {
-    return (ViewGroup) getContentView(activity).getRootView();
-  }
-
+  private static RNBootSplashDialog mInitialDialog = null;
   @Nullable
-  private static View getSplashScreenView(@NonNull Activity activity) {
-    final ViewGroup rootView = getRootView(activity);
+  private static RNBootSplashDialog mFadeOutDialog = null;
 
-    return rootView != null
-      ? rootView.findViewById(R.id.bootsplash_layout)
-      : null;
-  }
-
-  private static void removeSplashScreenView(@NonNull Activity activity) {
-    final ViewGroup rootView = getRootView(activity);
-    final View splashScreenView = getSplashScreenView(activity);
-
-    if (rootView != null && splashScreenView != null) {
-      rootView.removeView(splashScreenView);
+  private static void showDialog(
+    @NonNull final RNBootSplashDialog dialog,
+    @NonNull final Runnable callback
+  ) {
+    if (dialog.isShowing()) {
+      callback.run();
+      return;
     }
-  }
 
-  private static void clearPromiseQueue() {
-    while (!mPromiseQueue.isEmpty()) {
-      Promise promise = mPromiseQueue.shift();
-
-      if (promise != null) {
-        promise.resolve(true);
+    dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+      @Override
+      public void onShow(DialogInterface dialog) {
+        callback.run();
       }
-    }
-  }
-
-  // From https://stackoverflow.com/a/61062773
-  public static boolean isSamsungOneUI4() {
-    String name = "SEM_PLATFORM_INT";
+    });
 
     try {
-      Field field = Build.VERSION.class.getDeclaredField(name);
-      int version = (field.getInt(null) - 90000) / 10000;
-      return version == 4;
-    } catch (Exception ignored) {
-      return false;
+      dialog.show();
+    } catch (Exception exception) {
+      callback.run();
+    }
+  }
+
+  private static void dismissDialog(
+    @Nullable final RNBootSplashDialog dialog,
+    @NonNull final Runnable callback
+  ) {
+    if (dialog == null || !dialog.isShowing()) {
+      callback.run();
+      return;
+    }
+
+    dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+      @Override
+      public void onDismiss(DialogInterface dialog) {
+        callback.run();
+      }
+    });
+
+    try {
+      dialog.dismiss();
+    } catch (Exception exception) {
+      callback.run();
     }
   }
 
@@ -113,13 +106,6 @@ public class RNBootSplashModuleImpl {
       return;
     }
 
-    ViewGroup rootView = getRootView(activity);
-
-    if (rootView == null) {
-      FLog.w(ReactConstants.TAG, NAME + ": Ignored initialization, current activity rootView is null.");
-      return;
-    }
-
     // Apply postBootSplashTheme
     TypedValue typedValue = new TypedValue();
     Resources.Theme currentTheme = activity.getTheme();
@@ -133,28 +119,8 @@ public class RNBootSplashModuleImpl {
       }
     }
 
-    @Nullable Integer backgroundResId = null;
-    @Nullable Integer backgroundColor = null;
-    @Nullable Drawable logo = null;
-    @Nullable Drawable brand = null;
-
-    if (currentTheme.resolveAttribute(R.attr.bootSplashBackground, typedValue, true)) {
-      backgroundResId = typedValue.resourceId;
-      backgroundColor = typedValue.data;
-    }
-
-    if (currentTheme.resolveAttribute(R.attr.bootSplashLogo, typedValue, true)
-      && typedValue.resourceId != Resources.ID_NULL) {
-      logo = currentTheme.getDrawable(typedValue.resourceId);
-    }
-
-    if (currentTheme.resolveAttribute(R.attr.bootSplashBrand, typedValue, true)
-      && typedValue.resourceId != Resources.ID_NULL) {
-      brand = currentTheme.getDrawable(typedValue.resourceId);
-    }
-
-    // Keep the splash screen on-screen until View is added
-    final View contentView = getContentView(activity);
+    // Keep the splash screen on-screen until Dialog is shown
+    final View contentView = activity.findViewById(android.R.id.content);
     mShouldKeepOnScreen = true;
 
     contentView
@@ -177,46 +143,45 @@ public class RNBootSplashModuleImpl {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
       // This is not called on Android 12 when activity is started using intent
       // (Android studio / CLI / notification / widget…)
+      SplashScreen.OnExitAnimationListener listener = new SplashScreen.OnExitAnimationListener() {
+        @Override
+        public void onSplashScreenExit(@NonNull SplashScreenView view) {
+          view.remove(); // Remove it immediately, without animation
+
+          activity
+            .getSplashScreen()
+            .clearOnExitAnimationListener();
+        }
+      };
+
       activity
         .getSplashScreen()
-        .setOnExitAnimationListener(new SplashScreen.OnExitAnimationListener() {
-          @Override
-          public void onSplashScreenExit(@NonNull SplashScreenView splashScreenView) {
-            splashScreenView.remove(); // Remove it immediately, without animation
+        .setOnExitAnimationListener(listener);
+    }
 
-            activity
-              .getSplashScreen()
-              .clearOnExitAnimationListener();
+    mInitialDialog = new RNBootSplashDialog(activity, mThemeResId, false);
+
+    UiThreadUtil.runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        showDialog(mInitialDialog, new Runnable() {
+          @Override
+          public void run() {
+            mShouldKeepOnScreen = false;
           }
         });
+      }
+    });
+  }
+
+  private static void clearPromiseQueue() {
+    while (!mPromiseQueue.isEmpty()) {
+      Promise promise = mPromiseQueue.shift();
+
+      if (promise != null) {
+        promise.resolve(true);
+      }
     }
-
-    @LayoutRes int layout = isSamsungOneUI4()
-      ? R.layout.splash_screen_view_samsung_oneui_4
-      : R.layout.splash_screen_view;
-
-    View splashScreenView = FrameLayout.inflate(activity, layout, null);
-
-    if (backgroundResId != null && backgroundResId != Resources.ID_NULL) {
-      splashScreenView.setBackgroundResource(backgroundResId);
-    } else if (backgroundColor != null) {
-      splashScreenView.setBackgroundColor(backgroundColor);
-    } else {
-      splashScreenView.setBackground(activity.getWindow().getDecorView().getBackground());
-    }
-
-    if (logo != null) {
-      ImageView logoView = splashScreenView.findViewById(R.id.bootsplash_logo);
-      logoView.setImageDrawable(logo);
-    }
-
-    if (brand != null) {
-      ImageView brandView = splashScreenView.findViewById(R.id.bootsplash_brand);
-      brandView.setImageDrawable(brand);
-    }
-
-    rootView.addView(splashScreenView);
-    mShouldKeepOnScreen = false; // unfreeze the system thread UI
   }
 
   private static void hideAndClearPromiseQueue(
@@ -246,35 +211,66 @@ public class RNBootSplashModuleImpl {
           return;
         }
 
-        View splashScreenView  = getSplashScreenView(activity);
+        if (mFadeOutDialog != null) {
+          return; // wait until fade out end for clearPromiseQueue
+        }
 
-        if (splashScreenView == null) {
+        if (mInitialDialog == null) {
           clearPromiseQueue();
-          return;
+          return; // both initial and fade out dialog are hidden
         }
 
         if (!fade) {
-          removeSplashScreenView(activity);
-          clearPromiseQueue();
-          return;
-        }
-
-        splashScreenView
-          .animate()
-          .setDuration(250)
-          .alpha(0)
-          .setInterpolator(new AccelerateInterpolator())
-          .setListener(new AnimatorListenerAdapter() {
+          dismissDialog(mInitialDialog, new Runnable() {
             @Override
-            public void onAnimationEnd(Animator animation) {
-              super.onAnimationEnd(animation);
-
-              removeSplashScreenView(activity);
+            public void run() {
+              mInitialDialog = null;
               clearPromiseQueue();
             }
           });
+
+          return;
+        }
+
+        // Create a new Dialog instance with fade out animation
+        mFadeOutDialog = new RNBootSplashDialog(activity, mThemeResId, true);
+
+        showDialog(mFadeOutDialog, new Runnable() {
+
+          @Override
+          public void run() {
+            dismissDialog(mInitialDialog, new Runnable() {
+
+              @Override
+              public void run() {
+                mInitialDialog = null;
+
+                dismissDialog(mFadeOutDialog, new Runnable() {
+                  @Override
+                  public void run() {
+                    mFadeOutDialog = null;
+                    clearPromiseQueue();
+                  }
+                });
+              }
+            });
+          }
+        });
       }
     });
+  }
+
+  // From https://stackoverflow.com/a/61062773
+  public static boolean isSamsungOneUI4() {
+    String name = "SEM_PLATFORM_INT";
+
+    try {
+      Field field = Build.VERSION.class.getDeclaredField(name);
+      int version = (field.getInt(null) - 90000) / 10000;
+      return version == 4;
+    } catch (Exception ignored) {
+      return false;
+    }
   }
 
   public static Map<String, Object> getConstants(final ReactApplicationContext reactContext) {
@@ -311,15 +307,7 @@ public class RNBootSplashModuleImpl {
     hideAndClearPromiseQueue(reactContext, fade);
   }
 
-  public static void isVisible(
-    final ReactApplicationContext reactContext,
-    final Promise promise
-  ) {
-    if (mShouldKeepOnScreen) {
-      promise.resolve(true);
-    } else {
-      final Activity activity = reactContext.getCurrentActivity();
-      promise.resolve(activity != null && getSplashScreenView(activity) != null);
-    }
+  public static void isVisible(final Promise promise) {
+    promise.resolve(mShouldKeepOnScreen || mInitialDialog != null || mFadeOutDialog != null);
   }
 }
