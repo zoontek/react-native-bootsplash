@@ -3,6 +3,7 @@ package com.zoontek.rnbootsplash;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -12,10 +13,11 @@ import com.facebook.react.module.annotations.ReactModule;
 import java.util.Map;
 
 @ReactModule(name = RNBootSplashModuleImpl.NAME)
-public class RNBootSplashModule extends ReactContextBaseJavaModule {
+public class RNBootSplashModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
 
   public RNBootSplashModule(ReactApplicationContext reactContext) {
     super(reactContext);
+    reactContext.addLifecycleEventListener(this);
   }
 
   @NonNull
@@ -28,6 +30,19 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule {
   @Override
   public Map<String, Object> getConstants() {
     return RNBootSplashModuleImpl.getConstants(getReactApplicationContext());
+  }
+
+  @Override
+  public void onHostDestroy() {}
+
+  @Override
+  public void onHostResume() {
+    RNBootSplashModuleImpl.onHostResume();
+  }
+
+  @Override
+  public void onHostPause() {
+    RNBootSplashModuleImpl.onHostPause();
   }
 
   @ReactMethod

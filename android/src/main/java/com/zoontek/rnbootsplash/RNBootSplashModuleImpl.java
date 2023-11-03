@@ -40,9 +40,7 @@ public class RNBootSplashModuleImpl {
   private static int mThemeResId = -1;
 
   @Nullable
-  private static RNBootSplashDialog mInitialDialog = null;
-  @Nullable
-  private static RNBootSplashDialog mFadeOutDialog = null;
+  private static RNBootSplashDialog mDialog = null;
 
   private static void showDialog(
     @NonNull final RNBootSplashDialog dialog,
@@ -159,12 +157,12 @@ public class RNBootSplashModuleImpl {
         .setOnExitAnimationListener(listener);
     }
 
-    mInitialDialog = new RNBootSplashDialog(activity, mThemeResId, false);
+    mDialog = new RNBootSplashDialog(activity, mThemeResId, false);
 
     UiThreadUtil.runOnUiThread(new Runnable() {
       @Override
       public void run() {
-        showDialog(mInitialDialog, new Runnable() {
+        showDialog(mDialog, new Runnable() {
           @Override
           public void run() {
             mShouldKeepOnScreen = false;
@@ -172,6 +170,18 @@ public class RNBootSplashModuleImpl {
         });
       }
     });
+  }
+
+  public static void onHostResume() {
+    if (mDialog != null && !mDialog.isShowing()) {
+      mDialog.show();
+    }
+  }
+
+  public static void onHostPause() {
+    if (mDialog != null && mDialog.isShowing()) {
+      mDialog.dismiss();
+    }
   }
 
   private static void clearPromiseQueue() {
@@ -211,20 +221,20 @@ public class RNBootSplashModuleImpl {
           return;
         }
 
-        if (mFadeOutDialog != null) {
+        if (mDialog != null && mDialog.shouldFade()) {
           return; // wait until fade out end for clearPromiseQueue
         }
 
-        if (mInitialDialog == null) {
+        if (mDialog == null) {
           clearPromiseQueue();
           return; // both initial and fade out dialog are hidden
         }
 
         if (!fade) {
-          dismissDialog(mInitialDialog, new Runnable() {
+          dismissDialog(mDialog, new Runnable() {
             @Override
             public void run() {
-              mInitialDialog = null;
+              mDialog = null;
               clearPromiseQueue();
             }
           });
@@ -233,22 +243,23 @@ public class RNBootSplashModuleImpl {
         }
 
         // Create a new Dialog instance with fade out animation
-        mFadeOutDialog = new RNBootSplashDialog(activity, mThemeResId, true);
+        final RNBootSplashDialog mFadeOutDialog =
+          new RNBootSplashDialog(activity, mThemeResId, true);
 
         showDialog(mFadeOutDialog, new Runnable() {
 
           @Override
           public void run() {
-            dismissDialog(mInitialDialog, new Runnable() {
+            dismissDialog(mDialog, new Runnable() {
 
               @Override
               public void run() {
-                mInitialDialog = null;
+                mDialog = mFadeOutDialog;
 
-                dismissDialog(mFadeOutDialog, new Runnable() {
+                dismissDialog(mDialog, new Runnable() {
                   @Override
                   public void run() {
-                    mFadeOutDialog = null;
+                    mDialog = null;
                     clearPromiseQueue();
                   }
                 });
@@ -287,7 +298,8 @@ public class RNBootSplashModuleImpl {
       ? PixelUtil.toDIPFromPixel(resources.getDimensionPixelSize(statusBarHeightResId))
       : 0;
 
-    float navigationBarHeight = navigationBarHeightResId > 0 && !ViewConfiguration.get(reactContext).hasPermanentMenuKey()
+    float navigationBarHeight = navigationBarHeightResId > 0 &&
+      !ViewConfiguration.get(reactContext).hasPermanentMenuKey()
       ? PixelUtil.toDIPFromPixel(resources.getDimensionPixelSize(navigationBarHeightResId))
       : 0;
 
@@ -308,6 +320,6 @@ public class RNBootSplashModuleImpl {
   }
 
   public static void isVisible(final Promise promise) {
-    promise.resolve(mShouldKeepOnScreen || mInitialDialog != null || mFadeOutDialog != null);
+    promise.resolve(mShouldKeepOnScreen || mDialog != null);
   }
 }

@@ -11,7 +11,7 @@ import androidx.annotation.StyleRes;
 
 public class RNBootSplashDialog extends Dialog {
 
-  public final boolean mFade;
+  private final boolean mFade;
 
   public RNBootSplashDialog(@NonNull Activity activity, @StyleRes int themeResId, boolean fade) {
     super(activity, themeResId);
@@ -21,6 +21,10 @@ public class RNBootSplashDialog extends Dialog {
     setOwnerActivity(activity);
     setCancelable(false);
     setCanceledOnTouchOutside(false);
+  }
+
+  public boolean shouldFade() {
+    return mFade;
   }
 
   @Override
