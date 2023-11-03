@@ -221,7 +221,7 @@ public class RNBootSplashModuleImpl {
           return;
         }
 
-        if (mDialog != null && mDialog.shouldFade()) {
+        if (mDialog != null && mDialog.shouldFadeOut()) {
           return; // wait until fade out end for clearPromiseQueue
         }
 

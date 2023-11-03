@@ -23,7 +23,7 @@ public class RNBootSplashDialog extends Dialog {
     setCanceledOnTouchOutside(false);
   }
 
-  public boolean shouldFade() {
+  public boolean shouldFadeOut() {
     return mFade;
   }
 
@@ -49,7 +49,8 @@ public class RNBootSplashDialog extends Dialog {
       if (RNBootSplashModuleImpl.isSamsungOneUI4()) {
         window.setBackgroundDrawableResource(R.drawable.compat_splash_screen_oneui_4);
       }
-      if (mFade) {
+
+      if (shouldFadeOut()) {
         window.setWindowAnimations(R.style.BootSplashFadeOutAnimation);
       }
     }
