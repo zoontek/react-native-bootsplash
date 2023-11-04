@@ -6,11 +6,6 @@
         <item name="android:windowExitAnimation">@null</item>
     </style>
 
-    <style name="BootSplashFadeInAnimation">
-        <item name="android:windowEnterAnimation">@anim/bootsplash_fade_in</item>
-        <item name="android:windowExitAnimation">@null</item>
-    </style>
-
     <style name="BootSplashFadeOutAnimation">
         <item name="android:windowEnterAnimation">@null</item>
         <item name="android:windowExitAnimation">@anim/bootsplash_fade_out</item>

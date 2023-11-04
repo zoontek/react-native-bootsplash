@@ -2,7 +2,6 @@ package com.zoontek.rnbootsplash;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Build;
 import android.util.TypedValue;
@@ -40,53 +39,9 @@ public class RNBootSplashModuleImpl {
   private static int mThemeResId = -1;
 
   @Nullable
-  private static RNBootSplashDialog mDialog = null;
-
-  private static void showDialog(
-    @NonNull final RNBootSplashDialog dialog,
-    @NonNull final Runnable callback
-  ) {
-    if (dialog.isShowing()) {
-      callback.run();
-      return;
-    }
-
-    dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-      @Override
-      public void onShow(DialogInterface dialog) {
-        callback.run();
-      }
-    });
-
-    try {
-      dialog.show();
-    } catch (Exception exception) {
-      callback.run();
-    }
-  }
-
-  private static void dismissDialog(
-    @Nullable final RNBootSplashDialog dialog,
-    @NonNull final Runnable callback
-  ) {
-    if (dialog == null || !dialog.isShowing()) {
-      callback.run();
-      return;
-    }
-
-    dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-      @Override
-      public void onDismiss(DialogInterface dialog) {
-        callback.run();
-      }
-    });
-
-    try {
-      dialog.dismiss();
-    } catch (Exception exception) {
-      callback.run();
-    }
-  }
+  private static RNBootSplashDialog mInitialDialog = null;
+  @Nullable
+  private static RNBootSplashDialog mFadeOutDialog = null;
 
   protected static void init(
     @Nullable final Activity activity,
@@ -157,12 +112,12 @@ public class RNBootSplashModuleImpl {
         .setOnExitAnimationListener(listener);
     }
 
-    mDialog = new RNBootSplashDialog(activity, mThemeResId, false);
+    mInitialDialog = new RNBootSplashDialog(activity, mThemeResId, false);
 
     UiThreadUtil.runOnUiThread(new Runnable() {
       @Override
       public void run() {
-        showDialog(mDialog, new Runnable() {
+        mInitialDialog.show(new Runnable() {
           @Override
           public void run() {
             mShouldKeepOnScreen = false;
@@ -173,14 +128,20 @@ public class RNBootSplashModuleImpl {
   }
 
   public static void onHostResume() {
-    if (mDialog != null && !mDialog.isShowing()) {
-      mDialog.show();
+    if (mInitialDialog != null) {
+      mInitialDialog.show();
+    }
+    if (mFadeOutDialog != null) {
+      mFadeOutDialog.show();
     }
   }
 
   public static void onHostPause() {
-    if (mDialog != null && mDialog.isShowing()) {
-      mDialog.dismiss();
+    if (mInitialDialog != null) {
+      mInitialDialog.dismiss();
+    }
+    if (mFadeOutDialog != null) {
+      mFadeOutDialog.dismiss();
     }
   }
 
@@ -221,20 +182,20 @@ public class RNBootSplashModuleImpl {
           return;
         }
 
-        if (mDialog != null && mDialog.shouldFadeOut()) {
+        if (mFadeOutDialog != null) {
           return; // wait until fade out end for clearPromiseQueue
         }
 
-        if (mDialog == null) {
+        if (mInitialDialog == null) {
           clearPromiseQueue();
           return; // both initial and fade out dialog are hidden
         }
 
         if (!fade) {
-          dismissDialog(mDialog, new Runnable() {
+          mInitialDialog.dismiss(new Runnable() {
             @Override
             public void run() {
-              mDialog = null;
+              mInitialDialog = null;
               clearPromiseQueue();
             }
           });
@@ -243,23 +204,21 @@ public class RNBootSplashModuleImpl {
         }
 
         // Create a new Dialog instance with fade out animation
-        final RNBootSplashDialog mFadeOutDialog =
-          new RNBootSplashDialog(activity, mThemeResId, true);
+        mFadeOutDialog = new RNBootSplashDialog(activity, mThemeResId, true);
 
-        showDialog(mFadeOutDialog, new Runnable() {
-
+        mFadeOutDialog.show(new Runnable() {
           @Override
           public void run() {
-            dismissDialog(mDialog, new Runnable() {
 
+            mInitialDialog.dismiss(new Runnable() {
               @Override
               public void run() {
-                mDialog = mFadeOutDialog;
+                mInitialDialog = null;
 
-                dismissDialog(mDialog, new Runnable() {
+                mFadeOutDialog.dismiss(new Runnable() {
                   @Override
                   public void run() {
-                    mDialog = null;
+                    mFadeOutDialog = null;
                     clearPromiseQueue();
                   }
                 });
@@ -320,6 +279,6 @@ public class RNBootSplashModuleImpl {
   }
 
   public static void isVisible(final Promise promise) {
-    promise.resolve(mShouldKeepOnScreen || mDialog != null);
+    promise.resolve(mShouldKeepOnScreen || mInitialDialog != null || mFadeOutDialog != null);
   }
 }
