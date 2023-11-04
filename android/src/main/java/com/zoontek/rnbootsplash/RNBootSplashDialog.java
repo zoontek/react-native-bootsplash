@@ -24,6 +24,10 @@ public class RNBootSplashDialog extends Dialog {
     setCanceledOnTouchOutside(false);
   }
 
+  public boolean getFade() {
+    return mFade;
+  }
+
   @Override
   public void onBackPressed() {
     Activity activity = getOwnerActivity();
