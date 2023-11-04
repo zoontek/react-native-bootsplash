@@ -48,6 +48,6 @@ public class RNBootSplashModule extends NativeRNBootSplashSpec implements Lifecy
 
   @Override
   public void isVisible(Promise promise) {
-    RNBootSplashModuleImpl.isVisible( promise);
+    RNBootSplashModuleImpl.isVisible(promise);
   }
 }
