@@ -31,7 +31,7 @@ export type Manifest = {
 export type UseHideAnimationConfig = {
   manifest: Manifest;
 
-  logo: ImageRequireSource;
+  logo?: ImageRequireSource;
   darkLogo?: ImageRequireSource;
   brand?: ImageRequireSource;
   darkBrand?: ImageRequireSource;
@@ -45,7 +45,7 @@ export type UseHideAnimationConfig = {
 export type UseHideAnimation = {
   container: ViewProps;
   logo: ImageProps;
-  brand?: ImageProps;
+  brand: ImageProps;
 };
 
 export function hide(config: Config = {}): Promise<void> {
@@ -72,7 +72,9 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
     navigationBarTranslucent = false,
   } = config;
 
-  const hasBrand = manifest.brand != null && brandSrc != null;
+  const skipLogo = logoSrc == null;
+  const skipBrand = manifest.brand == null || brandSrc == null;
+
   const logoWidth = manifest.logo.width;
   const logoHeight = manifest.logo.height;
   const brandBottom = manifest.brand?.bottom;
@@ -86,19 +88,22 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
       ? manifest.darkBackground
       : manifest.background;
 
-  const logoFinalSrc: ImageRequireSource =
-    colorScheme === "dark" && darkLogoSrc != null ? darkLogoSrc : logoSrc;
+  const logoFinalSrc: ImageRequireSource | undefined = skipLogo
+    ? undefined
+    : colorScheme === "dark" && darkLogoSrc != null
+    ? darkLogoSrc
+    : logoSrc;
 
-  const brandFinalSrc: ImageRequireSource | undefined = hasBrand
-    ? colorScheme === "dark" && darkBrandSrc != null
-      ? darkBrandSrc
-      : brandSrc
-    : undefined;
+  const brandFinalSrc: ImageRequireSource | undefined = skipBrand
+    ? undefined
+    : colorScheme === "dark" && darkBrandSrc != null
+    ? darkBrandSrc
+    : brandSrc;
 
   const animateFn = useRef(animate);
   const layoutReady = useRef(false);
-  const logoReady = useRef(false);
-  const brandReady = useRef(!hasBrand);
+  const logoReady = useRef(skipLogo);
+  const brandReady = useRef(skipBrand);
   const animateHasBeenCalled = useRef(false);
 
   useEffect(() => {
@@ -136,23 +141,27 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
       },
     };
 
-    const logo: ImageProps = {
-      fadeDuration: 0,
-      resizeMode: "contain",
-      source: logoFinalSrc,
-      style: {
-        width: logoWidth,
-        height: logoHeight,
-      },
-      onLoadEnd: () => {
-        logoReady.current = true;
-        maybeRunAnimate();
-      },
-    };
+    const logo: ImageProps =
+      logoFinalSrc == null
+        ? { source: -1 }
+        : {
+            fadeDuration: 0,
+            resizeMode: "contain",
+            source: logoFinalSrc,
+            style: {
+              width: logoWidth,
+              height: logoHeight,
+            },
+            onLoadEnd: () => {
+              logoReady.current = true;
+              maybeRunAnimate();
+            },
+          };
 
-    const brand: ImageProps | undefined =
-      brandFinalSrc != null
-        ? {
+    const brand: ImageProps =
+      brandFinalSrc == null
+        ? { source: -1 }
+        : {
             fadeDuration: 0,
             resizeMode: "contain",
             source: brandFinalSrc,
@@ -166,14 +175,13 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
               brandReady.current = true;
               maybeRunAnimate();
             },
-          }
-        : undefined;
+          };
 
     if (Platform.OS !== "android") {
       return { container, logo, brand };
     }
 
-    const { statusBarHeight, navigationBarHeight } =
+    const { logoSizeRatio, navigationBarHeight, statusBarHeight } =
       NativeModule.getConstants();
 
     return {
@@ -187,7 +195,13 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
             : -navigationBarHeight,
         },
       },
-      logo,
+      logo: {
+        ...logo,
+        style: {
+          width: logoWidth * logoSizeRatio,
+          height: logoHeight * logoSizeRatio,
+        },
+      },
       brand,
     };
   }, [

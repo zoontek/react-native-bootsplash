@@ -131,8 +131,9 @@ RCT_EXPORT_MODULE();
 
 - (NSDictionary *)constantsToExport {
   return @{
-    @"statusBarHeight": @(0),
-    @"navigationBarHeight": @(0)
+    @"logoSizeRatio": @(1),
+    @"navigationBarHeight": @(0),
+    @"statusBarHeight": @(0)
   };
 }
 

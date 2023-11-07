@@ -2,7 +2,6 @@ package com.zoontek.rnbootsplash;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Build;
 import android.util.TypedValue;
@@ -23,6 +22,7 @@ import com.facebook.react.bridge.UiThreadUtil;
 import com.facebook.react.common.ReactConstants;
 import com.facebook.react.uimanager.PixelUtil;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
@@ -39,55 +39,7 @@ public class RNBootSplashModuleImpl {
   private static int mThemeResId = -1;
 
   @Nullable
-  private static RNBootSplashDialog mInitialDialog = null;
-  @Nullable
-  private static RNBootSplashDialog mFadeOutDialog = null;
-
-  private static void showDialog(
-    @NonNull final RNBootSplashDialog dialog,
-    @NonNull final Runnable callback
-  ) {
-    if (dialog.isShowing()) {
-      callback.run();
-      return;
-    }
-
-    dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-      @Override
-      public void onShow(DialogInterface dialog) {
-        callback.run();
-      }
-    });
-
-    try {
-      dialog.show();
-    } catch (Exception exception) {
-      callback.run();
-    }
-  }
-
-  private static void dismissDialog(
-    @Nullable final RNBootSplashDialog dialog,
-    @NonNull final Runnable callback
-  ) {
-    if (dialog == null || !dialog.isShowing()) {
-      callback.run();
-      return;
-    }
-
-    dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-      @Override
-      public void onDismiss(DialogInterface dialog) {
-        callback.run();
-      }
-    });
-
-    try {
-      dialog.dismiss();
-    } catch (Exception exception) {
-      callback.run();
-    }
-  }
+  private static RNBootSplashDialog mDialog = null;
 
   protected static void init(
     @Nullable final Activity activity,
@@ -125,19 +77,19 @@ public class RNBootSplashModuleImpl {
     contentView
       .getViewTreeObserver()
       .addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-      @Override
-      public boolean onPreDraw() {
-        if (mShouldKeepOnScreen) {
-          return false;
+        @Override
+        public boolean onPreDraw() {
+          if (mShouldKeepOnScreen) {
+            return false;
+          }
+
+          contentView
+            .getViewTreeObserver()
+            .removeOnPreDrawListener(this);
+
+          return true;
         }
-
-        contentView
-          .getViewTreeObserver()
-          .removeOnPreDrawListener(this);
-
-        return true;
-      }
-    });
+      });
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
       // This is not called on Android 12 when activity is started using intent
@@ -158,12 +110,12 @@ public class RNBootSplashModuleImpl {
         .setOnExitAnimationListener(listener);
     }
 
-    mInitialDialog = new RNBootSplashDialog(activity, mThemeResId, false);
+    mDialog = new RNBootSplashDialog(activity, mThemeResId, false);
 
     UiThreadUtil.runOnUiThread(new Runnable() {
       @Override
       public void run() {
-        showDialog(mInitialDialog, new Runnable() {
+        mDialog.show(new Runnable() {
           @Override
           public void run() {
             mShouldKeepOnScreen = false;
@@ -171,6 +123,18 @@ public class RNBootSplashModuleImpl {
         });
       }
     });
+  }
+
+  public static void onHostResume() {
+    if (mDialog != null) {
+      mDialog.show();
+    }
+  }
+
+  public static void onHostPause() {
+    if (mDialog != null) {
+      mDialog.dismiss();
+    }
   }
 
   private static void clearPromiseQueue() {
@@ -210,53 +174,68 @@ public class RNBootSplashModuleImpl {
           return;
         }
 
-        if (mFadeOutDialog != null) {
+        if (mDialog != null && mDialog.getFade()) {
           return; // wait until fade out end for clearPromiseQueue
         }
 
-        if (mInitialDialog == null) {
+        if (mDialog == null) {
           clearPromiseQueue();
           return; // both initial and fade out dialog are hidden
         }
 
-        if (!fade) {
-          dismissDialog(mInitialDialog, new Runnable() {
+        final RNBootSplashDialog[] tmp = {mDialog};
+
+        if (fade) {
+          // Create a new Dialog instance with fade out animation
+          mDialog = new RNBootSplashDialog(activity, mThemeResId, true);
+
+          mDialog.show(new Runnable() {
+
             @Override
             public void run() {
-              mInitialDialog = null;
+              tmp[0].dismiss(new Runnable() {
+
+                @Override
+                public void run() {
+                  tmp[0] = null;
+
+                  mDialog.dismiss(new Runnable() {
+                    @Override
+                    public void run() {
+                      mDialog = null;
+                      clearPromiseQueue();
+                    }
+                  });
+                }
+              });
+            }
+          });
+        } else {
+          mDialog = null;
+
+          tmp[0].dismiss(new Runnable() {
+            @Override
+            public void run() {
+              tmp[0] = null;
               clearPromiseQueue();
             }
           });
-
-          return;
         }
-
-        // Create a new Dialog instance with fade out animation
-        mFadeOutDialog = new RNBootSplashDialog(activity, mThemeResId, true);
-
-        showDialog(mFadeOutDialog, new Runnable() {
-
-          @Override
-          public void run() {
-            dismissDialog(mInitialDialog, new Runnable() {
-
-              @Override
-              public void run() {
-                mInitialDialog = null;
-
-                dismissDialog(mFadeOutDialog, new Runnable() {
-                  @Override
-                  public void run() {
-                    mFadeOutDialog = null;
-                    clearPromiseQueue();
-                  }
-                });
-              }
-            });
-          }
-        });
       }
     });
+  }
+
+  // From https://stackoverflow.com/a/61062773
+  public static boolean isSamsungOneUI4() {
+    String name = "SEM_PLATFORM_INT";
+
+    try {
+      Field field = Build.VERSION.class.getDeclaredField(name);
+      int version = (field.getInt(null) - 90000) / 10000;
+      return version == 4;
+    } catch (Exception ignored) {
+      return false;
+    }
   }
 
   public static Map<String, Object> getConstants(final ReactApplicationContext reactContext) {
@@ -273,12 +252,14 @@ public class RNBootSplashModuleImpl {
       ? PixelUtil.toDIPFromPixel(resources.getDimensionPixelSize(statusBarHeightResId))
       : 0;
 
-    float navigationBarHeight = navigationBarHeightResId > 0 && !ViewConfiguration.get(reactContext).hasPermanentMenuKey()
+    float navigationBarHeight = navigationBarHeightResId > 0 &&
+      !ViewConfiguration.get(reactContext).hasPermanentMenuKey()
       ? PixelUtil.toDIPFromPixel(resources.getDimensionPixelSize(navigationBarHeightResId))
       : 0;
 
-    constants.put("statusBarHeight", statusBarHeight);
+    constants.put("logoSizeRatio", isSamsungOneUI4() ? 0.5 : 1);
     constants.put("navigationBarHeight", navigationBarHeight);
+    constants.put("statusBarHeight", statusBarHeight);
 
     return constants;
   }
@@ -293,6 +274,6 @@ public class RNBootSplashModuleImpl {
   }
 
   public static void isVisible(final Promise promise) {
-    promise.resolve(mShouldKeepOnScreen || mInitialDialog != null || mFadeOutDialog != null);
+    promise.resolve(mShouldKeepOnScreen || mDialog != null);
   }
 }

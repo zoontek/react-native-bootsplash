@@ -13,7 +13,11 @@ function removeNode(node: Node | null) {
 }
 
 export default {
-  getConstants: () => ({ navigationBarHeight: 0, statusBarHeight: 0 }),
+  getConstants: () => ({
+    logoSizeRatio: 1,
+    navigationBarHeight: 0,
+    statusBarHeight: 0,
+  }),
 
   hide: (fade) =>
     document.fonts.ready.then(() => {

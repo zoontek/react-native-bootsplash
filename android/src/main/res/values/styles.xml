@@ -6,11 +6,6 @@
         <item name="android:windowExitAnimation">@null</item>
     </style>
 
-    <style name="BootSplashFadeInAnimation">
-        <item name="android:windowEnterAnimation">@anim/bootsplash_fade_in</item>
-        <item name="android:windowExitAnimation">@null</item>
-    </style>
-
     <style name="BootSplashFadeOutAnimation">
         <item name="android:windowEnterAnimation">@null</item>
         <item name="android:windowExitAnimation">@anim/bootsplash_fade_out</item>
@@ -21,7 +16,10 @@
         <item name="android:windowBackground">@drawable/compat_splash_screen</item>
     </style>
 
-    <style name="Theme.BootSplash.Branded" parent="Theme.BootSplash.Common">
+    <style name="Theme.BootSplash.DayNight" parent="Theme.BootSplash.Common">
+    </style>
+
+    <style name="Theme.BootSplash.Branded" parent="Theme.BootSplash.DayNight">
         <item name="bootSplashBrand">@drawable/transparent_pixel</item>
     </style>
 

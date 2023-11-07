@@ -53,9 +53,7 @@ export const AnimatedBootSplash = ({ onAnimationEnd }: Props) => {
         style={[logo.style, { transform: [{ translateY }] }]}
       />
 
-      {/* {brand && (
-        <Animated.Image {...brand} style={[brand.style, { opacity }]} />
-      )} */}
+      {/* <Animated.Image {...brand} style={[brand.style, { opacity }]} /> */}
     </Animated.View>
   );
 };
