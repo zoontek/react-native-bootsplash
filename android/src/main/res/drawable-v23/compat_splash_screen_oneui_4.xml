@@ -13,10 +13,7 @@
         android:width="144dp"
         android:height="144dp" />
 
-    <item
-        android:drawable="?bootSplashBrand"
-        android:gravity="bottom|center_horizontal"
-        android:width="200dp"
-        android:height="80dp"
-        android:bottom="60dp" />
+    <item android:gravity="fill" android:bottom="60dp">
+        <bitmap android:src="?bootSplashBrand" android:gravity="bottom|center_horizontal" />
+    </item>
 </layer-list>
