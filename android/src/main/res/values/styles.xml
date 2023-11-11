@@ -14,16 +14,13 @@
     <style name="Theme.BootSplash.Common" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="android:opacity">opaque</item>
         <item name="android:windowBackground">@drawable/compat_splash_screen</item>
+        <item name="bootSplashBrand">@drawable/transparent_pixel</item>
     </style>
 
     <style name="Theme.BootSplash.DayNight" parent="Theme.BootSplash.Common">
     </style>
 
-    <style name="Theme.BootSplash.Branded" parent="Theme.BootSplash.DayNight">
-        <item name="bootSplashBrand">@drawable/transparent_pixel</item>
-    </style>
-
-    <style name="Theme.BootSplash" parent="Theme.BootSplash.Branded">
+    <style name="Theme.BootSplash" parent="Theme.BootSplash.DayNight">
         <item name="bootSplashBackground">?android:colorBackground</item>
         <item name="bootSplashLogo">@android:drawable/sym_def_app_icon</item>
         <item name="postBootSplashTheme">?android:attr/theme</item>

@@ -5,13 +5,11 @@
         <color android:color="?attr/bootSplashBackground" />
     </item>
 
-    <!-- There's an issue with logo size on Samsung OneUI v4
-     We need to render it 2 times smaller (288 / 2 = 144) -->
     <item
         android:drawable="?bootSplashLogo"
         android:gravity="center"
-        android:width="144dp"
-        android:height="144dp" />
+        android:width="288dp"
+        android:height="288dp" />
 
     <item
         android:drawable="?bootSplashBrand"
