@@ -27,6 +27,9 @@ android {
 
     if (project.android.hasProperty("namespace")) {
         namespace "com.zoontek.rnbootsplash"
+        buildFeatures {
+            buildConfig true
+        }
     }
     defaultConfig {
         buildConfigField("boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString())
