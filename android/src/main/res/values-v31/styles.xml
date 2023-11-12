@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
-    <style name="Theme.BootSplash" parent="Theme.BootSplash.Branded">
+    <style name="Theme.BootSplash" parent="Theme.BootSplash.DayNight">
         <item name="android:windowSplashScreenBackground">?bootSplashBackground</item>
         <item name="android:windowSplashScreenAnimatedIcon">?bootSplashLogo</item>
         <item name="android:windowSplashScreenBrandingImage">?bootSplashBrand</item>
