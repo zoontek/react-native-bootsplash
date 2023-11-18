@@ -33,7 +33,16 @@ public class RNBootSplashModuleImpl {
   public static final String NAME = "RNBootSplash";
 
   private static final RNBootSplashQueue<Promise> mPromiseQueue = new RNBootSplashQueue<>();
-  private static boolean mShouldKeepOnScreen = false;
+
+  private enum Status {
+    HIDDEN,
+    HIDING,
+    INITIALIZING,
+    VISIBLE,
+  }
+
+  @NonNull
+  private static Status mStatus = Status.HIDDEN;
 
   @StyleRes
   private static int mThemeResId = -1;
@@ -74,14 +83,14 @@ public class RNBootSplashModuleImpl {
 
     // Keep the splash screen on-screen until Dialog is shown
     final View contentView = activity.findViewById(android.R.id.content);
-    mShouldKeepOnScreen = true;
+    mStatus = Status.INITIALIZING;
 
     contentView
       .getViewTreeObserver()
       .addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
         @Override
         public boolean onPreDraw() {
-          if (mShouldKeepOnScreen) {
+          if (mStatus == Status.INITIALIZING) {
             return false;
           }
 
@@ -120,29 +129,11 @@ public class RNBootSplashModuleImpl {
         mInitialDialog.show(new Runnable() {
           @Override
           public void run() {
-            mShouldKeepOnScreen = false;
+            mStatus = Status.VISIBLE;
           }
         });
       }
     });
-  }
-
-  public static void onHostResume() {
-    if (mInitialDialog != null) {
-      mInitialDialog.show();
-    }
-    if (mFadeOutDialog != null) {
-      mFadeOutDialog.show();
-    }
-  }
-
-  public static void onHostPause() {
-    if (mInitialDialog != null) {
-      mInitialDialog.dismiss();
-    }
-    if (mFadeOutDialog != null) {
-      mFadeOutDialog.dismiss();
-    }
   }
 
   private static void clearPromiseQueue() {
@@ -164,7 +155,7 @@ public class RNBootSplashModuleImpl {
       public void run() {
         final Activity activity = reactContext.getCurrentActivity();
 
-        if (mShouldKeepOnScreen
+        if (mStatus == Status.INITIALIZING
           || activity == null
           || activity.isFinishing()
           || activity.isDestroyed()
@@ -182,19 +173,22 @@ public class RNBootSplashModuleImpl {
           return;
         }
 
-        if (mFadeOutDialog != null) {
+        if (mStatus == Status.HIDING) {
           return; // wait until fade out end for clearPromiseQueue
         }
 
-        if (mInitialDialog == null) {
+        if (mInitialDialog == null || mStatus == Status.HIDDEN) {
           clearPromiseQueue();
           return; // both initial and fade out dialog are hidden
         }
+
+        mStatus = Status.HIDING;
 
         if (!fade) {
           mInitialDialog.dismiss(new Runnable() {
             @Override
             public void run() {
+              mStatus = Status.HIDDEN;
               mInitialDialog = null;
               clearPromiseQueue();
             }
@@ -214,11 +208,12 @@ public class RNBootSplashModuleImpl {
 
               @Override
               public void run() {
-                mInitialDialog = null;
 
                 mFadeOutDialog.dismiss(new Runnable() {
                   @Override
                   public void run() {
+                    mStatus = Status.HIDDEN;
+                    mInitialDialog = null;
                     mFadeOutDialog = null;
                     clearPromiseQueue();
                   }
@@ -280,6 +275,6 @@ public class RNBootSplashModuleImpl {
   }
 
   public static void isVisible(final Promise promise) {
-    promise.resolve(mShouldKeepOnScreen || mInitialDialog != null || mFadeOutDialog != null);
+    promise.resolve(mStatus != Status.HIDDEN);
   }
 }
