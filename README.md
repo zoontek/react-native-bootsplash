@@ -278,11 +278,19 @@ _ℹ️ For `react-native` < `0.71` setup, follow the [`v4.4.0 README.md`](https
     android:icon="@mipmap/ic_launcher"
     android:roundIcon="@mipmap/ic_launcher_round"
     android:allowBackup="false"
-    android:theme="@style/BootTheme"> <!-- Replace @style/AppTheme with @style/BootTheme -->
-    <!-- … -->
+    android:theme="@style/AppTheme"> <!-- Apply @style/AppTheme on .MainApplication -->
+    <activity
+      android:name=".MainActivity"
+      android:label="@string/app_name"
+      android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
+      android:launchMode="singleTask"
+      android:windowSoftInputMode="adjustResize"
+      android:exported="true"
+      android:theme="@style/BootTheme"> <!-- Apply @style/BootTheme on .MainActivity -->
+      <!-- … -->
+    </activity>
   </application>
 </manifest>
-
 ```
 
 3. Finally edit your `android/app/src/main/java/com/yourprojectname/MainActivity.java` file:
