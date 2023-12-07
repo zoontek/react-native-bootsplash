@@ -293,7 +293,10 @@ _ℹ️ For `react-native` < `0.71` setup, follow the [`v4.4.0 README.md`](https
 </manifest>
 ```
 
-3. Finally edit your `android/app/src/main/java/com/yourprojectname/MainActivity.java` file:
+3. Finally edit your MainActivity.  
+
+For `react-native` < `0.73`
+ `android/app/src/main/java/com/yourprojectname/MainActivity.java` file:
 
 ```java
 // …
@@ -311,6 +314,26 @@ public class MainActivity extends ReactActivity {
     RNBootSplash.init(this, R.style.BootTheme); // ⬅️ initialize the splash screen
     super.onCreate(savedInstanceState); // or super.onCreate(null) with react-native-screens
   }
+}
+```
+
+For `react-native` >= `0.73`
+ `android/app/src/main/java/com/yourprojectname/MainActivity.kt` file:
+
+```kotlin
+// …
+
+// add these required imports:
+import android.os.Bundle
+import com.zoontek.rnbootsplash.RNBootSplash
+
+class MainActivity : ReactActivity() { {
+
+  // …
+   override fun onCreate(savedInstanceState: Bundle?) {
+        RNBootSplash.init(this, R.style.BootTheme) // ⬅️ initialize the splash 
+        super.onCreate(savedInstanceState) // or super.onCreate(null) with react-native-screens
+   }
 }
 ```
 
