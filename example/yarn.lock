@@ -5165,7 +5165,7 @@ react-native-bars@2.3.0:
   integrity sha512-SVitn6Lmlc/GrsNK20Z5t+8pmwnpLYZk2XAZLCBuJMTceTA+tFo/hoOOJnw4gMBkzJoOvnP8eLTgi4ECSDvRnA==
 
 "react-native-bootsplash@file:..":
-  version "5.1.3"
+  version "5.1.4"
   dependencies:
     detect-indent "^6.1.0"
     fs-extra "^11.2.0"
