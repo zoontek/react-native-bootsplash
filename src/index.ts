@@ -91,14 +91,14 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
   const logoFinalSrc: ImageRequireSource | undefined = skipLogo
     ? undefined
     : colorScheme === "dark" && darkLogoSrc != null
-    ? darkLogoSrc
-    : logoSrc;
+      ? darkLogoSrc
+      : logoSrc;
 
   const brandFinalSrc: ImageRequireSource | undefined = skipBrand
     ? undefined
     : colorScheme === "dark" && darkBrandSrc != null
-    ? darkBrandSrc
-    : brandSrc;
+      ? darkBrandSrc
+      : brandSrc;
 
   const animateFn = useRef(animate);
   const layoutReady = useRef(false);

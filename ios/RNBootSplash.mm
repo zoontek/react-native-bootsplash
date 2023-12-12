@@ -3,7 +3,7 @@
 #import <React/RCTUtils.h>
 
 #if RCT_NEW_ARCH_ENABLED
-#import <React/RCTFabricSurfaceHostingProxyRootView.h>
+#import <React/RCTSurfaceHostingProxyRootView.h>
 #import <React/RCTSurfaceHostingView.h>
 #else
 #import <React/RCTRootView.h>
@@ -90,9 +90,8 @@ RCT_EXPORT_MODULE();
     }];
 
 #ifdef RCT_NEW_ARCH_ENABLED
-    if (rootView != nil && [rootView isKindOfClass:[RCTFabricSurfaceHostingProxyRootView class]]) {
-      RCTFabricSurfaceHostingProxyRootView *proxy = (RCTFabricSurfaceHostingProxyRootView *)rootView;
-      _rootView = (RCTSurfaceHostingView *)proxy.surface.view;
+    if (rootView != nil && [rootView isKindOfClass:[RCTSurfaceHostingProxyRootView class]]) {
+      _rootView = [(RCTSurfaceHostingProxyRootView *)rootView view];
 #else
     if (rootView != nil && [rootView isKindOfClass:[RCTRootView class]]) {
       _rootView = (RCTRootView *)rootView;

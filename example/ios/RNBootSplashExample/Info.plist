@@ -20,40 +20,19 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>CFBundleURLName</key>
-			<string>URL scheme</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>bootsplash</string>
-			</array>
-		</dict>
-	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
-		<key>NSExceptionDomains</key>
-		<dict>
-			<key>localhost</key>
-			<dict>
-				<key>NSExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
-			</dict>
-		</dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<false/>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>fetch</string>
-	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>BootSplash.storyboard</string>
 	<key>UIRequiredDeviceCapabilities</key>
