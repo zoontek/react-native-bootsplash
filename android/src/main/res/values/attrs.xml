@@ -4,5 +4,6 @@
     <attr name="bootSplashBackground" format="color" />
     <attr name="bootSplashLogo" format="reference" />
     <attr name="bootSplashBrand" format="reference" />
+    <attr name="darkContentBarsStyle" format="boolean" />
     <attr name="postBootSplashTheme" format="reference" />
 </resources>

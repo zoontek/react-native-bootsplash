@@ -4,6 +4,7 @@
     <public name="bootSplashBackground" type="attr" />
     <public name="bootSplashLogo" type="attr" />
     <public name="bootSplashBrand" type="attr" />
+    <public name="darkContentBarsStyle" type="attr" />
     <public name="postBootSplashTheme" type="attr" />
 
     <public name="Theme.BootSplash" type="style" />

@@ -29,6 +29,7 @@
     <style name="Theme.BootSplash.EdgeToEdge.Common" parent="Theme.BootSplash">
         <item name="android:fitsSystemWindows">false</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="darkContentBarsStyle">false</item>
     </style>
 
     <style name="Theme.BootSplash.EdgeToEdge" parent="Theme.BootSplash.EdgeToEdge.Common">
