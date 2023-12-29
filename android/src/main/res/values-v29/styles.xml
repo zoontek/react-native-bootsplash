@@ -5,7 +5,7 @@
         <item name="android:forceDarkAllowed">false</item>
     </style>
 
-    <style name="Theme.BootSplash.EdgeToEdge" parent="Theme.BootSplash.EdgeToEdge.Common">
+    <style name="Theme.BootSplash.EdgeToEdge" parent="Theme.BootSplash.EdgeToEdge.DayNight">
         <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
 
         <item name="android:enforceStatusBarContrast">false</item>

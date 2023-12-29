@@ -29,10 +29,13 @@
     <style name="Theme.BootSplash.EdgeToEdge.Common" parent="Theme.BootSplash">
         <item name="android:fitsSystemWindows">false</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="darkContentBarsStyle">false</item>
     </style>
 
-    <style name="Theme.BootSplash.EdgeToEdge" parent="Theme.BootSplash.EdgeToEdge.Common">
+    <style name="Theme.BootSplash.EdgeToEdge.DayNight" parent="Theme.BootSplash.EdgeToEdge.Common">
+        <item name="darkContentBarsStyle">true</item>
+    </style>
+
+    <style name="Theme.BootSplash.EdgeToEdge" parent="Theme.BootSplash.EdgeToEdge.DayNight">
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowTranslucentNavigation">true</item>
     </style>
