@@ -18,7 +18,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "0.73.1",
-    "react-native-bars": "2.4.0",
+    "react-native-bars": "2.4.2",
     "react-native-bootsplash": "file:../",
     "react-native-web": "0.19.9"
   },
