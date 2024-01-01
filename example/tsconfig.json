@@ -21,8 +21,12 @@
     "noImplicitReturns": false,
     "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": true
+    "noUnusedParameters": true,
+
+    "paths": {
+      "react-native-bootsplash": ["../src"]
+    }
   },
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["src"],
   "exclude": ["node_modules", "babel.config.js", "metro.config.js"]
 }
