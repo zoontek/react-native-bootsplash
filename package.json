@@ -38,11 +38,11 @@
     "launchscreen"
   ],
   "scripts": {
-    "format": "prettier '**/*' --ignore-unknown --write",
+    "format": "prettier '**/*' -u -w",
     "lint": "eslint --ext ts,tsx ./src",
     "typecheck": "tsc --noEmit",
     "build": "bob build",
-    "prepack": "yarn format --write=false --check && yarn lint && yarn typecheck && yarn build && node ../obfuscator"
+    "prepack": "prettier '**/*' -u -c && yarn lint && yarn typecheck && yarn build && node ../obfuscator"
   },
   "react-native-builder-bob": {
     "source": "src",
