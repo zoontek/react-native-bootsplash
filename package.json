@@ -1,6 +1,6 @@
 {
   "name": "react-native-bootsplash",
-  "version": "5.2.1",
+  "version": "5.2.2",
   "license": "MIT",
   "description": "Display a bootsplash on your app starts. Hide it when you want.",
   "author": "Mathieu Acthernoene <zoontek@gmail.com>",
@@ -38,12 +38,11 @@
     "launchscreen"
   ],
   "scripts": {
-    "setup-hooks": "git config --local core.hooksPath .hooks",
+    "format": "prettier '**/*' --ignore-unknown --write",
     "lint": "eslint --ext ts,tsx ./src",
-    "typecheck": "tsc --project ./ --noEmit",
+    "typecheck": "tsc --noEmit",
     "build": "bob build",
-    "format": "prettier '**/*' -u -w",
-    "prepack": "yarn lint && yarn typecheck && yarn build && node ../obfuscator"
+    "prepack": "yarn format --write=false --check && yarn lint && yarn typecheck && yarn build && node ../obfuscator"
   },
   "react-native-builder-bob": {
     "source": "src",
@@ -55,13 +54,9 @@
     ]
   },
   "prettier": {
-    "trailingComma": "all",
     "plugins": [
       "prettier-plugin-organize-imports"
     ]
-  },
-  "lint-staged": {
-    "*": "prettier -u -w"
   },
   "peerDependencies": {
     "react": ">=18.1.0",
@@ -82,14 +77,13 @@
     "@babel/preset-env": "^7.20.0",
     "@react-native-community/cli-types": "^12.3.0",
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^20.10.6",
-    "@types/react": "^18.2.46",
+    "@types/node": "^20.10.7",
+    "@types/react": "^18.2.47",
     "@types/sharp": "^0.31.1",
-    "@typescript-eslint/eslint-plugin": "^6.16.0",
-    "@typescript-eslint/parser": "^6.16.0",
+    "@typescript-eslint/eslint-plugin": "^6.18.0",
+    "@typescript-eslint/parser": "^6.18.0",
     "eslint": "^8.56.0",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "lint-staged": "^15.2.0",
     "prettier-plugin-organize-imports": "^3.2.4",
     "react": "18.2.0",
     "react-native": "0.73.1",

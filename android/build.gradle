@@ -27,8 +27,14 @@ android {
 
     if (project.android.hasProperty("namespace")) {
         namespace "com.zoontek.rnbootsplash"
+
         buildFeatures {
             buildConfig true
+        }
+        sourceSets {
+            main {
+                manifest.srcFile "src/main/AndroidManifestNew.xml"
+            }
         }
     }
     defaultConfig {
