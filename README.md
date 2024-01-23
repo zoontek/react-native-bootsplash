@@ -178,9 +178,9 @@ android/app/src/main/res/drawable-xxxhdpi/bootsplash_logo.png
 
 ios/RNBootSplashExample/BootSplash.storyboard
 ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/Contents.json
-ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo.png
-ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo@2x.png
-ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo@3x.png
+ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo-<hash>.png
+ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo-<hash>@2x.png
+ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo-<hash>@3x.png
 
 index.html
 
