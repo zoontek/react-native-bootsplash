@@ -1,3 +1,4 @@
+import murmurhash from "@emotion/hash";
 import {
   AndroidProjectConfig,
   CommandFunction,
@@ -182,6 +183,32 @@ export const writeHtml = async (
   logWrite(file);
 };
 
+export const cleanIOSAssets = (dir: string, prefix: string) => {
+  fs.readdirSync(dir, "utf-8")
+    .filter((file) => file.startsWith(prefix) && file.endsWith(".png"))
+    .map((file) => path.join(dir, file))
+    .forEach((file) => fs.rmSync(file, { force: true }));
+};
+
+export const getIOSAssetFileName = async ({
+  name,
+  image,
+  width,
+}: {
+  name: string;
+  image: Sharp;
+  width: number;
+}) => {
+  const buffer = await image
+    .clone()
+    .resize(width)
+    .png({ quality: 100 })
+    .toBuffer();
+
+  const hash = murmurhash(buffer.toString("base64"));
+  return `${name}-${hash}`;
+};
+
 const ensureSupportedFormat = async (
   name: string,
   image: Sharp | undefined,
@@ -314,8 +341,7 @@ const requireAddon = ():
   | { execute: (config: AddonConfig) => Promise<void> }
   | undefined => {
   try {
-    // eslint-disable-next-line
-    return require("./addon");
+    return require("./addon"); // eslint-disable-line
   } catch {
     return;
   }
@@ -575,22 +601,29 @@ export const generate: CommandFunction<{
     );
 
     fs.ensureDirSync(imageSetPath);
+    cleanIOSAssets(imageSetPath, "bootsplash_logo");
+
+    const logoFileName = await getIOSAssetFileName({
+      name: "bootsplash_logo",
+      image: logo,
+      width: logoWidth,
+    });
 
     writeJson(path.resolve(imageSetPath, "Contents.json"), {
       images: [
         {
           idiom: "universal",
-          filename: "bootsplash_logo.png",
+          filename: `${logoFileName}.png`,
           scale: "1x",
         },
         {
           idiom: "universal",
-          filename: "bootsplash_logo@2x.png",
+          filename: `${logoFileName}@2x.png`,
           scale: "2x",
         },
         {
           idiom: "universal",
-          filename: "bootsplash_logo@3x.png",
+          filename: `${logoFileName}@3x.png`,
           scale: "3x",
         },
       ],
@@ -608,7 +641,7 @@ export const generate: CommandFunction<{
       ].map(({ ratio, suffix }) => {
         const filePath = path.resolve(
           imageSetPath,
-          `bootsplash_logo${suffix}.png`,
+          `${logoFileName}${suffix}.png`,
         );
 
         return logo

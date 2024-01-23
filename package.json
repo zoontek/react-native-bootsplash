@@ -63,6 +63,7 @@
     "react-native": ">=0.70.0"
   },
   "dependencies": {
+    "@emotion/hash": "^0.9.1",
     "detect-indent": "^6.1.0",
     "fs-extra": "^11.2.0",
     "node-html-parser": "^6.1.12",
