@@ -70,10 +70,10 @@ const generateBootSplash = {
       description: "[dark mode] Brand file path (PNG or SVG)",
     },
   ],
-  func: (argv, ctx, args) => {
+  func: ([logo], { project: { android, ios } }, args) => {
     const { generate } = require("./dist/commonjs/generate");
 
-    generate(argv, ctx, args).catch((error) => {
+    generate({ android, ios, logo, ...args }).catch((error) => {
       console.error(error);
       process.exit(1);
     });

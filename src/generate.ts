@@ -1,7 +1,6 @@
 import murmurhash from "@emotion/hash";
 import {
   AndroidProjectConfig,
-  CommandFunction,
   IOSProjectConfig,
 } from "@react-native-community/cli-types";
 import detectIndent from "detect-indent";
@@ -347,7 +346,19 @@ const requireAddon = ():
   }
 };
 
-export const generate: CommandFunction<{
+export const generate = async ({
+  android,
+  ios,
+  platforms,
+  html,
+  flavor,
+  licenseKey,
+  ...args
+}: {
+  android?: AndroidProjectConfig;
+  ios?: IOSProjectConfig;
+
+  logo: string;
   platforms: string[];
   background: string;
   logoWidth: number;
@@ -361,11 +372,7 @@ export const generate: CommandFunction<{
   darkBackground?: string;
   darkLogo?: string;
   darkBrand?: string;
-}> = async (
-  [argsLogo],
-  { project: { android, ios } },
-  { platforms, html, flavor, licenseKey, ...args },
-) => {
+}) => {
   const [nodeStringVersion = ""] = process.versions.node.split(".");
   const nodeVersion = parseInt(nodeStringVersion, 10);
 
@@ -374,12 +381,7 @@ export const generate: CommandFunction<{
     process.exit(1);
   }
 
-  if (argsLogo == null) {
-    log.error("Missing required argument 'logo'");
-    process.exit(1);
-  }
-
-  const logoPath = path.resolve(workingPath, argsLogo);
+  const logoPath = path.resolve(workingPath, args.logo);
 
   const darkLogoPath =
     args.darkLogo != null
