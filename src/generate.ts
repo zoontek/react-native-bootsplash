@@ -1,4 +1,5 @@
 import murmurhash from "@emotion/hash";
+import plist from "@expo/plist";
 import {
   AndroidProjectConfig,
   IOSProjectConfig,
@@ -600,6 +601,28 @@ export const generate = async ({
 
   if (iosProjectPath != null) {
     log.title("🍏", "iOS");
+
+    const infoPlistPath = path.join(iosProjectPath, "Info.plist");
+
+    const infoPlist = plist.parse(hfs.text(infoPlistPath)) as Record<
+      string,
+      unknown
+    >;
+
+    infoPlist["UILaunchStoryboardName"] = "BootSplash.storyboard";
+
+    const formatted = formatXml(plist.build(infoPlist), {
+      collapseContent: true,
+      forceSelfClosingEmptyTag: false,
+      indentation: "\t",
+      lineSeparator: "\n",
+      whiteSpaceAtEndOfSelfclosingTag: false,
+    })
+      .replace(/<string\/>/gm, "<string></string>")
+      .replace(/^\t/gm, "");
+
+    hfs.write(infoPlistPath, formatted);
+    logWrite(infoPlistPath);
 
     const storyboardPath = path.resolve(
       iosProjectPath,
