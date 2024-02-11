@@ -142,13 +142,13 @@ public class RNBootSplashModuleImpl {
 
       if (finalThemeId != 0) {
         activity.setTheme(finalThemeId);
-
-        Window window = activity.getWindow();
-
-        if (window != null) {
-          window.setBackgroundDrawable(null);
-        }
       }
+    }
+
+    Window window = activity.getWindow();
+
+    if (window != null) {
+      window.setBackgroundDrawable(null);
     }
 
     @Nullable Integer backgroundResId = null;
