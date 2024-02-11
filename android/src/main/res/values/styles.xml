@@ -1,15 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="BootSplashNoAnimation">
-        <item name="android:windowEnterAnimation">@null</item>
-        <item name="android:windowExitAnimation">@null</item>
-    </style>
-
-    <style name="BootSplashFadeOutAnimation">
-        <item name="android:windowEnterAnimation">@null</item>
-        <item name="android:windowExitAnimation">@anim/bootsplash_fade_out</item>
-    </style>
-
     <style name="Theme.BootSplash.Common" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="android:opacity">opaque</item>
         <item name="android:windowBackground">@drawable/compat_splash_screen</item>

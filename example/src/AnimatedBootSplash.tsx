@@ -3,15 +3,17 @@ import { Animated, Dimensions } from "react-native";
 import BootSplash from "react-native-bootsplash";
 
 type Props = {
+  ready: boolean;
   onAnimationEnd: () => void;
 };
 
-export const AnimatedBootSplash = ({ onAnimationEnd }: Props) => {
+export const AnimatedBootSplash = ({ ready, onAnimationEnd }: Props) => {
   const [opacity] = useState(() => new Animated.Value(1));
   const [translateY] = useState(() => new Animated.Value(0));
 
   const { container, logo /*, brand */ } = BootSplash.useHideAnimation({
     manifest: require("../assets/bootsplash_manifest.json"),
+    pause: !ready,
 
     logo: require("../assets/bootsplash_logo.png"),
     // darkLogo: require("../assets/bootsplash_dark_logo.png"),
