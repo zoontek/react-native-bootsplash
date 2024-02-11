@@ -1,4 +1,7 @@
 import murmurhash from "@emotion/hash";
+import { IOSConfig } from "@expo/config-plugins";
+import plist from "@expo/plist";
+import { findProjectRoot } from "@react-native-community/cli-tools";
 import {
   AndroidProjectConfig,
   IOSProjectConfig,
@@ -100,6 +103,23 @@ const getStoryboard = ({
     </resources>
 </document>
 `;
+};
+
+export const addFileToXcodeProject = (filePath: string) => {
+  const projectRoot = findProjectRoot(workingPath);
+
+  const pbxprojectPath = IOSConfig.Paths.getPBXProjectPath(projectRoot);
+  const project = IOSConfig.XcodeUtils.getPbxproj(projectRoot);
+  const xcodeProjectPath = IOSConfig.Paths.getXcodeProjectPath(projectRoot);
+
+  IOSConfig.XcodeUtils.addResourceFileToGroup({
+    filepath: filePath,
+    groupName: path.parse(xcodeProjectPath).name,
+    project,
+  });
+
+  hfs.write(pbxprojectPath, project.writeSync());
+  logWrite(pbxprojectPath);
 };
 
 // Freely inspired by https://github.com/humanwhocodes/humanfs
@@ -615,6 +635,30 @@ export const generate = async ({
       }),
       { whiteSpaceAtEndOfSelfclosingTag: false },
     );
+
+    addFileToXcodeProject(storyboardPath);
+
+    const infoPlistPath = path.join(iosProjectPath, "Info.plist");
+
+    const infoPlist = plist.parse(hfs.text(infoPlistPath)) as Record<
+      string,
+      unknown
+    >;
+
+    infoPlist["UILaunchStoryboardName"] = "BootSplash.storyboard";
+
+    const formatted = formatXml(plist.build(infoPlist), {
+      collapseContent: true,
+      forceSelfClosingEmptyTag: false,
+      indentation: "\t",
+      lineSeparator: "\n",
+      whiteSpaceAtEndOfSelfclosingTag: false,
+    })
+      .replace(/<string\/>/gm, "<string></string>")
+      .replace(/^\t/gm, "");
+
+    hfs.write(infoPlistPath, formatted);
+    logWrite(infoPlistPath);
 
     const imageSetPath = path.resolve(
       iosProjectPath,
