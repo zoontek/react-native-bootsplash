@@ -64,7 +64,7 @@
   },
   "dependencies": {
     "@emotion/hash": "^0.9.1",
-    "@expo/plist": "^0.1.0",
+    "@expo/config-plugins": "^7.8.4",
     "detect-indent": "^6.1.0",
     "node-html-parser": "^6.1.12",
     "picocolors": "^1.0.0",

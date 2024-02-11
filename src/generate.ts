@@ -1,5 +1,7 @@
 import murmurhash from "@emotion/hash";
+import { IOSConfig } from "@expo/config-plugins";
 import plist from "@expo/plist";
+import { findProjectRoot } from "@react-native-community/cli-tools";
 import {
   AndroidProjectConfig,
   IOSProjectConfig,
@@ -101,6 +103,23 @@ const getStoryboard = ({
     </resources>
 </document>
 `;
+};
+
+export const addFileToXcodeProject = (filePath: string) => {
+  const projectRoot = findProjectRoot(workingPath);
+
+  const pbxprojectPath = IOSConfig.Paths.getPBXProjectPath(projectRoot);
+  const project = IOSConfig.XcodeUtils.getPbxproj(projectRoot);
+  const xcodeProjectPath = IOSConfig.Paths.getXcodeProjectPath(projectRoot);
+
+  IOSConfig.XcodeUtils.addResourceFileToGroup({
+    filepath: filePath,
+    groupName: path.parse(xcodeProjectPath).name,
+    project,
+  });
+
+  hfs.write(pbxprojectPath, project.writeSync());
+  logWrite(pbxprojectPath);
 };
 
 // Freely inspired by https://github.com/humanwhocodes/humanfs
@@ -602,6 +621,23 @@ export const generate = async ({
   if (iosProjectPath != null) {
     log.title("🍏", "iOS");
 
+    const storyboardPath = path.resolve(
+      iosProjectPath,
+      "BootSplash.storyboard",
+    );
+
+    writeXml(
+      storyboardPath,
+      getStoryboard({
+        logoHeight,
+        logoWidth,
+        background: background.rgb,
+      }),
+      { whiteSpaceAtEndOfSelfclosingTag: false },
+    );
+
+    addFileToXcodeProject(storyboardPath);
+
     const infoPlistPath = path.join(iosProjectPath, "Info.plist");
 
     const infoPlist = plist.parse(hfs.text(infoPlistPath)) as Record<
@@ -623,21 +659,6 @@ export const generate = async ({
 
     hfs.write(infoPlistPath, formatted);
     logWrite(infoPlistPath);
-
-    const storyboardPath = path.resolve(
-      iosProjectPath,
-      "BootSplash.storyboard",
-    );
-
-    writeXml(
-      storyboardPath,
-      getStoryboard({
-        logoHeight,
-        logoWidth,
-        background: background.rgb,
-      }),
-      { whiteSpaceAtEndOfSelfclosingTag: false },
-    );
 
     const imageSetPath = path.resolve(
       iosProjectPath,

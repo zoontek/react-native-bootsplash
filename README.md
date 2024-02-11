@@ -177,6 +177,8 @@ android/app/src/main/res/drawable-xxhdpi/bootsplash_logo.png
 android/app/src/main/res/drawable-xxxhdpi/bootsplash_logo.png
 
 ios/RNBootSplashExample/BootSplash.storyboard
+ios/RNBootSplashExample.xcodeproj/project.pbxproj
+ios/RNBootSplashExample/Info.plist
 ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/Contents.json
 ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo-<hash>.png
 ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo-<hash>@2x.png
@@ -230,18 +232,6 @@ _ℹ️ For `react-native` < `0.71` setup, follow the [`v4.4.0 README.md`](https
 
 @end
 ```
-
-2. Drag and drop the generated `BootSplash.storyboard` (and `Colors.xcassets`, when using dark mode):
-
-![](./docs/xcode_1.png)
-
-3. Create folder references:
-
-![](./docs/xcode_2.png)
-
-4. Set `BootSplash.storyboard` as Launch Screen File:
-
-![](./docs/xcode_3.png)
 
 ### Android
 
