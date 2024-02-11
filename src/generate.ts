@@ -4,7 +4,7 @@ import {
   IOSProjectConfig,
 } from "@react-native-community/cli-types";
 import detectIndent from "detect-indent";
-import fs from "fs-extra";
+import fs from "fs";
 import { parse as parseHtml } from "node-html-parser";
 import path from "path";
 import pc from "picocolors";
@@ -102,6 +102,19 @@ const getStoryboard = ({
 `;
 };
 
+// Freely inspired by https://github.com/humanwhocodes/humanfs
+export const hfs = {
+  buffer: (path: string) => fs.readFileSync(path),
+  ensureDir: (dir: string) => void fs.mkdirSync(dir, { recursive: true }),
+  exists: (path: string) => fs.existsSync(path),
+  json: (path: string) => JSON.parse(fs.readFileSync(path, "utf-8")) as unknown,
+  readDir: (path: string) => fs.readdirSync(path, "utf-8"),
+  realPath: (path: string) => fs.realpathSync(path, "utf-8"),
+  rm: (path: string) => fs.rmSync(path, { force: true }),
+  text: (path: string) => fs.readFileSync(path, "utf-8"),
+  write: (file: string, data: string) => fs.writeFileSync(file, data, "utf-8"),
+};
+
 export const log = {
   error: (text: string) => console.log(pc.red(`❌  ${text}`)),
   text: (text: string) => console.log(text),
@@ -120,12 +133,12 @@ export const logWrite = (
   );
 
 export const writeJson = (file: string, json: object) => {
-  fs.writeFileSync(file, JSON.stringify(json, null, 2) + "\n", "utf-8");
+  hfs.write(file, JSON.stringify(json, null, 2) + "\n");
   logWrite(file);
 };
 
 export const readXml = (file: string) => {
-  const xml = fs.readFileSync(file, "utf-8");
+  const xml = hfs.text(file);
   const { indent } = detectIndent(xml);
 
   const formatOptions: XMLFormatterOptions = {
@@ -149,12 +162,12 @@ export const writeXml = (
     ...options,
   });
 
-  fs.writeFileSync(file, formatted + "\n", "utf-8");
+  hfs.write(file, formatted + "\n");
   logWrite(file);
 };
 
 export const readHtml = (file: string) => {
-  const html = fs.readFileSync(file, "utf-8");
+  const html = hfs.text(file);
   const { type, amount } = detectIndent(html);
 
   const formatOptions: PrettierOptions = {
@@ -178,15 +191,16 @@ export const writeHtml = async (
     ...options,
   });
 
-  fs.writeFileSync(file, formatted, "utf-8");
+  hfs.write(file, formatted);
   logWrite(file);
 };
 
 export const cleanIOSAssets = (dir: string, prefix: string) => {
-  fs.readdirSync(dir, "utf-8")
+  hfs
+    .readDir(dir)
     .filter((file) => file.startsWith(prefix) && file.endsWith(".png"))
     .map((file) => path.join(dir, file))
-    .forEach((file) => fs.rmSync(file, { force: true }));
+    .forEach((file) => hfs.rm(file));
 };
 
 export const getIOSAssetFileName = async ({
@@ -248,7 +262,7 @@ const getAndroidResPath = (
     "res",
   );
 
-  if (!fs.existsSync(androidResPath)) {
+  if (!hfs.exists(androidResPath)) {
     log.warn(
       `No ${path.relative(
         workingPath,
@@ -282,7 +296,7 @@ const getIOSProjectPath = (ios: IOSProjectConfig): string | undefined => {
     .resolve(ios.sourceDir, ios.xcodeProject.name)
     .replace(/\.(xcodeproj|xcworkspace)$/, "");
 
-  if (!fs.existsSync(iosProjectPath)) {
+  if (!hfs.exists(iosProjectPath)) {
     log.warn(
       `No ${path.relative(
         workingPath,
@@ -297,7 +311,7 @@ const getIOSProjectPath = (ios: IOSProjectConfig): string | undefined => {
 const getHtmlTemplatePath = (html: string): string | undefined => {
   const htmlTemplatePath = path.resolve(workingPath, html);
 
-  if (!fs.existsSync(htmlTemplatePath)) {
+  if (!hfs.exists(htmlTemplatePath)) {
     log.warn(
       `No ${path.relative(
         workingPath,
@@ -500,12 +514,12 @@ export const generate = async ({
     log.title("🤖", "Android");
 
     const valuesPath = path.resolve(androidResPath, "values");
-    fs.ensureDirSync(valuesPath);
+    hfs.ensureDir(valuesPath);
 
     const colorsXmlPath = path.resolve(valuesPath, "colors.xml");
     const colorsXmlEntry = `<color name="bootsplash_background">${background.hex}</color>`;
 
-    if (fs.existsSync(colorsXmlPath)) {
+    if (hfs.exists(colorsXmlPath)) {
       const { root, formatOptions } = readXml(colorsXmlPath);
       const nextColor = parseHtml(colorsXmlEntry);
       const prevColor = root.querySelector(
@@ -536,7 +550,7 @@ export const generate = async ({
           `drawable-${suffix}`,
         );
 
-        fs.ensureDirSync(drawableDirPath);
+        hfs.ensureDir(drawableDirPath);
 
         // https://developer.android.com/develop/ui/views/launch/splash-screen#dimensions
         const canvasSize = 288 * ratio;
@@ -602,7 +616,7 @@ export const generate = async ({
       "BootSplashLogo.imageset",
     );
 
-    fs.ensureDirSync(imageSetPath);
+    hfs.ensureDir(imageSetPath);
     cleanIOSAssets(imageSetPath, "bootsplash_logo");
 
     const logoFileName = await getIOSAssetFileName({
@@ -667,7 +681,7 @@ export const generate = async ({
 
     const base64 = (
       format === "svg"
-        ? fs.readFileSync(logoPath)
+        ? hfs.buffer(logoPath)
         : await logo
             .clone()
             .resize(Math.round(logoWidth * 2))
@@ -725,7 +739,7 @@ export const generate = async ({
   if (assetsOutputPath != null) {
     log.title("📄", "Assets");
 
-    fs.ensureDirSync(assetsOutputPath);
+    hfs.ensureDir(assetsOutputPath);
 
     writeJson(path.resolve(assetsOutputPath, "bootsplash_manifest.json"), {
       background: background.hex,
