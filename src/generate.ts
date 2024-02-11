@@ -105,14 +105,20 @@ const getStoryboard = ({
 // Freely inspired by https://github.com/humanwhocodes/humanfs
 export const hfs = {
   buffer: (path: string) => fs.readFileSync(path),
-  ensureDir: (dir: string) => void fs.mkdirSync(dir, { recursive: true }),
   exists: (path: string) => fs.existsSync(path),
   json: (path: string) => JSON.parse(fs.readFileSync(path, "utf-8")) as unknown,
   readDir: (path: string) => fs.readdirSync(path, "utf-8"),
   realPath: (path: string) => fs.realpathSync(path, "utf-8"),
   rm: (path: string) => fs.rmSync(path, { force: true }),
   text: (path: string) => fs.readFileSync(path, "utf-8"),
-  write: (file: string, data: string) => fs.writeFileSync(file, data, "utf-8"),
+
+  ensureDir: (dir: string) => {
+    fs.mkdirSync(dir, { recursive: true });
+  },
+  write: (file: string, data: string) => {
+    const trimmed = data.trim();
+    fs.writeFileSync(file, trimmed === "" ? trimmed : trimmed + "\n", "utf-8");
+  },
 };
 
 export const log = {
@@ -133,7 +139,7 @@ export const logWrite = (
   );
 
 export const writeJson = (file: string, json: object) => {
-  hfs.write(file, JSON.stringify(json, null, 2) + "\n");
+  hfs.write(file, JSON.stringify(json, null, 2));
   logWrite(file);
 };
 
@@ -162,7 +168,7 @@ export const writeXml = (
     ...options,
   });
 
-  hfs.write(file, formatted + "\n");
+  hfs.write(file, formatted);
   logWrite(file);
 };
 
