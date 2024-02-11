@@ -33,18 +33,16 @@ export const App = () => {
   }, []);
 
   return (
-    <>
-      <View style={styles.container}>
-        <Text style={styles.text}>Hello, Dave.</Text>
+    <View style={styles.container}>
+      <Text style={styles.text}>Hello, Dave.</Text>
 
-        {visible && (
-          <AnimatedBootSplash
-            onAnimationEnd={() => {
-              setVisible(false);
-            }}
-          />
-        )}
-      </View>
-    </>
+      {visible && (
+        <AnimatedBootSplash
+          onAnimationEnd={() => {
+            setVisible(false);
+          }}
+        />
+      )}
+    </View>
   );
 };
