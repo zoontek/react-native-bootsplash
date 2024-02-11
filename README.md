@@ -205,7 +205,7 @@ _ℹ️ For `react-native` < `0.71` setup, follow the [`v4.4.0 README.md`](https
 
 ---
 
-1. Edit the `ios/YourProjectName/AppDelegate.mm` file:
+Edit the `ios/YourProjectName/AppDelegate.mm` file:
 
 ```obj-c
 #import "AppDelegate.h"
