@@ -387,6 +387,7 @@ To use it, don't forget to set the `--assets-output` option of the generator as 
 ```ts
 type useHideAnimation = (config: {
   manifest: Manifest; // the manifest file is generated when --assets-output is specified
+  pause?: boolean; // a boolean flag instructing animate execution to be paused
 
   // the required generated assets
   logo?: ImageRequireSource;

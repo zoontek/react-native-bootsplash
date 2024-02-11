@@ -58,9 +58,7 @@ const SecondScreen = () => (
 const Stack = createNativeStackNavigator<StackParamList>();
 
 export const App = () => {
-  const [bootSplashState, setBootSplashState] = useState<
-    "visible" | "hiding" | "hidden"
-  >("visible");
+  const [step, setStep] = useState<"visible" | "hiding" | "hidden">("visible");
 
   useEffect(() => {
     // set transparent status bar
@@ -76,7 +74,7 @@ export const App = () => {
     <>
       <NavigationContainer
         onReady={() => {
-          setBootSplashState("hiding");
+          setStep("hiding");
         }}
       >
         <Stack.Navigator initialRouteName="First">
@@ -85,10 +83,11 @@ export const App = () => {
         </Stack.Navigator>
       </NavigationContainer>
 
-      {bootSplashState === "hiding" && (
+      {step !== "hidden" && (
         <AnimatedBootSplash
+          ready={step === "hiding"}
           onAnimationEnd={() => {
-            setBootSplashState("hidden");
+            setStep("hidden");
           }}
         />
       )}
