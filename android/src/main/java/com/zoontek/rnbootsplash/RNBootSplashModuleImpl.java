@@ -271,7 +271,7 @@ public class RNBootSplashModuleImpl {
 
         View splashScreenView  = getSplashScreenView(activity);
 
-        if (splashScreenView == null) {
+        if (splashScreenView == null || mStatus == Status.HIDDEN) {
           clearPromiseQueue();
           return;
         }
