@@ -145,16 +145,15 @@ public class RNBootSplashModuleImpl {
       }
     }
 
-    Window window = activity.getWindow();
-
-    if (window != null) {
-      window.setBackgroundDrawable(null);
-    }
-
+    @Nullable Window window = activity.getWindow();
     @Nullable Integer backgroundResId = null;
     @Nullable Integer backgroundColor = null;
     @Nullable Drawable logo = null;
     @Nullable Drawable brand = null;
+
+    if (window != null) {
+      window.setBackgroundDrawable(null);
+    }
 
     if (currentTheme.resolveAttribute(R.attr.bootSplashBackground, typedValue, true)) {
       backgroundResId = typedValue.resourceId;
@@ -221,8 +220,8 @@ public class RNBootSplashModuleImpl {
       splashScreenView.setBackgroundResource(backgroundResId);
     } else if (backgroundColor != null) {
       splashScreenView.setBackgroundColor(backgroundColor);
-    } else {
-      splashScreenView.setBackground(activity.getWindow().getDecorView().getBackground());
+    } else if (window != null) {
+      splashScreenView.setBackground(window.getDecorView().getBackground());
     }
 
     if (logo != null) {
