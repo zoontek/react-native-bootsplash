@@ -1,5 +1,17 @@
+import { NavigationContainer } from "@react-navigation/native";
+import {
+  NativeStackScreenProps,
+  createNativeStackNavigator,
+} from "@react-navigation/native-stack";
 import { useEffect, useState } from "react";
-import { Platform, StatusBar, StyleSheet, Text, View } from "react-native";
+import {
+  Button,
+  Platform,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { AnimatedBootSplash } from "./AnimatedBootSplash";
 
 const styles = StyleSheet.create({
@@ -19,8 +31,36 @@ const styles = StyleSheet.create({
   },
 });
 
+type StackParamList = {
+  First: undefined;
+  Second: undefined;
+};
+
+const FirstScreen = ({
+  navigation,
+}: NativeStackScreenProps<StackParamList, "First">) => (
+  <View style={styles.container}>
+    <Button
+      title="Go to second screen"
+      onPress={() => {
+        navigation.navigate("Second");
+      }}
+    />
+  </View>
+);
+
+const SecondScreen = () => (
+  <View style={styles.container}>
+    <Text style={styles.text}>Hello, Dave.</Text>
+  </View>
+);
+
+const Stack = createNativeStackNavigator<StackParamList>();
+
 export const App = () => {
-  const [visible, setVisible] = useState(true);
+  const [bootSplashState, setBootSplashState] = useState<
+    "visible" | "hiding" | "hidden"
+  >("visible");
 
   useEffect(() => {
     // set transparent status bar
@@ -33,16 +73,25 @@ export const App = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Hello, Dave.</Text>
+    <>
+      <NavigationContainer
+        onReady={() => {
+          setBootSplashState("hiding");
+        }}
+      >
+        <Stack.Navigator initialRouteName="First">
+          <Stack.Screen name="First" component={FirstScreen} />
+          <Stack.Screen name="Second" component={SecondScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
 
-      {visible && (
+      {bootSplashState === "hiding" && (
         <AnimatedBootSplash
           onAnimationEnd={() => {
-            setVisible(false);
+            setBootSplashState("hidden");
           }}
         />
       )}
-    </View>
+    </>
   );
 };

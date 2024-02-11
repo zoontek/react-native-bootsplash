@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -141,6 +142,12 @@ public class RNBootSplashModuleImpl {
 
       if (finalThemeId != 0) {
         activity.setTheme(finalThemeId);
+
+        Window window = activity.getWindow();
+
+        if (window != null) {
+          window.setBackgroundDrawable(null);
+        }
       }
     }
 
