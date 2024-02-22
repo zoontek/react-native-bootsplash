@@ -3853,9 +3853,9 @@ invariant@^2.2.4:
     loose-envify "^1.0.0"
 
 ip@^1.1.5:
-  version "1.1.8"
-  resolved "https://registry.yarnpkg.com/ip/-/ip-1.1.8.tgz#ae05948f6b075435ed3307acce04629da8cdbf48"
-  integrity sha512-PuExPYUiu6qMBQb4l06ecm6T6ujzhmh+MeJcW9wa89PoAz5pvd4zPgN5WJV104mb6S2T1AwNIAaB70JNrLQWhg==
+  version "1.1.9"
+  resolved "https://registry.yarnpkg.com/ip/-/ip-1.1.9.tgz#8dfbcc99a754d07f425310b86a99546b1151e396"
+  integrity sha512-cyRxvOEpNHNtchU3Ln9KC/auJgup87llfQpQ+t5ghoC/UhL16SWzbueiCsdTnWmqAWl7LadfuwhlqmtOaqMHdQ==
 
 ipaddr.js@1.9.1:
   version "1.9.1"
@@ -5237,8 +5237,17 @@ react-native-bars@2.4.3:
   integrity sha512-CcqMqDN3Vp7xcOLzHlLmdK+1MBKF2S2tBqWUw/bKLtX/cRGgJwhXvCLD7fctA91V7Jh4vWiGmQPqWGHHXRfnog==
 
 "react-native-bootsplash@link:..":
-  version "0.0.0"
-  uid ""
+  version "5.4.0"
+  dependencies:
+    "@emotion/hash" "^0.9.1"
+    "@expo/config-plugins" "^7.8.4"
+    detect-indent "^6.1.0"
+    node-html-parser "^6.1.12"
+    picocolors "^1.0.0"
+    prettier "^3.1.1"
+    sharp "^0.32.6"
+    ts-dedent "^2.2.0"
+    xml-formatter "^3.6.0"
 
 react-native-web-image-loader@^0.1.1:
   version "0.1.1"
