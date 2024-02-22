@@ -116,6 +116,7 @@ export const addFileToXcodeProject = (filePath: string) => {
     filepath: filePath,
     groupName: path.parse(xcodeProjectPath).name,
     project,
+    isBuildFile: true,
   });
 
   hfs.write(pbxprojectPath, project.writeSync());
@@ -636,7 +637,9 @@ export const generate = async ({
       { whiteSpaceAtEndOfSelfclosingTag: false },
     );
 
-    addFileToXcodeProject(storyboardPath);
+    addFileToXcodeProject(
+      path.join(path.basename(iosProjectPath), "BootSplash.storyboard"),
+    );
 
     const infoPlistPath = path.join(iosProjectPath, "Info.plist");
 
