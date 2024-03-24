@@ -24,6 +24,17 @@ public class RNBootSplashModule extends NativeRNBootSplashSpec implements Lifecy
   }
 
   @Override
+  public void onHostResume() {}
+
+  @Override
+  public void onHostPause() {}
+
+  @Override
+  public void onHostDestroy() {
+    RNBootSplashModuleImpl.onHostDestroy();
+  }
+
+  @Override
   protected Map<String, Object> getTypedExportedConstants() {
     return RNBootSplashModuleImpl.getConstants(getReactApplicationContext());
   }
@@ -36,18 +47,5 @@ public class RNBootSplashModule extends NativeRNBootSplashSpec implements Lifecy
   @Override
   public void isVisible(Promise promise) {
     RNBootSplashModuleImpl.isVisible(promise);
-  }
-
-  @Override
-  public void onHostResume() {
-  }
-
-  @Override
-  public void onHostPause() {
-  }
-
-  @Override
-  public void onHostDestroy() {
-    RNBootSplashModuleImpl.deInit();
   }
 }

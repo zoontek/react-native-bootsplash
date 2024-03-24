@@ -26,6 +26,17 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
     return RNBootSplashModuleImpl.NAME;
   }
 
+  @Override
+  public void onHostResume() {}
+
+  @Override
+  public void onHostPause() {}
+
+  @Override
+  public void onHostDestroy() {
+    RNBootSplashModuleImpl.onHostDestroy();
+  }
+
   @Nullable
   @Override
   public Map<String, Object> getConstants() {
@@ -40,18 +51,5 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
   @ReactMethod
   public void isVisible(Promise promise) {
     RNBootSplashModuleImpl.isVisible(promise);
-  }
-
-  @Override
-  public void onHostResume() {
-  }
-
-  @Override
-  public void onHostPause() {
-  }
-
-  @Override
-  public void onHostDestroy() {
-    RNBootSplashModuleImpl.deInit();
   }
 }

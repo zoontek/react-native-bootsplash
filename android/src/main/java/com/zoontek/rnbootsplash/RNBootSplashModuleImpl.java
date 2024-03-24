@@ -136,14 +136,6 @@ public class RNBootSplashModuleImpl {
     });
   }
 
-  protected static void deInit() {
-    mThemeResId = -1;
-    mStatus = Status.HIDDEN;
-    mInitialDialog = null;
-    mFadeOutDialog = null;
-    clearPromiseQueue();
-  }
-
   private static void clearPromiseQueue() {
     while (!mPromiseQueue.isEmpty()) {
       Promise promise = mPromiseQueue.shift();
@@ -244,6 +236,21 @@ public class RNBootSplashModuleImpl {
       return version == 4;
     } catch (Exception ignored) {
       return false;
+    }
+  }
+
+  protected static void onHostDestroy() {
+    mStatus = Status.HIDDEN;
+    mThemeResId = -1;
+    clearPromiseQueue();
+
+    if (mInitialDialog != null) {
+      mInitialDialog.dismiss();
+      mInitialDialog = null;
+    }
+    if (mFadeOutDialog != null) {
+      mFadeOutDialog.dismiss();
+      mFadeOutDialog = null;
     }
   }
 
