@@ -136,6 +136,14 @@ public class RNBootSplashModuleImpl {
     });
   }
 
+  protected static void deInit() {
+    mThemeResId = -1;
+    mStatus = Status.HIDDEN;
+    mInitialDialog = null;
+    mFadeOutDialog = null;
+    clearPromiseQueue();
+  }
+
   private static void clearPromiseQueue() {
     while (!mPromiseQueue.isEmpty()) {
       Promise promise = mPromiseQueue.shift();

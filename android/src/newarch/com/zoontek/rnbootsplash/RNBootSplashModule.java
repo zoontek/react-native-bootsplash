@@ -2,6 +2,7 @@ package com.zoontek.rnbootsplash;
 
 import androidx.annotation.NonNull;
 
+import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.module.annotations.ReactModule;
@@ -9,10 +10,11 @@ import com.facebook.react.module.annotations.ReactModule;
 import java.util.Map;
 
 @ReactModule(name = RNBootSplashModuleImpl.NAME)
-public class RNBootSplashModule extends NativeRNBootSplashSpec {
+public class RNBootSplashModule extends NativeRNBootSplashSpec implements LifecycleEventListener {
 
   public RNBootSplashModule(ReactApplicationContext reactContext) {
     super(reactContext);
+    reactContext.addLifecycleEventListener(this);
   }
 
   @Override
@@ -34,5 +36,18 @@ public class RNBootSplashModule extends NativeRNBootSplashSpec {
   @Override
   public void isVisible(Promise promise) {
     RNBootSplashModuleImpl.isVisible(promise);
+  }
+
+  @Override
+  public void onHostResume() {
+  }
+
+  @Override
+  public void onHostPause() {
+  }
+
+  @Override
+  public void onHostDestroy() {
+    RNBootSplashModuleImpl.deInit();
   }
 }
