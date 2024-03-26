@@ -1163,7 +1163,7 @@ PODS:
     - React-logger (= 0.74.0-rc.5)
     - React-perflogger (= 0.74.0-rc.5)
     - React-utils (= 0.74.0-rc.5)
-  - RNBootSplash (5.4.1):
+  - RNBootSplash (5.5.0-rc.0):
     - React-Core
   - SocketRocket (0.7.0)
   - Yoga (0.0.0)
@@ -1346,7 +1346,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: d3f49c53809116a5d38da093a8aa78bf551aed09
-  DoubleConversion: fea03f2699887d960129cc54bba7e52542b6f953
+  DoubleConversion: 76ab83afb40bddeeee456813d9c04f67f78771b5
   FBLazyVector: 5b76d5fff75c5fb146a50a6edee4db626f9914d5
   fmt: 4c2741a687cc09f0634a2e2c72a838b99f1ff120
   glog: c5d68082e772fa1c511173d6b30a9de2c05a69a2
@@ -1398,7 +1398,7 @@ SPEC CHECKSUMS:
   React-runtimescheduler: 8951a04c202e17b4bd1a4789c21ad9dcaed6440b
   React-utils: c3478109d1266c268f923862546adfa4c23c0474
   ReactCommon: 9e56154615276b73abffa10c09905da40f6ad638
-  RNBootSplash: eff8239c4f795ce42a0604873aef3733aac0dedd
+  RNBootSplash: 0b2b9103fee434f7dc28c9a0515ff93cbc82a523
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   Yoga: 708c16540a21c44f989f4d402050e1f419d7461c
 
