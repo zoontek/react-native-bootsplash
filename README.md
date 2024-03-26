@@ -217,16 +217,19 @@ Edit the `ios/YourProjectName/AppDelegate.mm` file:
 
 // …
 
-// ⬇️ Add this before file @end
+// ⬇️ Add this before file @end (when bridgeless is enabled)
+- (void)customizeRootView:(RCTRootView *)rootView {
+  [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView]; // ⬅️ initialize the splash screen
+}
+
+// OR
+
+// ⬇️ Add this before file @end (when bridgeless is disabled)
 - (UIView *)createRootViewWithBridge:(RCTBridge *)bridge
                           moduleName:(NSString *)moduleName
                            initProps:(NSDictionary *)initProps {
-  UIView *rootView = [super createRootViewWithBridge:bridge
-                                          moduleName:moduleName
-                                           initProps:initProps];
-
+  UIView *rootView = [super createRootViewWithBridge:bridge moduleName:moduleName initProps:initProps];
   [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView]; // ⬅️ initialize the splash screen
-
   return rootView;
 }
 
