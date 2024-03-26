@@ -5,13 +5,16 @@
 #if RCT_NEW_ARCH_ENABLED
 #import <React/RCTSurfaceHostingProxyRootView.h>
 #import <React/RCTSurfaceHostingView.h>
+
+static RCTSurfaceHostingProxyRootView *_rootView = nil;
 #else
 #import <React/RCTRootView.h>
+
+static UIView *_rootView = nil;
 #endif
 
-static NSMutableArray<RCTPromiseResolveBlock> *_resolveQueue = [[NSMutableArray alloc] init];
 static UIView *_loadingView = nil;
-static UIView *_rootView = nil;
+static NSMutableArray<RCTPromiseResolveBlock> *_resolveQueue = [[NSMutableArray alloc] init];
 static bool _fade = false;
 static bool _nativeHidden = false;
 
@@ -91,7 +94,7 @@ RCT_EXPORT_MODULE();
 
 #ifdef RCT_NEW_ARCH_ENABLED
     if (rootView != nil && [rootView isKindOfClass:[RCTSurfaceHostingProxyRootView class]]) {
-      _rootView = [(RCTSurfaceHostingProxyRootView *)rootView view];
+      _rootView = (RCTSurfaceHostingProxyRootView *)rootView;
 #else
     if (rootView != nil && [rootView isKindOfClass:[RCTRootView class]]) {
       _rootView = (RCTRootView *)rootView;
@@ -104,7 +107,12 @@ RCT_EXPORT_MODULE();
       _loadingView.center = (CGPoint){CGRectGetMidX(_rootView.bounds), CGRectGetMidY(_rootView.bounds)};
       _loadingView.hidden = NO;
 
+#if RCT_NEW_ARCH_ENABLED
+      [_rootView disableActivityIndicatorAutoHide:YES];
+      [_rootView setLoadingView:_loadingView];
+#else
       [_rootView addSubview:_loadingView];
+#endif
 
       [[NSNotificationCenter defaultCenter] addObserver:self
                                                selector:@selector(onJavaScriptDidLoad)

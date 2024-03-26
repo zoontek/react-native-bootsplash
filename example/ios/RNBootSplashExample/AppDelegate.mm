@@ -41,4 +41,8 @@
   return rootView;
 }
 
+//- (void)customizeRootView:(RCTRootView *)rootView {
+//  [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView];
+//}
+
 @end
