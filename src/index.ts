@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ImageProps,
   ImageRequireSource,
@@ -6,7 +6,6 @@ import {
   StyleSheet,
   ViewProps,
   ViewStyle,
-  useColorScheme,
 } from "react-native";
 import NativeModule from "./NativeRNBootSplash";
 
@@ -81,22 +80,24 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
   const brandWidth = manifest.brand?.width;
   const brandHeight = manifest.brand?.height;
 
-  const colorScheme = useColorScheme();
+  const [
+    { darkModeEnabled, logoSizeRatio, navigationBarHeight, statusBarHeight },
+  ] = useState(() => NativeModule.getConstants());
 
   const backgroundColor: string =
-    colorScheme === "dark" && manifest.darkBackground != null
+    darkModeEnabled && manifest.darkBackground != null
       ? manifest.darkBackground
       : manifest.background;
 
   const logoFinalSrc: ImageRequireSource | undefined = skipLogo
     ? undefined
-    : colorScheme === "dark" && darkLogoSrc != null
+    : darkModeEnabled && darkLogoSrc != null
       ? darkLogoSrc
       : logoSrc;
 
   const brandFinalSrc: ImageRequireSource | undefined = skipBrand
     ? undefined
-    : colorScheme === "dark" && darkBrandSrc != null
+    : darkModeEnabled && darkBrandSrc != null
       ? darkBrandSrc
       : brandSrc;
 
@@ -181,9 +182,6 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
       return { container, logo, brand };
     }
 
-    const { logoSizeRatio, navigationBarHeight, statusBarHeight } =
-      NativeModule.getConstants();
-
     return {
       container: {
         ...container,
@@ -205,6 +203,10 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
       brand,
     };
   }, [
+    logoSizeRatio,
+    navigationBarHeight,
+    statusBarHeight,
+
     maybeRunAnimate,
 
     logoWidth,

@@ -137,7 +137,15 @@ RCT_EXPORT_MODULE();
 }
 
 - (NSDictionary *)constantsToExport {
+  UIWindow *window = RCTKeyWindow();
+  __block bool darkModeEnabled = false;
+
+  RCTUnsafeExecuteOnMainQueueSync(^{
+    darkModeEnabled = window != nil && window.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark;
+  });
+
   return @{
+    @"darkModeEnabled": @(darkModeEnabled),
     @"logoSizeRatio": @(1),
     @"navigationBarHeight": @(0),
     @"statusBarHeight": @(0)
