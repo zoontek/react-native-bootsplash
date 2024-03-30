@@ -81,7 +81,12 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
   const brandHeight = manifest.brand?.height;
 
   const [
-    { darkModeEnabled, logoSizeRatio, navigationBarHeight, statusBarHeight },
+    {
+      darkModeEnabled,
+      logoSizeRatio = 1,
+      navigationBarHeight = 0,
+      statusBarHeight = 0,
+    },
   ] = useState(() => NativeModule.getConstants());
 
   const backgroundColor: string =

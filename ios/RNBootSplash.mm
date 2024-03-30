@@ -145,10 +145,7 @@ RCT_EXPORT_MODULE();
   });
 
   return @{
-    @"darkModeEnabled": @(darkModeEnabled),
-    @"logoSizeRatio": @(1),
-    @"navigationBarHeight": @(0),
-    @"statusBarHeight": @(0)
+    @"darkModeEnabled": @(darkModeEnabled)
   };
 }
 
