@@ -14,9 +14,10 @@ function removeNode(node: Node | null) {
 
 export default {
   getConstants: () => ({
-    logoSizeRatio: 1,
-    navigationBarHeight: 0,
-    statusBarHeight: 0,
+    darkModeEnabled:
+      typeof window !== "undefined" &&
+      "matchMedia" in window &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches,
   }),
 
   hide: (fade) =>

@@ -2,6 +2,7 @@ package com.zoontek.rnbootsplash;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
 import android.util.TypedValue;
@@ -258,6 +259,9 @@ public class RNBootSplashModuleImpl {
     final Resources resources = reactContext.getResources();
     HashMap<String, Object> constants = new HashMap<>();
 
+    int uiMode =
+      reactContext.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+
     @SuppressLint({"InternalInsetResource", "DiscouragedApi"}) final int statusBarHeightResId =
       resources.getIdentifier("status_bar_height", "dimen", "android");
 
@@ -273,6 +277,7 @@ public class RNBootSplashModuleImpl {
       ? PixelUtil.toDIPFromPixel(resources.getDimensionPixelSize(navigationBarHeightResId))
       : 0;
 
+    constants.put("darkModeEnabled", uiMode == Configuration.UI_MODE_NIGHT_YES);
     constants.put("logoSizeRatio", isSamsungOneUI4() ? 0.5 : 1);
     constants.put("navigationBarHeight", navigationBarHeight);
     constants.put("statusBarHeight", statusBarHeight);
