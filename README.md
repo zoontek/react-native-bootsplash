@@ -17,8 +17,8 @@ Show a splash screen during app startup. Hide it when you are ready.<br>
 
 ## Support
 
-This library follows the React Native [releases support policy](https://github.com/reactwg/react-native-releases#releases-support-policy).<br>
-It is supporting the **latest version** and the **two previous minor series**.
+This library follows the React Native [releases support policy](https://github.com/reactwg/react-native-releases/blob/main/docs/support.md).<br>
+It is supporting the **latest version**, and the **two previous minor series**.
 
 ## Installation
 
