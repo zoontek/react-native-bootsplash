@@ -24,17 +24,24 @@ const workingPath = process.env.INIT_CWD ?? process.env.PWD ?? process.cwd();
 
 export type Color = {
   hex: string;
-  rgb: { R: string; G: string; B: string };
+  rgb: {
+    R: string;
+    G: string;
+    B: string;
+  };
 };
 
-const parseColor = (value: string): Color => {
+export const parseColor = (value: string): Color => {
   const up = value.toUpperCase().replace(/[^0-9A-F]/g, "");
-  const hex = "#" + (up.length === 3 ? up + up : up);
 
-  if (hex.length !== 7) {
-    log.error("--background-color value is not a valid hexadecimal color.");
+  if (up.length !== 3 && up.length !== 6) {
+    log.error(`"${value}" value is not a valid hexadecimal color.`);
     process.exit(1);
   }
+
+  const hex =
+    "#" +
+    (up.length === 3 ? "" + up[0] + up[0] + up[1] + up[1] + up[2] + up[2] : up);
 
   const rgb: Color["rgb"] = {
     R: (parseInt("" + hex[1] + hex[2], 16) / 255).toPrecision(15),
