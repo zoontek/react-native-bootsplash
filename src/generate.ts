@@ -33,16 +33,16 @@ export type Color = {
 
 export const parseColor = (value: string): Color => {
   const up = value.toUpperCase().replace(/[^0-9A-F]/g, "");
-  const short = up.length !== 3;
 
-  if (short && up.length !== 6) {
+  if (up.length !== 3 && up.length !== 6) {
     log.error(`"${value}" value is not a valid hexadecimal color.`);
     process.exit(1);
   }
 
-  const hex = short
-    ? "#" + up[0] + up[0] + up[1] + up[1] + up[2] + up[2]
-    : "#" + up;
+  const hex =
+    up.length === 3
+      ? "#" + up[0] + up[0] + up[1] + up[1] + up[2] + up[2]
+      : "#" + up;
 
   const rgb: Color["rgb"] = {
     R: (parseInt("" + hex[1] + hex[2], 16) / 255).toPrecision(15),
