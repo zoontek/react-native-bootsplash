@@ -656,7 +656,7 @@ export const generate = async ({
       unknown
     >;
 
-    infoPlist["UILaunchStoryboardName"] = "BootSplash.storyboard";
+    infoPlist["UILaunchStoryboardName"] = "BootSplash";
 
     const formatted = formatXml(plist.build(infoPlist), {
       collapseContent: true,
