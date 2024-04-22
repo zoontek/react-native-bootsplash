@@ -217,14 +217,14 @@ Edit the `ios/YourProjectName/AppDelegate.mm` file:
 
 // …
 
-// ⬇️ Add this before file @end (when bridgeless is enabled)
+// ⬇️ Add this before file @end (for react-native 0.74+)
 - (void)customizeRootView:(RCTRootView *)rootView {
   [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView]; // ⬅️ initialize the splash screen
 }
 
 // OR
 
-// ⬇️ Add this before file @end (when bridgeless is disabled)
+// ⬇️ Add this before file @end (for react-native < 0.74)
 - (UIView *)createRootViewWithBridge:(RCTBridge *)bridge
                           moduleName:(NSString *)moduleName
                            initProps:(NSDictionary *)initProps {
