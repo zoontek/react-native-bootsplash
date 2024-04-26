@@ -1,5 +1,5 @@
 import murmurhash from "@emotion/hash";
-import { IOSConfig } from "@expo/config-plugins";
+import * as Expo from "@expo/config-plugins";
 import plist from "@expo/plist";
 import { findProjectRoot } from "@react-native-community/cli-tools";
 import {
@@ -21,14 +21,37 @@ import formatXml, { XMLFormatterOptions } from "xml-formatter";
 import { Manifest } from ".";
 
 const workingPath = process.env.INIT_CWD ?? process.env.PWD ?? process.cwd();
+const projectRoot = findProjectRoot(workingPath);
+
+type RGBColor = {
+  R: string;
+  G: string;
+  B: string;
+};
 
 export type Color = {
   hex: string;
-  rgb: {
-    R: string;
-    G: string;
-    B: string;
-  };
+  rgb: RGBColor;
+};
+
+export const log = {
+  error: (text: string) => {
+    console.log(pc.red(`❌  ${text}`));
+  },
+  title: (emoji: string, text: string) => {
+    console.log(`\n${emoji}  ${pc.underline(pc.bold(text))}`);
+  },
+  warn: (text: string) => {
+    console.log(pc.yellow(`⚠️   ${text}`));
+  },
+  write: (filePath: string, dimensions?: { width: number; height: number }) => {
+    console.log(
+      `    ${path.relative(workingPath, filePath)}` +
+        (dimensions != null
+          ? ` (${dimensions.width}x${dimensions.height})`
+          : ""),
+    );
+  },
 };
 
 export const parseColor = (value: string): Color => {
@@ -114,13 +137,13 @@ const getStoryboard = ({
 };
 
 export const addFileToXcodeProject = (filePath: string) => {
-  const projectRoot = findProjectRoot(workingPath);
+  const pbxprojectPath = Expo.IOSConfig.Paths.getPBXProjectPath(projectRoot);
+  const project = Expo.IOSConfig.XcodeUtils.getPbxproj(projectRoot);
 
-  const pbxprojectPath = IOSConfig.Paths.getPBXProjectPath(projectRoot);
-  const project = IOSConfig.XcodeUtils.getPbxproj(projectRoot);
-  const xcodeProjectPath = IOSConfig.Paths.getXcodeProjectPath(projectRoot);
+  const xcodeProjectPath =
+    Expo.IOSConfig.Paths.getXcodeProjectPath(projectRoot);
 
-  IOSConfig.XcodeUtils.addResourceFileToGroup({
+  Expo.IOSConfig.XcodeUtils.addResourceFileToGroup({
     filepath: filePath,
     groupName: path.parse(xcodeProjectPath).name,
     project,
@@ -128,7 +151,7 @@ export const addFileToXcodeProject = (filePath: string) => {
   });
 
   hfs.write(pbxprojectPath, project.writeSync());
-  logWrite(pbxprojectPath);
+  log.write(pbxprojectPath);
 };
 
 // Freely inspired by https://github.com/humanwhocodes/humanfs
@@ -141,39 +164,30 @@ export const hfs = {
   rm: (path: string) => fs.rmSync(path, { force: true }),
   text: (path: string) => fs.readFileSync(path, "utf-8"),
 
+  copy: (src: string, dest: string) => {
+    const srcBuffer = fs.readFileSync(src);
+    const destBuffer = fs.readFileSync(dest);
+
+    if (!srcBuffer.equals(destBuffer)) {
+      fs.copyFileSync(src, dest);
+    }
+  },
   ensureDir: (dir: string) => {
     fs.mkdirSync(dir, { recursive: true });
   },
-  write: (file: string, data: string) => {
-    const trimmed = data.trim();
-    fs.writeFileSync(file, trimmed === "" ? trimmed : trimmed + "\n", "utf-8");
+  write: (path: string, content: string) => {
+    const trimmed = content.trim();
+    fs.writeFileSync(path, trimmed === "" ? trimmed : trimmed + "\n", "utf-8");
   },
 };
 
-export const log = {
-  error: (text: string) => console.log(pc.red(`❌  ${text}`)),
-  text: (text: string) => console.log(text),
-  title: (emoji: string, text: string) =>
-    console.log(`\n${emoji}  ${pc.underline(pc.bold(text))}`),
-  warn: (text: string) => console.log(pc.yellow(`⚠️   ${text}`)),
+export const writeJson = (filePath: string, content: object) => {
+  hfs.write(filePath, JSON.stringify(content, null, 2));
+  log.write(filePath);
 };
 
-export const logWrite = (
-  filePath: string,
-  dimensions?: { width: number; height: number },
-) =>
-  console.log(
-    `    ${path.relative(workingPath, filePath)}` +
-      (dimensions != null ? ` (${dimensions.width}x${dimensions.height})` : ""),
-  );
-
-export const writeJson = (file: string, json: object) => {
-  hfs.write(file, JSON.stringify(json, null, 2));
-  logWrite(file);
-};
-
-export const readXml = (file: string) => {
-  const xml = hfs.text(file);
+export const readXml = (filePath: string) => {
+  const xml = hfs.text(filePath);
   const { indent } = detectIndent(xml);
 
   const formatOptions: XMLFormatterOptions = {
@@ -184,11 +198,11 @@ export const readXml = (file: string) => {
 };
 
 export const writeXml = (
-  file: string,
-  xml: string,
+  filePath: string,
+  content: string,
   options?: XMLFormatterOptions,
 ) => {
-  const formatted = formatXml(xml, {
+  const formatted = formatXml(content, {
     collapseContent: true,
     forceSelfClosingEmptyTag: true,
     indentation: "    ",
@@ -197,12 +211,12 @@ export const writeXml = (
     ...options,
   });
 
-  hfs.write(file, formatted);
-  logWrite(file);
+  hfs.write(filePath, formatted);
+  log.write(filePath);
 };
 
-export const readHtml = (file: string) => {
-  const html = hfs.text(file);
+export const readHtml = (filePath: string) => {
+  const html = hfs.text(filePath);
   const { type, amount } = detectIndent(html);
 
   const formatOptions: PrettierOptions = {
@@ -214,11 +228,11 @@ export const readHtml = (file: string) => {
 };
 
 export const writeHtml = async (
-  file: string,
-  html: string,
+  filePath: string,
+  content: string,
   options?: Omit<PrettierOptions, "parser" | "plugins">,
 ) => {
-  const formatted = await prettier.format(html, {
+  const formatted = await prettier.format(content, {
     parser: "html",
     plugins: [htmlPlugin, cssPlugin],
     tabWidth: 2,
@@ -226,8 +240,8 @@ export const writeHtml = async (
     ...options,
   });
 
-  hfs.write(file, formatted);
-  logWrite(file);
+  hfs.write(filePath, formatted);
+  log.write(filePath);
 };
 
 export const cleanIOSAssets = (dir: string, prefix: string) => {
@@ -358,6 +372,22 @@ const getHtmlTemplatePath = (html: string): string | undefined => {
   }
 };
 
+export const getImageHeight = (
+  image: Sharp | undefined,
+  width: number,
+): Promise<number> => {
+  if (image == null) {
+    return Promise.resolve(0);
+  }
+
+  return image
+    .clone()
+    .resize(width)
+    .toBuffer()
+    .then((buffer) => sharp(buffer).metadata())
+    .then(({ height = 0 }) => Math.round(height));
+};
+
 export type AddonConfig = {
   licenseKey: string;
 
@@ -411,7 +441,7 @@ export const generate = async ({
   platforms: ("android" | "ios" | "web")[];
   background: string;
   logoWidth: number;
-  assetsOutput?: string;
+  assetsOutput: string;
   html: string;
   flavor: string;
 
@@ -445,10 +475,7 @@ export const generate = async ({
       ? path.resolve(workingPath, args.darkBrand)
       : undefined;
 
-  const assetsOutputPath =
-    args.assetsOutput != null
-      ? path.resolve(workingPath, args.assetsOutput)
-      : undefined;
+  const assetsOutputPath = path.resolve(workingPath, args.assetsOutput);
 
   const logo = sharp(logoPath);
   const darkLogo = darkLogoPath != null ? sharp(darkLogoPath) : undefined;
@@ -499,20 +526,8 @@ export const generate = async ({
   await ensureSupportedFormat("Brand", brand);
   await ensureSupportedFormat("Dark brand", darkBrand);
 
-  const logoHeight = await logo
-    .clone()
-    .resize(logoWidth)
-    .toBuffer()
-    .then((buffer) => sharp(buffer).metadata())
-    .then(({ height = 0 }) => Math.round(height));
-
-  const brandHeight =
-    (await brand
-      ?.clone()
-      .resize(brandWidth)
-      .toBuffer()
-      .then((buffer) => sharp(buffer).metadata())
-      .then(({ height = 0 }) => Math.round(height))) ?? 0;
+  const logoHeight = await getImageHeight(logo, logoWidth);
+  const brandHeight = await getImageHeight(brand, brandWidth);
 
   if (logoWidth < args.logoWidth) {
     log.warn(
@@ -618,7 +633,7 @@ export const generate = async ({
               .toFile(filePath),
           )
           .then(() => {
-            logWrite(filePath, {
+            log.write(filePath, {
               width: canvasSize,
               height: canvasSize,
             });
@@ -669,7 +684,7 @@ export const generate = async ({
       .replace(/^\t/gm, "");
 
     hfs.write(infoPlistPath, formatted);
-    logWrite(infoPlistPath);
+    log.write(infoPlistPath);
 
     const imageSetPath = path.resolve(
       iosProjectPath,
@@ -727,7 +742,7 @@ export const generate = async ({
           .png({ quality: 100 })
           .toFile(filePath)
           .then(({ width, height }) => {
-            logWrite(filePath, { width, height });
+            log.write(filePath, { width, height });
           });
       }),
     );
@@ -797,43 +812,41 @@ export const generate = async ({
     await writeHtml(htmlTemplatePath, root.toString(), formatOptions);
   }
 
-  if (assetsOutputPath != null) {
-    log.title("📄", "Assets");
+  log.title("📄", "Assets");
 
-    hfs.ensureDir(assetsOutputPath);
+  hfs.ensureDir(assetsOutputPath);
 
-    writeJson(path.resolve(assetsOutputPath, "bootsplash_manifest.json"), {
-      background: background.hex,
-      logo: {
-        width: logoWidth,
-        height: logoHeight,
-      },
-    } satisfies Manifest);
+  writeJson(path.resolve(assetsOutputPath, "bootsplash_manifest.json"), {
+    background: background.hex,
+    logo: {
+      width: logoWidth,
+      height: logoHeight,
+    },
+  } satisfies Manifest);
 
-    await Promise.all(
-      [
-        { ratio: 1, suffix: "" },
-        { ratio: 1.5, suffix: "@1,5x" },
-        { ratio: 2, suffix: "@2x" },
-        { ratio: 3, suffix: "@3x" },
-        { ratio: 4, suffix: "@4x" },
-      ].map(({ ratio, suffix }) => {
-        const filePath = path.resolve(
-          assetsOutputPath,
-          `bootsplash_logo${suffix}.png`,
-        );
+  await Promise.all(
+    [
+      { ratio: 1, suffix: "" },
+      { ratio: 1.5, suffix: "@1,5x" },
+      { ratio: 2, suffix: "@2x" },
+      { ratio: 3, suffix: "@3x" },
+      { ratio: 4, suffix: "@4x" },
+    ].map(({ ratio, suffix }) => {
+      const filePath = path.resolve(
+        assetsOutputPath,
+        `bootsplash_logo${suffix}.png`,
+      );
 
-        return logo
-          .clone()
-          .resize(Math.round(logoWidth * ratio))
-          .png({ quality: 100 })
-          .toFile(filePath)
-          .then(({ width, height }) => {
-            logWrite(filePath, { width, height });
-          });
-      }),
-    );
-  }
+      return logo
+        .clone()
+        .resize(Math.round(logoWidth * ratio))
+        .png({ quality: 100 })
+        .toFile(filePath)
+        .then(({ width, height }) => {
+          log.write(filePath, { width, height });
+        });
+    }),
+  );
 
   if (licenseKey != null && executeAddon) {
     const addon = requireAddon();
@@ -865,7 +878,7 @@ export const generate = async ({
       darkBrand,
     });
   } else {
-    log.text(`
+    console.log(`
 ${pc.blue("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓")}
 ${pc.blue("┃")}  🔑  ${pc.bold(
       "Get a license key for brand image / dark mode support",
@@ -876,5 +889,22 @@ ${pc.blue("┃")}      ${pc.underline(
 ${pc.blue("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛")}`);
   }
 
-  log.text(`\n💖  Thanks for using ${pc.underline("react-native-bootsplash")}`);
+  console.log(
+    `\n💖  Thanks for using ${pc.underline("react-native-bootsplash")}`,
+  );
+};
+
+export type ExpoProps = {
+  assetsDir?: string;
+};
+
+export type ExpoPlugin = Expo.ConfigPlugin<ExpoProps>;
+
+export const withGenerate: ExpoPlugin = (config, props = {}) => {
+  const plugins: ExpoPlugin[] = [];
+
+  return Expo.withPlugins(
+    config,
+    plugins.map((plugin) => [plugin, props]),
+  );
 };
