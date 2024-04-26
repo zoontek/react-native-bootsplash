@@ -64,30 +64,30 @@
   },
   "dependencies": {
     "@emotion/hash": "^0.9.1",
-    "@expo/config-plugins": "^7.8.4",
+    "@expo/config-plugins": "^7.9.1",
     "detect-indent": "^6.1.0",
-    "node-html-parser": "^6.1.12",
+    "node-html-parser": "^6.1.13",
     "picocolors": "^1.0.0",
-    "prettier": "^3.1.1",
+    "prettier": "^3.2.5",
     "sharp": "^0.32.6",
     "ts-dedent": "^2.2.0",
-    "xml-formatter": "^3.6.0"
+    "xml-formatter": "^3.6.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@babel/preset-env": "^7.20.0",
-    "@types/node": "^20.10.7",
+    "@types/node": "^20.12.7",
     "@types/react": "^18.2.60",
     "@types/sharp": "^0.31.1",
-    "@typescript-eslint/eslint-plugin": "^7.4.0",
-    "@typescript-eslint/parser": "^7.4.0",
+    "@typescript-eslint/eslint-plugin": "^7.7.1",
+    "@typescript-eslint/parser": "^7.7.1",
     "eslint": "^8.57.0",
-    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-hooks": "^4.6.1",
     "prettier-plugin-organize-imports": "^3.2.4",
     "react": "18.2.0",
     "react-native": "0.74.3",
     "react-native-builder-bob": "^0.23.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.4.5"
   },
   "codegenConfig": {
     "name": "RNBootSplashSpec",
