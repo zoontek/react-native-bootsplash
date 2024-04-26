@@ -19,6 +19,7 @@
     "!ios/build",
     "!src/addon",
     "RNBootSplash.podspec",
+    "app.plugin.js",
     "react-native.config.js"
   ],
   "repository": {

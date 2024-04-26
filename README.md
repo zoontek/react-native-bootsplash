@@ -186,7 +186,6 @@ ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo-
 
 index.html
 
-# Only if --assets-output was specified
 assets/bootsplash_manifest.json
 assets/bootsplash_logo.png
 assets/bootsplash_logo@1,5x.png
@@ -382,14 +381,13 @@ BootSplash.isVisible().then((value) => console.log(value));
 
 ### useHideAnimation()
 
-A hook to easily creation a hide custom hide animation, by animating all splash screen elements using `Animated`, `react-native-reanimated` or else (similar as the video on top of this documentation).<br>
-To use it, don't forget to set the `--assets-output` option of the generator as it requires the manifest and assets images files.
+A hook to easily creation a hide custom hide animation, by animating all splash screen elements using `Animated`, `react-native-reanimated` or else (similar as the video on top of this documentation).
 
 #### Method type
 
 ```ts
 type useHideAnimation = (config: {
-  manifest: Manifest; // the manifest file is generated when --assets-output is specified
+  manifest: Manifest; // the manifest file is generated in your assets directory
 
   // the required generated assets
   logo?: ImageRequireSource;
