@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { Animated, Dimensions } from "react-native";
+import { Animated, Dimensions, Platform } from "react-native";
 import BootSplash from "react-native-bootsplash";
+
+const useNativeDriver = Platform.OS !== "web";
 
 type Props = {
   onAnimationEnd: () => void;
@@ -26,17 +28,17 @@ export const AnimatedBootSplash = ({ onAnimationEnd }: Props) => {
 
       Animated.stagger(250, [
         Animated.spring(translateY, {
-          useNativeDriver: true,
+          useNativeDriver,
           toValue: -50,
         }),
         Animated.spring(translateY, {
-          useNativeDriver: true,
+          useNativeDriver,
           toValue: height,
         }),
       ]).start();
 
       Animated.timing(opacity, {
-        useNativeDriver: true,
+        useNativeDriver,
         toValue: 0,
         duration: 150,
         delay: 350,
