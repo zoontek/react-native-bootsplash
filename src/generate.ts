@@ -45,12 +45,12 @@ export const parseColor = (value: string): Color => {
       : "#" + up;
 
   const rgb: Color["rgb"] = {
-    R: (parseInt("" + hex[1] + hex[2], 16) / 255).toPrecision(15),
-    G: (parseInt("" + hex[3] + hex[4], 16) / 255).toPrecision(15),
-    B: (parseInt("" + hex[5] + hex[6], 16) / 255).toPrecision(15),
+    R: (Number.parseInt("" + hex[1] + hex[2], 16) / 255).toPrecision(15),
+    G: (Number.parseInt("" + hex[3] + hex[4], 16) / 255).toPrecision(15),
+    B: (Number.parseInt("" + hex[5] + hex[6], 16) / 255).toPrecision(15),
   };
 
-  return { hex, rgb };
+  return { hex: hex.toLowerCase(), rgb };
 };
 
 const getStoryboard = ({
@@ -408,7 +408,7 @@ export const generate = async ({
   ios?: IOSProjectConfig;
 
   logo: string;
-  platforms: string[];
+  platforms: ("android" | "ios" | "web")[];
   background: string;
   logoWidth: number;
   assetsOutput?: string;
@@ -423,9 +423,9 @@ export const generate = async ({
   darkBrand?: string;
 }) => {
   const [nodeStringVersion = ""] = process.versions.node.split(".");
-  const nodeVersion = parseInt(nodeStringVersion, 10);
+  const nodeVersion = Number.parseInt(nodeStringVersion, 10);
 
-  if (!isNaN(nodeVersion) && nodeVersion < 18) {
+  if (!Number.isNaN(nodeVersion) && nodeVersion < 18) {
     log.error("Requires Node 18 (or higher)");
     process.exit(1);
   }
