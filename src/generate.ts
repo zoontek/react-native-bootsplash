@@ -97,6 +97,7 @@ const getStoryboard = ({
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21678"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -117,7 +118,7 @@ const getStoryboard = ({
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Bcu-3y-fUS"/>
-                        <color key="backgroundColor" red="${R}" green="${G}" blue="${B}" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" name="BootSplashBackground"/>
                         <constraints>
                             <constraint firstItem="3lX-Ut-9ad" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="Fh9-Fy-1nT"/>
                             <constraint firstItem="3lX-Ut-9ad" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="nvB-Ic-PnI"/>
@@ -131,12 +132,15 @@ const getStoryboard = ({
     </scenes>
     <resources>
         <image name="BootSplashLogo" width="${logoWidth}" height="${logoHeight}"/>
+        <namedColor name="BootSplashBackground">
+            <color red="${R}" green="${G}" blue="${B}" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
     </resources>
 </document>
 `;
 };
 
-export const addFileToXcodeProject = (filePath: string) => {
+const addFileToXcodeProject = (filePath: string) => {
   const pbxprojectPath = Expo.IOSConfig.Paths.getPBXProjectPath(projectRoot);
   const project = Expo.IOSConfig.XcodeUtils.getPbxproj(projectRoot);
 
@@ -394,7 +398,7 @@ export type AddonConfig = {
   androidResPath: string | undefined;
   iosProjectPath: string | undefined;
   htmlTemplatePath: string | undefined;
-  assetsOutputPath: string | undefined;
+  assetsOutputPath: string;
 
   logoPath: string;
   darkLogoPath: string | undefined;
@@ -662,6 +666,39 @@ export const generate = async ({
 
     addFileToXcodeProject(
       path.join(path.basename(iosProjectPath), "BootSplash.storyboard"),
+    );
+
+    const colorsSetPath = path.resolve(
+      iosProjectPath,
+      "Colors.xcassets",
+      "BootSplashBackground.colorset",
+    );
+
+    hfs.ensureDir(colorsSetPath);
+
+    writeJson(path.resolve(colorsSetPath, "Contents.json"), {
+      colors: [
+        {
+          idiom: "universal",
+          color: {
+            "color-space": "srgb",
+            components: {
+              blue: background.rgb.B,
+              green: background.rgb.G,
+              red: background.rgb.R,
+              alpha: "1.000",
+            },
+          },
+        },
+      ],
+      info: {
+        author: "xcode",
+        version: 1,
+      },
+    });
+
+    addFileToXcodeProject(
+      path.join(path.basename(iosProjectPath), "Colors.xcassets"),
     );
 
     const infoPlistPath = path.join(iosProjectPath, "Info.plist");
