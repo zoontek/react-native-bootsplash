@@ -29,6 +29,7 @@ export type Manifest = {
 
 export type UseHideAnimationConfig = {
   manifest: Manifest;
+  ready?: boolean;
 
   logo?: ImageRequireSource;
   darkLogo?: ImageRequireSource;
@@ -59,6 +60,7 @@ export function isVisible(): Promise<boolean> {
 export function useHideAnimation(config: UseHideAnimationConfig) {
   const {
     manifest,
+    ready = true,
 
     logo: logoSrc,
     darkLogo: darkLogoSrc,
@@ -106,30 +108,38 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
       ? darkBrandSrc
       : brandSrc;
 
-  const animateFn = useRef(animate);
-  const layoutReady = useRef(false);
-  const logoReady = useRef(skipLogo);
-  const brandReady = useRef(skipBrand);
-  const animateHasBeenCalled = useRef(false);
+  const ref = useRef({
+    layoutReady: false,
+    logoReady: skipLogo,
+    brandReady: skipBrand,
+    userReady: ready,
 
-  useEffect(() => {
-    animateFn.current = animate;
+    animate,
+    animateHasBeenCalled: false,
   });
 
   const maybeRunAnimate = useCallback(() => {
     if (
-      layoutReady.current &&
-      logoReady.current &&
-      brandReady.current &&
-      !animateHasBeenCalled.current
+      ref.current.layoutReady &&
+      ref.current.logoReady &&
+      ref.current.brandReady &&
+      ref.current.userReady &&
+      !ref.current.animateHasBeenCalled
     ) {
-      animateHasBeenCalled.current = true;
+      ref.current.animateHasBeenCalled = true;
 
       hide({ fade: false })
-        .then(() => animateFn.current())
+        .then(() => ref.current.animate())
         .catch(() => {});
     }
   }, []);
+
+  useEffect(() => {
+    ref.current.animate = animate;
+    ref.current.userReady = ready;
+
+    maybeRunAnimate();
+  });
 
   return useMemo<UseHideAnimation>(() => {
     const containerStyle: ViewStyle = {
@@ -142,7 +152,7 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
     const container: ViewProps = {
       style: containerStyle,
       onLayout: () => {
-        layoutReady.current = true;
+        ref.current.layoutReady = true;
         maybeRunAnimate();
       },
     };
@@ -159,7 +169,7 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
               height: logoHeight,
             },
             onLoadEnd: () => {
-              logoReady.current = true;
+              ref.current.logoReady = true;
               maybeRunAnimate();
             },
           };
@@ -178,7 +188,7 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
               height: brandHeight,
             },
             onLoadEnd: () => {
-              brandReady.current = true;
+              ref.current.brandReady = true;
               maybeRunAnimate();
             },
           };

@@ -388,6 +388,7 @@ A hook to easily creation a hide custom hide animation, by animating all splash 
 ```ts
 type useHideAnimation = (config: {
   manifest: Manifest; // the manifest file is generated in your assets directory
+  ready?: boolean; // a boolean flag to delay the animate execution (default: true)
 
   // the required generated assets
   logo?: ImageRequireSource;
