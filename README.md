@@ -316,7 +316,7 @@ public class MainActivity extends ReactActivity {
 import android.os.Bundle
 import com.zoontek.rnbootsplash.RNBootSplash
 
-class MainActivity : ReactActivity() { {
+class MainActivity : ReactActivity() {
 
   // …
 
