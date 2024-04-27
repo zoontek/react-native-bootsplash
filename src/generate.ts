@@ -291,22 +291,21 @@ const ensureSupportedFormat = async (
   }
 };
 
-const getAndroidResPath = (
-  android: AndroidProjectConfig,
-  {
-    brandHeight,
-    brandWidth,
-    flavor,
-    logoHeight,
-    logoWidth,
-  }: {
-    brandHeight: number;
-    brandWidth: number;
-    flavor: string;
-    logoHeight: number;
-    logoWidth: number;
-  },
-): string | undefined => {
+const getAndroidResPath = ({
+  android,
+  brandHeight,
+  brandWidth,
+  flavor,
+  logoHeight,
+  logoWidth,
+}: {
+  android: AndroidProjectConfig;
+  brandHeight: number;
+  brandWidth: number;
+  flavor: string;
+  logoHeight: number;
+  logoWidth: number;
+}): string | undefined => {
   const androidResPath = path.resolve(
     android.sourceDir,
     android.appName,
@@ -479,7 +478,11 @@ export const generate = async ({
       ? path.resolve(workingPath, args.darkBrand)
       : undefined;
 
-  const assetsOutputPath = path.resolve(workingPath, args.assetsOutput);
+  const assetsOutputPath = path.resolve(
+    workingPath,
+    args.assetsOutput,
+    "bootsplash",
+  );
 
   const logo = sharp(logoPath);
   const darkLogo = darkLogoPath != null ? sharp(darkLogoPath) : undefined;
@@ -546,7 +549,8 @@ export const generate = async ({
 
   const androidResPath =
     platforms.includes("android") && android != null
-      ? getAndroidResPath(android, {
+      ? getAndroidResPath({
+          android,
           brandHeight,
           brandWidth,
           flavor,
@@ -576,6 +580,7 @@ export const generate = async ({
     if (hfs.exists(colorsXmlPath)) {
       const { root, formatOptions } = readXml(colorsXmlPath);
       const nextColor = parseHtml(colorsXmlEntry);
+
       const prevColor = root.querySelector(
         'color[name="bootsplash_background"]',
       );
@@ -853,7 +858,7 @@ export const generate = async ({
 
   hfs.ensureDir(assetsOutputPath);
 
-  writeJson(path.resolve(assetsOutputPath, "bootsplash_manifest.json"), {
+  writeJson(path.resolve(assetsOutputPath, "manifest.json"), {
     background: background.hex,
     logo: {
       width: logoWidth,
@@ -869,10 +874,7 @@ export const generate = async ({
       { ratio: 3, suffix: "@3x" },
       { ratio: 4, suffix: "@4x" },
     ].map(({ ratio, suffix }) => {
-      const filePath = path.resolve(
-        assetsOutputPath,
-        `bootsplash_logo${suffix}.png`,
-      );
+      const filePath = path.resolve(assetsOutputPath, `logo${suffix}.png`);
 
       return logo
         .clone()
