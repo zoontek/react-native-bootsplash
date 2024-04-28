@@ -26,9 +26,15 @@ import { Manifest } from ".";
 const workingPath = process.env.INIT_CWD ?? process.env.PWD ?? process.cwd();
 const projectRoot = findProjectRoot(workingPath);
 
-type Platforms = ("android" | "ios" | "web")[];
+export type Platforms = ("android" | "ios" | "web")[];
 
-type RGBColor = {
+export type AcceptedFileName = `bootsplash_${
+  | "logo"
+  | "dark_logo"
+  | "brand"
+  | "dark_brand"}`;
+
+export type RGBColor = {
   R: string;
   G: string;
   B: string;
@@ -266,10 +272,14 @@ export const getIOSAssetFileName = async ({
   image,
   width,
 }: {
-  name: string;
-  image: Sharp;
+  name: AcceptedFileName;
+  image?: Sharp;
   width: number;
 }) => {
+  if (image == null) {
+    return name;
+  }
+
   const buffer = await image
     .clone()
     .resize(width)
@@ -544,11 +554,7 @@ export const generate = async ({
       ? path.resolve(workingPath, args.darkBrand)
       : undefined;
 
-  const assetsOutputPath = path.resolve(
-    workingPath,
-    args.assetsOutput,
-    "bootsplash",
-  );
+  const assetsOutputPath = path.resolve(workingPath, args.assetsOutput);
 
   const logo = sharp(logoPath);
   const darkLogo = darkLogoPath != null ? sharp(darkLogoPath) : undefined;
@@ -642,29 +648,31 @@ export const generate = async ({
 
     hfs.ensureDir(androidOutputPath);
 
-    const valuesPath = path.resolve(androidOutputPath, "values");
-    hfs.ensureDir(valuesPath);
+    if (!isExpo) {
+      const valuesPath = path.resolve(androidOutputPath, "values");
+      hfs.ensureDir(valuesPath);
 
-    const colorsXmlPath = path.resolve(valuesPath, "colors.xml");
-    const colorsXmlEntry = `<color name="bootsplash_background">${background.hex}</color>`;
+      const colorsXmlPath = path.resolve(valuesPath, "colors.xml");
+      const colorsXmlEntry = `<color name="bootsplash_background">${background.hex}</color>`;
 
-    if (hfs.exists(colorsXmlPath)) {
-      const { root, formatOptions } = readXml(colorsXmlPath);
-      const nextColor = parseHtml(colorsXmlEntry);
+      if (hfs.exists(colorsXmlPath)) {
+        const { root, formatOptions } = readXml(colorsXmlPath);
+        const nextColor = parseHtml(colorsXmlEntry);
 
-      const prevColor = root.querySelector(
-        'color[name="bootsplash_background"]',
-      );
+        const prevColor = root.querySelector(
+          'color[name="bootsplash_background"]',
+        );
 
-      if (prevColor != null) {
-        prevColor.replaceWith(nextColor);
+        if (prevColor != null) {
+          prevColor.replaceWith(nextColor);
+        } else {
+          root.querySelector("resources")?.appendChild(nextColor);
+        }
+
+        writeXml(colorsXmlPath, root.toString(), formatOptions);
       } else {
-        root.querySelector("resources")?.appendChild(nextColor);
+        writeXml(colorsXmlPath, `<resources>${colorsXmlEntry}</resources>`);
       }
-
-      writeXml(colorsXmlPath, root.toString(), formatOptions);
-    } else {
-      writeXml(colorsXmlPath, `<resources>${colorsXmlEntry}</resources>`);
     }
 
     await Promise.all(
@@ -934,7 +942,7 @@ export const generate = async ({
 
   hfs.ensureDir(assetsOutputPath);
 
-  writeJson(path.resolve(assetsOutputPath, "manifest.json"), {
+  writeJson(path.resolve(assetsOutputPath, "bootsplash_manifest.json"), {
     background: background.hex,
     logo: {
       width: logoWidth,
@@ -950,7 +958,10 @@ export const generate = async ({
       { ratio: 3, suffix: "@3x" },
       { ratio: 4, suffix: "@4x" },
     ].map(({ ratio, suffix }) => {
-      const filePath = path.resolve(assetsOutputPath, `logo${suffix}.png`);
+      const filePath = path.resolve(
+        assetsOutputPath,
+        `bootsplash_logo${suffix}.png`,
+      );
 
       return logo
         .clone()
@@ -1074,7 +1085,7 @@ const withAndroidStyles: ExpoPlugin = (config, props) =>
     const { assetsDir = "assets", edgeToEdge = false } = props;
 
     const manifest = (await hfs.json(
-      path.resolve(workingPath, assetsDir, "bootsplash", "manifest.json"),
+      path.resolve(workingPath, assetsDir, "bootsplash_manifest.json"),
     )) as Manifest;
 
     const item = [
@@ -1119,7 +1130,7 @@ const withAndroidColors: ExpoPlugin = (config, props) =>
     const { assetsDir = "assets" } = props;
 
     const manifest = (await hfs.json(
-      path.resolve(workingPath, assetsDir, "bootsplash", "manifest.json"),
+      path.resolve(workingPath, assetsDir, "bootsplash_manifest.json"),
     )) as Manifest;
 
     config.modResults = assignColorValue(config.modResults, {
@@ -1135,7 +1146,7 @@ const withAndroidColorsNight: ExpoPlugin = (config, props) =>
     const { assetsDir = "assets" } = props;
 
     const manifest = (await hfs.json(
-      path.resolve(workingPath, assetsDir, "bootsplash", "manifest.json"),
+      path.resolve(workingPath, assetsDir, "bootsplash_manifest.json"),
     )) as Manifest;
 
     if (manifest.darkBackground != null) {
