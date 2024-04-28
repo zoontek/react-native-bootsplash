@@ -313,7 +313,7 @@ const getAndroidOutputPath = ({
   logoHeight: number;
   logoWidth: number;
   platforms: Platforms;
-}): string | undefined => {
+}) => {
   if (!platforms.includes("android")) {
     return;
   }
@@ -324,7 +324,7 @@ const getAndroidOutputPath = ({
     return; // TODO: warn user
   }
 
-  const androidResPath = path.resolve(
+  const androidOutputPath = path.resolve(
     android.sourceDir,
     android.appName,
     "src",
@@ -332,28 +332,31 @@ const getAndroidOutputPath = ({
     "res",
   );
 
-  if (!hfs.exists(androidResPath)) {
-    log.warn(
+  if (!hfs.exists(androidOutputPath)) {
+    return log.warn(
       `No ${path.relative(
         workingPath,
-        androidResPath,
+        androidOutputPath,
       )} directory found. Skipping Android assets generation…`,
     );
-  } else if (logoWidth > 288 || logoHeight > 288) {
-    log.warn(
+  }
+
+  if (logoWidth > 288 || logoHeight > 288) {
+    return log.warn(
       "Logo size exceeding 288x288dp will be cropped by Android. Skipping Android assets generation…",
     );
-  } else if (brandWidth > 200 || brandHeight > 80) {
-    log.warn(
+  }
+  if (brandWidth > 200 || brandHeight > 80) {
+    return log.warn(
       "Brand size exceeding 200x80dp will be cropped by Android. Skipping Android assets generation…",
     );
-  } else {
-    if (logoWidth > 192 || logoHeight > 192) {
-      log.warn(`Logo size exceeds 192x192dp. It might be cropped by Android.`);
-    }
-
-    return androidResPath;
   }
+
+  if (logoWidth > 192 || logoHeight > 192) {
+    log.warn("Logo size exceeds 192x192dp. It might be cropped by Android.");
+  }
+
+  return androidOutputPath;
 };
 
 const getIOSOutputPath = ({
@@ -366,7 +369,7 @@ const getIOSOutputPath = ({
   ios?: IOSProjectConfig;
   isExpo: boolean;
   platforms: Platforms;
-}): string | undefined => {
+}) => {
   if (!platforms.includes("ios")) {
     return;
   }
@@ -376,26 +379,24 @@ const getIOSOutputPath = ({
   if (ios == null) {
     return; // TODO: warn user
   }
-
   if (ios.xcodeProject == null) {
-    log.warn("No Xcode project found. Skipping iOS assets generation…");
-    return;
+    return log.warn("No Xcode project found. Skipping iOS assets generation…");
   }
 
-  const iosProjectPath = path
+  const iosOutputPath = path
     .resolve(ios.sourceDir, ios.xcodeProject.name)
     .replace(/\.(xcodeproj|xcworkspace)$/, "");
 
-  if (!hfs.exists(iosProjectPath)) {
-    log.warn(
+  if (!hfs.exists(iosOutputPath)) {
+    return log.warn(
       `No ${path.relative(
         workingPath,
-        iosProjectPath,
+        iosOutputPath,
       )} directory found. Skipping iOS assets generation…`,
     );
-  } else {
-    return iosProjectPath;
   }
+
+  return iosOutputPath;
 };
 
 const getHtmlTemplatePath = ({
@@ -404,7 +405,7 @@ const getHtmlTemplatePath = ({
 }: {
   html: string;
   platforms: Platforms;
-}): string | undefined => {
+}) => {
   if (!platforms.includes("web")) {
     return;
   }
@@ -412,15 +413,15 @@ const getHtmlTemplatePath = ({
   const htmlTemplatePath = path.resolve(workingPath, html);
 
   if (!hfs.exists(htmlTemplatePath)) {
-    log.warn(
+    return log.warn(
       `No ${path.relative(
         workingPath,
         htmlTemplatePath,
       )} file found. Skipping HTML + CSS generation…`,
     );
-  } else {
-    return htmlTemplatePath;
   }
+
+  return htmlTemplatePath;
 };
 
 export const getImageHeight = (
@@ -566,7 +567,7 @@ export const generate = async ({
 
   if (licenseKey != null && !executeAddon) {
     log.warn(
-      `You specified a license key but none of the options that requires it.`,
+      "You specified a license key but none of the options that requires it.",
     );
   }
 
