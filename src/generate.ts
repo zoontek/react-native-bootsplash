@@ -23,6 +23,8 @@ import { Manifest } from ".";
 const workingPath = process.env.INIT_CWD ?? process.env.PWD ?? process.cwd();
 const projectRoot = findProjectRoot(workingPath);
 
+type Platforms = ("android" | "ios" | "web")[];
+
 type RGBColor = {
   R: string;
   G: string;
@@ -291,21 +293,37 @@ const ensureSupportedFormat = async (
   }
 };
 
-const getAndroidResPath = ({
+const getAndroidOutputPath = ({
   android,
+  assetsOutputPath,
   brandHeight,
   brandWidth,
   flavor,
+  isExpo,
   logoHeight,
   logoWidth,
+  platforms,
 }: {
-  android: AndroidProjectConfig;
+  android?: AndroidProjectConfig;
+  assetsOutputPath: string;
   brandHeight: number;
   brandWidth: number;
   flavor: string;
+  isExpo: boolean;
   logoHeight: number;
   logoWidth: number;
+  platforms: Platforms;
 }): string | undefined => {
+  if (!platforms.includes("android")) {
+    return;
+  }
+  if (isExpo) {
+    return path.join(assetsOutputPath, "android");
+  }
+  if (android == null) {
+    return; // TODO: warn user
+  }
+
   const androidResPath = path.resolve(
     android.sourceDir,
     android.appName,
@@ -325,7 +343,7 @@ const getAndroidResPath = ({
     log.warn(
       "Logo size exceeding 288x288dp will be cropped by Android. Skipping Android assets generation…",
     );
-  } else if (brandHeight > 80 || brandWidth > 200) {
+  } else if (brandWidth > 200 || brandHeight > 80) {
     log.warn(
       "Brand size exceeding 200x80dp will be cropped by Android. Skipping Android assets generation…",
     );
@@ -338,7 +356,27 @@ const getAndroidResPath = ({
   }
 };
 
-const getIOSProjectPath = (ios: IOSProjectConfig): string | undefined => {
+const getIOSOutputPath = ({
+  assetsOutputPath,
+  ios,
+  isExpo,
+  platforms,
+}: {
+  assetsOutputPath: string;
+  ios?: IOSProjectConfig;
+  isExpo: boolean;
+  platforms: Platforms;
+}): string | undefined => {
+  if (!platforms.includes("ios")) {
+    return;
+  }
+  if (isExpo) {
+    return path.join(assetsOutputPath, "ios");
+  }
+  if (ios == null) {
+    return; // TODO: warn user
+  }
+
   if (ios.xcodeProject == null) {
     log.warn("No Xcode project found. Skipping iOS assets generation…");
     return;
@@ -360,7 +398,17 @@ const getIOSProjectPath = (ios: IOSProjectConfig): string | undefined => {
   }
 };
 
-const getHtmlTemplatePath = (html: string): string | undefined => {
+const getHtmlTemplatePath = ({
+  html,
+  platforms,
+}: {
+  html: string;
+  platforms: Platforms;
+}): string | undefined => {
+  if (!platforms.includes("web")) {
+    return;
+  }
+
   const htmlTemplatePath = path.resolve(workingPath, html);
 
   if (!hfs.exists(htmlTemplatePath)) {
@@ -393,9 +441,10 @@ export const getImageHeight = (
 
 export type AddonConfig = {
   licenseKey: string;
+  isExpo: boolean;
 
-  androidResPath: string | undefined;
-  iosProjectPath: string | undefined;
+  androidOutputPath: string | undefined;
+  iosOutputPath: string | undefined;
   htmlTemplatePath: string | undefined;
   assetsOutputPath: string;
 
@@ -428,6 +477,17 @@ const requireAddon = ():
   }
 };
 
+const hasExpoConfig = () => {
+  const appJsonPath = path.resolve(projectRoot, "app.json");
+
+  if (!hfs.exists(appJsonPath)) {
+    return false;
+  }
+
+  const { expo } = hfs.json(appJsonPath) as { expo?: unknown };
+  return expo != null;
+};
+
 export const generate = async ({
   android,
   ios,
@@ -441,7 +501,7 @@ export const generate = async ({
   ios?: IOSProjectConfig;
 
   logo: string;
-  platforms: ("android" | "ios" | "web")[];
+  platforms: Platforms;
   background: string;
   logoWidth: number;
   assetsOutput: string;
@@ -455,6 +515,8 @@ export const generate = async ({
   darkLogo?: string;
   darkBrand?: string;
 }) => {
+  const isExpo = hasExpoConfig();
+
   const [nodeStringVersion = ""] = process.versions.node.split(".");
   const nodeVersion = Number.parseInt(nodeStringVersion, 10);
 
@@ -547,31 +609,36 @@ export const generate = async ({
     );
   }
 
-  const androidResPath =
-    platforms.includes("android") && android != null
-      ? getAndroidResPath({
-          android,
-          brandHeight,
-          brandWidth,
-          flavor,
-          logoHeight,
-          logoWidth,
-        })
-      : undefined;
+  const androidOutputPath = getAndroidOutputPath({
+    android,
+    assetsOutputPath,
+    brandHeight,
+    brandWidth,
+    flavor,
+    isExpo,
+    logoHeight,
+    logoWidth,
+    platforms,
+  });
 
-  const iosProjectPath =
-    platforms.includes("ios") && ios != null
-      ? getIOSProjectPath(ios)
-      : undefined;
+  const iosOutputPath = getIOSOutputPath({
+    assetsOutputPath,
+    ios,
+    isExpo,
+    platforms,
+  });
 
-  const htmlTemplatePath = platforms.includes("web")
-    ? getHtmlTemplatePath(html)
-    : undefined;
+  const htmlTemplatePath = getHtmlTemplatePath({
+    html,
+    platforms,
+  });
 
-  if (androidResPath != null) {
+  if (androidOutputPath != null) {
     log.title("🤖", "Android");
 
-    const valuesPath = path.resolve(androidResPath, "values");
+    hfs.ensureDir(androidOutputPath);
+
+    const valuesPath = path.resolve(androidOutputPath, "values");
     hfs.ensureDir(valuesPath);
 
     const colorsXmlPath = path.resolve(valuesPath, "colors.xml");
@@ -605,7 +672,7 @@ export const generate = async ({
         { ratio: 4, suffix: "xxxhdpi" },
       ].map(({ ratio, suffix }) => {
         const drawableDirPath = path.resolve(
-          androidResPath,
+          androidOutputPath,
           `drawable-${suffix}`,
         );
 
@@ -651,13 +718,12 @@ export const generate = async ({
     );
   }
 
-  if (iosProjectPath != null) {
+  if (iosOutputPath != null) {
     log.title("🍏", "iOS");
 
-    const storyboardPath = path.resolve(
-      iosProjectPath,
-      "BootSplash.storyboard",
-    );
+    hfs.ensureDir(iosOutputPath);
+
+    const storyboardPath = path.resolve(iosOutputPath, "BootSplash.storyboard");
 
     writeXml(
       storyboardPath,
@@ -669,12 +735,14 @@ export const generate = async ({
       { whiteSpaceAtEndOfSelfclosingTag: false },
     );
 
-    addFileToXcodeProject(
-      path.join(path.basename(iosProjectPath), "BootSplash.storyboard"),
-    );
+    if (!isExpo) {
+      addFileToXcodeProject(
+        path.join(path.basename(iosOutputPath), "BootSplash.storyboard"),
+      );
+    }
 
     const colorsSetPath = path.resolve(
-      iosProjectPath,
+      iosOutputPath,
       "Colors.xcassets",
       "BootSplashBackground.colorset",
     );
@@ -702,34 +770,38 @@ export const generate = async ({
       },
     });
 
-    addFileToXcodeProject(
-      path.join(path.basename(iosProjectPath), "Colors.xcassets"),
-    );
+    if (!isExpo) {
+      addFileToXcodeProject(
+        path.join(path.basename(iosOutputPath), "Colors.xcassets"),
+      );
+    }
 
-    const infoPlistPath = path.join(iosProjectPath, "Info.plist");
+    if (!isExpo) {
+      const infoPlistPath = path.join(iosOutputPath, "Info.plist");
 
-    const infoPlist = plist.parse(hfs.text(infoPlistPath)) as Record<
-      string,
-      unknown
-    >;
+      const infoPlist = plist.parse(hfs.text(infoPlistPath)) as Record<
+        string,
+        unknown
+      >;
 
-    infoPlist["UILaunchStoryboardName"] = "BootSplash";
+      infoPlist["UILaunchStoryboardName"] = "BootSplash";
 
-    const formatted = formatXml(plist.build(infoPlist), {
-      collapseContent: true,
-      forceSelfClosingEmptyTag: false,
-      indentation: "\t",
-      lineSeparator: "\n",
-      whiteSpaceAtEndOfSelfclosingTag: false,
-    })
-      .replace(/<string\/>/gm, "<string></string>")
-      .replace(/^\t/gm, "");
+      const formatted = formatXml(plist.build(infoPlist), {
+        collapseContent: true,
+        forceSelfClosingEmptyTag: false,
+        indentation: "\t",
+        lineSeparator: "\n",
+        whiteSpaceAtEndOfSelfclosingTag: false,
+      })
+        .replace(/<string\/>/gm, "<string></string>")
+        .replace(/^\t/gm, "");
 
-    hfs.write(infoPlistPath, formatted);
-    log.write(infoPlistPath);
+      hfs.write(infoPlistPath, formatted);
+      log.write(infoPlistPath);
+    }
 
     const imageSetPath = path.resolve(
-      iosProjectPath,
+      iosOutputPath,
       "Images.xcassets",
       "BootSplashLogo.imageset",
     );
@@ -892,9 +964,10 @@ export const generate = async ({
 
     await addon?.execute({
       licenseKey,
+      isExpo,
 
-      androidResPath,
-      iosProjectPath,
+      androidOutputPath,
+      iosOutputPath,
       htmlTemplatePath,
       assetsOutputPath,
 
