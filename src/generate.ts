@@ -1,5 +1,8 @@
 import murmurhash from "@emotion/hash";
 import * as Expo from "@expo/config-plugins";
+import { assignColorValue } from "@expo/config-plugins/build/android/Colors";
+import { addImports } from "@expo/config-plugins/build/android/codeMod";
+import { mergeContents } from "@expo/config-plugins/build/utils/generateCode";
 import plist from "@expo/plist";
 import { findProjectRoot } from "@react-native-community/cli-tools";
 import {
@@ -318,10 +321,10 @@ const getAndroidOutputPath = ({
     return;
   }
   if (isExpo) {
-    return path.join(assetsOutputPath, "android");
+    return path.resolve(assetsOutputPath, "android");
   }
   if (android == null) {
-    return; // TODO: warn user
+    return;
   }
 
   const androidOutputPath = path.resolve(
@@ -374,10 +377,10 @@ const getIOSOutputPath = ({
     return;
   }
   if (isExpo) {
-    return path.join(assetsOutputPath, "ios");
+    return path.resolve(assetsOutputPath, "ios");
   }
   if (ios == null) {
-    return; // TODO: warn user
+    return;
   }
   if (ios.xcodeProject == null) {
     return log.warn("No Xcode project found. Skipping iOS assets generation…");
@@ -444,9 +447,9 @@ export type AddonConfig = {
   licenseKey: string;
   isExpo: boolean;
 
-  androidOutputPath: string | undefined;
-  iosOutputPath: string | undefined;
-  htmlTemplatePath: string | undefined;
+  androidOutputPath: string | void;
+  iosOutputPath: string | void;
+  htmlTemplatePath: string | void;
   assetsOutputPath: string;
 
   logoPath: string;
@@ -778,7 +781,7 @@ export const generate = async ({
     }
 
     if (!isExpo) {
-      const infoPlistPath = path.join(iosOutputPath, "Info.plist");
+      const infoPlistPath = path.resolve(iosOutputPath, "Info.plist");
 
       const infoPlist = plist.parse(hfs.text(infoPlistPath)) as Record<
         string,
@@ -1009,12 +1012,241 @@ ${pc.blue("┗━━━━━━━━━━━━━━━━━━━━━━
 
 export type ExpoProps = {
   assetsDir?: string;
+  edgeToEdge?: boolean;
 };
 
 export type ExpoPlugin = Expo.ConfigPlugin<ExpoProps>;
 
+const withAndroidManifest: ExpoPlugin = (config) =>
+  Expo.withAndroidManifest(config, (config) => {
+    config.modResults.manifest.application?.forEach((application) => {
+      if (application.$["android:name"] === ".MainApplication") {
+        const { activity } = application;
+
+        activity?.forEach((activity) => {
+          if (activity.$["android:name"] === ".MainActivity") {
+            activity.$["android:theme"] = "@style/BootTheme";
+          }
+        });
+      }
+    });
+
+    return config;
+  });
+
+const withMainActivity: ExpoPlugin = (config) =>
+  Expo.withMainActivity(config, (config) => {
+    const { modResults } = config;
+    const { language } = modResults;
+
+    const withImports = addImports(
+      modResults.contents.replace(
+        /(\/\/ )?setTheme\(R\.style\.AppTheme\)/,
+        "// setTheme(R.style.AppTheme)",
+      ),
+      ["android.os.Bundle", "com.zoontek.rnbootsplash.RNBootSplash"],
+      language === "java",
+    );
+
+    // indented with 4 spaces
+    const withInit = mergeContents({
+      src: withImports,
+      comment: "    //",
+      tag: "bootsplash-init",
+      offset: 0,
+      anchor: /super\.onCreate\(null\)/,
+      newSrc:
+        "    RNBootSplash.init(this, R.style.BootTheme)" +
+        (language === "java" ? ";" : ""),
+    });
+
+    return {
+      ...config,
+      modResults: {
+        ...modResults,
+        contents: withInit.contents,
+      },
+    };
+  });
+
+const withAndroidStyles: ExpoPlugin = (config, props) =>
+  Expo.withAndroidStyles(config, async (config) => {
+    const { assetsDir = "assets", edgeToEdge = false } = props;
+
+    const manifest = (await hfs.json(
+      path.resolve(workingPath, assetsDir, "bootsplash", "manifest.json"),
+    )) as Manifest;
+
+    const item = [
+      {
+        $: { name: "postBootSplashTheme" },
+        _: "@style/AppTheme",
+      },
+      {
+        $: { name: "bootSplashBackground" },
+        _: "@color/bootsplash_background",
+      },
+      {
+        $: { name: "bootSplashLogo" },
+        _: "@drawable/bootsplash_logo",
+      },
+    ];
+
+    if (manifest.brand != null) {
+      item.push({
+        $: { name: "bootSplashBrand" },
+        _: "@drawable/bootsplash_brand",
+      });
+    }
+
+    config.modResults.resources.style
+      ?.filter(({ $ }) => $.name !== "BootTheme")
+      .push({
+        item,
+        $: {
+          name: "BootTheme",
+          parent: edgeToEdge
+            ? "Theme.BootSplash"
+            : "Theme.BootSplash.EdgeToEdge",
+        },
+      });
+
+    return config;
+  });
+
+const withAndroidColors: ExpoPlugin = (config, props) =>
+  Expo.withAndroidColors(config, async (config) => {
+    const { assetsDir = "assets" } = props;
+
+    const manifest = (await hfs.json(
+      path.resolve(workingPath, assetsDir, "bootsplash", "manifest.json"),
+    )) as Manifest;
+
+    config.modResults = assignColorValue(config.modResults, {
+      name: "bootsplash_background",
+      value: manifest.background,
+    });
+
+    return config;
+  });
+
+const withAndroidColorsNight: ExpoPlugin = (config, props) =>
+  Expo.withAndroidColorsNight(config, async (config) => {
+    const { assetsDir = "assets" } = props;
+
+    const manifest = (await hfs.json(
+      path.resolve(workingPath, assetsDir, "bootsplash", "manifest.json"),
+    )) as Manifest;
+
+    if (manifest.darkBackground != null) {
+      config.modResults = assignColorValue(config.modResults, {
+        name: "bootsplash_background",
+        value: manifest.darkBackground,
+      });
+    }
+
+    return config;
+  });
+
+const withAppDelegate: ExpoPlugin = (config) =>
+  Expo.withAppDelegate(config, (config) => {
+    const [sdkStringVersion = ""] = config.sdkVersion?.split(".") ?? "";
+    const isAtLeastExpo51 = Number.parseInt(sdkStringVersion, 10) >= 51;
+
+    const { modResults } = config;
+    const { language } = modResults;
+
+    if (language !== "objc" && language !== "objcpp") {
+      throw new Error(
+        `Cannot modify the project AppDelegate as it's not in a supported language: ${language}`,
+      );
+    }
+
+    const withHeader = mergeContents({
+      src: modResults.contents,
+      comment: "//",
+      tag: "bootsplash-header",
+      offset: 1,
+      anchor: /#import "AppDelegate\.h"/,
+      newSrc: '#import "RNBootSplash.h"',
+    });
+
+    const withRootView = mergeContents({
+      src: withHeader.contents,
+      comment: "//",
+      tag: "bootsplash-init",
+      offset: 0,
+      anchor: /@end/,
+      newSrc: isAtLeastExpo51
+        ? dedent`
+          - (void)customizeRootView:(RCTRootView *)rootView {
+            [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView];
+          }
+        `
+        : dedent`
+          - (UIView *)createRootViewWithBridge:(RCTBridge *)bridge moduleName:(NSString *)moduleName initProps:(NSDictionary *)initProps {
+            UIView *rootView = [super createRootViewWithBridge:bridge moduleName:moduleName initProps:initProps];
+            [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView];
+            return rootView;
+          }
+        `,
+    });
+
+    return {
+      ...config,
+      modResults: {
+        ...modResults,
+        contents: withRootView.contents,
+      },
+    };
+  });
+
+const withInfoPlist: ExpoPlugin = (config) =>
+  Expo.withInfoPlist(config, (config) => {
+    config.modResults["UILaunchStoryboardName"] = "BootSplash";
+    return config;
+  });
+
+const withXcodeProject: ExpoPlugin = (config) =>
+  Expo.withXcodeProject(config, (config) => {
+    const { platformProjectRoot, projectName = "" } = config.modRequest;
+    const xcodeProjectPath = path.join(platformProjectRoot, projectName);
+
+    Expo.IOSConfig.XcodeUtils.addResourceFileToGroup({
+      filepath: path.join(xcodeProjectPath, "BootSplash.storyboard"),
+      groupName: projectName,
+      project: config.modResults,
+      isBuildFile: true,
+    });
+
+    Expo.IOSConfig.XcodeUtils.addResourceFileToGroup({
+      filepath: path.join(xcodeProjectPath, "Colors.xcassets"),
+      groupName: projectName,
+      project: config.modResults,
+      isBuildFile: true,
+    });
+
+    return config;
+  });
+
 export const withGenerate: ExpoPlugin = (config, props = {}) => {
   const plugins: ExpoPlugin[] = [];
+  const { platforms = [] } = config;
+
+  // TODO: Make a plugin per platform that copy / paste directory by directory iterations
+  if (platforms.includes("android")) {
+    plugins.push(
+      withAndroidManifest,
+      withMainActivity,
+      withAndroidStyles,
+      withAndroidColors,
+      withAndroidColorsNight,
+    );
+  }
+
+  if (platforms.includes("ios")) {
+    plugins.push(withAppDelegate, withInfoPlist, withXcodeProject);
+  }
 
   return Expo.withPlugins(
     config,
