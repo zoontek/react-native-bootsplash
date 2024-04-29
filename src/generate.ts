@@ -180,11 +180,15 @@ export const hfs = {
   text: (path: string) => fs.readFileSync(path, "utf-8"),
 
   copy: (src: string, dest: string) => {
+    if (!hfs.exists(dest)) {
+      return fs.copyFileSync(src, dest);
+    }
+
     const srcBuffer = fs.readFileSync(src);
     const destBuffer = fs.readFileSync(dest);
 
     if (!srcBuffer.equals(destBuffer)) {
-      fs.copyFileSync(src, dest);
+      return fs.copyFileSync(src, dest);
     }
   },
   ensureDir: (dir: string) => {
@@ -1028,6 +1032,41 @@ export type ExpoProps = {
 
 export type ExpoPlugin = Expo.ConfigPlugin<ExpoProps>;
 
+const withAndroidAssets: ExpoPlugin = (config, props) =>
+  Expo.withDangerousMod(config, [
+    "android",
+    (config) => {
+      const { assetsDir = "assets" } = props;
+      const { platformProjectRoot } = config.modRequest;
+
+      const src = path.resolve(workingPath, assetsDir, "android");
+
+      const dest = path.resolve(
+        platformProjectRoot,
+        "app",
+        "src",
+        "main",
+        "res",
+      );
+
+      for (const drawableDir of hfs.readDir(src)) {
+        const srcDrawableDir = path.join(src, drawableDir);
+        const destDrawableDir = path.join(dest, drawableDir);
+
+        hfs.ensureDir(destDrawableDir);
+
+        for (const file of hfs.readDir(srcDrawableDir)) {
+          hfs.copy(
+            path.join(srcDrawableDir, file),
+            path.join(destDrawableDir, file),
+          );
+        }
+      }
+
+      return config;
+    },
+  ]);
+
 const withAndroidManifest: ExpoPlugin = (config) =>
   Expo.withAndroidManifest(config, (config) => {
     config.modResults.manifest.application?.forEach((application) => {
@@ -1247,6 +1286,7 @@ export const withGenerate: ExpoPlugin = (config, props = {}) => {
   // TODO: Make a plugin per platform that copy / paste directory by directory iterations
   if (platforms.includes("android")) {
     plugins.push(
+      withAndroidAssets,
       withAndroidManifest,
       withMainActivity,
       withAndroidStyles,
