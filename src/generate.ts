@@ -279,17 +279,12 @@ const cleanIOS = (dir: string) => {
     });
 };
 
-export const getIOSAssetFileName = async ({
-  name,
-  image,
-  width,
-}: {
-  name: AcceptedFileName;
-  image?: Sharp;
-  width: number;
-}) => {
+const getImageBase64 = async (
+  image: Sharp | undefined,
+  width: number,
+): Promise<string> => {
   if (image == null) {
-    return name;
+    return "";
   }
 
   const buffer = await image
@@ -298,8 +293,45 @@ export const getIOSAssetFileName = async ({
     .png({ quality: 100 })
     .toBuffer();
 
-  const hash = murmurhash(buffer.toString("base64"));
-  return `${name}-${hash}`;
+  return buffer.toString("base64");
+};
+
+const getFileNameSuffix = async ({
+  background,
+  brand,
+  brandWidth,
+  darkBackground,
+  darkBrand,
+  darkLogo,
+  logo,
+  logoWidth,
+}: {
+  background: Color;
+  brand: Sharp | undefined;
+  brandWidth: number;
+  darkBackground: Color | undefined;
+  darkBrand: Sharp | undefined;
+  darkLogo: Sharp | undefined;
+  logo: Sharp;
+  logoWidth: number;
+}) => {
+  const [logoHash, darkLogoHash, brandHash, darkBrandHash] = await Promise.all([
+    getImageBase64(logo, logoWidth),
+    getImageBase64(darkLogo, logoWidth),
+    getImageBase64(brand, brandWidth),
+    getImageBase64(darkBrand, brandWidth),
+  ]);
+
+  const stableArray: string[] = [
+    background.hex,
+    brandHash,
+    darkBackground?.hex ?? "",
+    darkBrandHash,
+    darkLogoHash,
+    logoHash,
+  ];
+
+  return murmurhash(stableArray.join());
 };
 
 const ensureSupportedFormat = async (
@@ -329,7 +361,7 @@ const getAndroidOutputPath = ({
   logoWidth,
   platforms,
 }: {
-  android?: AndroidProjectConfig;
+  android: AndroidProjectConfig | undefined;
   assetsOutputPath: string;
   brandHeight: number;
   brandWidth: number;
@@ -390,8 +422,8 @@ const getIOSOutputPath = ({
   isExpo,
   platforms,
 }: {
+  ios: IOSProjectConfig | undefined;
   assetsOutputPath: string;
-  ios?: IOSProjectConfig;
   isExpo: boolean;
   platforms: Platforms;
 }) => {
@@ -468,6 +500,7 @@ export const getImageHeight = (
 export type AddonConfig = {
   licenseKey: string;
   isExpo: boolean;
+  fileNameSuffix: string;
 
   androidOutputPath: string | void;
   iosOutputPath: string | void;
@@ -630,6 +663,17 @@ export const generate = async ({
       `Brand width must be a multiple of 2. It has been rounded to ${brandWidth}dp.`,
     );
   }
+
+  const fileNameSuffix = await getFileNameSuffix({
+    background,
+    brand,
+    brandWidth,
+    darkBackground,
+    darkBrand,
+    darkLogo,
+    logo,
+    logoWidth,
+  });
 
   const androidOutputPath = getAndroidOutputPath({
     android,
@@ -833,11 +877,7 @@ export const generate = async ({
 
     hfs.ensureDir(imageSetPath);
 
-    const logoFileName = await getIOSAssetFileName({
-      name: "bootsplash_logo",
-      image: logo,
-      width: logoWidth,
-    });
+    const logoFileName = `bootsplash_logo-${fileNameSuffix}`;
 
     writeJson(path.resolve(imageSetPath, "Contents.json"), {
       images: [
@@ -992,6 +1032,7 @@ export const generate = async ({
     await addon?.execute({
       licenseKey,
       isExpo,
+      fileNameSuffix,
 
       androidOutputPath,
       iosOutputPath,
