@@ -176,7 +176,7 @@ export const hfs = {
   json: (path: string) => JSON.parse(fs.readFileSync(path, "utf-8")) as unknown,
   readDir: (path: string) => fs.readdirSync(path, "utf-8"),
   realPath: (path: string) => fs.realpathSync(path, "utf-8"),
-  rm: (path: string) => fs.rmSync(path, { force: true }),
+  rm: (path: string) => fs.rmSync(path, { force: true, recursive: true }),
   text: (path: string) => fs.readFileSync(path, "utf-8"),
 
   copy: (src: string, dest: string) => {
@@ -263,12 +263,20 @@ export const writeHtml = async (
   log.write(filePath);
 };
 
-export const cleanIOSAssets = (dir: string, prefix: string) => {
+const cleanIOS = (dir: string) => {
   hfs
     .readDir(dir)
-    .filter((file) => file.startsWith(prefix) && file.endsWith(".png"))
+    .filter((file) => file === "Colors.xcassets" || file === "Images.xcassets")
     .map((file) => path.join(dir, file))
-    .forEach((file) => hfs.rm(file));
+    .flatMap((dir) =>
+      hfs
+        .readDir(dir)
+        .filter((file) => file.startsWith("BootSplash"))
+        .map((file) => path.join(dir, file)),
+    )
+    .forEach((file) => {
+      hfs.rm(file);
+    });
 };
 
 export const getIOSAssetFileName = async ({
@@ -738,6 +746,7 @@ export const generate = async ({
     log.title("🍏", "iOS");
 
     hfs.ensureDir(iosOutputPath);
+    cleanIOS(iosOutputPath);
 
     const storyboardPath = path.resolve(iosOutputPath, "BootSplash.storyboard");
 
@@ -823,7 +832,6 @@ export const generate = async ({
     );
 
     hfs.ensureDir(imageSetPath);
-    cleanIOSAssets(imageSetPath, "bootsplash_logo");
 
     const logoFileName = await getIOSAssetFileName({
       name: "bootsplash_logo",
