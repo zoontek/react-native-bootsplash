@@ -65,6 +65,7 @@
   },
   "dependencies": {
     "@emotion/hash": "^0.9.1",
+    "@expo/config": "^8.5.6",
     "@expo/config-plugins": "^7.9.1",
     "detect-indent": "^6.1.0",
     "fs-extra": "^11.2.0",
