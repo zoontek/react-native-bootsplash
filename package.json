@@ -67,6 +67,7 @@
     "@emotion/hash": "^0.9.1",
     "@expo/config-plugins": "^7.9.1",
     "detect-indent": "^6.1.0",
+    "fs-extra": "^11.2.0",
     "node-html-parser": "^6.1.13",
     "picocolors": "^1.0.0",
     "prettier": "^3.2.5",
@@ -77,6 +78,7 @@
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@babel/preset-env": "^7.20.0",
+    "@types/fs-extra": "^11.0.4",
     "@types/node": "^20.12.7",
     "@types/react": "^18.2.60",
     "@types/sharp": "^0.31.1",
