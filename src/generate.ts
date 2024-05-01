@@ -91,10 +91,12 @@ const getStoryboard = ({
   logoHeight,
   logoWidth,
   background: { R, G, B },
+  fileNameSuffix,
 }: {
   logoHeight: number;
   logoWidth: number;
   background: Color["rgb"];
+  fileNameSuffix: string;
 }) => {
   const frameWidth = 375;
   const frameHeight = 667;
@@ -121,7 +123,7 @@ const getStoryboard = ({
                         <rect key="frame" x="0.0" y="0.0" width="${frameWidth}" height="${frameHeight}"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="BootSplashLogo" translatesAutoresizingMaskIntoConstraints="NO" id="3lX-Ut-9ad">
+                            <imageView autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="BootSplashLogo-${fileNameSuffix}" translatesAutoresizingMaskIntoConstraints="NO" id="3lX-Ut-9ad">
                                 <rect key="frame" x="${logoX}" y="${logoY}" width="${logoWidth}" height="${logoHeight}"/>
                                 <accessibility key="accessibilityConfiguration">
                                     <accessibilityTraits key="traits" image="YES" notEnabled="YES"/>
@@ -129,7 +131,7 @@ const getStoryboard = ({
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Bcu-3y-fUS"/>
-                        <color key="backgroundColor" name="BootSplashBackground"/>
+                        <color key="backgroundColor" name="BootSplashBackground-${fileNameSuffix}"/>
                         <constraints>
                             <constraint firstItem="3lX-Ut-9ad" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="Fh9-Fy-1nT"/>
                             <constraint firstItem="3lX-Ut-9ad" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="nvB-Ic-PnI"/>
@@ -142,8 +144,8 @@ const getStoryboard = ({
         </scene>
     </scenes>
     <resources>
-        <image name="BootSplashLogo" width="${logoWidth}" height="${logoHeight}"/>
-        <namedColor name="BootSplashBackground">
+        <image name="BootSplashLogo-${fileNameSuffix}" width="${logoWidth}" height="${logoHeight}"/>
+        <namedColor name="BootSplashBackground-${fileNameSuffix}">
             <color red="${R}" green="${G}" blue="${B}" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
     </resources>
@@ -322,16 +324,21 @@ const getFileNameSuffix = async ({
     getImageBase64(darkBrand, brandWidth),
   ]);
 
-  const stableArray: string[] = [
-    background.hex,
-    brandHash,
-    darkBackground?.hex ?? "",
-    darkBrandHash,
-    darkLogoHash,
-    logoHash,
-  ];
+  const record: Record<string, string> = {
+    background: background.hex,
+    darkBackground: darkBackground?.hex ?? "",
+    logo: logoHash,
+    darkLogo: darkLogoHash,
+    brand: brandHash,
+    darkBrand: darkBrandHash,
+  };
 
-  return murmurhash(stableArray.join());
+  const stableKey = Object.keys(record)
+    .sort()
+    .map((key) => record[key])
+    .join();
+
+  return murmurhash(stableKey);
 };
 
 const ensureSupportedFormat = async (
@@ -800,6 +807,7 @@ export const generate = async ({
         logoHeight,
         logoWidth,
         background: background.rgb,
+        fileNameSuffix,
       }),
       { whiteSpaceAtEndOfSelfclosingTag: false },
     );
@@ -813,7 +821,7 @@ export const generate = async ({
     const colorsSetPath = path.resolve(
       iosOutputPath,
       "Colors.xcassets",
-      "BootSplashBackground.colorset",
+      `BootSplashBackground-${fileNameSuffix}.colorset`,
     );
 
     hfs.ensureDir(colorsSetPath);
@@ -872,7 +880,7 @@ export const generate = async ({
     const imageSetPath = path.resolve(
       iosOutputPath,
       "Images.xcassets",
-      "BootSplashLogo.imageset",
+      `BootSplashLogo-${fileNameSuffix}.imageset`,
     );
 
     hfs.ensureDir(imageSetPath);
