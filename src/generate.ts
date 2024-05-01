@@ -1158,6 +1158,9 @@ const withMainActivity: ExpoPlugin = (config) =>
 const withAndroidStyles: ExpoPlugin = (config, props) =>
   Expo.withAndroidStyles(config, async (config) => {
     const { assetsDir = "assets/bootsplash", edgeToEdge = false } = props;
+    const { modResults } = config;
+    const { resources } = modResults;
+    const { style = [] } = resources;
 
     const manifest = (await hfs.json(
       path.resolve(workingPath, assetsDir, "manifest.json"),
@@ -1185,19 +1188,29 @@ const withAndroidStyles: ExpoPlugin = (config, props) =>
       });
     }
 
-    config.modResults.resources.style
-      ?.filter(({ $ }) => $.name !== "BootTheme")
-      .push({
-        item,
+    const withBootTheme = [
+      ...style.filter(({ $ }) => $.name !== "BootTheme"),
+      {
         $: {
           name: "BootTheme",
           parent: edgeToEdge
-            ? "Theme.BootSplash"
-            : "Theme.BootSplash.EdgeToEdge",
+            ? "Theme.BootSplash.EdgeToEdge"
+            : "Theme.BootSplash",
         },
-      });
+        item,
+      },
+    ];
 
-    return config;
+    return {
+      ...config,
+      modResults: {
+        ...modResults,
+        resources: {
+          ...resources,
+          style: withBootTheme,
+        },
+      },
+    };
   });
 
 const withAndroidColors: ExpoPlugin = (config, props) =>
