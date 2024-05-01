@@ -774,9 +774,25 @@ export const generate = async ({
     log.title("🍏", "iOS");
 
     hfs.ensureDir(iosOutputPath);
+
     cleanIOS(iosOutputPath);
 
     const storyboardPath = path.resolve(iosOutputPath, "BootSplash.storyboard");
+
+    const colorsSetPath = path.resolve(
+      iosOutputPath,
+      "Colors.xcassets",
+      `BootSplashBackground-${fileNameSuffix}.colorset`,
+    );
+
+    const imageSetPath = path.resolve(
+      iosOutputPath,
+      "Images.xcassets",
+      `BootSplashLogo-${fileNameSuffix}.imageset`,
+    );
+
+    hfs.ensureDir(colorsSetPath);
+    hfs.ensureDir(imageSetPath);
 
     writeXml(
       storyboardPath,
@@ -788,14 +804,6 @@ export const generate = async ({
       }),
       { whiteSpaceAtEndOfSelfclosingTag: false },
     );
-
-    const colorsSetPath = path.resolve(
-      iosOutputPath,
-      "Colors.xcassets",
-      `BootSplashBackground-${fileNameSuffix}.colorset`,
-    );
-
-    hfs.ensureDir(colorsSetPath);
 
     writeJson(path.resolve(colorsSetPath, "Contents.json"), {
       colors: [
@@ -817,66 +825,6 @@ export const generate = async ({
         version: 1,
       },
     });
-
-    if (!isExpo) {
-      const pbxprojectPath =
-        Expo.IOSConfig.Paths.getPBXProjectPath(projectRoot);
-
-      const xcodeProjectPath =
-        Expo.IOSConfig.Paths.getXcodeProjectPath(projectRoot);
-
-      const project = Expo.IOSConfig.XcodeUtils.getPbxproj(projectRoot);
-      const projectName = path.basename(iosOutputPath);
-
-      Expo.IOSConfig.XcodeUtils.addResourceFileToGroup({
-        filepath: path.join(projectName, "BootSplash.storyboard"),
-        groupName: path.parse(xcodeProjectPath).name,
-        project,
-        isBuildFile: true,
-      });
-
-      Expo.IOSConfig.XcodeUtils.addResourceFileToGroup({
-        filepath: path.join(projectName, "Colors.xcassets"),
-        groupName: path.parse(xcodeProjectPath).name,
-        project,
-        isBuildFile: true,
-      });
-
-      hfs.write(pbxprojectPath, project.writeSync());
-      log.write(pbxprojectPath);
-    }
-
-    if (!isExpo) {
-      const infoPlistPath = path.resolve(iosOutputPath, "Info.plist");
-
-      const infoPlist = plist.parse(hfs.text(infoPlistPath)) as Record<
-        string,
-        unknown
-      >;
-
-      infoPlist["UILaunchStoryboardName"] = "BootSplash";
-
-      const formatted = formatXml(plist.build(infoPlist), {
-        collapseContent: true,
-        forceSelfClosingEmptyTag: false,
-        indentation: "\t",
-        lineSeparator: "\n",
-        whiteSpaceAtEndOfSelfclosingTag: false,
-      })
-        .replace(/<string\/>/gm, "<string></string>")
-        .replace(/^\t/gm, "");
-
-      hfs.write(infoPlistPath, formatted);
-      log.write(infoPlistPath);
-    }
-
-    const imageSetPath = path.resolve(
-      iosOutputPath,
-      "Images.xcassets",
-      `BootSplashLogo-${fileNameSuffix}.imageset`,
-    );
-
-    hfs.ensureDir(imageSetPath);
 
     const logoFileName = `logo-${fileNameSuffix}`;
 
@@ -925,6 +873,56 @@ export const generate = async ({
           });
       }),
     );
+
+    if (!isExpo) {
+      const pbxprojectPath =
+        Expo.IOSConfig.Paths.getPBXProjectPath(projectRoot);
+
+      const xcodeProjectPath =
+        Expo.IOSConfig.Paths.getXcodeProjectPath(projectRoot);
+
+      const project = Expo.IOSConfig.XcodeUtils.getPbxproj(projectRoot);
+      const projectName = path.basename(iosOutputPath);
+
+      Expo.IOSConfig.XcodeUtils.addResourceFileToGroup({
+        filepath: path.join(projectName, "BootSplash.storyboard"),
+        groupName: path.parse(xcodeProjectPath).name,
+        project,
+        isBuildFile: true,
+      });
+
+      Expo.IOSConfig.XcodeUtils.addResourceFileToGroup({
+        filepath: path.join(projectName, "Colors.xcassets"),
+        groupName: path.parse(xcodeProjectPath).name,
+        project,
+        isBuildFile: true,
+      });
+
+      hfs.write(pbxprojectPath, project.writeSync());
+      log.write(pbxprojectPath);
+
+      const infoPlistPath = path.resolve(iosOutputPath, "Info.plist");
+
+      const infoPlist = plist.parse(hfs.text(infoPlistPath)) as Record<
+        string,
+        unknown
+      >;
+
+      infoPlist["UILaunchStoryboardName"] = "BootSplash";
+
+      const formatted = formatXml(plist.build(infoPlist), {
+        collapseContent: true,
+        forceSelfClosingEmptyTag: false,
+        indentation: "\t",
+        lineSeparator: "\n",
+        whiteSpaceAtEndOfSelfclosingTag: false,
+      })
+        .replace(/<string\/>/gm, "<string></string>")
+        .replace(/^\t/gm, "");
+
+      hfs.write(infoPlistPath, formatted);
+      log.write(infoPlistPath);
+    }
   }
 
   if (htmlTemplatePath != null) {
