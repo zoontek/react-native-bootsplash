@@ -688,33 +688,6 @@ export const generate = async ({
 
     hfs.ensureDir(androidOutputPath);
 
-    if (!isExpo) {
-      const valuesPath = path.resolve(androidOutputPath, "values");
-      hfs.ensureDir(valuesPath);
-
-      const colorsXmlPath = path.resolve(valuesPath, "colors.xml");
-      const colorsXmlEntry = `<color name="bootsplash_background">${background.hex}</color>`;
-
-      if (hfs.exists(colorsXmlPath)) {
-        const { root, formatOptions } = readXml(colorsXmlPath);
-        const nextColor = parseHtml(colorsXmlEntry);
-
-        const prevColor = root.querySelector(
-          'color[name="bootsplash_background"]',
-        );
-
-        if (prevColor != null) {
-          prevColor.replaceWith(nextColor);
-        } else {
-          root.querySelector("resources")?.appendChild(nextColor);
-        }
-
-        writeXml(colorsXmlPath, root.toString(), formatOptions);
-      } else {
-        writeXml(colorsXmlPath, `<resources>${colorsXmlEntry}</resources>`);
-      }
-    }
-
     await Promise.all(
       [
         { ratio: 1, suffix: "mdpi" },
@@ -768,13 +741,39 @@ export const generate = async ({
           });
       }),
     );
+
+    if (!isExpo) {
+      const valuesPath = path.resolve(androidOutputPath, "values");
+      hfs.ensureDir(valuesPath);
+
+      const colorsXmlPath = path.resolve(valuesPath, "colors.xml");
+      const colorsXmlEntry = `<color name="bootsplash_background">${background.hex}</color>`;
+
+      if (hfs.exists(colorsXmlPath)) {
+        const { root, formatOptions } = readXml(colorsXmlPath);
+        const nextColor = parseHtml(colorsXmlEntry);
+
+        const prevColor = root.querySelector(
+          'color[name="bootsplash_background"]',
+        );
+
+        if (prevColor != null) {
+          prevColor.replaceWith(nextColor);
+        } else {
+          root.querySelector("resources")?.appendChild(nextColor);
+        }
+
+        writeXml(colorsXmlPath, root.toString(), formatOptions);
+      } else {
+        writeXml(colorsXmlPath, `<resources>${colorsXmlEntry}</resources>`);
+      }
+    }
   }
 
   if (iosOutputPath != null) {
     log.title("🍏", "iOS");
 
     hfs.ensureDir(iosOutputPath);
-
     cleanIOS(iosOutputPath);
 
     const storyboardPath = path.resolve(iosOutputPath, "BootSplash.storyboard");
