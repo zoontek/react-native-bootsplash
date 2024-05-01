@@ -1,4 +1,5 @@
 import murmurhash from "@emotion/hash";
+import { getConfig as getExpoConfig } from "@expo/config";
 import * as Expo from "@expo/config-plugins";
 import { assignColorValue } from "@expo/config-plugins/build/android/Colors";
 import { addImports } from "@expo/config-plugins/build/android/codeMod";
@@ -520,17 +521,6 @@ const requireAddon = ():
   }
 };
 
-const hasExpoConfig = () => {
-  const appJsonPath = path.resolve(projectRoot, "app.json");
-
-  if (!hfs.exists(appJsonPath)) {
-    return false;
-  }
-
-  const { expo } = hfs.json(appJsonPath) as { expo?: unknown };
-  return expo != null;
-};
-
 export const generate = async ({
   android,
   ios,
@@ -558,7 +548,9 @@ export const generate = async ({
   darkLogo?: string;
   darkBrand?: string;
 }) => {
-  const isExpo = hasExpoConfig();
+  const isExpo =
+    getExpoConfig(projectRoot, { skipSDKVersionRequirement: true }).exp
+      .sdkVersion != null;
 
   const [nodeStringVersion = ""] = process.versions.node.split(".");
   const nodeVersion = Number.parseInt(nodeStringVersion, 10);
