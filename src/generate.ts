@@ -1064,6 +1064,7 @@ ${pc.blue("┗━━━━━━━━━━━━━━━━━━━━━━
 export type ExpoProps = {
   assetsDir?: string;
   edgeToEdge?: boolean;
+  darkContentBarsStyle?: boolean;
 };
 
 export type ExpoPlugin = Expo.ConfigPlugin<ExpoProps>;
@@ -1157,7 +1158,12 @@ const withMainActivity: ExpoPlugin = (config) =>
 
 const withAndroidStyles: ExpoPlugin = (config, props) =>
   Expo.withAndroidStyles(config, async (config) => {
-    const { assetsDir = "assets/bootsplash", edgeToEdge = false } = props;
+    const {
+      assetsDir = "assets/bootsplash",
+      edgeToEdge = false,
+      darkContentBarsStyle,
+    } = props;
+
     const { modResults } = config;
     const { resources } = modResults;
     const { style = [] } = resources;
@@ -1185,6 +1191,12 @@ const withAndroidStyles: ExpoPlugin = (config, props) =>
       item.push({
         $: { name: "bootSplashBrand" },
         _: "@drawable/bootsplash_brand",
+      });
+    }
+    if (darkContentBarsStyle != null) {
+      item.push({
+        $: { name: "darkContentBarsStyle" },
+        _: String(darkContentBarsStyle),
       });
     }
 
