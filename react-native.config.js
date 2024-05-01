@@ -34,7 +34,7 @@ const generateBootSplash = {
     {
       name: "--assets-output <string>",
       description: "Assets output directory path",
-      default: "assets",
+      default: "assets/bootsplash",
     },
     {
       name: "--flavor <string>",
@@ -45,7 +45,7 @@ const generateBootSplash = {
     {
       name: "--html <string>",
       description: "HTML template file path (your web app entry point)",
-      default: "index.html",
+      default: "public/index.html",
     },
     {
       name: "--license-key <string>",

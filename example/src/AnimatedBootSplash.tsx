@@ -13,12 +13,12 @@ export const AnimatedBootSplash = ({ onAnimationEnd }: Props) => {
   const [translateY] = useState(() => new Animated.Value(0));
 
   const { container, logo /*, brand */ } = BootSplash.useHideAnimation({
-    manifest: require("../assets/bootsplash_manifest.json"),
+    manifest: require("../assets/bootsplash/manifest.json"),
 
-    logo: require("../assets/bootsplash_logo.png"),
-    // darkLogo: require("../assets/bootsplash_dark_logo.png"),
-    // brand: require("../assets/bootsplash_brand.png"),
-    // darkBrand: require("../assets/bootsplash_dark_brand.png"),
+    logo: require("../assets/bootsplash/logo.png"),
+    // darkLogo: require("../assets/bootsplash/dark-logo.png"),
+    // brand: require("../assets/bootsplash/brand.png"),
+    // darkBrand: require("../assets/bootsplash/dark-brand.png"),
 
     statusBarTranslucent: true,
     navigationBarTranslucent: false,

@@ -10,7 +10,7 @@ import {
   IOSProjectConfig,
 } from "@react-native-community/cli-types";
 import detectIndent from "detect-indent";
-import fs from "fs";
+import fs from "fs-extra";
 import { parse as parseHtml } from "node-html-parser";
 import path from "path";
 import pc from "picocolors";
@@ -27,12 +27,6 @@ const workingPath = process.env.INIT_CWD ?? process.env.PWD ?? process.cwd();
 const projectRoot = findProjectRoot(workingPath);
 
 export type Platforms = ("android" | "ios" | "web")[];
-
-export type AcceptedFileName = `bootsplash_${
-  | "logo"
-  | "dark_logo"
-  | "brand"
-  | "dark_brand"}`;
 
 export type RGBColor = {
   R: string;
@@ -153,28 +147,11 @@ const getStoryboard = ({
 `;
 };
 
-const addFileToXcodeProject = (filePath: string) => {
-  const pbxprojectPath = Expo.IOSConfig.Paths.getPBXProjectPath(projectRoot);
-  const project = Expo.IOSConfig.XcodeUtils.getPbxproj(projectRoot);
-
-  const xcodeProjectPath =
-    Expo.IOSConfig.Paths.getXcodeProjectPath(projectRoot);
-
-  Expo.IOSConfig.XcodeUtils.addResourceFileToGroup({
-    filepath: filePath,
-    groupName: path.parse(xcodeProjectPath).name,
-    project,
-    isBuildFile: true,
-  });
-
-  hfs.write(pbxprojectPath, project.writeSync());
-  log.write(pbxprojectPath);
-};
-
 // Freely inspired by https://github.com/humanwhocodes/humanfs
 export const hfs = {
   buffer: (path: string) => fs.readFileSync(path),
   exists: (path: string) => fs.existsSync(path),
+  isDir: (path: string) => fs.lstatSync(path).isDirectory(),
   json: (path: string) => JSON.parse(fs.readFileSync(path, "utf-8")) as unknown,
   readDir: (path: string) => fs.readdirSync(path, "utf-8"),
   realPath: (path: string) => fs.realpathSync(path, "utf-8"),
@@ -182,15 +159,15 @@ export const hfs = {
   text: (path: string) => fs.readFileSync(path, "utf-8"),
 
   copy: (src: string, dest: string) => {
-    if (!hfs.exists(dest)) {
-      return fs.copyFileSync(src, dest);
+    if (hfs.isDir(src) || !hfs.exists(dest)) {
+      return fs.copySync(src, dest, { overwrite: true });
     }
 
     const srcBuffer = fs.readFileSync(src);
     const destBuffer = fs.readFileSync(dest);
 
     if (!srcBuffer.equals(destBuffer)) {
-      return fs.copyFileSync(src, dest);
+      return fs.copySync(src, dest, { overwrite: true });
     }
   },
   ensureDir: (dir: string) => {
@@ -812,12 +789,6 @@ export const generate = async ({
       { whiteSpaceAtEndOfSelfclosingTag: false },
     );
 
-    if (!isExpo) {
-      addFileToXcodeProject(
-        path.join(path.basename(iosOutputPath), "BootSplash.storyboard"),
-      );
-    }
-
     const colorsSetPath = path.resolve(
       iosOutputPath,
       "Colors.xcassets",
@@ -848,9 +819,31 @@ export const generate = async ({
     });
 
     if (!isExpo) {
-      addFileToXcodeProject(
-        path.join(path.basename(iosOutputPath), "Colors.xcassets"),
-      );
+      const pbxprojectPath =
+        Expo.IOSConfig.Paths.getPBXProjectPath(projectRoot);
+
+      const xcodeProjectPath =
+        Expo.IOSConfig.Paths.getXcodeProjectPath(projectRoot);
+
+      const project = Expo.IOSConfig.XcodeUtils.getPbxproj(projectRoot);
+      const projectName = path.basename(iosOutputPath);
+
+      Expo.IOSConfig.XcodeUtils.addResourceFileToGroup({
+        filepath: path.join(projectName, "BootSplash.storyboard"),
+        groupName: path.parse(xcodeProjectPath).name,
+        project,
+        isBuildFile: true,
+      });
+
+      Expo.IOSConfig.XcodeUtils.addResourceFileToGroup({
+        filepath: path.join(projectName, "Colors.xcassets"),
+        groupName: path.parse(xcodeProjectPath).name,
+        project,
+        isBuildFile: true,
+      });
+
+      hfs.write(pbxprojectPath, project.writeSync());
+      log.write(pbxprojectPath);
     }
 
     if (!isExpo) {
@@ -885,7 +878,7 @@ export const generate = async ({
 
     hfs.ensureDir(imageSetPath);
 
-    const logoFileName = `bootsplash_logo-${fileNameSuffix}`;
+    const logoFileName = `logo-${fileNameSuffix}`;
 
     writeJson(path.resolve(imageSetPath, "Contents.json"), {
       images: [
@@ -1002,7 +995,7 @@ export const generate = async ({
 
   hfs.ensureDir(assetsOutputPath);
 
-  writeJson(path.resolve(assetsOutputPath, "bootsplash_manifest.json"), {
+  writeJson(path.resolve(assetsOutputPath, "manifest.json"), {
     background: background.hex,
     logo: {
       width: logoWidth,
@@ -1018,10 +1011,7 @@ export const generate = async ({
       { ratio: 3, suffix: "@3x" },
       { ratio: 4, suffix: "@4x" },
     ].map(({ ratio, suffix }) => {
-      const filePath = path.resolve(
-        assetsOutputPath,
-        `bootsplash_logo${suffix}.png`,
-      );
+      const filePath = path.resolve(assetsOutputPath, `logo${suffix}.png`);
 
       return logo
         .clone()
@@ -1093,12 +1083,12 @@ const withAndroidAssets: ExpoPlugin = (config, props) =>
   Expo.withDangerousMod(config, [
     "android",
     (config) => {
-      const { assetsDir = "assets" } = props;
+      const { assetsDir = "assets/bootsplash" } = props;
       const { platformProjectRoot } = config.modRequest;
 
-      const src = path.resolve(workingPath, assetsDir, "android");
+      const srcDir = path.resolve(workingPath, assetsDir, "android");
 
-      const dest = path.resolve(
+      const destDir = path.resolve(
         platformProjectRoot,
         "app",
         "src",
@@ -1106,9 +1096,9 @@ const withAndroidAssets: ExpoPlugin = (config, props) =>
         "res",
       );
 
-      for (const drawableDir of hfs.readDir(src)) {
-        const srcDrawableDir = path.join(src, drawableDir);
-        const destDrawableDir = path.join(dest, drawableDir);
+      for (const drawableDir of hfs.readDir(srcDir)) {
+        const srcDrawableDir = path.join(srcDir, drawableDir);
+        const destDrawableDir = path.join(destDir, drawableDir);
 
         hfs.ensureDir(destDrawableDir);
 
@@ -1178,10 +1168,10 @@ const withMainActivity: ExpoPlugin = (config) =>
 
 const withAndroidStyles: ExpoPlugin = (config, props) =>
   Expo.withAndroidStyles(config, async (config) => {
-    const { assetsDir = "assets", edgeToEdge = false } = props;
+    const { assetsDir = "assets/bootsplash", edgeToEdge = false } = props;
 
     const manifest = (await hfs.json(
-      path.resolve(workingPath, assetsDir, "bootsplash_manifest.json"),
+      path.resolve(workingPath, assetsDir, "manifest.json"),
     )) as Manifest;
 
     const item = [
@@ -1223,10 +1213,10 @@ const withAndroidStyles: ExpoPlugin = (config, props) =>
 
 const withAndroidColors: ExpoPlugin = (config, props) =>
   Expo.withAndroidColors(config, async (config) => {
-    const { assetsDir = "assets" } = props;
+    const { assetsDir = "assets/bootsplash" } = props;
 
     const manifest = (await hfs.json(
-      path.resolve(workingPath, assetsDir, "bootsplash_manifest.json"),
+      path.resolve(workingPath, assetsDir, "manifest.json"),
     )) as Manifest;
 
     config.modResults = assignColorValue(config.modResults, {
@@ -1239,10 +1229,10 @@ const withAndroidColors: ExpoPlugin = (config, props) =>
 
 const withAndroidColorsNight: ExpoPlugin = (config, props) =>
   Expo.withAndroidColorsNight(config, async (config) => {
-    const { assetsDir = "assets" } = props;
+    const { assetsDir = "assets/bootsplash" } = props;
 
     const manifest = (await hfs.json(
-      path.resolve(workingPath, assetsDir, "bootsplash_manifest.json"),
+      path.resolve(workingPath, assetsDir, "manifest.json"),
     )) as Manifest;
 
     if (manifest.darkBackground != null) {
@@ -1254,6 +1244,41 @@ const withAndroidColorsNight: ExpoPlugin = (config, props) =>
 
     return config;
   });
+
+const withIOSAssets: ExpoPlugin = (config, props) =>
+  Expo.withDangerousMod(config, [
+    "ios",
+    (config) => {
+      const { assetsDir = "assets/bootsplash" } = props;
+      const { platformProjectRoot, projectName = "" } = config.modRequest;
+
+      const srcDir = path.resolve(workingPath, assetsDir, "ios");
+      const destDir = path.resolve(platformProjectRoot, projectName);
+
+      cleanIOS(destDir);
+
+      hfs.copy(
+        path.join(srcDir, "BootSplash.storyboard"),
+        path.join(destDir, "BootSplash.storyboard"),
+      );
+
+      for (const xcassetsDir of ["Colors.xcassets", "Images.xcassets"]) {
+        const srcXcassetsDir = path.join(srcDir, xcassetsDir);
+        const destXcassetsDir = path.join(destDir, xcassetsDir);
+
+        hfs.ensureDir(destXcassetsDir);
+
+        for (const file of hfs.readDir(srcXcassetsDir)) {
+          hfs.copy(
+            path.join(srcXcassetsDir, file),
+            path.join(destXcassetsDir, file),
+          );
+        }
+      }
+
+      return config;
+    },
+  ]);
 
 const withAppDelegate: ExpoPlugin = (config) =>
   Expo.withAppDelegate(config, (config) => {
@@ -1316,18 +1341,17 @@ const withInfoPlist: ExpoPlugin = (config) =>
 
 const withXcodeProject: ExpoPlugin = (config) =>
   Expo.withXcodeProject(config, (config) => {
-    const { platformProjectRoot, projectName = "" } = config.modRequest;
-    const xcodeProjectPath = path.join(platformProjectRoot, projectName);
+    const { projectName = "" } = config.modRequest;
 
     Expo.IOSConfig.XcodeUtils.addResourceFileToGroup({
-      filepath: path.join(xcodeProjectPath, "BootSplash.storyboard"),
+      filepath: path.join(projectName, "BootSplash.storyboard"),
       groupName: projectName,
       project: config.modResults,
       isBuildFile: true,
     });
 
     Expo.IOSConfig.XcodeUtils.addResourceFileToGroup({
-      filepath: path.join(xcodeProjectPath, "Colors.xcassets"),
+      filepath: path.join(projectName, "Colors.xcassets"),
       groupName: projectName,
       project: config.modResults,
       isBuildFile: true,
@@ -1340,7 +1364,6 @@ export const withGenerate: ExpoPlugin = (config, props = {}) => {
   const plugins: ExpoPlugin[] = [];
   const { platforms = [] } = config;
 
-  // TODO: Make a plugin per platform that copy / paste directory by directory iterations
   if (platforms.includes("android")) {
     plugins.push(
       withAndroidAssets,
@@ -1353,7 +1376,12 @@ export const withGenerate: ExpoPlugin = (config, props = {}) => {
   }
 
   if (platforms.includes("ios")) {
-    plugins.push(withAppDelegate, withInfoPlist, withXcodeProject);
+    plugins.push(
+      withIOSAssets,
+      withAppDelegate,
+      withInfoPlist,
+      withXcodeProject,
+    );
   }
 
   return Expo.withPlugins(

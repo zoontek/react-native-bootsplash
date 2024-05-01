@@ -113,9 +113,9 @@ Options:
   --platforms <list>          Platforms to generate for, separated by a comma (default: "android,ios,web")
   --background <string>       Background color (in hexadecimal format) (default: "#fff")
   --logo-width <number>       Logo width at @1x (in dp - we recommend approximately ~100) (default: 100)
-  --assets-output <string>    Assets output directory path
+  --assets-output <string>    Assets output directory path (default: "assets/bootsplash")
   --flavor <string>           Android flavor build variant (where your resource directory is) (default: "main")
-  --html <string>             HTML template file path (your web app entry point) (default: "index.html")
+  --html <string>             HTML template file path (your web app entry point) (default: "public/index.html")
   --license-key <string>      License key to enable brand and dark mode assets generation
   --brand <string>            Brand file path (PNG or SVG)
   --brand-width <number>      Brand width at @1x (in dp - we recommend approximately ~80) (default: 80)
@@ -141,28 +141,28 @@ _📍 This license key grants unlimited and unrestricted usage of the generator 
 
 ```bash
 # Without license key
-yarn react-native generate-bootsplash svgs/light_logo.svg \
+yarn react-native generate-bootsplash svgs/light-logo.svg \
   --platforms=android,ios,web \
   --background=F5FCFF \
   --logo-width=100 \
-  --assets-output=assets \
+  --assets-output=assets/bootsplash \
   --flavor=main \
-  --html=index.html
+  --html=public/index.html
 
 # With license key 🔑
-yarn react-native generate-bootsplash svgs/light_logo.svg \
+yarn react-native generate-bootsplash svgs/light-logo.svg \
   --platforms=android,ios,web \
   --background=F5FCFF \
   --logo-width=100 \
-  --assets-output=assets \
+  --assets-output=assets/bootsplash \
   --flavor=main \
-  --html=index.html \
+  --html=public/index.html \
   --license-key=xxxxx \
-  --brand=svgs/light_brand.svg \
+  --brand=svgs/light-brand.svg \
   --brand-width=80 \
   --dark-background=00090A \
-  --dark-logo=svgs/dark_logo.svg \
-  --dark-brand=svgs/dark_brand.svg
+  --dark-logo=svgs/dark-logo.svg \
+  --dark-brand=svgs/dark-brand.svg
 ```
 
 This tool relies on the naming conventions that are used in the `/example` project and will therefore create the following files:
@@ -176,22 +176,23 @@ android/app/src/main/res/drawable-xhdpi/bootsplash_logo.png
 android/app/src/main/res/drawable-xxhdpi/bootsplash_logo.png
 android/app/src/main/res/drawable-xxxhdpi/bootsplash_logo.png
 
-ios/RNBootSplashExample/BootSplash.storyboard
-ios/RNBootSplashExample.xcodeproj/project.pbxproj
-ios/RNBootSplashExample/Info.plist
-ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/Contents.json
-ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo-<hash>.png
-ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo-<hash>@2x.png
-ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo-<hash>@3x.png
+ios/YourApp/BootSplash.storyboard
+ios/YourApp.xcodeproj/project.pbxproj
+ios/YourApp/Info.plist
+ios/YourApp/Colors.xcassets/BootSplashBackground-<hash>.colorset/Contents.json
+ios/YourApp/Images.xcassets/BootSplashLogo-<hash>.imageset/Contents.json
+ios/YourApp/Images.xcassets/BootSplashLogo-<hash>.imageset/logo-<hash>.png
+ios/YourApp/Images.xcassets/BootSplashLogo-<hash>.imageset/logo-<hash>@2x.png
+ios/YourApp/Images.xcassets/BootSplashLogo-<hash>.imageset/logo-<hash>@3x.png
 
-index.html
+public/index.html
 
-assets/bootsplash_manifest.json
-assets/bootsplash_logo.png
-assets/bootsplash_logo@1,5x.png
-assets/bootsplash_logo@2x.png
-assets/bootsplash_logo@3x.png
-assets/bootsplash_logo@4x.png
+assets/bootsplash/manifest.json
+assets/bootsplash/logo.png
+assets/bootsplash/logo@1,5x.png
+assets/bootsplash/logo@2x.png
+assets/bootsplash/logo@3x.png
+assets/bootsplash/logo@4x.png
 
 # + Over 40 files with license key 🔑 (brand images, dark mode versions…)
 ```
@@ -424,12 +425,12 @@ const AnimatedBootSplash = ({ onAnimationEnd }: Props) => {
   const [opacity] = useState(() => new Animated.Value(1));
 
   const { container, logo /*, brand */ } = BootSplash.useHideAnimation({
-    manifest: require("../assets/bootsplash_manifest.json"),
+    manifest: require("../assets/bootsplash/manifest.json"),
 
-    logo: require("../assets/bootsplash_logo.png"),
-    // darkLogo: require("../assets/bootsplash_dark_logo.png"),
-    // brand: require("../assets/bootsplash_brand.png"),
-    // darkBrand: require("../assets/bootsplash_dark_brand.png"),
+    logo: require("../assets/bootsplash/logo.png"),
+    // darkLogo: require("../assets/bootsplash/dark-logo.png"),
+    // brand: require("../assets/bootsplash/brand.png"),
+    // darkBrand: require("../assets/bootsplash/dark-brand.png"),
 
     statusBarTranslucent: true,
     navigationBarTranslucent: false,

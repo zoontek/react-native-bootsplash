@@ -49,6 +49,7 @@
 			children = (
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
+				AED2CA2683E04CD1801CA2E7 /* Colors.xcassets */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				2E573F5576CF4C7EAB2F2EB6 /* BootSplash.storyboard */,
