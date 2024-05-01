@@ -169,21 +169,21 @@ This tool relies on the naming conventions that are used in the `/example` proje
 
 ```bash
 # Without license key
-android/app/src/main/res/values/colors.xml
-android/app/src/main/res/drawable-hdpi/bootsplash_logo.png
 android/app/src/main/res/drawable-mdpi/bootsplash_logo.png
+android/app/src/main/res/drawable-hdpi/bootsplash_logo.png
 android/app/src/main/res/drawable-xhdpi/bootsplash_logo.png
 android/app/src/main/res/drawable-xxhdpi/bootsplash_logo.png
 android/app/src/main/res/drawable-xxxhdpi/bootsplash_logo.png
+android/app/src/main/res/values/colors.xml
 
 ios/YourApp/BootSplash.storyboard
-ios/YourApp.xcodeproj/project.pbxproj
-ios/YourApp/Info.plist
 ios/YourApp/Colors.xcassets/BootSplashBackground-<hash>.colorset/Contents.json
 ios/YourApp/Images.xcassets/BootSplashLogo-<hash>.imageset/Contents.json
 ios/YourApp/Images.xcassets/BootSplashLogo-<hash>.imageset/logo-<hash>.png
 ios/YourApp/Images.xcassets/BootSplashLogo-<hash>.imageset/logo-<hash>@2x.png
 ios/YourApp/Images.xcassets/BootSplashLogo-<hash>.imageset/logo-<hash>@3x.png
+ios/YourApp/Info.plist
+ios/YourApp.xcodeproj/project.pbxproj
 
 public/index.html
 

@@ -874,6 +874,28 @@ export const generate = async ({
     );
 
     if (!isExpo) {
+      const infoPlistPath = path.resolve(iosOutputPath, "Info.plist");
+
+      const infoPlist = plist.parse(hfs.text(infoPlistPath)) as Record<
+        string,
+        unknown
+      >;
+
+      infoPlist["UILaunchStoryboardName"] = "BootSplash";
+
+      const formatted = formatXml(plist.build(infoPlist), {
+        collapseContent: true,
+        forceSelfClosingEmptyTag: false,
+        indentation: "\t",
+        lineSeparator: "\n",
+        whiteSpaceAtEndOfSelfclosingTag: false,
+      })
+        .replace(/<string\/>/gm, "<string></string>")
+        .replace(/^\t/gm, "");
+
+      hfs.write(infoPlistPath, formatted);
+      log.write(infoPlistPath);
+
       const pbxprojectPath =
         Expo.IOSConfig.Paths.getPBXProjectPath(projectRoot);
 
@@ -899,28 +921,6 @@ export const generate = async ({
 
       hfs.write(pbxprojectPath, project.writeSync());
       log.write(pbxprojectPath);
-
-      const infoPlistPath = path.resolve(iosOutputPath, "Info.plist");
-
-      const infoPlist = plist.parse(hfs.text(infoPlistPath)) as Record<
-        string,
-        unknown
-      >;
-
-      infoPlist["UILaunchStoryboardName"] = "BootSplash";
-
-      const formatted = formatXml(plist.build(infoPlist), {
-        collapseContent: true,
-        forceSelfClosingEmptyTag: false,
-        indentation: "\t",
-        lineSeparator: "\n",
-        whiteSpaceAtEndOfSelfclosingTag: false,
-      })
-        .replace(/<string\/>/gm, "<string></string>")
-        .replace(/^\t/gm, "");
-
-      hfs.write(infoPlistPath, formatted);
-      log.write(infoPlistPath);
     }
   }
 
