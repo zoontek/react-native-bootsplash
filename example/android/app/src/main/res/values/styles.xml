@@ -1,27 +1,18 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
     <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
-        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
-    <style name="BootTheme" parent="Theme.BootSplash">
+    <style name="BootTheme" parent="Theme.BootSplash.TransparentStatus">
+        <!-- enforce status bar style as the example app doesn't support dark mode -->
+        <item name="darkContentBarsStyle">true</item>
+
         <item name="bootSplashBackground">@color/bootsplash_background</item>
         <item name="bootSplashLogo">@drawable/bootsplash_logo</item>
         <!-- <item name="bootSplashBrand">@drawable/bootsplash_brand</item> -->
         <item name="postBootSplashTheme">@style/AppTheme</item>
-
-        <!--
-        3 things to know to use windowLightStatusBar / windowLightNavigationBar:
-        - true = dark-content, false = light-content barStyle
-        - windowLightStatusBar should target at least "m" api
-        - windowLightNavigationBar should target at least "o_mr1" api
-
-        For this example, we are using a transparent status bar + an opaque navigation bar.
-        For that, we only need to set the status color as the bootsplash background color.
-        -->
-        <item name="android:statusBarColor" tools:targetApi="m">@color/bootsplash_background</item>
-        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
     </style>
 
 </resources>

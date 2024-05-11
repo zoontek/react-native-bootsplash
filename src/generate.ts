@@ -1063,8 +1063,10 @@ ${pc.blue("┗━━━━━━━━━━━━━━━━━━━━━━
 
 export type ExpoProps = {
   assetsDir?: string;
-  edgeToEdge?: boolean;
-  darkContentBarsStyle?: boolean;
+  android?: {
+    parentTheme?: "default" | "transparentStatus" | "edgeToEdge";
+    darkContentBarsStyle?: boolean;
+  };
 };
 
 export type ExpoPlugin = Expo.ConfigPlugin<ExpoProps>;
@@ -1158,11 +1160,8 @@ const withMainActivity: ExpoPlugin = (config) =>
 
 const withAndroidStyles: ExpoPlugin = (config, props) =>
   Expo.withAndroidStyles(config, async (config) => {
-    const {
-      assetsDir = "assets/bootsplash",
-      edgeToEdge = false,
-      darkContentBarsStyle,
-    } = props;
+    const { assetsDir = "assets/bootsplash", android = {} } = props;
+    const { parentTheme = "default", darkContentBarsStyle } = android;
 
     const { modResults } = config;
     const { resources } = modResults;
@@ -1205,9 +1204,12 @@ const withAndroidStyles: ExpoPlugin = (config, props) =>
       {
         $: {
           name: "BootTheme",
-          parent: edgeToEdge
-            ? "Theme.BootSplash.EdgeToEdge"
-            : "Theme.BootSplash",
+          parent:
+            parentTheme === "transparentStatus"
+              ? "Theme.BootSplash.TransparentStatus"
+              : parentTheme === "edgeToEdge"
+                ? "Theme.BootSplash.EdgeToEdge"
+                : "Theme.BootSplash",
         },
         item,
       },

@@ -25,16 +25,19 @@
         <item name="postBootSplashTheme">?android:attr/theme</item>
     </style>
 
-    <style name="Theme.BootSplash.EdgeToEdge.Common" parent="Theme.BootSplash">
+    <style name="Theme.BootSplash.BarsStyle" parent="Theme.BootSplash">
+        <item name="darkContentBarsStyle">true</item>
+    </style>
+
+    <style name="Theme.BootSplash.TransparentStatus" parent="Theme.BootSplash.BarsStyle">
+    </style>
+
+    <style name="Theme.BootSplash.EdgeToEdge.Common" parent="Theme.BootSplash.BarsStyle">
         <item name="android:fitsSystemWindows">false</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
 
-    <style name="Theme.BootSplash.EdgeToEdge.DayNight" parent="Theme.BootSplash.EdgeToEdge.Common">
-        <item name="darkContentBarsStyle">true</item>
-    </style>
-
-    <style name="Theme.BootSplash.EdgeToEdge" parent="Theme.BootSplash.EdgeToEdge.DayNight">
+    <style name="Theme.BootSplash.EdgeToEdge" parent="Theme.BootSplash.EdgeToEdge.Common">
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowTranslucentNavigation">true</item>
     </style>
