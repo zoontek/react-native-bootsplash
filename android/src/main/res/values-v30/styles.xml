@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.BootSplash.EdgeToEdge" parent="Theme.BootSplash.EdgeToEdge.DayNight">
+    <style name="Theme.BootSplash.EdgeToEdge" parent="Theme.BootSplash.EdgeToEdge.Common">
         <item name="android:windowLayoutInDisplayCutoutMode">always</item>
 
         <item name="android:enforceStatusBarContrast">false</item>

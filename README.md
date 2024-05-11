@@ -247,7 +247,7 @@ Edit the `ios/YourProjectName/AppDelegate.mm` file:
       <!-- Your base theme customization -->
   </style>
 
-  <!-- BootTheme should inherit from Theme.BootSplash or Theme.BootSplash.EdgeToEdge -->
+  <!-- BootTheme should inherit from Theme.BootSplash, Theme.BootSplash.TransparentStatus or Theme.BootSplash.EdgeToEdge -->
   <style name="BootTheme" parent="Theme.BootSplash">
     <item name="bootSplashBackground">@color/bootsplash_background</item>
     <item name="bootSplashLogo">@drawable/bootsplash_logo</item>
@@ -271,7 +271,7 @@ Edit the `ios/YourProjectName/AppDelegate.mm` file:
     android:icon="@mipmap/ic_launcher"
     android:roundIcon="@mipmap/ic_launcher_round"
     android:allowBackup="false"
-    android:theme="@style/AppTheme"> <!-- Apply @style/AppTheme on .MainApplication -->
+    android:theme="@style/AppTheme">
     <activity
       android:name=".MainActivity"
       android:label="@string/app_name"
@@ -479,6 +479,31 @@ const App = () => {
 
 ## FAQ
 
+### How can I have a transparent status bar, or [edge-to-edge layout](https://developer.android.com/develop/ui/views/layout/edge-to-edge)?
+
+Edit your `values/styles.xml` file to inherit from `Theme.BootSplash.TransparentStatus` / `Theme.BootSplash.EdgeToEdge` instead of `Theme.BootSplash`:
+
+```xml
+<resources>
+
+  <!-- … -->
+
+  <!-- make BootTheme inherit from Theme.BootSplash.TransparentStatus / Theme.BootSplash.EdgeToEdge -->
+  <style name="BootTheme" parent="Theme.EdgeToEdge">
+    <!-- … -->
+
+    <!-- optional, used to enforce the initial bars styles -->
+    <!-- default is true in light mode, false in dark mode -->
+    <item name="darkContentBarsStyle">true</item>
+  </style>
+
+</resources>
+```
+
+### Why are both light and dark assets inlined in my index.html?
+
+For the sake of simplicity. Since the light and dark versions of your assets are likely identical (except for the colors), if your `index.html` file is compressed with **gzip**, the size difference will be negligible.
+
 ### How should I use it with React Navigation?
 
 If you are using React Navigation, you can hide the splash screen once the navigation container and all children have finished mounting by using the `onReady` function.
@@ -524,36 +549,6 @@ After that, we need to add the setup file in the jest config. You can add it und
 {
   "setupFiles": ["<rootDir>/jest/setup.js"]
 }
-```
-
-### Why are both light and dark assets inlined in my index.html?
-
-For the sake of simplicity. Since the light and dark versions of your assets are likely identical (except for the colors), if your `index.html` file is compressed with **gzip**, the size difference will be negligible.
-
-### How can I make my splash screen status bar transparent?
-
-Edit your `values/styles.xml` to set `android:statusBarColor` and `android:windowLightStatusBar` values:
-
-```diff
-- <resources>
-+ <resources xmlns:tools="http://schemas.android.com/tools">
-
-  <style name="BootTheme" parent="Theme.BootSplash">
-    <!-- … -->
-
-+   <!-- Apply color + style to the status bar (true = dark-content, false = light-content) -->
-+   <item name="android:statusBarColor" tools:targetApi="m">@color/bootsplash_background</item>
-+   <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
-  </style>
-```
-
-### How can I apply [edge-to-edge layout](https://developer.android.com/develop/ui/views/layout/edge-to-edge) to my splash screen?
-
-Edit your `values/styles.xml` file to use `Theme.BootSplash.EdgeToEdge` instead of `Theme.BootSplash`:
-
-```diff
-- <style name="BootTheme" parent="Theme.BootSplash">
-+ <style name="BootTheme" parent="Theme.BootSplash.EdgeToEdge">
 ```
 
 ## Sponsors
