@@ -1376,9 +1376,17 @@ const withXcodeProject: ExpoPlugin = (config) =>
     return config;
   });
 
+const withoutExpoSplashScreen: ExpoPlugin = Expo.createRunOncePlugin(
+  (config) => config,
+  "expo-splash-screen",
+  "skip",
+);
+
 export const withGenerate: ExpoPlugin = (config, props = {}) => {
   const plugins: ExpoPlugin[] = [];
   const { platforms = [] } = config;
+
+  plugins.push(withoutExpoSplashScreen);
 
   if (platforms.includes("android")) {
     plugins.push(
