@@ -1298,9 +1298,6 @@ const withIOSAssets: ExpoPlugin = (config, props) =>
 
 const withAppDelegate: ExpoPlugin = (config) =>
   Expo.withAppDelegate(config, (config) => {
-    const [sdkStringVersion = ""] = config.sdkVersion?.split(".") ?? "";
-    const isAtLeastExpo51 = Number.parseInt(sdkStringVersion, 10) >= 51;
-
     const { modResults } = config;
     const { language } = modResults;
 
@@ -1325,13 +1322,7 @@ const withAppDelegate: ExpoPlugin = (config) =>
       tag: "bootsplash-init",
       offset: 0,
       anchor: /@end/,
-      newSrc: isAtLeastExpo51
-        ? dedent`
-          - (void)customizeRootView:(RCTRootView *)rootView {
-            [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView];
-          }
-        `
-        : dedent`
+      newSrc: dedent`
           - (UIView *)createRootViewWithBridge:(RCTBridge *)bridge moduleName:(NSString *)moduleName initProps:(NSDictionary *)initProps {
             UIView *rootView = [super createRootViewWithBridge:bridge moduleName:moduleName initProps:initProps];
             [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView];
