@@ -404,9 +404,9 @@ type useHideAnimation = (config: {
 
   animate: () => void;
 }) => {
-  container: ViewProps;
-  logo: ImageProps;
-  brand: ImageProps;
+  container: ContainerProps;
+  logo: LogoProps;
+  brand: BrandProps;
 };
 ```
 
