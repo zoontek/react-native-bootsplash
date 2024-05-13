@@ -64,7 +64,6 @@
     "react-native": ">=0.70.0"
   },
   "dependencies": {
-    "@emotion/hash": "^0.9.1",
     "@expo/config": "^8.1.2 || ^9.0.1",
     "@expo/config-plugins": "^7.2.5 || ^8.0.4",
     "detect-indent": "^6.1.0",
