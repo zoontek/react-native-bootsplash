@@ -12,7 +12,7 @@ import {
 import crypto from "crypto";
 import detectIndent from "detect-indent";
 import fs from "fs-extra";
-import { parse as parseHtml } from "node-html-parser";
+import { HTMLElement, parse as parseHtml } from "node-html-parser";
 import path from "path";
 import pc from "picocolors";
 import { Options as PrettierOptions } from "prettier";
@@ -229,9 +229,12 @@ export const readHtml = (filePath: string) => {
 export const writeHtml = async (
   filePath: string,
   content: string,
-  options?: Omit<PrettierOptions, "parser" | "plugins"> & {
+  {
+    selfClosingTags = false,
+    ...options
+  }: Omit<PrettierOptions, "parser" | "plugins"> & {
     selfClosingTags?: boolean;
-  },
+  } = {},
 ) => {
   const formatted = await prettier.format(content, {
     parser: "html",
@@ -245,9 +248,7 @@ export const writeHtml = async (
 
   hfs.write(
     filePath,
-    options?.selfClosingTags ?? false
-      ? formatted.replace(/><\/[a-z-0-9]+>/gi, " />")
-      : formatted,
+    selfClosingTags ? formatted.replace(/><\/[a-z-0-9]+>/gi, " />") : formatted,
   );
 
   log.write(filePath);
@@ -749,27 +750,6 @@ export const generate = async ({
     );
 
     if (!isExpo) {
-      const manifestPath = path.resolve(
-        androidOutputPath,
-        "..",
-        "AndroidManifest.xml",
-      );
-
-      const { root, formatOptions } = readHtml(manifestPath);
-      const activities = root.querySelectorAll("activity");
-
-      for (const activity of activities) {
-        if (activity.getAttribute("android:name") === ".MainActivity") {
-          activity.setAttribute("android:theme", "@style/BootTheme");
-        }
-      }
-
-      await writeHtml(manifestPath, root.toString(), {
-        ...formatOptions,
-        selfClosingTags: true,
-        singleAttributePerLine: true,
-      });
-
       const valuesPath = path.resolve(androidOutputPath, "values");
       hfs.ensureDir(valuesPath);
 
@@ -793,6 +773,86 @@ export const generate = async ({
         writeXml(colorsXmlPath, root.toString(), formatOptions);
       } else {
         writeXml(colorsXmlPath, `<resources>${colorsXmlEntry}</resources>`);
+      }
+
+      {
+        const manifestXmlPath = path.resolve(
+          androidOutputPath,
+          "..",
+          "AndroidManifest.xml",
+        );
+
+        const { root, formatOptions } = readHtml(manifestXmlPath);
+        const activities = root.querySelectorAll("activity");
+
+        for (const activity of activities) {
+          if (activity.getAttribute("android:name") === ".MainActivity") {
+            activity.setAttribute("android:theme", "@style/BootTheme");
+          }
+        }
+
+        await writeHtml(manifestXmlPath, root.toString(), {
+          ...formatOptions,
+          htmlWhitespaceSensitivity: "ignore",
+          selfClosingTags: true,
+          singleAttributePerLine: true,
+        });
+      }
+
+      {
+        const stylesXmlPath = path.resolve(valuesPath, "styles.xml");
+        const { root, formatOptions } = readHtml(stylesXmlPath);
+
+        const prevStyle = root.querySelector('style[name="BootTheme"]');
+        const parent = prevStyle?.getAttribute("parent") ?? "Theme.BootSplash";
+
+        const extraItems = parseHtml(
+          prevStyle?.text
+            .split("\n")
+            .map((line) => line.trim())
+            .join("") ?? "",
+        )
+          .childNodes.filter((node) => {
+            if (!(node instanceof HTMLElement)) {
+              return true;
+            }
+
+            const name = node.getAttribute("name");
+
+            return (
+              name !== "postBootSplashTheme" &&
+              name !== "bootSplashBackground" &&
+              name !== "bootSplashLogo" &&
+              name !== "bootSplashBrand"
+            );
+          })
+          .map((node) => node.toString());
+
+        const bootSplashItems = [
+          '<item name="postBootSplashTheme">@style/AppTheme</item>',
+          '<item name="bootSplashBackground">@color/bootsplash_background</item>',
+          '<item name="bootSplashLogo">@drawable/bootsplash_logo</item>',
+        ];
+
+        if (brand != null && brandPath != null) {
+          bootSplashItems.push(
+            '<item name="bootSplashBrand">@drawable/bootsplash_brand</item>',
+          );
+        }
+
+        const nextStyle = parseHtml(dedent`
+          <style name="BootTheme" parent="${parent}">
+            ${[...bootSplashItems, ...extraItems].join("\n")}
+          </style>
+        `);
+
+        prevStyle?.remove(); // remove the existing style
+        root.querySelector("resources")?.appendChild(nextStyle);
+
+        await writeHtml(stylesXmlPath, root.toString(), {
+          ...formatOptions,
+          htmlWhitespaceSensitivity: "ignore",
+        });
       }
     }
   }
@@ -1356,12 +1416,12 @@ const withAppDelegate: ExpoPlugin = (config) =>
       offset: 0,
       anchor: /@end/,
       newSrc: dedent`
-          - (UIView *)createRootViewWithBridge:(RCTBridge *)bridge moduleName:(NSString *)moduleName initProps:(NSDictionary *)initProps {
-            UIView *rootView = [super createRootViewWithBridge:bridge moduleName:moduleName initProps:initProps];
-            [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView];
-            return rootView;
-          }
-        `,
+        - (UIView *)createRootViewWithBridge:(RCTBridge *)bridge moduleName:(NSString *)moduleName initProps:(NSDictionary *)initProps {
+          UIView *rootView = [super createRootViewWithBridge:bridge moduleName:moduleName initProps:initProps];
+          [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView];
+          return rootView;
+        }
+      `,
     });
 
     return {
