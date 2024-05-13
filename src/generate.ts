@@ -1,4 +1,3 @@
-import murmurhash from "@emotion/hash";
 import { getConfig as getExpoConfig } from "@expo/config";
 import * as Expo from "@expo/config-plugins";
 import { assignColorValue } from "@expo/config-plugins/build/android/Colors";
@@ -10,6 +9,7 @@ import {
   AndroidProjectConfig,
   IOSProjectConfig,
 } from "@react-native-community/cli-types";
+import crypto from "crypto";
 import detectIndent from "detect-indent";
 import fs from "fs-extra";
 import { parse as parseHtml } from "node-html-parser";
@@ -326,7 +326,11 @@ const getFileNameSuffix = async ({
     .map((key) => record[key])
     .join();
 
-  return murmurhash(stableKey);
+  return crypto
+    .createHash("shake256", { outputLength: 3 })
+    .update(stableKey)
+    .digest("hex")
+    .toLowerCase();
 };
 
 const ensureSupportedFormat = async (
