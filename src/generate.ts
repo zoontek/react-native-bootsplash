@@ -229,17 +229,27 @@ export const readHtml = (filePath: string) => {
 export const writeHtml = async (
   filePath: string,
   content: string,
-  options?: Omit<PrettierOptions, "parser" | "plugins">,
+  options?: Omit<PrettierOptions, "parser" | "plugins"> & {
+    selfClosingTags?: boolean;
+  },
 ) => {
   const formatted = await prettier.format(content, {
     parser: "html",
     plugins: [htmlPlugin, cssPlugin],
+    bracketSameLine: true,
+    printWidth: 10000,
     tabWidth: 2,
     useTabs: false,
     ...options,
   });
 
-  hfs.write(filePath, formatted);
+  hfs.write(
+    filePath,
+    options?.selfClosingTags ?? false
+      ? formatted.replace(/><\/[a-z-0-9]+>/gi, " />")
+      : formatted,
+  );
+
   log.write(filePath);
 };
 
@@ -735,6 +745,27 @@ export const generate = async ({
     );
 
     if (!isExpo) {
+      const manifestPath = path.resolve(
+        androidOutputPath,
+        "..",
+        "AndroidManifest.xml",
+      );
+
+      const { root, formatOptions } = readHtml(manifestPath);
+      const activities = root.querySelectorAll("activity");
+
+      for (const activity of activities) {
+        if (activity.getAttribute("android:name") === ".MainActivity") {
+          activity.setAttribute("android:theme", "@style/BootTheme");
+        }
+      }
+
+      await writeHtml(manifestPath, root.toString(), {
+        ...formatOptions,
+        selfClosingTags: true,
+        singleAttributePerLine: true,
+      });
+
       const valuesPath = path.resolve(androidOutputPath, "values");
       hfs.ensureDir(valuesPath);
 
