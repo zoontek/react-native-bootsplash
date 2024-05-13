@@ -27,7 +27,7 @@ import { Manifest } from ".";
 const workingPath = process.env.INIT_CWD ?? process.env.PWD ?? process.cwd();
 const projectRoot = findProjectRoot(workingPath);
 
-export type Platforms = ("android" | "ios" | "web")[];
+type Platforms = ("android" | "ios" | "web")[];
 
 export type RGBColor = {
   R: string;
@@ -35,7 +35,7 @@ export type RGBColor = {
   B: string;
 };
 
-export type Color = {
+type Color = {
   hex: string;
   rgb: RGBColor;
 };
@@ -60,7 +60,7 @@ export const log = {
   },
 };
 
-export const parseColor = (value: string): Color => {
+const parseColor = (value: string): Color => {
   const up = value.toUpperCase().replace(/[^0-9A-F]/g, "");
 
   if (up.length !== 3 && up.length !== 6) {
@@ -402,8 +402,8 @@ const getAndroidOutputPath = ({
 };
 
 const getIOSOutputPath = ({
-  assetsOutputPath,
   ios,
+  assetsOutputPath,
   isExpo,
   platforms,
 }: {
@@ -466,7 +466,7 @@ const getHtmlTemplatePath = ({
   return htmlTemplatePath;
 };
 
-export const getImageHeight = (
+const getImageHeight = (
   image: Sharp | undefined,
   width: number,
 ): Promise<number> => {
@@ -1061,15 +1061,13 @@ ${pc.blue("┗━━━━━━━━━━━━━━━━━━━━━━
   );
 };
 
-export type ExpoProps = {
+type ExpoPlugin = Expo.ConfigPlugin<{
   assetsDir?: string;
   android?: {
     parentTheme?: "TransparentStatus" | "EdgeToEdge";
     darkContentBarsStyle?: boolean;
   };
-};
-
-export type ExpoPlugin = Expo.ConfigPlugin<ExpoProps>;
+}>;
 
 const withAndroidAssets: ExpoPlugin = (config, props) =>
   Expo.withDangerousMod(config, [
