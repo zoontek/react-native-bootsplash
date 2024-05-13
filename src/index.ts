@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  ImageProps,
   ImageRequireSource,
+  ImageResizeMode,
+  ImageSourcePropType,
+  ImageStyle,
   Platform,
   StyleSheet,
-  ViewProps,
   ViewStyle,
 } from "react-native";
 import NativeModule from "./NativeRNBootSplash";
@@ -42,10 +43,31 @@ export type UseHideAnimationConfig = {
   navigationBarTranslucent?: boolean;
 };
 
+export type ContainerProps = {
+  style: ViewStyle;
+  onLayout: () => void;
+};
+
+export type LogoProps = {
+  source: ImageSourcePropType;
+  fadeDuration?: number;
+  resizeMode?: ImageResizeMode;
+  style?: ImageStyle;
+  onLoadEnd?: () => void;
+};
+
+export type BrandProps = {
+  source: ImageSourcePropType;
+  fadeDuration?: number;
+  resizeMode?: ImageResizeMode;
+  style?: ImageStyle;
+  onLoadEnd?: () => void;
+};
+
 export type UseHideAnimation = {
-  container: ViewProps;
-  logo: ImageProps;
-  brand: ImageProps;
+  container: ContainerProps;
+  logo: LogoProps;
+  brand: BrandProps;
 };
 
 export function hide(config: Config = {}): Promise<void> {
@@ -149,7 +171,7 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
       justifyContent: "center",
     };
 
-    const container: ViewProps = {
+    const container: ContainerProps = {
       style: containerStyle,
       onLayout: () => {
         ref.current.layoutReady = true;
@@ -157,13 +179,13 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
       },
     };
 
-    const logo: ImageProps =
+    const logo: LogoProps =
       logoFinalSrc == null
         ? { source: -1 }
         : {
+            source: logoFinalSrc,
             fadeDuration: 0,
             resizeMode: "contain",
-            source: logoFinalSrc,
             style: {
               width: logoWidth,
               height: logoHeight,
@@ -174,13 +196,13 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
             },
           };
 
-    const brand: ImageProps =
+    const brand: BrandProps =
       brandFinalSrc == null
         ? { source: -1 }
         : {
+            source: brandFinalSrc,
             fadeDuration: 0,
             resizeMode: "contain",
-            source: brandFinalSrc,
             style: {
               position: "absolute",
               bottom: Platform.OS === "web" ? 60 : brandBottom,
