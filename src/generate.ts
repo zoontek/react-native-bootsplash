@@ -185,73 +185,77 @@ export const writeJson = (filePath: string, content: object) => {
   log.write(filePath);
 };
 
-export const readXml = (filePath: string) => {
-  const xml = hfs.text(filePath);
-  const { indent } = detectIndent(xml);
+type FormatOptions = { indent?: detectIndent.Indent } & (
+  | {
+      formatter: "prettier";
+      selfClosingTags?: boolean;
+      useCssPlugin?: boolean;
+      htmlWhitespaceSensitivity?: PrettierOptions["htmlWhitespaceSensitivity"];
+      singleAttributePerLine?: PrettierOptions["singleAttributePerLine"];
+    }
+  | {
+      formatter: "xmlFormatter";
+      whiteSpaceAtEndOfSelfclosingTag?: XMLFormatterOptions["whiteSpaceAtEndOfSelfclosingTag"];
+    }
+);
 
-  const formatOptions: XMLFormatterOptions = {
-    indentation: indent || "    ",
+export const readXmlLike = (filePath: string) => {
+  const content = hfs.text(filePath);
+
+  return {
+    root: parseHtml(content),
+    formatOptions: {
+      indent: detectIndent(content),
+    },
   };
-
-  return { root: parseHtml(xml), formatOptions };
 };
 
-export const writeXml = (
+export const writeXmlLike = async (
   filePath: string,
   content: string,
-  options?: XMLFormatterOptions,
+  { indent, ...formatOptions }: FormatOptions,
 ) => {
-  const formatted = formatXml(content, {
-    collapseContent: true,
-    forceSelfClosingEmptyTag: true,
-    indentation: "    ",
-    lineSeparator: "\n",
-    whiteSpaceAtEndOfSelfclosingTag: true,
-    ...options,
-  });
+  if (formatOptions.formatter === "prettier") {
+    const {
+      formatter,
+      useCssPlugin = false,
+      selfClosingTags = false,
+      ...options
+    } = formatOptions;
 
-  hfs.write(filePath, formatted);
-  log.write(filePath);
-};
+    const formatted = await prettier.format(content, {
+      parser: "html",
+      bracketSameLine: true,
+      printWidth: 10000,
+      plugins: [htmlPlugin, ...(useCssPlugin ? [cssPlugin] : [])],
+      useTabs: indent?.type === "tab",
+      tabWidth: (indent?.amount ?? 0) || 2,
+      ...options,
+    });
 
-export const readHtml = (filePath: string) => {
-  const html = hfs.text(filePath);
-  const { type, amount } = detectIndent(html);
+    hfs.write(
+      filePath,
+      selfClosingTags
+        ? formatted.replace(/><\/[a-z-0-9]+>/gi, " />")
+        : formatted,
+    );
 
-  const formatOptions: PrettierOptions = {
-    useTabs: type === "tab",
-    tabWidth: amount || 2,
-  };
+    log.write(filePath);
+  } else {
+    const { formatter, ...options } = formatOptions;
 
-  return { root: parseHtml(html), formatOptions };
-};
+    const formatted = formatXml(content, {
+      collapseContent: true,
+      forceSelfClosingEmptyTag: true,
+      lineSeparator: "\n",
+      whiteSpaceAtEndOfSelfclosingTag: true,
+      indentation: (indent?.indent ?? "") || "    ",
+      ...options,
+    });
 
-export const writeHtml = async (
-  filePath: string,
-  content: string,
-  {
-    selfClosingTags = false,
-    ...options
-  }: Omit<PrettierOptions, "parser" | "plugins"> & {
-    selfClosingTags?: boolean;
-  } = {},
-) => {
-  const formatted = await prettier.format(content, {
-    parser: "html",
-    plugins: [htmlPlugin, cssPlugin],
-    bracketSameLine: true,
-    printWidth: 10000,
-    tabWidth: 2,
-    useTabs: false,
-    ...options,
-  });
-
-  hfs.write(
-    filePath,
-    selfClosingTags ? formatted.replace(/><\/[a-z-0-9]+>/gi, " />") : formatted,
-  );
-
-  log.write(filePath);
+    hfs.write(filePath, formatted);
+    log.write(filePath);
+  }
 };
 
 const cleanIOS = (dir: string) => {
@@ -757,7 +761,7 @@ export const generate = async ({
       const colorsXmlEntry = `<color name="bootsplash_background">${background.hex}</color>`;
 
       if (hfs.exists(colorsXmlPath)) {
-        const { root, formatOptions } = readXml(colorsXmlPath);
+        const { root, formatOptions } = readXmlLike(colorsXmlPath);
         const nextColor = parseHtml(colorsXmlEntry);
 
         const prevColor = root.querySelector(
@@ -770,9 +774,16 @@ export const generate = async ({
           root.querySelector("resources")?.appendChild(nextColor);
         }
 
-        writeXml(colorsXmlPath, root.toString(), formatOptions);
+        await writeXmlLike(colorsXmlPath, root.toString(), {
+          formatter: "xmlFormatter",
+          ...formatOptions,
+        });
       } else {
-        writeXml(colorsXmlPath, `<resources>${colorsXmlEntry}</resources>`);
+        await writeXmlLike(
+          colorsXmlPath,
+          `<resources>${colorsXmlEntry}</resources>`,
+          { formatter: "xmlFormatter" },
+        );
       }
 
       {
@@ -782,7 +793,7 @@ export const generate = async ({
           "AndroidManifest.xml",
         );
 
-        const { root, formatOptions } = readHtml(manifestXmlPath);
+        const { root, formatOptions } = readXmlLike(manifestXmlPath);
         const activities = root.querySelectorAll("activity");
 
         for (const activity of activities) {
@@ -791,8 +802,9 @@ export const generate = async ({
           }
         }
 
-        await writeHtml(manifestXmlPath, root.toString(), {
+        await writeXmlLike(manifestXmlPath, root.toString(), {
           ...formatOptions,
+          formatter: "prettier",
           htmlWhitespaceSensitivity: "ignore",
           selfClosingTags: true,
           singleAttributePerLine: true,
@@ -801,7 +813,7 @@ export const generate = async ({
 
       {
         const stylesXmlPath = path.resolve(valuesPath, "styles.xml");
-        const { root, formatOptions } = readHtml(stylesXmlPath);
+        const { root, formatOptions } = readXmlLike(stylesXmlPath);
 
         const prevStyle = root.querySelector('style[name="BootTheme"]');
         const parent = prevStyle?.getAttribute("parent") ?? "Theme.BootSplash";
@@ -849,8 +861,9 @@ export const generate = async ({
         prevStyle?.remove(); // remove the existing style
         root.querySelector("resources")?.appendChild(nextStyle);
 
-        await writeHtml(stylesXmlPath, root.toString(), {
+        await writeXmlLike(stylesXmlPath, root.toString(), {
           ...formatOptions,
+          formatter: "prettier",
           htmlWhitespaceSensitivity: "ignore",
         });
       }
@@ -880,7 +893,7 @@ export const generate = async ({
     hfs.ensureDir(colorsSetPath);
     hfs.ensureDir(imageSetPath);
 
-    writeXml(
+    await writeXmlLike(
       storyboardPath,
       getStoryboard({
         logoHeight,
@@ -888,7 +901,10 @@ export const generate = async ({
         background: background.rgb,
         fileNameSuffix,
       }),
-      { whiteSpaceAtEndOfSelfclosingTag: false },
+      {
+        formatter: "xmlFormatter",
+        whiteSpaceAtEndOfSelfclosingTag: false,
+      },
     );
 
     writeJson(path.resolve(colorsSetPath, "Contents.json"), {
@@ -1014,7 +1030,7 @@ export const generate = async ({
   if (htmlTemplatePath != null) {
     log.title("🌐", "Web");
 
-    const { root, formatOptions } = readHtml(htmlTemplatePath);
+    const { root, formatOptions } = readXmlLike(htmlTemplatePath);
     const { format } = await logo.metadata();
     const prevStyle = root.querySelector("#bootsplash-style");
 
@@ -1072,7 +1088,11 @@ export const generate = async ({
       root.querySelector("body")?.appendChild(nextDiv);
     }
 
-    await writeHtml(htmlTemplatePath, root.toString(), formatOptions);
+    await writeXmlLike(htmlTemplatePath, root.toString(), {
+      ...formatOptions,
+      formatter: "prettier",
+      useCssPlugin: true,
+    });
   }
 
   log.title("📄", "Assets");
