@@ -849,10 +849,10 @@ export const generate = async ({
       ];
 
       const nextStyle = parseHtml(dedent`
-          <style name="BootTheme" parent="${parent}">
-            ${styleItems.join("\n")}
-          </style>
-        `);
+        <style name="BootTheme" parent="${parent}">
+          ${styleItems.join("\n")}
+        </style>
+      `);
 
       prevStyle?.remove(); // remove the existing style
       stylesXml.root.querySelector("resources")?.appendChild(nextStyle);
