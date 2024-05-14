@@ -174,7 +174,9 @@ android/app/src/main/res/drawable-hdpi/bootsplash_logo.png
 android/app/src/main/res/drawable-xhdpi/bootsplash_logo.png
 android/app/src/main/res/drawable-xxhdpi/bootsplash_logo.png
 android/app/src/main/res/drawable-xxxhdpi/bootsplash_logo.png
+android/app/src/main/AndroidManifest.xml
 android/app/src/main/res/values/colors.xml
+android/app/src/main/res/values/styles.xml
 
 ios/YourApp/BootSplash.storyboard
 ios/YourApp/Colors.xcassets/BootSplashBackground-<hash>.colorset/Contents.json
@@ -205,7 +207,7 @@ _ℹ️ For `react-native` < `0.71` setup, follow the [`v4.4.0 README.md`](https
 
 ---
 
-Edit the `ios/YourProjectName/AppDelegate.mm` file:
+Edit the `ios/YourApp/AppDelegate.mm` file:
 
 ```obj-c
 #import "AppDelegate.h"
@@ -238,55 +240,7 @@ Edit the `ios/YourProjectName/AppDelegate.mm` file:
 
 ### Android
 
-1. Edit your `android/app/src/main/res/values/styles.xml` file:
-
-```xml
-<resources>
-
-  <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
-      <!-- Your base theme customization -->
-  </style>
-
-  <!-- BootTheme should inherit from Theme.BootSplash, Theme.BootSplash.TransparentStatus or Theme.BootSplash.EdgeToEdge -->
-  <style name="BootTheme" parent="Theme.BootSplash">
-    <item name="bootSplashBackground">@color/bootsplash_background</item>
-    <item name="bootSplashLogo">@drawable/bootsplash_logo</item>
-    <item name="bootSplashBrand">@drawable/bootsplash_brand</item> <!-- Only if you have a brand image -->
-    <item name="postBootSplashTheme">@style/AppTheme</item>
-  </style>
-
-</resources>
-```
-
-2. Edit your `android/app/src/main/AndroidManifest.xml` file:
-
-```xml
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
-  <!-- … -->
-
-  <application
-    android:name=".MainApplication"
-    android:label="@string/app_name"
-    android:icon="@mipmap/ic_launcher"
-    android:roundIcon="@mipmap/ic_launcher_round"
-    android:allowBackup="false"
-    android:theme="@style/AppTheme">
-    <activity
-      android:name=".MainActivity"
-      android:label="@string/app_name"
-      android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
-      android:launchMode="singleTask"
-      android:windowSoftInputMode="adjustResize"
-      android:exported="true"
-      android:theme="@style/BootTheme"> <!-- Apply @style/BootTheme on .MainActivity -->
-      <!-- … -->
-    </activity>
-  </application>
-</manifest>
-```
-
-3. Finally edit your `android/app/src/main/java/com/yourprojectname/MainActivity.{java,kt}` file:
+1. Edit your `android/app/src/main/java/com/yourapp/MainActivity.{java,kt}` file:
 
 ```java
 // Java (react-native < 0.73)

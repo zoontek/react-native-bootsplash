@@ -752,6 +752,29 @@ export const generate = async ({
     );
 
     if (!isExpo) {
+      const manifestXmlPath = path.resolve(
+        androidOutputPath,
+        "..",
+        "AndroidManifest.xml",
+      );
+
+      const manifestXml = readXmlLike(manifestXmlPath);
+      const activities = manifestXml.root.querySelectorAll("activity");
+
+      for (const activity of activities) {
+        if (activity.getAttribute("android:name") === ".MainActivity") {
+          activity.setAttribute("android:theme", "@style/BootTheme");
+        }
+      }
+
+      await writeXmlLike(manifestXmlPath, manifestXml.root.toString(), {
+        ...manifestXml.formatOptions,
+        formatter: "prettier",
+        htmlWhitespaceSensitivity: "ignore",
+        selfClosingTags: true,
+        singleAttributePerLine: true,
+      });
+
       const valuesPath = path.resolve(androidOutputPath, "values");
       hfs.ensureDir(valuesPath);
 
@@ -759,21 +782,21 @@ export const generate = async ({
       const colorsXmlEntry = `<color name="bootsplash_background">${background.hex}</color>`;
 
       if (hfs.exists(colorsXmlPath)) {
-        const { root, formatOptions } = readXmlLike(colorsXmlPath);
+        const colorsXml = readXmlLike(colorsXmlPath);
         const nextColor = parseHtml(colorsXmlEntry);
 
-        const prevColor = root.querySelector(
+        const prevColor = colorsXml.root.querySelector(
           'color[name="bootsplash_background"]',
         );
 
         if (prevColor != null) {
           prevColor.replaceWith(nextColor);
         } else {
-          root.querySelector("resources")?.appendChild(nextColor);
+          colorsXml.root.querySelector("resources")?.appendChild(nextColor);
         }
 
-        await writeXmlLike(colorsXmlPath, root.toString(), {
-          ...formatOptions,
+        await writeXmlLike(colorsXmlPath, colorsXml.root.toString(), {
+          ...colorsXml.formatOptions,
           formatter: "xmlFormatter",
         });
       } else {
@@ -784,88 +807,61 @@ export const generate = async ({
         );
       }
 
-      {
-        const manifestXmlPath = path.resolve(
-          androidOutputPath,
-          "..",
-          "AndroidManifest.xml",
-        );
+      const stylesXmlPath = path.resolve(valuesPath, "styles.xml");
+      const stylesXml = readXmlLike(stylesXmlPath);
 
-        const { root, formatOptions } = readXmlLike(manifestXmlPath);
-        const activities = root.querySelectorAll("activity");
+      const prevStyle = stylesXml.root.querySelector('style[name="BootTheme"]');
+      const parent = prevStyle?.getAttribute("parent") ?? "Theme.BootSplash";
 
-        for (const activity of activities) {
-          if (activity.getAttribute("android:name") === ".MainActivity") {
-            activity.setAttribute("android:theme", "@style/BootTheme");
+      const extraItems = parseHtml(
+        prevStyle?.text
+          .split("\n")
+          .map((line) => line.trim())
+          .join("") ?? "",
+      )
+        .childNodes.filter((node) => {
+          if (!(node instanceof HTMLElement)) {
+            return true;
           }
-        }
 
-        await writeXmlLike(manifestXmlPath, root.toString(), {
-          ...formatOptions,
-          formatter: "prettier",
-          htmlWhitespaceSensitivity: "ignore",
-          selfClosingTags: true,
-          singleAttributePerLine: true,
-        });
-      }
+          const name = node.getAttribute("name");
 
-      {
-        const stylesXmlPath = path.resolve(valuesPath, "styles.xml");
-        const { root, formatOptions } = readXmlLike(stylesXmlPath);
+          return (
+            name !== "bootSplashBackground" &&
+            name !== "bootSplashLogo" &&
+            name !== "bootSplashBrand" &&
+            name !== "postBootSplashTheme"
+          );
+        })
+        .map((node) => node.toString());
 
-        const prevStyle = root.querySelector('style[name="BootTheme"]');
-        const parent = prevStyle?.getAttribute("parent") ?? "Theme.BootSplash";
+      const styleItems: string[] = [
+        ...(extraItems.length > 0 ? [...extraItems, ""] : []),
 
-        const extraItems = parseHtml(
-          prevStyle?.text
-            .split("\n")
-            .map((line) => line.trim())
-            .join("") ?? "",
-        )
-          .childNodes.filter((node) => {
-            if (!(node instanceof HTMLElement)) {
-              return true;
-            }
+        '<item name="bootSplashBackground">@color/bootsplash_background</item>',
+        '<item name="bootSplashLogo">@drawable/bootsplash_logo</item>',
 
-            const name = node.getAttribute("name");
+        ...(brand != null && brandPath != null
+          ? ['<item name="bootSplashBrand">@drawable/bootsplash_brand</item>']
+          : []),
 
-            return (
-              name !== "bootSplashBackground" &&
-              name !== "bootSplashLogo" &&
-              name !== "bootSplashBrand" &&
-              name !== "postBootSplashTheme"
-            );
-          })
-          .map((node) => node.toString());
+        '<item name="postBootSplashTheme">@style/AppTheme</item>',
+      ];
 
-        const styleItems: string[] = [
-          ...(extraItems.length > 0 ? [...extraItems, ""] : []),
-
-          '<item name="bootSplashBackground">@color/bootsplash_background</item>',
-          '<item name="bootSplashLogo">@drawable/bootsplash_logo</item>',
-
-          ...(brand != null && brandPath != null
-            ? ['<item name="bootSplashBrand">@drawable/bootsplash_brand</item>']
-            : []),
-
-          '<item name="postBootSplashTheme">@style/AppTheme</item>',
-        ];
-
-        const nextStyle = parseHtml(dedent`
+      const nextStyle = parseHtml(dedent`
           <style name="BootTheme" parent="${parent}">
             ${styleItems.join("\n")}
           </style>
         `);
 
-        prevStyle?.remove(); // remove the existing style
-        root.querySelector("resources")?.appendChild(nextStyle);
+      prevStyle?.remove(); // remove the existing style
+      stylesXml.root.querySelector("resources")?.appendChild(nextStyle);
 
-        await writeXmlLike(stylesXmlPath, root.toString(), {
-          ...formatOptions,
-          formatter: "prettier",
-          htmlWhitespaceSensitivity: "ignore",
-        });
-      }
+      await writeXmlLike(stylesXmlPath, stylesXml.root.toString(), {
+        ...stylesXml.formatOptions,
+        formatter: "prettier",
+        htmlWhitespaceSensitivity: "ignore",
+      });
     }
   }
 
@@ -1029,9 +1025,9 @@ export const generate = async ({
   if (htmlTemplatePath != null) {
     log.title("🌐", "Web");
 
-    const { root, formatOptions } = readXmlLike(htmlTemplatePath);
+    const htmlTemplate = readXmlLike(htmlTemplatePath);
     const { format } = await logo.metadata();
-    const prevStyle = root.querySelector("#bootsplash-style");
+    const prevStyle = htmlTemplate.root.querySelector("#bootsplash-style");
 
     const base64 = (
       format === "svg"
@@ -1070,10 +1066,10 @@ export const generate = async ({
     if (prevStyle != null) {
       prevStyle.replaceWith(nextStyle);
     } else {
-      root.querySelector("head")?.appendChild(nextStyle);
+      htmlTemplate.root.querySelector("head")?.appendChild(nextStyle);
     }
 
-    const prevDiv = root.querySelector("#bootsplash");
+    const prevDiv = htmlTemplate.root.querySelector("#bootsplash");
 
     const nextDiv = parseHtml(dedent`
       <div id="bootsplash">
@@ -1084,11 +1080,11 @@ export const generate = async ({
     if (prevDiv != null) {
       prevDiv.replaceWith(nextDiv);
     } else {
-      root.querySelector("body")?.appendChild(nextDiv);
+      htmlTemplate.root.querySelector("body")?.appendChild(nextDiv);
     }
 
-    await writeXmlLike(htmlTemplatePath, root.toString(), {
-      ...formatOptions,
+    await writeXmlLike(htmlTemplatePath, htmlTemplate.root.toString(), {
+      ...htmlTemplate.formatOptions,
       formatter: "prettier",
       useCssPlugin: true,
     });
