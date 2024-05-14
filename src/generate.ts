@@ -204,9 +204,7 @@ export const readXmlLike = (filePath: string) => {
 
   return {
     root: parseHtml(content),
-    formatOptions: {
-      indent: detectIndent(content),
-    },
+    formatOptions: { indent: detectIndent(content) },
   };
 };
 
@@ -775,8 +773,8 @@ export const generate = async ({
         }
 
         await writeXmlLike(colorsXmlPath, root.toString(), {
-          formatter: "xmlFormatter",
           ...formatOptions,
+          formatter: "xmlFormatter",
         });
       } else {
         await writeXmlLike(
@@ -832,29 +830,30 @@ export const generate = async ({
             const name = node.getAttribute("name");
 
             return (
-              name !== "postBootSplashTheme" &&
               name !== "bootSplashBackground" &&
               name !== "bootSplashLogo" &&
-              name !== "bootSplashBrand"
+              name !== "bootSplashBrand" &&
+              name !== "postBootSplashTheme"
             );
           })
           .map((node) => node.toString());
 
-        const bootSplashItems = [
-          '<item name="postBootSplashTheme">@style/AppTheme</item>',
+        const styleItems: string[] = [
+          ...(extraItems.length > 0 ? [...extraItems, ""] : []),
+
           '<item name="bootSplashBackground">@color/bootsplash_background</item>',
           '<item name="bootSplashLogo">@drawable/bootsplash_logo</item>',
-        ];
 
-        if (brand != null && brandPath != null) {
-          bootSplashItems.push(
-            '<item name="bootSplashBrand">@drawable/bootsplash_brand</item>',
-          );
-        }
+          ...(brand != null && brandPath != null
+            ? ['<item name="bootSplashBrand">@drawable/bootsplash_brand</item>']
+            : []),
+
+          '<item name="postBootSplashTheme">@style/AppTheme</item>',
+        ];
 
         const nextStyle = parseHtml(dedent`
           <style name="BootTheme" parent="${parent}">
-            ${[...bootSplashItems, ...extraItems].join("\n")}
+            ${styleItems.join("\n")}
           </style>
         `);
 
