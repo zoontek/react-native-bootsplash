@@ -203,10 +203,6 @@ assets/bootsplash/logo@4x.png
 
 ### iOS
 
-_ℹ️ For `react-native` < `0.71` setup, follow the [`v4.4.0 README.md`](https://github.com/zoontek/react-native-bootsplash/blob/4.4.0/README.md)._
-
----
-
 Edit the `ios/YourApp/AppDelegate.mm` file:
 
 ```obj-c
