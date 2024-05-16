@@ -1002,18 +1002,19 @@ export const generate = async ({
 
       const project = Expo.IOSConfig.XcodeUtils.getPbxproj(projectRoot);
       const projectName = path.basename(iosOutputPath);
+      const groupName = path.parse(xcodeProjectPath).name;
 
       Expo.IOSConfig.XcodeUtils.addResourceFileToGroup({
-        filepath: path.join(projectName, "BootSplash.storyboard"),
-        groupName: path.parse(xcodeProjectPath).name,
         project,
+        filepath: path.join(projectName, "BootSplash.storyboard"),
+        groupName,
         isBuildFile: true,
       });
 
       Expo.IOSConfig.XcodeUtils.addResourceFileToGroup({
-        filepath: path.join(projectName, "Colors.xcassets"),
-        groupName: path.parse(xcodeProjectPath).name,
         project,
+        filepath: path.join(projectName, "Colors.xcassets"),
+        groupName,
         isBuildFile: true,
       });
 
