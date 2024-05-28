@@ -9,6 +9,7 @@ import {
   AndroidProjectConfig,
   IOSProjectConfig,
 } from "@react-native-community/cli-types";
+import childProcess from "child_process";
 import crypto from "crypto";
 import detectIndent from "detect-indent";
 import fs from "fs-extra";
@@ -21,6 +22,7 @@ import * as cssPlugin from "prettier/plugins/postcss";
 import * as prettier from "prettier/standalone";
 import sharp, { Sharp } from "sharp";
 import { dedent } from "ts-dedent";
+import util from "util";
 import formatXml, { XMLFormatterOptions } from "xml-formatter";
 import { Manifest } from ".";
 
@@ -39,6 +41,11 @@ type Color = {
   hex: string;
   rgb: RGBColor;
 };
+
+const promisifiedExec = util.promisify(childProcess.exec);
+
+const exec = (cmd: string) =>
+  promisifiedExec(cmd).then(({ stdout, stderr }) => stdout || stderr);
 
 export const log = {
   error: (text: string) => {
@@ -458,15 +465,35 @@ const getIOSOutputPath = ({
   return iosOutputPath;
 };
 
-const getHtmlTemplatePath = ({
+const getHtmlTemplatePath = async ({
+  isExpo,
   html,
   platforms,
 }: {
+  isExpo: boolean;
   html: string;
   platforms: Platforms;
 }) => {
   if (!platforms.includes("web")) {
     return;
+  }
+
+  if (isExpo) {
+    const htmlTemplatePath = path.resolve(workingPath, html);
+
+    const htmlTemplateRelativePath = path.relative(
+      workingPath,
+      htmlTemplatePath,
+    );
+
+    if (
+      htmlTemplateRelativePath === "public/index.html" &&
+      !hfs.exists(htmlTemplatePath)
+    ) {
+      const cmd = `npx expo customize ${htmlTemplateRelativePath}`;
+      console.log(pc.dim(`Running ${cmd}`));
+      await exec(cmd);
+    }
   }
 
   const htmlTemplatePath = path.resolve(workingPath, html);
@@ -687,7 +714,8 @@ export const generate = async ({
     platforms,
   });
 
-  const htmlTemplatePath = getHtmlTemplatePath({
+  const htmlTemplatePath = await getHtmlTemplatePath({
+    isExpo,
     html,
     platforms,
   });
