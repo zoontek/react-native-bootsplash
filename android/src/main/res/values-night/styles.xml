@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.BootSplash.EdgeToEdge.DayNight" parent="Theme.BootSplash.EdgeToEdge.Common">
+    <style name="Theme.BootSplash.BarsStyle" parent="Theme.BootSplash">
         <item name="darkContentBarsStyle">false</item>
     </style>
 </resources>
