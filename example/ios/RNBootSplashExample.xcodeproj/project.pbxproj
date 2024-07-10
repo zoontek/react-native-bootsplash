@@ -55,7 +55,6 @@
 				2E573F5576CF4C7EAB2F2EB6 /* BootSplash.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				7084016BE0AB0931398173FB /* PrivacyInfo.xcprivacy */,
-				AED2CA2683E04CD1801CA2E7 /* Colors.xcassets */,
 			);
 			name = RNBootSplashExample;
 			sourceTree = "<group>";
