@@ -201,6 +201,49 @@ assets/bootsplash/logo@4x.png
 
 ![](./docs/cli_generator.png)
 
+### Expo
+
+1. Disable `expo-splash-screen` autolinking (in your `package.json`):
+
+```json
+"expo": {
+  "autolinking": {
+    "exclude": [
+      "expo-splash-screen"
+    ]
+  }
+}
+```
+
+2. Edit your `app.json` to add the plugin:
+
+```diff
+{
+  "expo": {
+-   "splash": {
+-     "image": "./assets/splash.png",
+-     "resizeMode": "contain",
+-     "backgroundColor": "#ffffff"
+-   },
++   "plugins": [
++     ["react-native-bootsplash", { "assetsDir": "assets/bootsplash" }]
++   ]
+  }
+}
+```
+
+_📌 The available plugins options are:_
+
+```ts
+type PluginOptions = {
+  assetsDir?: string; // optional, default is "assets/bootsplash"
+  android?: {
+    parentTheme?: "TransparentStatus" | "EdgeToEdge"; // optional, default is `undefined` (`Theme.BootSplash`)
+    darkContentBarsStyle?: boolean; // optional, default is `undefined`
+  };
+};
+```
+
 ### iOS
 
 Edit the `ios/YourApp/AppDelegate.mm` file:
