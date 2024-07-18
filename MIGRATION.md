@@ -1,69 +1,19 @@
-# Migration from v4
+# Migration from v5
 
 ## What's new
 
-- Brand image support
-- Dark mode support 🌚
-- Web support 🌐
-- A new hook, `useHideAnimation`, allowing you to easily animate all splash screen elements using `Animated` or `react-native-reanimated`. Create something nicer than a simple fade 🚀
-- An improved CLI generator, now able to edit / output over **50** files (light and dark logos + light and dark brand images, config files…for all pixel densities!). Note that the new options require a [license key 🔑](https://zoontek.gumroad.com/l/bootsplash-generator)
+- An expo plugin 🧩
+- A `ready` option in `useHideAnimation` config in order to delay your animation, if you want to wait for something else than just layout rendering + images loading 🚦
+- A new Android theme: `Theme.BootSplash.TransparentStatus` (for transparent status bar + opaque navigation bar) 🫥
 
 ## What else?
 
-- [AndroidX SplashScreen library](https://developer.android.com/jetpack/androidx/releases/core#core-splashscreen-1.0.0) has been replaced in order to solve a lot of known issues with it ([#381](https://github.com/zoontek/react-native-bootsplash/issues/381), [#418](https://github.com/zoontek/react-native-bootsplash/issues/418), [#440](https://github.com/zoontek/react-native-bootsplash/issues/440), [#456](https://github.com/zoontek/react-native-bootsplash/issues/456), etc). `react-native-bootsplash` now uses its own polyfill, compatible with Android 5+ (without any degraded mode).
-- Your Android theme status / navigation bar styles are not overwritten anymore. Guides for transparent status bar and edge-to-edge layouts have been added in the brand new FAQ.
-- Android generated assets has been migrated from `mipmap-*` directories to `drawable-*` ones.
-- To avoid conflicts, Android provided theme / properties has been renamed `Theme.BootSplash` / `Theme.BootSplash.EdgeToEdge`, `bootSplashBackground`, `bootSplashLogo`, `bootSplashBrand` and `postBootSplashTheme`.
-- The `duration` argument has been removed from `fade()` options.
-- `getVisibilityStatus()` has been replaced with `isVisible()` (which returns a `Promise<boolean>`). The `transitioning` status does not exists anymore (when the splash screen is fading, it stays `visible` until complete disappearance).
-- The CLI now output a `bootsplash_manifest.json` file to share image sizes + colors with the JS thread (used by `useHideAnimation`).
-- `--assets-path` CLI option has been renamed `--assets-output`.
-- React Native < 0.70 and iOS < 12.4 support has been dropped.
-- ReScript bindings has been removed as I don't know how to write them. Feels free to open a PR to add it back.
+- `--assets-output` now has a default value, which is `assets/bootsplash`. These assets will always be generated, as it's required for expo or the `useHideAnimation` hook (`assets/bootsplash_logo.png` become `assets/bootsplash/logo.png`, etc.)
+- **All** iOS assets are now suffixed with a short hash of the different splash screen items to prevent [caching issues](https://stackoverflow.com/questions/33002829/ios-keeping-old-launch-screen-and-app-icon-after-update) (before, it was only the logo).
+- iOS implementation now always uses a `colorset` for background color, even if you choose not to support dark mode (before it was inlined in the `.storyboard` file in such case).
 
 ## How to update
 
-👉 First, run the CLI to generate assets in updated locations!<br>
-It will also update your `BootSplash.storyboard`, the only change to perform on iOS.
-
-### Android
-
-1. Delete all `android/app/src/main/res/mipmap-*/bootsplash_logo.png` files.
-
-2. Edit your `android/app/build.gradle` file:
-
-```diff
-// …
-
-dependencies {
-  // The version of react-native is set by the React Native Gradle Plugin
-  implementation("com.facebook.react:react-android")
-- implementation("androidx.core:core-splashscreen:1.0.0")
-```
-
-3. Edit your `values/styles.xml` file:
-
-```diff
-- <!-- BootTheme should inherit from Theme.SplashScreen -->
-+ <!-- BootTheme should inherit from Theme.BootSplash or Theme.BootSplash.EdgeToEdge -->
-- <style name="BootTheme" parent="Theme.SplashScreen">
-+ <style name="BootTheme" parent="Theme.BootSplash">
--   <item name="windowSplashScreenBackground">@color/bootsplash_background</item>
-+   <item name="bootSplashBackground">@color/bootsplash_background</item>
--   <item name="windowSplashScreenAnimatedIcon">@mipmap/bootsplash_logo</item>
-+   <item name="bootSplashLogo">@drawable/bootsplash_logo</item>
--   <item name="postSplashScreenTheme">@style/AppTheme</item>
-+   <item name="postBootSplashTheme">@style/AppTheme</item>
-  </style>
-```
-
-4. Edit your `MainActivity.java` file:
-
-```diff
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
--   RNBootSplash.init(this);
-+   RNBootSplash.init(this, R.style.BootTheme);
-    super.onCreate(savedInstanceState);
-  }
-```
+- Delete your previously generated assets directory.
+- Run the CLI to generate assets in updated locations.
+- That's all! ✨
