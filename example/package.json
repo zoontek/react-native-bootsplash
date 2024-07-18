@@ -6,7 +6,7 @@
     "node": ">=18"
   },
   "scripts": {
-    "clean": "rm -rf ./node_modules ./ios/Pods",
+    "clean": "rm -rf ./node_modules",
     "preinstall": "cd .. && yarn && yarn build && cd example",
     "start": "react-native start",
     "web": "webpack serve",

@@ -77,54 +77,50 @@ RCT_EXPORT_MODULE();
     return;
   }
 
-  static dispatch_once_t onceToken;
+  [NSTimer scheduledTimerWithTimeInterval:0.35
+                                  repeats:NO
+                                    block:^(NSTimer * _Nonnull timer) {
+    // wait for native iOS launch screen to fade out
+    _nativeHidden = true;
 
-  dispatch_once(&onceToken, ^(void) {
-    [NSTimer scheduledTimerWithTimeInterval:0.35
-                                    repeats:NO
-                                      block:^(NSTimer * _Nonnull timer) {
-      // wait for native iOS launch screen to fade out
-      _nativeHidden = true;
+    // hide has been called before native launch screen fade out
+    if ([_resolveQueue count] > 0) {
+      [self hideAndClearPromiseQueue];
+    }
+  }];
 
-      // hide has been called before native launch screen fade out
-      if ([_resolveQueue count] > 0) {
-        [self hideAndClearPromiseQueue];
-      }
-    }];
-
+  if (rootView != nil) {
 #ifdef RCT_NEW_ARCH_ENABLED
-    if (rootView != nil && [rootView isKindOfClass:[RCTSurfaceHostingProxyRootView class]]) {
-      _rootView = (RCTSurfaceHostingProxyRootView *)rootView;
+    _rootView = (RCTSurfaceHostingProxyRootView *)rootView;
 #else
-    if (rootView != nil && [rootView isKindOfClass:[RCTRootView class]]) {
-      _rootView = (RCTRootView *)rootView;
+    _rootView = (RCTRootView *)rootView;
 #endif
-      UIStoryboard *storyboard = [UIStoryboard storyboardWithName:storyboardName bundle:nil];
 
-      _loadingView = [[storyboard instantiateInitialViewController] view];
-      _loadingView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-      _loadingView.frame = _rootView.bounds;
-      _loadingView.center = (CGPoint){CGRectGetMidX(_rootView.bounds), CGRectGetMidY(_rootView.bounds)};
-      _loadingView.hidden = NO;
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:storyboardName bundle:nil];
+
+    _loadingView = [[storyboard instantiateInitialViewController] view];
+    _loadingView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    _loadingView.frame = _rootView.bounds;
+    _loadingView.center = (CGPoint){CGRectGetMidX(_rootView.bounds), CGRectGetMidY(_rootView.bounds)};
+    _loadingView.hidden = NO;
 
 #if RCT_NEW_ARCH_ENABLED
-      [_rootView disableActivityIndicatorAutoHide:YES];
-      [_rootView setLoadingView:_loadingView];
+    [_rootView disableActivityIndicatorAutoHide:YES];
+    [_rootView setLoadingView:_loadingView];
 #else
-      [_rootView addSubview:_loadingView];
+    [_rootView addSubview:_loadingView];
 #endif
 
-      [[NSNotificationCenter defaultCenter] addObserver:self
-                                               selector:@selector(onJavaScriptDidLoad)
-                                                   name:RCTJavaScriptDidLoadNotification
-                                                 object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(onJavaScriptDidLoad)
+                                                 name:RCTJavaScriptDidLoadNotification
+                                               object:nil];
 
-      [[NSNotificationCenter defaultCenter] addObserver:self
-                                               selector:@selector(onJavaScriptDidFailToLoad)
-                                                   name:RCTJavaScriptDidFailToLoadNotification
-                                                 object:nil];
-    }
-  });
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(onJavaScriptDidFailToLoad)
+                                                 name:RCTJavaScriptDidFailToLoadNotification
+                                               object:nil];
+  }
 }
 
 + (void)onJavaScriptDidLoad {

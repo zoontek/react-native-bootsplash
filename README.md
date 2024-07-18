@@ -30,66 +30,6 @@ $ yarn add react-native-bootsplash
 
 _⚠️  Don't forget going into the `ios` directory to execute a `pod install`._
 
-## 🆘 Manual linking
-
-Because this package targets recent React Native versions, you probably don't need to link it manually. But if you have a special case, follow these additional instructions:
-
-<details>
-  <summary><b>👀 See manual linking instructions</b></summary>
-
-### iOS
-
-Add this line to your `ios/Podfile` file, then run `pod install`.
-
-```bash
-target 'YourAwesomeProject' do
-  # …
-  pod 'RNBootSplash', :path => '../node_modules/react-native-bootsplash'
-end
-```
-
-### Android
-
-1. Add the following lines to `android/settings.gradle`:
-
-```gradle
-include ':react-native-bootsplash'
-project(':react-native-bootsplash').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-bootsplash/android')
-```
-
-2. Add the implementation line to the dependencies in `android/app/build.gradle`:
-
-```gradle
-dependencies {
-  // ...
-  implementation project(':react-native-bootsplash')
-}
-```
-
-3. Add the import and link the package in `MainApplication.java`:
-
-```java
-import com.zoontek.rnbootsplash.RNBootSplashPackage; // ⬅️ add the RNBootSplashPackage import
-
-public class MainApplication extends Application implements ReactApplication {
-
-  // …
-
-  @Override
-  protected List<ReactPackage> getPackages() {
-    @SuppressWarnings("UnnecessaryLocalVariable")
-    List<ReactPackage> packages = new PackageList(this).getPackages();
-    // …
-    packages.add(new RNBootSplashPackage());
-    return packages;
-  }
-
-  // …
-}
-```
-
-</details>
-
 ## Setup
 
 ### Assets generation
@@ -113,9 +53,9 @@ Options:
   --platforms <list>          Platforms to generate for, separated by a comma (default: "android,ios,web")
   --background <string>       Background color (in hexadecimal format) (default: "#fff")
   --logo-width <number>       Logo width at @1x (in dp - we recommend approximately ~100) (default: 100)
-  --assets-output <string>    Assets output directory path
+  --assets-output <string>    Assets output directory path (default: "assets/bootsplash")
   --flavor <string>           Android flavor build variant (where your resource directory is) (default: "main")
-  --html <string>             HTML template file path (your web app entry point) (default: "index.html")
+  --html <string>             HTML template file path (your web app entry point) (default: "public/index.html")
   --license-key <string>      License key to enable brand and dark mode assets generation
   --brand <string>            Brand file path (PNG or SVG)
   --brand-width <number>      Brand width at @1x (in dp - we recommend approximately ~80) (default: 80)
@@ -141,71 +81,114 @@ _📍 This license key grants unlimited and unrestricted usage of the generator 
 
 ```bash
 # Without license key
-yarn react-native generate-bootsplash svgs/light_logo.svg \
+yarn react-native generate-bootsplash svgs/light-logo.svg \
   --platforms=android,ios,web \
   --background=F5FCFF \
   --logo-width=100 \
-  --assets-output=assets \
+  --assets-output=assets/bootsplash \
   --flavor=main \
-  --html=index.html
+  --html=public/index.html
 
 # With license key 🔑
-yarn react-native generate-bootsplash svgs/light_logo.svg \
+yarn react-native generate-bootsplash svgs/light-logo.svg \
   --platforms=android,ios,web \
   --background=F5FCFF \
   --logo-width=100 \
-  --assets-output=assets \
+  --assets-output=assets/bootsplash \
   --flavor=main \
-  --html=index.html \
+  --html=public/index.html \
   --license-key=xxxxx \
-  --brand=svgs/light_brand.svg \
+  --brand=svgs/light-brand.svg \
   --brand-width=80 \
   --dark-background=00090A \
-  --dark-logo=svgs/dark_logo.svg \
-  --dark-brand=svgs/dark_brand.svg
+  --dark-logo=svgs/dark-logo.svg \
+  --dark-brand=svgs/dark-brand.svg
 ```
 
 This tool relies on the naming conventions that are used in the `/example` project and will therefore create the following files:
 
 ```bash
 # Without license key
-android/app/src/main/res/values/colors.xml
-android/app/src/main/res/drawable-hdpi/bootsplash_logo.png
 android/app/src/main/res/drawable-mdpi/bootsplash_logo.png
+android/app/src/main/res/drawable-hdpi/bootsplash_logo.png
 android/app/src/main/res/drawable-xhdpi/bootsplash_logo.png
 android/app/src/main/res/drawable-xxhdpi/bootsplash_logo.png
 android/app/src/main/res/drawable-xxxhdpi/bootsplash_logo.png
+android/app/src/main/AndroidManifest.xml
+android/app/src/main/res/values/colors.xml
+android/app/src/main/res/values/styles.xml
 
-ios/RNBootSplashExample/BootSplash.storyboard
-ios/RNBootSplashExample.xcodeproj/project.pbxproj
-ios/RNBootSplashExample/Info.plist
-ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/Contents.json
-ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo-<hash>.png
-ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo-<hash>@2x.png
-ios/RNBootSplashExample/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo-<hash>@3x.png
+ios/YourApp/BootSplash.storyboard
+ios/YourApp/Colors.xcassets/BootSplashBackground-<hash>.colorset/Contents.json
+ios/YourApp/Images.xcassets/BootSplashLogo-<hash>.imageset/Contents.json
+ios/YourApp/Images.xcassets/BootSplashLogo-<hash>.imageset/logo-<hash>.png
+ios/YourApp/Images.xcassets/BootSplashLogo-<hash>.imageset/logo-<hash>@2x.png
+ios/YourApp/Images.xcassets/BootSplashLogo-<hash>.imageset/logo-<hash>@3x.png
+ios/YourApp/Info.plist
+ios/YourApp.xcodeproj/project.pbxproj
 
-index.html
+public/index.html
 
-# Only if --assets-output was specified
-assets/bootsplash_manifest.json
-assets/bootsplash_logo.png
-assets/bootsplash_logo@1,5x.png
-assets/bootsplash_logo@2x.png
-assets/bootsplash_logo@3x.png
-assets/bootsplash_logo@4x.png
+assets/bootsplash/manifest.json
+assets/bootsplash/logo.png
+assets/bootsplash/logo@1,5x.png
+assets/bootsplash/logo@2x.png
+assets/bootsplash/logo@3x.png
+assets/bootsplash/logo@4x.png
 
 # + Over 40 files with license key 🔑 (brand images, dark mode versions…)
 ```
 
 ![](./docs/cli_generator.png)
 
-### iOS
+### With Expo
 
-_ℹ️ For `react-native` < `0.71` setup, follow the [`v4.4.0 README.md`](https://github.com/zoontek/react-native-bootsplash/blob/4.4.0/README.md)._
+1. Disable `expo-splash-screen` autolinking (in your `package.json`):
 
----
+```json
+"expo": {
+  "autolinking": {
+    "exclude": [
+      "expo-splash-screen"
+    ]
+  }
+}
+```
 
-Edit the `ios/YourProjectName/AppDelegate.mm` file:
+2. Add the plugin in your `app.json`:
+
+```diff
+{
+  "expo": {
+-   "splash": {
+-     "image": "./assets/splash.png",
+-     "resizeMode": "contain",
+-     "backgroundColor": "#ffffff"
+-   },
++   "plugins": [
++     ["react-native-bootsplash", { "assetsDir": "assets/bootsplash" }]
++   ]
+  }
+}
+```
+
+_📌 The available plugins options are:_
+
+```ts
+type PluginOptions = {
+  assetsDir?: string; // optional, default is "assets/bootsplash"
+  android?: {
+    parentTheme?: "TransparentStatus" | "EdgeToEdge"; // optional, default is `undefined` (`Theme.BootSplash`)
+    darkContentBarsStyle?: boolean; // optional, default is `undefined`
+  };
+};
+```
+
+### With bare React Native
+
+#### iOS
+
+Edit the `ios/YourApp/AppDelegate.mm` file:
 
 ```obj-c
 #import "AppDelegate.h"
@@ -236,57 +219,9 @@ Edit the `ios/YourProjectName/AppDelegate.mm` file:
 @end
 ```
 
-### Android
+#### Android
 
-1. Edit your `android/app/src/main/res/values/styles.xml` file:
-
-```xml
-<resources>
-
-  <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
-      <!-- Your base theme customization -->
-  </style>
-
-  <!-- BootTheme should inherit from Theme.BootSplash or Theme.BootSplash.EdgeToEdge -->
-  <style name="BootTheme" parent="Theme.BootSplash">
-    <item name="bootSplashBackground">@color/bootsplash_background</item>
-    <item name="bootSplashLogo">@drawable/bootsplash_logo</item>
-    <item name="bootSplashBrand">@drawable/bootsplash_brand</item> <!-- Only if you have a brand image -->
-    <item name="postBootSplashTheme">@style/AppTheme</item>
-  </style>
-
-</resources>
-```
-
-2. Edit your `android/app/src/main/AndroidManifest.xml` file:
-
-```xml
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
-  <!-- … -->
-
-  <application
-    android:name=".MainApplication"
-    android:label="@string/app_name"
-    android:icon="@mipmap/ic_launcher"
-    android:roundIcon="@mipmap/ic_launcher_round"
-    android:allowBackup="false"
-    android:theme="@style/AppTheme"> <!-- Apply @style/AppTheme on .MainApplication -->
-    <activity
-      android:name=".MainActivity"
-      android:label="@string/app_name"
-      android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
-      android:launchMode="singleTask"
-      android:windowSoftInputMode="adjustResize"
-      android:exported="true"
-      android:theme="@style/BootTheme"> <!-- Apply @style/BootTheme on .MainActivity -->
-      <!-- … -->
-    </activity>
-  </application>
-</manifest>
-```
-
-3. Finally edit your `android/app/src/main/java/com/yourprojectname/MainActivity.{java,kt}` file:
+Edit your `android/app/src/main/java/com/yourapp/MainActivity.{java,kt}` file:
 
 ```java
 // Java (react-native < 0.73)
@@ -382,16 +317,16 @@ BootSplash.isVisible().then((value) => console.log(value));
 
 ### useHideAnimation()
 
-A hook to easily creation a hide custom hide animation, by animating all splash screen elements using `Animated`, `react-native-reanimated` or else (similar as the video on top of this documentation).<br>
-To use it, don't forget to set the `--assets-output` option of the generator as it requires the manifest and assets images files.
+A hook to easily creation a hide custom hide animation, by animating all splash screen elements using `Animated`, `react-native-reanimated` or else (similar as the video on top of this documentation).
 
 #### Method type
 
 ```ts
 type useHideAnimation = (config: {
-  manifest: Manifest; // the manifest file is generated when --assets-output is specified
+  ready?: boolean; // a boolean flag to delay the animate execution (default: true)
 
   // the required generated assets
+  manifest: Manifest; // the manifest file is generated in your assets directory
   logo?: ImageRequireSource;
   darkLogo?: ImageRequireSource;
   brand?: ImageRequireSource;
@@ -404,9 +339,9 @@ type useHideAnimation = (config: {
 
   animate: () => void;
 }) => {
-  container: ViewProps;
-  logo: ImageProps;
-  brand: ImageProps;
+  container: ContainerProps;
+  logo: LogoProps;
+  brand: BrandProps;
 };
 ```
 
@@ -425,12 +360,12 @@ const AnimatedBootSplash = ({ onAnimationEnd }: Props) => {
   const [opacity] = useState(() => new Animated.Value(1));
 
   const { container, logo /*, brand */ } = BootSplash.useHideAnimation({
-    manifest: require("../assets/bootsplash_manifest.json"),
+    manifest: require("../assets/bootsplash/manifest.json"),
 
-    logo: require("../assets/bootsplash_logo.png"),
-    // darkLogo: require("../assets/bootsplash_dark_logo.png"),
-    // brand: require("../assets/bootsplash_brand.png"),
-    // darkBrand: require("../assets/bootsplash_dark_brand.png"),
+    logo: require("../assets/bootsplash/logo.png"),
+    // darkLogo: require("../assets/bootsplash/dark-logo.png"),
+    // brand: require("../assets/bootsplash/brand.png"),
+    // darkBrand: require("../assets/bootsplash/dark-brand.png"),
 
     statusBarTranslucent: true,
     navigationBarTranslucent: false,
@@ -479,6 +414,31 @@ const App = () => {
 
 ## FAQ
 
+### How can I have a transparent status bar, or [edge-to-edge layout](https://developer.android.com/develop/ui/views/layout/edge-to-edge)?
+
+Edit your `values/styles.xml` file to inherit from `Theme.BootSplash.TransparentStatus` / `Theme.BootSplash.EdgeToEdge` instead of `Theme.BootSplash`:
+
+```xml
+<resources>
+
+  <!-- … -->
+
+  <!-- make BootTheme inherit from Theme.BootSplash.TransparentStatus / Theme.BootSplash.EdgeToEdge -->
+  <style name="BootTheme" parent="Theme.EdgeToEdge">
+    <!-- … -->
+
+    <!-- optional, used to enforce the initial bars styles -->
+    <!-- default is true in light mode, false in dark mode -->
+    <item name="darkContentBarsStyle">true</item>
+  </style>
+
+</resources>
+```
+
+### Why are both light and dark assets inlined in my index.html?
+
+For the sake of simplicity. Since the light and dark versions of your assets are likely identical (except for the colors), if your `index.html` file is compressed with **gzip**, the size difference will be negligible.
+
 ### How should I use it with React Navigation?
 
 If you are using React Navigation, you can hide the splash screen once the navigation container and all children have finished mounting by using the `onReady` function.
@@ -524,36 +484,6 @@ After that, we need to add the setup file in the jest config. You can add it und
 {
   "setupFiles": ["<rootDir>/jest/setup.js"]
 }
-```
-
-### Why are both light and dark assets inlined in my index.html?
-
-For the sake of simplicity. Since the light and dark versions of your assets are likely identical (except for the colors), if your `index.html` file is compressed with **gzip**, the size difference will be negligible.
-
-### How can I make my splash screen status bar transparent?
-
-Edit your `values/styles.xml` to set `android:statusBarColor` and `android:windowLightStatusBar` values:
-
-```diff
-- <resources>
-+ <resources xmlns:tools="http://schemas.android.com/tools">
-
-  <style name="BootTheme" parent="Theme.BootSplash">
-    <!-- … -->
-
-+   <!-- Apply color + style to the status bar (true = dark-content, false = light-content) -->
-+   <item name="android:statusBarColor" tools:targetApi="m">@color/bootsplash_background</item>
-+   <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
-  </style>
-```
-
-### How can I apply [edge-to-edge layout](https://developer.android.com/develop/ui/views/layout/edge-to-edge) to my splash screen?
-
-Edit your `values/styles.xml` file to use `Theme.BootSplash.EdgeToEdge` instead of `Theme.BootSplash`:
-
-```diff
-- <style name="BootTheme" parent="Theme.BootSplash">
-+ <style name="BootTheme" parent="Theme.BootSplash.EdgeToEdge">
 ```
 
 ## Sponsors

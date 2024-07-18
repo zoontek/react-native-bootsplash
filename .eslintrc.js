@@ -2,7 +2,14 @@ const path = require("path");
 
 module.exports = {
   root: true,
-  ignorePatterns: ["dist", "example", ".eslintrc.js", "react-native.config.js"],
+  ignorePatterns: [
+    "app.plugin.js",
+    ".eslintrc.js",
+    "react-native.config.js",
+    "dist",
+    "example",
+  ],
+
   parser: "@typescript-eslint/parser",
   plugins: ["@typescript-eslint", "react-hooks"],
 

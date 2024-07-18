@@ -11,6 +11,7 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		1AB79F8D067146898A2E138D /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AED2CA2683E04CD1801CA2E7 /* Colors.xcassets */; };
 		B8254349910638FE4FF3E98E /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 7084016BE0AB0931398173FB /* PrivacyInfo.xcprivacy */; };
 		FD2E7FC3D16D476C97098B9D /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2E573F5576CF4C7EAB2F2EB6 /* BootSplash.storyboard */; };
 /* End PBXBuildFile section */
@@ -27,6 +28,7 @@
 		5709B34CF0A7D63546082F79 /* Pods-RNBootSplashExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RNBootSplashExample.release.xcconfig"; path = "Target Support Files/Pods-RNBootSplashExample/Pods-RNBootSplashExample.release.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-RNBootSplashExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RNBootSplashExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7084016BE0AB0931398173FB /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = RNBootSplashExample/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		AED2CA2683E04CD1801CA2E7 /* Colors.xcassets */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = folder.assetcatalog; name = Colors.xcassets; path = RNBootSplashExample/Colors.xcassets; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -47,6 +49,7 @@
 			children = (
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
+				AED2CA2683E04CD1801CA2E7 /* Colors.xcassets */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				2E573F5576CF4C7EAB2F2EB6 /* BootSplash.storyboard */,
@@ -165,6 +168,7 @@
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				FD2E7FC3D16D476C97098B9D /* BootSplash.storyboard in Resources */,
+				1AB79F8D067146898A2E138D /* Colors.xcassets in Resources */,
 				B8254349910638FE4FF3E98E /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

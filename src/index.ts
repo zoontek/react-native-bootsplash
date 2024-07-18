@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  ImageProps,
   ImageRequireSource,
+  ImageResizeMode,
+  ImageSourcePropType,
+  ImageStyle,
   Platform,
   StyleSheet,
-  ViewProps,
   ViewStyle,
 } from "react-native";
 import NativeModule from "./NativeRNBootSplash";
@@ -29,6 +30,7 @@ export type Manifest = {
 
 export type UseHideAnimationConfig = {
   manifest: Manifest;
+  ready?: boolean;
 
   logo?: ImageRequireSource;
   darkLogo?: ImageRequireSource;
@@ -41,10 +43,31 @@ export type UseHideAnimationConfig = {
   navigationBarTranslucent?: boolean;
 };
 
+export type ContainerProps = {
+  style: ViewStyle;
+  onLayout: () => void;
+};
+
+export type LogoProps = {
+  source: ImageSourcePropType;
+  fadeDuration?: number;
+  resizeMode?: ImageResizeMode;
+  style?: ImageStyle;
+  onLoadEnd?: () => void;
+};
+
+export type BrandProps = {
+  source: ImageSourcePropType;
+  fadeDuration?: number;
+  resizeMode?: ImageResizeMode;
+  style?: ImageStyle;
+  onLoadEnd?: () => void;
+};
+
 export type UseHideAnimation = {
-  container: ViewProps;
-  logo: ImageProps;
-  brand: ImageProps;
+  container: ContainerProps;
+  logo: LogoProps;
+  brand: BrandProps;
 };
 
 export function hide(config: Config = {}): Promise<void> {
@@ -59,6 +82,7 @@ export function isVisible(): Promise<boolean> {
 export function useHideAnimation(config: UseHideAnimationConfig) {
   const {
     manifest,
+    ready = true,
 
     logo: logoSrc,
     darkLogo: darkLogoSrc,
@@ -106,30 +130,38 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
       ? darkBrandSrc
       : brandSrc;
 
-  const animateFn = useRef(animate);
-  const layoutReady = useRef(false);
-  const logoReady = useRef(skipLogo);
-  const brandReady = useRef(skipBrand);
-  const animateHasBeenCalled = useRef(false);
+  const ref = useRef({
+    layoutReady: false,
+    logoReady: skipLogo,
+    brandReady: skipBrand,
+    userReady: ready,
 
-  useEffect(() => {
-    animateFn.current = animate;
+    animate,
+    animateHasBeenCalled: false,
   });
 
   const maybeRunAnimate = useCallback(() => {
     if (
-      layoutReady.current &&
-      logoReady.current &&
-      brandReady.current &&
-      !animateHasBeenCalled.current
+      ref.current.layoutReady &&
+      ref.current.logoReady &&
+      ref.current.brandReady &&
+      ref.current.userReady &&
+      !ref.current.animateHasBeenCalled
     ) {
-      animateHasBeenCalled.current = true;
+      ref.current.animateHasBeenCalled = true;
 
       hide({ fade: false })
-        .then(() => animateFn.current())
+        .then(() => ref.current.animate())
         .catch(() => {});
     }
   }, []);
+
+  useEffect(() => {
+    ref.current.animate = animate;
+    ref.current.userReady = ready;
+
+    maybeRunAnimate();
+  });
 
   return useMemo<UseHideAnimation>(() => {
     const containerStyle: ViewStyle = {
@@ -139,38 +171,38 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
       justifyContent: "center",
     };
 
-    const container: ViewProps = {
+    const container: ContainerProps = {
       style: containerStyle,
       onLayout: () => {
-        layoutReady.current = true;
+        ref.current.layoutReady = true;
         maybeRunAnimate();
       },
     };
 
-    const logo: ImageProps =
+    const logo: LogoProps =
       logoFinalSrc == null
         ? { source: -1 }
         : {
+            source: logoFinalSrc,
             fadeDuration: 0,
             resizeMode: "contain",
-            source: logoFinalSrc,
             style: {
               width: logoWidth,
               height: logoHeight,
             },
             onLoadEnd: () => {
-              logoReady.current = true;
+              ref.current.logoReady = true;
               maybeRunAnimate();
             },
           };
 
-    const brand: ImageProps =
+    const brand: BrandProps =
       brandFinalSrc == null
         ? { source: -1 }
         : {
+            source: brandFinalSrc,
             fadeDuration: 0,
             resizeMode: "contain",
-            source: brandFinalSrc,
             style: {
               position: "absolute",
               bottom: Platform.OS === "web" ? 60 : brandBottom,
@@ -178,7 +210,7 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
               height: brandHeight,
             },
             onLoadEnd: () => {
-              brandReady.current = true;
+              ref.current.brandReady = true;
               maybeRunAnimate();
             },
           };
