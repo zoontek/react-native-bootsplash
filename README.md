@@ -155,7 +155,7 @@ assets/bootsplash/logo@4x.png
 }
 ```
 
-2. Edit your `app.json` to add the plugin:
+2. Add the plugin in your `app.json`:
 
 ```diff
 {
