@@ -317,7 +317,7 @@ BootSplash.isVisible().then((value) => console.log(value));
 
 ### useHideAnimation()
 
-A hook to easily creation a hide custom hide animation, by animating all splash screen elements using `Animated`, `react-native-reanimated` or else (similar as the video on top of this documentation).
+A hook to easily create a custom hide animation by animating all splash screen elements using `Animated`, `react-native-reanimated` or else (similar as the video on top of this documentation).
 
 #### Method type
 
