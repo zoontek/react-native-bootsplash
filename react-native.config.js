@@ -1,10 +1,20 @@
 const platforms = ["android", "ios", "web"];
+const projectTypes = ["detect", "bare", "expo"];
 
 /** @type {import("@react-native-community/cli-types").Command} */
 const generateBootSplash = {
   name: "generate-bootsplash <logo>",
   description: "Generate a launch screen using a logo file path (PNG or SVG)",
   options: [
+    {
+      name: "--project-type <string>",
+      description: 'Project type ("detect", "bare" or "expo")',
+      default: "detect",
+      parse: (value) => {
+        const type = value.toLowerCase();
+        return projectTypes.includes(type) ? type : "detect";
+      },
+    },
     {
       name: "--platforms <list>",
       description: "Platforms to generate for, separated by a comma",
@@ -75,12 +85,6 @@ const generateBootSplash = {
       name: "--dark-brand <string>",
       description: "[dark mode] Brand file path (PNG or SVG)",
     },
-    {
-      name: "--expo <boolean>",
-      description: "Generate assets for expo or bare project",
-      default: true,
-      parse: (value) => value === "true",
-    }
   ],
   func: ([logo], { project: { android, ios } }, args) => {
     const { generate } = require("./dist/commonjs/generate");

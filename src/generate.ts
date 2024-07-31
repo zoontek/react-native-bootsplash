@@ -26,6 +26,7 @@ import { Manifest } from ".";
 const workingPath = process.env.INIT_CWD ?? process.env.PWD ?? process.cwd();
 const projectRoot = findProjectRoot(workingPath);
 
+type ProjectType = "detect" | "bare" | "expo";
 type Platforms = ("android" | "ios" | "web")[];
 
 export type RGBColor = {
@@ -584,17 +585,18 @@ const requireAddon = ():
 export const generate = async ({
   android,
   ios,
+  projectType,
   platforms,
   html,
   flavor,
   licenseKey,
-  expo = true,
   ...args
 }: {
   android?: AndroidProjectConfig;
   ios?: IOSProjectConfig;
 
   logo: string;
+  projectType: ProjectType;
   platforms: Platforms;
   background: string;
   logoWidth: number;
@@ -608,13 +610,11 @@ export const generate = async ({
   darkBackground?: string;
   darkLogo?: string;
   darkBrand?: string;
-  expo?: boolean;
 }) => {
-  let isExpo = false;
-
-  if (expo) {
-    isExpo = getExpoConfig(workingPath).isExpo;
-  }
+  const isExpo =
+    projectType === "detect" || projectType === "expo"
+      ? getExpoConfig(workingPath).isExpo
+      : false;
 
   if (semver.lt(process.versions.node, "18.0.0")) {
     log.error("Requires Node 18 (or higher)");
