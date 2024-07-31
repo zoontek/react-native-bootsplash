@@ -588,6 +588,7 @@ export const generate = async ({
   html,
   flavor,
   licenseKey,
+  expo = true,
   ...args
 }: {
   android?: AndroidProjectConfig;
@@ -607,8 +608,13 @@ export const generate = async ({
   darkBackground?: string;
   darkLogo?: string;
   darkBrand?: string;
+  expo?: boolean;
 }) => {
-  const { isExpo } = getExpoConfig(workingPath);
+  let isExpo = false;
+
+  if (expo) {
+    isExpo = getExpoConfig(workingPath).isExpo;
+  }
 
   if (semver.lt(process.versions.node, "18.0.0")) {
     log.error("Requires Node 18 (or higher)");

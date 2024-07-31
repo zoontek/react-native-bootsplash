@@ -75,6 +75,12 @@ const generateBootSplash = {
       name: "--dark-brand <string>",
       description: "[dark mode] Brand file path (PNG or SVG)",
     },
+    {
+      name: "--expo <boolean>",
+      description: "Generate assets for expo or bare project",
+      default: true,
+      parse: (value) => value === "true",
+    }
   ],
   func: ([logo], { project: { android, ios } }, args) => {
     const { generate } = require("./dist/commonjs/generate");

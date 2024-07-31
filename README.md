@@ -62,6 +62,7 @@ Options:
   --dark-background <string>  [dark mode] Background color (in hexadecimal format)
   --dark-logo <string>        [dark mode] Logo file path (PNG or SVG)
   --dark-brand <string>       [dark mode] Brand file path (PNG or SVG)
+  --expo <boolean>            Generate assets for expo or bare project (default true)
   -h, --help                  display help for command
 ```
 
