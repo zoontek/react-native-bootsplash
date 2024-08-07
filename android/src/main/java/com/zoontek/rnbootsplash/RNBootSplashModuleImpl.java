@@ -147,6 +147,41 @@ public class RNBootSplashModuleImpl {
     }
   }
 
+  private static @NonNull Runnable getHideSequenceRunnable() {
+    final Runnable fadeOutDialogDismiss = new Runnable() {
+      @Override
+      public void run() {
+        mFadeOutDialog = null;
+        mStatus = Status.HIDDEN;
+        clearPromiseQueue();
+      }
+    };
+
+    final Runnable initialDialogDismiss = new Runnable() {
+      @Override
+      public void run() {
+        mInitialDialog = null;
+
+        if (mFadeOutDialog != null) {
+          mFadeOutDialog.dismiss(fadeOutDialogDismiss);
+        } else {
+          fadeOutDialogDismiss.run();
+        }
+      }
+    };
+
+    return new Runnable() {
+      @Override
+      public void run() {
+        if (mInitialDialog != null) {
+          mInitialDialog.dismiss(initialDialogDismiss);
+        } else {
+          initialDialogDismiss.run();
+        }
+      }
+    };
+  }
+
   private static void hideAndClearPromiseQueue(
     final ReactApplicationContext reactContext,
     final boolean fade
@@ -178,51 +213,24 @@ public class RNBootSplashModuleImpl {
           return; // wait until fade out end for clearPromiseQueue
         }
 
-        if (mInitialDialog == null || mStatus == Status.HIDDEN) {
+        if (mStatus == Status.HIDDEN) {
           clearPromiseQueue();
           return; // both initial and fade out dialog are hidden
         }
 
         mStatus = Status.HIDING;
 
-        if (!fade) {
-          mInitialDialog.dismiss(new Runnable() {
-            @Override
-            public void run() {
-              mStatus = Status.HIDDEN;
-              mInitialDialog = null;
-              clearPromiseQueue();
-            }
-          });
-
-          return;
-        }
-
-        // Create a new Dialog instance with fade out animation
-        mFadeOutDialog = new RNBootSplashDialog(activity, mThemeResId, true);
-
-        mFadeOutDialog.show(new Runnable() {
-
-          @Override
-          public void run() {
-            mInitialDialog.dismiss(new Runnable() {
-
-              @Override
-              public void run() {
-
-                mFadeOutDialog.dismiss(new Runnable() {
-                  @Override
-                  public void run() {
-                    mStatus = Status.HIDDEN;
-                    mInitialDialog = null;
-                    mFadeOutDialog = null;
-                    clearPromiseQueue();
-                  }
-                });
-              }
-            });
+        if (fade) {
+          // Create a new Dialog instance with fade out animation
+          mFadeOutDialog = new RNBootSplashDialog(activity, mThemeResId, true);
+          mFadeOutDialog.show(getHideSequenceRunnable());
+        } else {
+          if (mInitialDialog != null) {
+            mInitialDialog.dismiss(getHideSequenceRunnable());
+          } else {
+            getHideSequenceRunnable().run();
           }
-        });
+        }
       }
     });
   }
