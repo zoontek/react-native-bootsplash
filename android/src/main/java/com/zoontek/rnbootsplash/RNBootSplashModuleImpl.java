@@ -224,12 +224,10 @@ public class RNBootSplashModuleImpl {
           // Create a new Dialog instance with fade out animation
           mFadeOutDialog = new RNBootSplashDialog(activity, mThemeResId, true);
           mFadeOutDialog.show(getHideSequenceRunnable());
+        } else if (mInitialDialog != null) {
+          mInitialDialog.dismiss(getHideSequenceRunnable());
         } else {
-          if (mInitialDialog != null) {
-            mInitialDialog.dismiss(getHideSequenceRunnable());
-          } else {
-            getHideSequenceRunnable().run();
-          }
+          getHideSequenceRunnable().run();
         }
       }
     });
