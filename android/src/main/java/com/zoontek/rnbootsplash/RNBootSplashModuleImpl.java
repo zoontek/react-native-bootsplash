@@ -234,13 +234,13 @@ public class RNBootSplashModuleImpl {
   }
 
   // From https://stackoverflow.com/a/61062773
-  public static boolean isSamsungOneUI4() {
+  public static boolean isSamsungOneUIAbove4() {
     String name = "SEM_PLATFORM_INT";
 
     try {
       Field field = Build.VERSION.class.getDeclaredField(name);
       int version = (field.getInt(null) - 90000) / 10000;
-      return version == 4;
+      return version >= 4;
     } catch (Exception ignored) {
       return false;
     }
@@ -284,7 +284,7 @@ public class RNBootSplashModuleImpl {
       : 0;
 
     constants.put("darkModeEnabled", uiMode == Configuration.UI_MODE_NIGHT_YES);
-    constants.put("logoSizeRatio", isSamsungOneUI4() ? 0.5 : 1);
+    constants.put("logoSizeRatio", isSamsungOneUIAbove4() ? 0.5 : 1);
     constants.put("navigationBarHeight", navigationBarHeight);
     constants.put("statusBarHeight", statusBarHeight);
 
