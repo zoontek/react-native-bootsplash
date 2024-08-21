@@ -108,10 +108,6 @@ public class RNBootSplashDialog extends Dialog {
       window.setWindowAnimations(mFade
         ? R.style.BootSplashFadeOutAnimation
         : R.style.BootSplashNoAnimation);
-
-      if (RNBootSplashModuleImpl.isSamsungOneUI4()) {
-        window.setBackgroundDrawableResource(R.drawable.compat_splash_screen_oneui_4);
-      }
     }
 
     super.onCreate(savedInstanceState);
