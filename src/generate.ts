@@ -612,9 +612,8 @@ export const generate = async ({
   darkBrand?: string;
 }) => {
   const isExpo =
-    projectType === "detect" || projectType === "expo"
-      ? getExpoConfig(workingPath).isExpo
-      : false;
+    projectType === "expo" ||
+    (projectType === "detect" && getExpoConfig(workingPath).isExpo);
 
   if (semver.lt(process.versions.node, "18.0.0")) {
     log.error("Requires Node 18 (or higher)");
