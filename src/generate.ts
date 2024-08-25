@@ -185,23 +185,40 @@ export const hfs = {
   },
 };
 
-export const getExpoConfig = (projectRoot: string): { isExpo: boolean } => {
-  try {
-    const pkg = hfs.json(
-      path.resolve(projectRoot, "node_modules", "expo", "package.json"),
-    ) as { version?: string };
+// Adapted from https://github.com/square/find-yarn-workspace-root
+export const getExpoConfig = (from: string): { isExpo: boolean } => {
+  let previous: string | undefined;
+  let current = path.normalize(from);
 
-    const version = pkg.version;
+  do {
+    const pkgPath = path.resolve(
+      current,
+      "node_modules",
+      "expo",
+      "package.json",
+    );
 
-    if (version == null || semver.lt(version, "51.0.20")) {
-      log.error("Requires Expo 51.0.20 (or higher)");
-      process.exit(1);
+    if (fs.existsSync(pkgPath)) {
+      try {
+        const pkg = hfs.json(pkgPath) as { version?: string };
+        const version = pkg.version;
+
+        if (version == null || semver.lt(version, "51.0.20")) {
+          log.error("Requires Expo 51.0.20 (or higher)");
+          process.exit(1);
+        }
+
+        return { isExpo: true };
+      } catch {
+        return { isExpo: false };
+      }
     }
 
-    return { isExpo: true };
-  } catch {
-    return { isExpo: false };
-  }
+    previous = current;
+    current = path.dirname(current);
+  } while (current !== previous);
+
+  return { isExpo: false };
 };
 
 export const writeJson = (filePath: string, content: object) => {
