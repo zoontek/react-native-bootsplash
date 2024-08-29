@@ -79,6 +79,10 @@ export function isVisible(): Promise<boolean> {
   return NativeModule.isVisible();
 }
 
+export function getConstants() {
+  return NativeModule.getConstants();
+}
+
 export function useHideAnimation(config: UseHideAnimationConfig) {
   const {
     manifest,
@@ -265,4 +269,5 @@ export default {
   hide,
   isVisible,
   useHideAnimation,
+  getConstants,
 };
