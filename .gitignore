@@ -49,7 +49,7 @@ yarn-error.log
 
 # Ruby / CocoaPods
 **/Pods/
-example/vendor/bundle/
+/example/vendor/bundle/
 
 # Bob
 dist/
