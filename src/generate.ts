@@ -26,6 +26,11 @@ import { Manifest } from ".";
 const workingPath = process.env.INIT_CWD ?? process.env.PWD ?? process.cwd();
 const projectRoot = findProjectRoot(workingPath);
 
+type PackageJson = {
+  version?: string;
+  dependencies?: Record<string, string>;
+};
+
 type ProjectType = "detect" | "bare" | "expo";
 type Platforms = ("android" | "ios" | "web")[];
 
@@ -186,39 +191,56 @@ export const hfs = {
 };
 
 // Adapted from https://github.com/square/find-yarn-workspace-root
-export const getExpoConfig = (from: string): { isExpo: boolean } => {
+const findUp = <T>(from: string, matcher: (dir: string) => T | undefined) => {
   let previous: string | undefined;
   let current = path.normalize(from);
 
   do {
-    const pkgPath = path.resolve(
-      current,
-      "node_modules",
-      "expo",
-      "package.json",
-    );
+    const found = matcher(current);
 
-    if (fs.existsSync(pkgPath)) {
-      try {
-        const pkg = hfs.json(pkgPath) as { version?: string };
-        const version = pkg.version;
-
-        if (version == null || semver.lt(version, "51.0.20")) {
-          log.error("Requires Expo 51.0.20 (or higher)");
-          process.exit(1);
-        }
-
-        return { isExpo: true };
-      } catch {
-        return { isExpo: false };
-      }
+    if (typeof found !== "undefined") {
+      return found;
     }
 
     previous = current;
     current = path.dirname(current);
   } while (current !== previous);
+};
 
-  return { isExpo: false };
+export const getExpoConfig = (from: string): { isExpo: boolean } => {
+  const hasDependency =
+    findUp(from, (dir) => {
+      const pkgPath = path.resolve(dir, "package.json");
+
+      if (fs.existsSync(pkgPath)) {
+        try {
+          const pkg = hfs.json(pkgPath) as PackageJson;
+          return pkg.dependencies?.expo != null;
+        } catch {} // eslint-disable-line no-empty
+      }
+    }) ?? false;
+
+  if (!hasDependency) {
+    return { isExpo: false };
+  }
+
+  const version = findUp(from, (dir) => {
+    const pkgPath = path.resolve(dir, "node_modules", "expo", "package.json");
+
+    if (fs.existsSync(pkgPath)) {
+      try {
+        const pkg = hfs.json(pkgPath) as PackageJson;
+        return pkg.version;
+      } catch {} // eslint-disable-line no-empty
+    }
+  });
+
+  if (version == null || semver.lt(version, "51.0.20")) {
+    log.error("Requires Expo 51.0.20 (or higher)");
+    process.exit(1);
+  }
+
+  return { isExpo: true };
 };
 
 export const writeJson = (filePath: string, content: object) => {
