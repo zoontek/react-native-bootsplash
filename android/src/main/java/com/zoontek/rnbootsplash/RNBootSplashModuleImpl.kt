@@ -112,8 +112,7 @@ object RNBootSplashModuleImpl {
 
   private fun clearPromiseQueue() {
     while (!mPromiseQueue.isEmpty()) {
-      val promise = mPromiseQueue.shift()
-      promise?.resolve(true)
+      mPromiseQueue.shift()?.resolve(true)
     }
   }
 
@@ -168,20 +167,16 @@ object RNBootSplashModuleImpl {
         // Create a new Dialog instance with fade out animation
         mFadeOutDialog = RNBootSplashDialog(activity, mThemeResId, true)
         mFadeOutDialog?.show(hideSequence)
-      } else if (mInitialDialog != null) {
-        mInitialDialog?.dismiss(hideSequence)
       } else {
-        hideSequence()
+        mInitialDialog?.dismiss(hideSequence) ?: hideSequence()
       }
     }
   }
 
   // From https://stackoverflow.com/a/61062773
   fun isSamsungOneUI4(): Boolean {
-    val name = "SEM_PLATFORM_INT"
-
     return runCatching {
-      val field = Build.VERSION::class.java.getDeclaredField(name)
+      val field = Build.VERSION::class.java.getDeclaredField("SEM_PLATFORM_INT")
       val version = (field.getInt(null) - 90000) / 10000
       version == 4
     }.getOrDefault(false)
