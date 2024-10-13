@@ -15,7 +15,7 @@
   "dependencies": {
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "react-native": "0.75.3",
+    "react-native": "0.75.4",
     "react-native-bootsplash": "link:../",
     "react-native-edge-to-edge": "^0.1.1",
     "react-native-web": "0.19.12"
@@ -24,9 +24,9 @@
     "@babel/core": "^7.20.0",
     "@babel/preset-env": "^7.20.0",
     "@babel/runtime": "^7.20.0",
-    "@react-native/babel-preset": "0.75.3",
-    "@react-native/metro-config": "0.75.3",
-    "@types/react": "^18.2.60",
+    "@react-native/babel-preset": "0.75.4",
+    "@react-native/metro-config": "0.75.4",
+    "@types/react": "^18.2.6",
     "babel-loader": "^9.2.1",
     "babel-plugin-module-resolver": "^5.0.2",
     "html-webpack-plugin": "^5.6.0",
