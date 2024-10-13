@@ -439,8 +439,28 @@ const getAndroidOutputPath = ({
   if (!platforms.includes("android")) {
     return;
   }
+
+  const withSizeChecks = (assetsOutputPath: string) => {
+    if (logoWidth > 288 || logoHeight > 288) {
+      return log.warn(
+        "Logo size exceeding 288x288dp will be cropped by Android. Skipping Android assets generation…",
+      );
+    }
+    if (brandWidth > 200 || brandHeight > 80) {
+      return log.warn(
+        "Brand size exceeding 200x80dp will be cropped by Android. Skipping Android assets generation…",
+      );
+    }
+
+    if (logoWidth > 192 || logoHeight > 192) {
+      log.warn("Logo size exceeds 192x192dp. It might be cropped by Android.");
+    }
+
+    return assetsOutputPath;
+  };
+
   if (isExpo) {
-    return path.resolve(assetsOutputPath, "android");
+    return withSizeChecks(path.resolve(assetsOutputPath, "android"));
   }
   if (android == null) {
     return;
@@ -463,22 +483,7 @@ const getAndroidOutputPath = ({
     );
   }
 
-  if (logoWidth > 288 || logoHeight > 288) {
-    return log.warn(
-      "Logo size exceeding 288x288dp will be cropped by Android. Skipping Android assets generation…",
-    );
-  }
-  if (brandWidth > 200 || brandHeight > 80) {
-    return log.warn(
-      "Brand size exceeding 200x80dp will be cropped by Android. Skipping Android assets generation…",
-    );
-  }
-
-  if (logoWidth > 192 || logoHeight > 192) {
-    log.warn("Logo size exceeds 192x192dp. It might be cropped by Android.");
-  }
-
-  return androidOutputPath;
+  return withSizeChecks(androidOutputPath);
 };
 
 const getIOSOutputPath = ({
