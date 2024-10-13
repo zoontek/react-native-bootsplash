@@ -1,11 +1,12 @@
 package com.rnbootsplashexample
 
 import android.os.Bundle
+
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
 import com.facebook.react.defaults.DefaultReactActivityDelegate
-// import com.zoontek.rnbars.RNBars
+
 import com.zoontek.rnbootsplash.RNBootSplash
 
 class MainActivity : ReactActivity() {
@@ -26,6 +27,5 @@ class MainActivity : ReactActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     RNBootSplash.init(this, R.style.BootTheme) // ⬅️ initialize the splash screen
     super.onCreate(savedInstanceState) // super.onCreate(null) with react-native-screens
-    // RNBars.init(this) // initialize react-native-bars
   }
 }
