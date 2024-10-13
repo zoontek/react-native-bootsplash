@@ -31,12 +31,12 @@ class RNBootSplashDialog(
     }
   }
 
-  fun dismiss(callback: Runnable) {
+  fun dismiss(callback: () -> Unit) {
     if (isShowing) {
-      setOnDismissListener { callback.run() }
-      runCatching { super.dismiss() }.onFailure { callback.run() }
+      setOnDismissListener { callback() }
+      runCatching { super.dismiss() }.onFailure { callback() }
     } else {
-      callback.run()
+      callback()
     }
   }
 
@@ -46,12 +46,12 @@ class RNBootSplashDialog(
     }
   }
 
-  fun show(callback: Runnable) {
+  fun show(callback: () -> Unit) {
     if (!isShowing) {
-      setOnShowListener { callback.run() }
-      runCatching { super.show() }.onFailure { callback.run() }
+      setOnShowListener { callback() }
+      runCatching { super.show() }.onFailure { callback() }
     } else {
-      callback.run()
+      callback()
     }
   }
 
