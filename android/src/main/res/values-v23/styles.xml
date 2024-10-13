@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.BootSplash.TransparentStatus" parent="Theme.BootSplash.BarsStyle">
+    <style name="Theme.BootSplash.TransparentStatus" parent="Theme.BootSplash">
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">?darkContentBarsStyle</item>
     </style>
 
     <style name="Theme.BootSplash.EdgeToEdge" parent="Theme.BootSplash.EdgeToEdge.Common">
-        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:navigationBarColor">@color/systemBarDarkScrim</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">?darkContentBarsStyle</item>
     </style>

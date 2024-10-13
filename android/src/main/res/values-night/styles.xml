@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.BootSplash.BarsStyle" parent="Theme.BootSplash">
+    <style name="Theme.BootSplash.Base" parent="Theme.BootSplash.DayNight">
         <item name="darkContentBarsStyle">false</item>
     </style>
 </resources>
