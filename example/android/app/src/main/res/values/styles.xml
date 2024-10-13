@@ -1,10 +1,10 @@
 <resources>
-    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <style name="AppTheme" parent="Theme.EdgeToEdge">
         <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
         <item name="android:windowLightStatusBar">true</item>
     </style>
 
-    <style name="BootTheme" parent="Theme.BootSplash.TransparentStatus">
+    <style name="BootTheme" parent="Theme.BootSplash.EdgeToEdge">
         <!-- enforce status bar style as the example app doesn't support dark mode -->
         <item name="darkContentBarsStyle">true</item>
 

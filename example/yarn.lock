@@ -5396,6 +5396,16 @@ react-is@^18.0.0:
   version "0.0.0"
   uid ""
 
+react-native-edge-to-edge@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/react-native-edge-to-edge/-/react-native-edge-to-edge-0.1.1.tgz#ce49e7aeee4008fa8e1d70835a94817d3eca40a7"
+  integrity sha512-hoC6txo/wIIau2neVe+GaWwtba4Zq7yHKj0ruB9JJpehn+ZjmrgnGPTYXsSI6HI8fc0ZzUIeH94vWpPMwR8lvQ==
+
+react-native-is-edge-to-edge@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-is-edge-to-edge/-/react-native-is-edge-to-edge-0.1.0.tgz#6bcb719ff1409db84f101c04d8b5886e9aeec6c1"
+  integrity sha512-Cj+3BlpwBHRhUyRiFI5ncrmELI98Ds119eVNMFcJT+PEpUXTOcqlS0Y3PV9vlNjTaGlQ+J4N9nk2123sdmTCEA==
+
 react-native-web-image-loader@^0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/react-native-web-image-loader/-/react-native-web-image-loader-0.1.1.tgz#a320903ee477b7a3deb49fb7568924364eac7bf5"

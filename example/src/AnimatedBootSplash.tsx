@@ -20,8 +20,8 @@ export const AnimatedBootSplash = ({ onAnimationEnd }: Props) => {
     // brand: require("../assets/bootsplash/brand.png"),
     // darkBrand: require("../assets/bootsplash/dark-brand.png"),
 
-    statusBarTranslucent: true,
-    navigationBarTranslucent: false,
+    // statusBarTranslucent: true,
+    // navigationBarTranslucent: true,
 
     animate: () => {
       const { height } = Dimensions.get("window");

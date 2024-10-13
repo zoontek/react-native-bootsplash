@@ -8,6 +8,7 @@ import {
   StyleSheet,
   ViewStyle,
 } from "react-native";
+import { isEdgeToEdge } from "react-native-is-edge-to-edge";
 import NativeModule from "./NativeRNBootSplash";
 
 export type Config = {
@@ -91,8 +92,8 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
 
     animate,
 
-    statusBarTranslucent = false,
-    navigationBarTranslucent = false,
+    statusBarTranslucent,
+    navigationBarTranslucent,
   } = config;
 
   const skipLogo = logoSrc == null;
@@ -219,15 +220,33 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
       return { container, logo, brand };
     }
 
+    if (__DEV__) {
+      const hasNavigationBarOption = navigationBarTranslucent != null;
+      const hasStatusBarOption = statusBarTranslucent != null;
+      const hasBothOptions = hasStatusBarOption && hasNavigationBarOption;
+
+      if (isEdgeToEdge() && (hasStatusBarOption || hasNavigationBarOption)) {
+        console.warn(
+          hasBothOptions
+            ? "statusBarTranslucent and navigationBarTranslucent options are ignored when using react-native-edge-to-edge"
+            : `${hasStatusBarOption ? "status" : "navigation"}BarTranslucent option is ignored when using react-native-edge-to-edge`,
+        );
+      }
+    }
+
     return {
       container: {
         ...container,
         style: {
           ...containerStyle,
-          marginTop: statusBarTranslucent ? undefined : -statusBarHeight,
-          marginBottom: navigationBarTranslucent
-            ? undefined
-            : -navigationBarHeight,
+          marginTop:
+            isEdgeToEdge() || (statusBarTranslucent ?? false)
+              ? undefined
+              : -statusBarHeight,
+          marginBottom:
+            isEdgeToEdge() || (navigationBarTranslucent ?? false)
+              ? undefined
+              : -navigationBarHeight,
         },
       },
       logo: {
