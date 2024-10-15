@@ -5279,10 +5279,10 @@ react-native-edge-to-edge@^0.1.2:
   resolved "https://registry.yarnpkg.com/react-native-edge-to-edge/-/react-native-edge-to-edge-0.1.2.tgz#c23f9cbf2d78c5c020fff7beb169557fa87122b7"
   integrity sha512-j5f+ipP7FEqHDE8JHW11tv3iska0c7izs1V4/YidDsRWTv5VcA+GUBMSyduhpeUe39joQOd5hLf9/wwZVNiX2A==
 
-react-native-is-edge-to-edge@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/react-native-is-edge-to-edge/-/react-native-is-edge-to-edge-0.1.1.tgz#7f35e86071e004fd7b10644feae6f1b515497d85"
-  integrity sha512-XXO2E7FEGmTRBxUcHbyhyg1+5/3IMlsiUNkPWWI6+yohbraLeqJKjnOKltqSRsK1lfKzvO4lt18OVYMlOq/+ng==
+react-native-is-edge-to-edge@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/react-native-is-edge-to-edge/-/react-native-is-edge-to-edge-0.1.2.tgz#71ee904797aca7af604451307abe48313f0012a5"
+  integrity sha512-nLdcs5P+2cZOXW+OrjcYzzrmpFzkIyLUV1stukQBTVvD400yfqaMK8ZWGzaFEuMf1psXzJXlFSuSgYRd12VIWA==
 
 react-native-web-image-loader@^0.1.1:
   version "0.1.1"
