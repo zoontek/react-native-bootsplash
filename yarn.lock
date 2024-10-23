@@ -4576,10 +4576,10 @@ react-native-builder-bob@^0.30.2:
     which "^2.0.2"
     yargs "^17.5.1"
 
-react-native-is-edge-to-edge@^0.1.2:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/react-native-is-edge-to-edge/-/react-native-is-edge-to-edge-0.1.2.tgz#71ee904797aca7af604451307abe48313f0012a5"
-  integrity sha512-nLdcs5P+2cZOXW+OrjcYzzrmpFzkIyLUV1stukQBTVvD400yfqaMK8ZWGzaFEuMf1psXzJXlFSuSgYRd12VIWA==
+react-native-is-edge-to-edge@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-is-edge-to-edge/-/react-native-is-edge-to-edge-1.0.0.tgz#2187d7fa237354e12fddd0f9e84410a850988dbb"
+  integrity sha512-O+6OnYqey8lMyNvWZhWZF6NPBCvZNyeGX6qPvt7EJy310sVa4r05M0enxtmiVZl2xgj5vBJkYhROd5mSmZ/4mA==
 
 react-native@0.75.4:
   version "0.75.4"
