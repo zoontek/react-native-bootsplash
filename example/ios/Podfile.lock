@@ -1497,7 +1497,7 @@ PODS:
     - React-logger (= 0.75.4)
     - React-perflogger (= 0.75.4)
     - React-utils (= 0.75.4)
-  - RNBootSplash (6.2.4):
+  - RNBootSplash (6.2.5):
     - React-Core
   - SocketRocket (0.7.0)
   - Yoga (0.0.0)
@@ -1764,7 +1764,7 @@ SPEC CHECKSUMS:
   React-utils: cbe8b8b3d7b2ac282e018e46f0e7b25cdc87c5a0
   ReactCodegen: 4bcb34e6b5ebf6eef5cee34f55aa39991ea1c1f1
   ReactCommon: 6a952e50c2a4b694731d7682aaa6c79bc156e4ad
-  RNBootSplash: eef2be4400827b144ba993bcb8a4c68b4f5db14d
+  RNBootSplash: a0f447eeae965134a443a08170f8e5209538be52
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   Yoga: 055f92ad73f8c8600a93f0e25ac0b2344c3b07e6
 
