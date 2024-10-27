@@ -8,8 +8,13 @@ import {
   StyleSheet,
   ViewStyle,
 } from "react-native";
-import { isEdgeToEdge } from "react-native-is-edge-to-edge";
+import {
+  controlEdgeToEdgeValues,
+  isEdgeToEdge,
+} from "react-native-is-edge-to-edge";
 import NativeModule from "./NativeRNBootSplash";
+
+const EDGE_TO_EDGE = isEdgeToEdge();
 
 export type Config = {
   fade?: boolean;
@@ -95,6 +100,10 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
     statusBarTranslucent,
     navigationBarTranslucent,
   } = config;
+
+  if (__DEV__) {
+    controlEdgeToEdgeValues({ statusBarTranslucent, navigationBarTranslucent });
+  }
 
   const skipLogo = logoSrc == null;
   const skipBrand = manifest.brand == null || brandSrc == null;
@@ -220,31 +229,17 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
       return { container, logo, brand };
     }
 
-    if (__DEV__) {
-      const hasNavigationBarOption = navigationBarTranslucent != null;
-      const hasStatusBarOption = statusBarTranslucent != null;
-      const hasBothOptions = hasStatusBarOption && hasNavigationBarOption;
-
-      if (isEdgeToEdge() && (hasStatusBarOption || hasNavigationBarOption)) {
-        console.warn(
-          hasBothOptions
-            ? "statusBarTranslucent and navigationBarTranslucent options are ignored when using react-native-edge-to-edge"
-            : `${hasStatusBarOption ? "status" : "navigation"}BarTranslucent option is ignored when using react-native-edge-to-edge`,
-        );
-      }
-    }
-
     return {
       container: {
         ...container,
         style: {
           ...containerStyle,
           marginTop:
-            isEdgeToEdge() || (statusBarTranslucent ?? false)
+            EDGE_TO_EDGE || (statusBarTranslucent ?? false)
               ? undefined
               : -statusBarHeight,
           marginBottom:
-            isEdgeToEdge() || (navigationBarTranslucent ?? false)
+            EDGE_TO_EDGE || (navigationBarTranslucent ?? false)
               ? undefined
               : -navigationBarHeight,
         },
