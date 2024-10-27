@@ -846,22 +846,26 @@ export const generate = async ({
         "AndroidManifest.xml",
       );
 
-      const manifestXml = readXmlLike(manifestXmlPath);
-      const activities = manifestXml.root.querySelectorAll("activity");
+      if (hfs.exists(manifestXmlPath)) {
+        const manifestXml = readXmlLike(manifestXmlPath);
+        const activities = manifestXml.root.querySelectorAll("activity");
 
-      for (const activity of activities) {
-        if (activity.getAttribute("android:name") === ".MainActivity") {
-          activity.setAttribute("android:theme", "@style/BootTheme");
+        for (const activity of activities) {
+          if (activity.getAttribute("android:name") === ".MainActivity") {
+            activity.setAttribute("android:theme", "@style/BootTheme");
+          }
         }
-      }
 
-      await writeXmlLike(manifestXmlPath, manifestXml.root.toString(), {
-        ...manifestXml.formatOptions,
-        formatter: "prettier",
-        htmlWhitespaceSensitivity: "ignore",
-        selfClosingTags: true,
-        singleAttributePerLine: true,
-      });
+        await writeXmlLike(manifestXmlPath, manifestXml.root.toString(), {
+          ...manifestXml.formatOptions,
+          formatter: "prettier",
+          htmlWhitespaceSensitivity: "ignore",
+          selfClosingTags: true,
+          singleAttributePerLine: true,
+        });
+      } else {
+        log.warn("No AndroidManifest.xml found. Skipping…");
+      }
 
       const valuesPath = path.resolve(androidOutputPath, "values");
       hfs.ensureDir(valuesPath);
@@ -896,60 +900,68 @@ export const generate = async ({
       }
 
       const stylesXmlPath = path.resolve(valuesPath, "styles.xml");
-      const stylesXml = readXmlLike(stylesXmlPath);
 
-      const prevStyle = stylesXml.root.querySelector('style[name="BootTheme"]');
-      const parent = prevStyle?.getAttribute("parent") ?? "Theme.BootSplash";
+      if (hfs.exists(stylesXmlPath)) {
+        const stylesXml = readXmlLike(stylesXmlPath);
 
-      const extraItems = parseHtml(
-        prevStyle?.text
-          .split("\n")
-          .map((line) => line.trim())
-          .join("") ?? "",
-      )
-        .childNodes.filter((node) => {
-          if (!(node instanceof HTMLElement)) {
-            return true;
-          }
+        const prevStyle = stylesXml.root.querySelector(
+          'style[name="BootTheme"]',
+        );
 
-          const name = node.getAttribute("name");
+        const parent = prevStyle?.getAttribute("parent") ?? "Theme.BootSplash";
 
-          return (
-            name !== "bootSplashBackground" &&
-            name !== "bootSplashLogo" &&
-            name !== "bootSplashBrand" &&
-            name !== "postBootSplashTheme"
-          );
-        })
-        .map((node) => node.toString());
+        const extraItems = parseHtml(
+          prevStyle?.text
+            .split("\n")
+            .map((line) => line.trim())
+            .join("") ?? "",
+        )
+          .childNodes.filter((node) => {
+            if (!(node instanceof HTMLElement)) {
+              return true;
+            }
 
-      const styleItems: string[] = [
-        ...(extraItems.length > 0 ? [...extraItems, ""] : []),
+            const name = node.getAttribute("name");
 
-        '<item name="bootSplashBackground">@color/bootsplash_background</item>',
-        '<item name="bootSplashLogo">@drawable/bootsplash_logo</item>',
+            return (
+              name !== "bootSplashBackground" &&
+              name !== "bootSplashLogo" &&
+              name !== "bootSplashBrand" &&
+              name !== "postBootSplashTheme"
+            );
+          })
+          .map((node) => node.toString());
 
-        ...(brand != null && brandPath != null
-          ? ['<item name="bootSplashBrand">@drawable/bootsplash_brand</item>']
-          : []),
+        const styleItems: string[] = [
+          ...(extraItems.length > 0 ? [...extraItems, ""] : []),
 
-        '<item name="postBootSplashTheme">@style/AppTheme</item>',
-      ];
+          '<item name="bootSplashBackground">@color/bootsplash_background</item>',
+          '<item name="bootSplashLogo">@drawable/bootsplash_logo</item>',
 
-      const nextStyle = parseHtml(dedent`
-        <style name="BootTheme" parent="${parent}">
-          ${styleItems.join("\n")}
-        </style>
-      `);
+          ...(brand != null && brandPath != null
+            ? ['<item name="bootSplashBrand">@drawable/bootsplash_brand</item>']
+            : []),
 
-      prevStyle?.remove(); // remove the existing style
-      stylesXml.root.querySelector("resources")?.appendChild(nextStyle);
+          '<item name="postBootSplashTheme">@style/AppTheme</item>',
+        ];
 
-      await writeXmlLike(stylesXmlPath, stylesXml.root.toString(), {
-        ...stylesXml.formatOptions,
-        formatter: "prettier",
-        htmlWhitespaceSensitivity: "ignore",
-      });
+        const nextStyle = parseHtml(dedent`
+          <style name="BootTheme" parent="${parent}">
+            ${styleItems.join("\n")}
+          </style>
+        `);
+
+        prevStyle?.remove(); // remove the existing style
+        stylesXml.root.querySelector("resources")?.appendChild(nextStyle);
+
+        await writeXmlLike(stylesXmlPath, stylesXml.root.toString(), {
+          ...stylesXml.formatOptions,
+          formatter: "prettier",
+          htmlWhitespaceSensitivity: "ignore",
+        });
+      } else {
+        log.warn("No styles.xml found. Skipping…");
+      }
     }
   }
 
