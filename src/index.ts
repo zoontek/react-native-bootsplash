@@ -101,7 +101,8 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
     navigationBarTranslucent,
   } = config;
 
-  if (__DEV__) {
+  // __DEV__ global is missing in react-native-web
+  if (typeof __DEV__ !== "undefined" && __DEV__) {
     controlEdgeToEdgeValues({ statusBarTranslucent, navigationBarTranslucent });
   }
 

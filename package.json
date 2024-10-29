@@ -1,6 +1,6 @@
 {
   "name": "react-native-bootsplash",
-  "version": "6.2.5",
+  "version": "6.2.6",
   "license": "MIT",
   "description": "Display a bootsplash on your app starts. Hide it when you want.",
   "author": "Mathieu Acthernoene <zoontek@gmail.com>",
@@ -71,7 +71,7 @@
     "node-html-parser": "^6.1.13",
     "picocolors": "^1.1.0",
     "prettier": "^3.3.3",
-    "react-native-is-edge-to-edge": "^1.1.5",
+    "react-native-is-edge-to-edge": "^1.1.6",
     "sharp": "^0.32.6",
     "ts-dedent": "^2.2.0",
     "xml-formatter": "^3.6.3"
