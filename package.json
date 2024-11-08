@@ -43,7 +43,7 @@
     "format": "prettier '**/*' -u -w",
     "lint": "eslint --ext ts,tsx ./src",
     "typecheck": "tsc --noEmit",
-    "build": "yarn clean && bob build && rm -rf dist/commonjs/package.json",
+    "build": "yarn clean && bob build && rm -rf dist/*/package.json",
     "prepack": "prettier '**/*' -u -c && yarn lint && yarn typecheck && yarn build && node ../obfuscator"
   },
   "react-native-builder-bob": {
@@ -66,10 +66,11 @@
   },
   "dependencies": {
     "@expo/config-plugins": "^8.0.4",
+    "@react-native-community/cli-tools": "^15.0.0",
     "detect-indent": "^6.1.0",
     "fs-extra": "^11.2.0",
     "node-html-parser": "^6.1.13",
-    "picocolors": "^1.1.0",
+    "picocolors": "^1.1.1",
     "prettier": "^3.3.3",
     "react-native-is-edge-to-edge": "^1.1.6",
     "sharp": "^0.32.6",
@@ -77,22 +78,23 @@
     "xml-formatter": "^3.6.3"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0",
-    "@babel/preset-env": "^7.20.0",
+    "@babel/core": "^7.25.2",
+    "@babel/preset-env": "^7.25.3",
+    "@react-native-community/cli-types": "^15.0.0",
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^20.16.11",
+    "@types/node": "^20.17.6",
     "@types/react": "^18.2.6",
     "@types/semver": "^7.5.8",
-    "@typescript-eslint/eslint-plugin": "^8.8.1",
-    "@typescript-eslint/parser": "^8.8.1",
+    "@typescript-eslint/eslint-plugin": "^8.13.0",
+    "@typescript-eslint/parser": "^8.13.0",
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "prettier-plugin-organize-imports": "^4.1.0",
     "react": "18.3.1",
-    "react-native": "0.75.4",
-    "react-native-builder-bob": "^0.30.2",
+    "react-native": "0.76.1",
+    "react-native-builder-bob": "^0.31.0",
     "semver": "^7.6.3",
-    "typescript": "^5.5.3"
+    "typescript": "^5.6.3"
   },
   "codegenConfig": {
     "name": "RNBootSplashSpec",
