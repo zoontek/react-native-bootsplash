@@ -1,6 +1,6 @@
 {
   "name": "react-native-bootsplash",
-  "version": "6.2.6",
+  "version": "6.3.0",
   "license": "MIT",
   "description": "Display a bootsplash on your app starts. Hide it when you want.",
   "author": "Mathieu Acthernoene <zoontek@gmail.com>",
@@ -20,8 +20,12 @@
     "!src/addon",
     "RNBootSplash.podspec",
     "app.plugin.js",
+    "cli.js",
     "react-native.config.js"
   ],
+  "bin": {
+    "react-native-bootsplash": "./cli.js"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/zoontek/react-native-bootsplash.git"
@@ -66,7 +70,10 @@
   },
   "dependencies": {
     "@expo/config-plugins": "^8.0.4",
+    "@react-native-community/cli-config-android": "^15.0.0",
+    "@react-native-community/cli-config-apple": "^15.0.0",
     "@react-native-community/cli-tools": "^15.0.0",
+    "commander": "^12.1.0",
     "detect-indent": "^6.1.0",
     "fs-extra": "^11.2.0",
     "node-html-parser": "^6.1.13",

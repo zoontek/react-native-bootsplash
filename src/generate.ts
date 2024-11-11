@@ -1,10 +1,8 @@
 import * as Expo from "@expo/config-plugins";
 import plist from "@expo/plist";
+import { projectConfig as getAndroidProjectConfig } from "@react-native-community/cli-config-android";
+import { getProjectConfig as getAppleProjectConfig } from "@react-native-community/cli-config-apple";
 import { findProjectRoot } from "@react-native-community/cli-tools";
-import {
-  AndroidProjectConfig,
-  IOSProjectConfig,
-} from "@react-native-community/cli-types";
 import childProcess from "child_process";
 import crypto from "crypto";
 import detectIndent from "detect-indent";
@@ -25,6 +23,10 @@ import { Manifest } from ".";
 
 const workingPath = process.env.INIT_CWD ?? process.env.PWD ?? process.cwd();
 const projectRoot = findProjectRoot(workingPath);
+
+const getIOSProjectConfig = getAppleProjectConfig({ platformName: "ios" });
+const ios = getIOSProjectConfig(projectRoot, {});
+const android = getAndroidProjectConfig(projectRoot);
 
 type PackageJson = {
   version?: string;
@@ -416,7 +418,6 @@ const ensureSupportedFormat = async (
 };
 
 const getAndroidOutputPath = ({
-  android,
   assetsOutputPath,
   brandHeight,
   brandWidth,
@@ -426,7 +427,6 @@ const getAndroidOutputPath = ({
   logoWidth,
   platforms,
 }: {
-  android: AndroidProjectConfig | undefined;
   assetsOutputPath: string;
   brandHeight: number;
   brandWidth: number;
@@ -487,12 +487,10 @@ const getAndroidOutputPath = ({
 };
 
 const getIOSOutputPath = ({
-  ios,
   assetsOutputPath,
   isExpo,
   platforms,
 }: {
-  ios: IOSProjectConfig | undefined;
   assetsOutputPath: string;
   isExpo: boolean;
   platforms: Platforms;
@@ -627,8 +625,6 @@ const requireAddon = ():
 };
 
 export const generate = async ({
-  android,
-  ios,
   projectType,
   platforms,
   html,
@@ -636,9 +632,6 @@ export const generate = async ({
   licenseKey,
   ...args
 }: {
-  android?: AndroidProjectConfig;
-  ios?: IOSProjectConfig;
-
   logo: string;
   projectType: ProjectType;
   platforms: Platforms;
@@ -756,7 +749,6 @@ export const generate = async ({
   });
 
   const androidOutputPath = getAndroidOutputPath({
-    android,
     assetsOutputPath,
     brandHeight,
     brandWidth,
@@ -769,7 +761,6 @@ export const generate = async ({
 
   const iosOutputPath = getIOSOutputPath({
     assetsOutputPath,
-    ios,
     isExpo,
     platforms,
   });

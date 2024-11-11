@@ -1,5 +1,5 @@
-const platforms = ["android", "ios", "web"];
-const projectTypes = ["detect", "bare", "expo"];
+const validProjectTypes = ["detect", "bare", "expo"];
+const validPlatforms = ["android", "ios", "web"];
 
 /** @type {import("@react-native-community/cli-types").Command} */
 const generateBootSplash = {
@@ -10,22 +10,22 @@ const generateBootSplash = {
       name: "--project-type <string>",
       description: 'Project type ("detect", "bare" or "expo")',
       default: "detect",
-      parse: (value) => {
-        const type = value.toLowerCase();
-        return projectTypes.includes(type) ? type : "detect";
-      },
+      parse: (projectType) =>
+        validProjectTypes.includes(projectType.toLowerCase())
+          ? projectType.toLowerCase()
+          : "detect",
     },
     {
       name: "--platforms <list>",
       description: "Platforms to generate for, separated by a comma",
-      default: platforms.join(","),
-      parse: (value) => [
+      default: validPlatforms.join(","),
+      parse: (platforms) => [
         ...new Set(
-          value
+          platforms
             .toLowerCase()
             .split(/[ ,;|]/)
             .map((platform) => platform.trim())
-            .filter((item) => platforms.includes(item)),
+            .filter((item) => validPlatforms.includes(item)),
         ),
       ],
     },
@@ -39,7 +39,7 @@ const generateBootSplash = {
       description:
         "Logo width at @1x (in dp - we recommend approximately ~100)",
       default: 100,
-      parse: (value) => Number.parseInt(value, 10),
+      parse: (logoWidth) => Number.parseInt(logoWidth, 10),
     },
     {
       name: "--assets-output <string>",
@@ -71,7 +71,7 @@ const generateBootSplash = {
       description:
         "Brand width at @1x (in dp - we recommend approximately ~80)",
       default: 80,
-      parse: (value) => Number.parseInt(value, 10),
+      parse: (brandWidth) => Number.parseInt(brandWidth, 10),
     },
     {
       name: "--dark-background <string>",
@@ -86,10 +86,10 @@ const generateBootSplash = {
       description: "[dark mode] Brand file path (PNG or SVG)",
     },
   ],
-  func: ([logo], { project: { android, ios } }, args) => {
+  func: ([logo], _config, args) => {
     const { generate } = require("./dist/commonjs/generate");
 
-    generate({ android, ios, logo, ...args }).catch((error) => {
+    generate({ logo, ...args }).catch((error) => {
       console.error(error);
       process.exit(1);
     });

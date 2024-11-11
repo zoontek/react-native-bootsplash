@@ -37,15 +37,15 @@ _⚠️  Don't forget going into the `ios` directory to execute a `pod install
 In order to speed up the setup, we provide a **CLI** to generate assets, create the Android Drawable XML file and the iOS Storyboard file automatically ✨.
 
 ```bash
-$ npx react-native generate-bootsplash --help
+$ npx react-native-bootsplash generate --help
 # --- or ---
-$ yarn react-native generate-bootsplash --help
+$ yarn react-native-bootsplash generate --help
 ```
 
 The command can take multiple arguments:
 
 ```bash
-Usage: react-native generate-bootsplash [options] <logo>
+Usage: react-native-bootsplash generate [options] <logo>
 
 Generate a launch screen using a logo file path (PNG or SVG)
 
@@ -82,7 +82,7 @@ _📍 This license key grants unlimited and unrestricted usage of the generator 
 
 ```bash
 # Without license key
-yarn react-native generate-bootsplash svgs/light-logo.svg \
+yarn react-native-bootsplash generate svgs/light-logo.svg \
   --platforms=android,ios,web \
   --background=F5FCFF \
   --logo-width=100 \
@@ -91,7 +91,7 @@ yarn react-native generate-bootsplash svgs/light-logo.svg \
   --html=public/index.html
 
 # With license key 🔑
-yarn react-native generate-bootsplash svgs/light-logo.svg \
+yarn react-native-bootsplash generate svgs/light-logo.svg \
   --platforms=android,ios,web \
   --background=F5FCFF \
   --logo-width=100 \

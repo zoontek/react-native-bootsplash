@@ -5,6 +5,7 @@ module.exports = {
   ignorePatterns: [
     "app.plugin.js",
     ".eslintrc.js",
+    "cli.js",
     "react-native.config.js",
     "dist",
     "example",
