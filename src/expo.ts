@@ -47,13 +47,15 @@ const withAndroidAssets: Expo.ConfigPlugin<Props> = (config, props) =>
         const srcDrawableDir = path.join(srcDir, drawableDir);
         const destDrawableDir = path.join(destDir, drawableDir);
 
-        hfs.ensureDir(destDrawableDir);
+        if (hfs.isDir(srcDrawableDir)) {
+          hfs.ensureDir(destDrawableDir);
 
-        for (const file of hfs.readDir(srcDrawableDir)) {
-          hfs.copy(
-            path.join(srcDrawableDir, file),
-            path.join(destDrawableDir, file),
-          );
+          for (const file of hfs.readDir(srcDrawableDir)) {
+            hfs.copy(
+              path.join(srcDrawableDir, file),
+              path.join(destDrawableDir, file),
+            );
+          }
         }
       }
 
@@ -244,13 +246,15 @@ const withIOSAssets: Expo.ConfigPlugin<Props> = (config, props) =>
         const srcXcassetsDir = path.join(srcDir, xcassetsDir);
         const destXcassetsDir = path.join(destDir, xcassetsDir);
 
-        hfs.ensureDir(destXcassetsDir);
+        if (hfs.isDir(srcXcassetsDir)) {
+          hfs.ensureDir(destXcassetsDir);
 
-        for (const file of hfs.readDir(srcXcassetsDir)) {
-          hfs.copy(
-            path.join(srcXcassetsDir, file),
-            path.join(destXcassetsDir, file),
-          );
+          for (const file of hfs.readDir(srcXcassetsDir)) {
+            hfs.copy(
+              path.join(srcXcassetsDir, file),
+              path.join(destXcassetsDir, file),
+            );
+          }
         }
       }
 
