@@ -7,16 +7,16 @@ import { dedent } from "ts-dedent";
 import { Manifest } from ".";
 import { cleanIOSAssets, getExpoConfig, hfs } from "./generate";
 
-type ExpoPlugin = Expo.ConfigPlugin<{
+type Props = {
   assetsDir?: string;
   android?: {
     parentTheme?: "TransparentStatus" | "EdgeToEdge";
     darkContentBarsStyle?: boolean;
   };
-}>;
+};
 
 const withExpoVersionCheck =
-  (platform: "android" | "ios"): ExpoPlugin =>
+  (platform: "android" | "ios"): Expo.ConfigPlugin<Props> =>
   (config) =>
     Expo.withDangerousMod(config, [
       platform,
@@ -26,7 +26,7 @@ const withExpoVersionCheck =
       },
     ]);
 
-const withAndroidAssets: ExpoPlugin = (config, props) =>
+const withAndroidAssets: Expo.ConfigPlugin<Props> = (config, props) =>
   Expo.withDangerousMod(config, [
     "android",
     (config) => {
@@ -61,7 +61,7 @@ const withAndroidAssets: ExpoPlugin = (config, props) =>
     },
   ]);
 
-const withAndroidManifest: ExpoPlugin = (config) =>
+const withAndroidManifest: Expo.ConfigPlugin<Props> = (config) =>
   Expo.withAndroidManifest(config, (config) => {
     config.modResults.manifest.application?.forEach((application) => {
       if (application.$["android:name"] === ".MainApplication") {
@@ -78,7 +78,7 @@ const withAndroidManifest: ExpoPlugin = (config) =>
     return config;
   });
 
-const withMainActivity: ExpoPlugin = (config) =>
+const withMainActivity: Expo.ConfigPlugin<Props> = (config) =>
   Expo.withMainActivity(config, (config) => {
     const { modResults } = config;
     const { language } = modResults;
@@ -113,7 +113,7 @@ const withMainActivity: ExpoPlugin = (config) =>
     };
   });
 
-const withAndroidStyles: ExpoPlugin = (config, props) =>
+const withAndroidStyles: Expo.ConfigPlugin<Props> = (config, props) =>
   Expo.withAndroidStyles(config, async (config) => {
     const { assetsDir = "assets/bootsplash", android = {} } = props;
     const { parentTheme, darkContentBarsStyle } = android;
@@ -182,7 +182,7 @@ const withAndroidStyles: ExpoPlugin = (config, props) =>
     };
   });
 
-const withAndroidColors: ExpoPlugin = (config, props) =>
+const withAndroidColors: Expo.ConfigPlugin<Props> = (config, props) =>
   Expo.withAndroidColors(config, async (config) => {
     const { assetsDir = "assets/bootsplash" } = props;
     const { projectRoot } = config.modRequest;
@@ -199,7 +199,7 @@ const withAndroidColors: ExpoPlugin = (config, props) =>
     return config;
   });
 
-const withAndroidColorsNight: ExpoPlugin = (config, props) =>
+const withAndroidColorsNight: Expo.ConfigPlugin<Props> = (config, props) =>
   Expo.withAndroidColorsNight(config, async (config) => {
     const { assetsDir = "assets/bootsplash" } = props;
     const { projectRoot } = config.modRequest;
@@ -218,7 +218,7 @@ const withAndroidColorsNight: ExpoPlugin = (config, props) =>
     return config;
   });
 
-const withIOSAssets: ExpoPlugin = (config, props) =>
+const withIOSAssets: Expo.ConfigPlugin<Props> = (config, props) =>
   Expo.withDangerousMod(config, [
     "ios",
     (config) => {
@@ -258,7 +258,7 @@ const withIOSAssets: ExpoPlugin = (config, props) =>
     },
   ]);
 
-const withAppDelegate: ExpoPlugin = (config) =>
+const withAppDelegate: Expo.ConfigPlugin<Props> = (config) =>
   Expo.withAppDelegate(config, (config) => {
     const { modResults } = config;
     const { language } = modResults;
@@ -301,13 +301,13 @@ const withAppDelegate: ExpoPlugin = (config) =>
     };
   });
 
-const withInfoPlist: ExpoPlugin = (config) =>
+const withInfoPlist: Expo.ConfigPlugin<Props> = (config) =>
   Expo.withInfoPlist(config, (config) => {
     config.modResults["UILaunchStoryboardName"] = "BootSplash";
     return config;
   });
 
-const withXcodeProject: ExpoPlugin = (config) =>
+const withXcodeProject: Expo.ConfigPlugin<Props> = (config) =>
   Expo.withXcodeProject(config, (config) => {
     const { projectName = "" } = config.modRequest;
 
@@ -328,14 +328,14 @@ const withXcodeProject: ExpoPlugin = (config) =>
     return config;
   });
 
-const withoutExpoSplashScreen: ExpoPlugin = Expo.createRunOncePlugin(
-  (config) => config,
-  "expo-splash-screen",
-  "skip",
-);
+const withoutExpoSplashScreen: Expo.ConfigPlugin<Props> =
+  Expo.createRunOncePlugin((config) => config, "expo-splash-screen", "skip");
 
-export const withBootSplash: ExpoPlugin = (config, props = {}) => {
-  const plugins: ExpoPlugin[] = [];
+export const withBootSplash: Expo.ConfigPlugin<Props | undefined> = (
+  config,
+  props = {},
+) => {
+  const plugins: Expo.ConfigPlugin<Props>[] = [];
   const { platforms = [] } = config;
 
   plugins.push(withoutExpoSplashScreen);
