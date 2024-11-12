@@ -89,7 +89,7 @@ GEM
     public_suffix (4.0.7)
     rexml (3.3.9)
     ruby-macho (2.5.1)
-    securerandom (0.3.1)
+    securerandom (0.3.2)
     typhoeus (1.4.1)
       ethon (>= 0.9.0)
     tzinfo (2.0.6)
