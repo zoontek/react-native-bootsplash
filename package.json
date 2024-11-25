@@ -1,6 +1,6 @@
 {
   "name": "react-native-bootsplash",
-  "version": "6.3.1",
+  "version": "6.3.2",
   "license": "MIT",
   "description": "Display a bootsplash on your app starts. Hide it when you want.",
   "author": "Mathieu Acthernoene <zoontek@gmail.com>",
@@ -69,7 +69,7 @@
     "react-native": ">=0.70.0"
   },
   "dependencies": {
-    "@expo/config-plugins": "^8.0.4",
+    "@expo/config-plugins": "^8.0.0 || ^9.0.0",
     "@react-native-community/cli-config-android": "^15.0.0",
     "@react-native-community/cli-config-apple": "^15.0.0",
     "@react-native-community/cli-tools": "^15.0.0",
