@@ -187,6 +187,10 @@ type PluginOptions = {
 
 ### With bare React Native
 
+#### iOS (for react-native 0.77+)
+
+TODO: add docs
+
 #### iOS
 
 Edit the `ios/YourApp/AppDelegate.mm` file:
