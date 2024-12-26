@@ -189,7 +189,7 @@ type PluginOptions = {
 
 #### iOS (for react-native 0.77+)
 
-Edit the `ios/YourApp/YourApp-Bridging-Header.h` to expose Obj-c methods to Swift.
+Edit the `ios/YourApp-Bridging-Header.h` to expose Obj-c methods to Swift.
 
 ```obj-c
 // …
@@ -198,7 +198,7 @@ Edit the `ios/YourApp/YourApp-Bridging-Header.h` to expose Obj-c methods to Swif
 #import "RNBootSplash.h"
 ```
 
-Edit the `ios/YourApp/AppDelegate.swift`
+Edit the `ios/AppDelegate.swift`
 
 ```swift
 import UIKit
