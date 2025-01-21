@@ -187,9 +187,9 @@ type PluginOptions = {
 
 ### With bare React Native
 
-#### iOS (for react-native 0.77+)
+#### iOS (react-native 0.77+)
 
-Edit the `ios/YourApp-Bridging-Header.h` to expose Obj-c methods to Swift.
+Edit your [bridging header](https://developer.apple.com/documentation/swift/importing-objective-c-into-swift#Import-Code-Within-an-App-Target) file to expose Obj-C methods to Swift:
 
 ```obj-c
 // …
@@ -198,31 +198,26 @@ Edit the `ios/YourApp-Bridging-Header.h` to expose Obj-c methods to Swift.
 #import "RNBootSplash.h"
 ```
 
-Edit the `ios/AppDelegate.swift`
+Edit your `ios/YourApp/AppDelegate.swift` file:
 
 ```swift
-import UIKit
-import React
-import React_RCTAppDelegate
-import ReactAppDependencyProvider
-// ...
+// …
 
 @main
 class AppDelegate: RCTAppDelegate {
-  // ...
-  
-  // ⬇️ Add this and override customize method
+  // …
+
+  // ⬇️ Add this method
   override func customize(_ rootView: RCTRootView!) {
     super.customize(rootView)
     RNBootSplash.initWithStoryboard("BootSplash", rootView: rootView) // ⬅️ initialize the splash screen
   }
 }
-
 ```
 
-#### iOS (for react-native < 0.77)
+#### iOS (react-native < 0.77)
 
-Edit the `ios/YourApp/AppDelegate.mm` file:
+Edit your `ios/YourApp/AppDelegate.mm` file:
 
 ```obj-c
 #import "AppDelegate.h"
@@ -234,7 +229,7 @@ Edit the `ios/YourApp/AppDelegate.mm` file:
 
 // …
 
-// ⬇️ Add this before file @end (for react-native 0.74+)
+// ⬇️ Add this method before file @end (for react-native 0.74+)
 - (void)customizeRootView:(RCTRootView *)rootView {
   [super customizeRootView:rootView];
   [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView]; // ⬅️ initialize the splash screen
@@ -242,7 +237,7 @@ Edit the `ios/YourApp/AppDelegate.mm` file:
 
 // OR
 
-// ⬇️ Add this before file @end (for react-native < 0.74)
+// ⬇️ Add this method before file @end (for react-native < 0.74)
 - (UIView *)createRootViewWithBridge:(RCTBridge *)bridge
                           moduleName:(NSString *)moduleName
                            initProps:(NSDictionary *)initProps {
