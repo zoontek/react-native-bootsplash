@@ -10,9 +10,9 @@
 		0C80B921A6F3F58F76C31292 /* libPods-RNBootSplashExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-RNBootSplashExample.a */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		58CA62F13D8A4FC5B8D0EC94 /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9606E3AD6F0E4A06B27CC2E3 /* BootSplash.storyboard */; };
-		63EB61D72CF6B06A00DD81FA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EB61D62CF6B06A00DD81FA /* AppDelegate.swift */; };
 		8348E5A1EB36C351DD9D6654 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 		896B798CBF1B4BE49C470768 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C8B78429C105431082FBA2D4 /* Colors.xcassets */; };
+		DDFDB38A2D401F2E00BABB04 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDFDB3882D401F2E00BABB04 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,10 +23,10 @@
 		3B4392A12AC88292D35C810B /* Pods-RNBootSplashExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RNBootSplashExample.debug.xcconfig"; path = "Target Support Files/Pods-RNBootSplashExample/Pods-RNBootSplashExample.debug.xcconfig"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-RNBootSplashExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RNBootSplashExample.release.xcconfig"; path = "Target Support Files/Pods-RNBootSplashExample/Pods-RNBootSplashExample.release.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-RNBootSplashExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RNBootSplashExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		63EB61D52CF6B06A00DD81FA /* RNBootSplashExample-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RNBootSplashExample-Bridging-Header.h"; sourceTree = "<group>"; };
-		63EB61D62CF6B06A00DD81FA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9606E3AD6F0E4A06B27CC2E3 /* BootSplash.storyboard */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = BootSplash.storyboard; path = RNBootSplashExample/BootSplash.storyboard; sourceTree = "<group>"; };
 		C8B78429C105431082FBA2D4 /* Colors.xcassets */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = folder.assetcatalog; name = Colors.xcassets; path = RNBootSplashExample/Colors.xcassets; sourceTree = "<group>"; };
+		DDFDB3882D401F2E00BABB04 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = RNBootSplashExample/AppDelegate.swift; sourceTree = "<group>"; };
+		DDFDB3892D401F2E00BABB04 /* RNBootSplashExample-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "RNBootSplashExample-Bridging-Header.h"; path = "RNBootSplashExample/RNBootSplashExample-Bridging-Header.h"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -50,8 +50,8 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				9606E3AD6F0E4A06B27CC2E3 /* BootSplash.storyboard */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
-				63EB61D62CF6B06A00DD81FA /* AppDelegate.swift */,
-				63EB61D52CF6B06A00DD81FA /* RNBootSplashExample-Bridging-Header.h */,
+				DDFDB3882D401F2E00BABB04 /* AppDelegate.swift */,
+				DDFDB3892D401F2E00BABB04 /* RNBootSplashExample-Bridging-Header.h */,
 			);
 			name = RNBootSplashExample;
 			sourceTree = "<group>";
@@ -252,7 +252,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				63EB61D72CF6B06A00DD81FA /* AppDelegate.swift in Sources */,
+				DDFDB38A2D401F2E00BABB04 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -282,7 +282,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.zoontek.bootsplashexample;
 				PRODUCT_NAME = RNBootSplashExample;
-				SWIFT_OBJC_BRIDGING_HEADER = "RNBootSplashExample-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "RNBootSplashExample/RNBootSplashExample-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -311,7 +311,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.zoontek.bootsplashexample;
 				PRODUCT_NAME = RNBootSplashExample;
-				SWIFT_OBJC_BRIDGING_HEADER = "RNBootSplashExample-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "RNBootSplashExample/RNBootSplashExample-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
