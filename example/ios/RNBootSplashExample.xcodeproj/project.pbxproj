@@ -26,7 +26,6 @@
 		9606E3AD6F0E4A06B27CC2E3 /* BootSplash.storyboard */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = BootSplash.storyboard; path = RNBootSplashExample/BootSplash.storyboard; sourceTree = "<group>"; };
 		C8B78429C105431082FBA2D4 /* Colors.xcassets */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = folder.assetcatalog; name = Colors.xcassets; path = RNBootSplashExample/Colors.xcassets; sourceTree = "<group>"; };
 		DDFDB3882D401F2E00BABB04 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = RNBootSplashExample/AppDelegate.swift; sourceTree = "<group>"; };
-		DDFDB3892D401F2E00BABB04 /* RNBootSplashExample-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "RNBootSplashExample-Bridging-Header.h"; path = "RNBootSplashExample/RNBootSplashExample-Bridging-Header.h"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -51,7 +50,6 @@
 				9606E3AD6F0E4A06B27CC2E3 /* BootSplash.storyboard */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
 				DDFDB3882D401F2E00BABB04 /* AppDelegate.swift */,
-				DDFDB3892D401F2E00BABB04 /* RNBootSplashExample-Bridging-Header.h */,
 			);
 			name = RNBootSplashExample;
 			sourceTree = "<group>";
@@ -282,7 +280,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.zoontek.bootsplashexample;
 				PRODUCT_NAME = RNBootSplashExample;
-				SWIFT_OBJC_BRIDGING_HEADER = "RNBootSplashExample/RNBootSplashExample-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -311,7 +308,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.zoontek.bootsplashexample;
 				PRODUCT_NAME = RNBootSplashExample;
-				SWIFT_OBJC_BRIDGING_HEADER = "RNBootSplashExample/RNBootSplashExample-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
