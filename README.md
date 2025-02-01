@@ -448,7 +448,7 @@ Edit your `values/styles.xml` file to inherit from `Theme.BootSplash.Transparent
   <!-- … -->
 
   <!-- make BootTheme inherit from Theme.BootSplash.TransparentStatus / Theme.BootSplash.EdgeToEdge -->
-  <style name="BootTheme" parent="Theme.EdgeToEdge">
+  <style name="BootTheme" parent="Theme.BootSplash.EdgeToEdge">
     <!-- … -->
 
     <!-- optional, used to enforce the initial bars styles -->
