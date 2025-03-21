@@ -279,28 +279,39 @@ const withAppDelegate: Expo.ConfigPlugin<Props> = (config) =>
     const { modResults } = config;
     const { language } = modResults;
 
-    if (language !== "objc" && language !== "objcpp") {
+    if (language !== "objc" && language !== "objcpp" && language !== "swift") {
       throw new Error(
         `Cannot modify the project AppDelegate as it's not in a supported language: ${language}`,
       );
     }
+
+    const isSwift = language === "swift";
 
     const withHeader = mergeContents({
       src: modResults.contents,
       comment: "//",
       tag: "bootsplash-header",
       offset: 1,
-      anchor: /#import "AppDelegate\.h"/,
-      newSrc: '#import "RNBootSplash.h"',
+      anchor: isSwift ? /import Expo/ : /#import "AppDelegate\.h"/,
+      newSrc: isSwift ? 'import RNBootSplash' : '#import "RNBootSplash.h"',
     });
 
     const withRootView = mergeContents({
       src: withHeader.contents,
       comment: "//",
       tag: "bootsplash-init",
-      offset: 0,
-      anchor: /@end/,
-      newSrc: dedent`
+      offset: isSwift ? 1 : 0,
+      anchor: isSwift
+        ? /public class AppDelegate: ExpoAppDelegate {/
+        : /@end/,
+      newSrc: isSwift
+        ? dedent`
+        override func customize(_ rootView: RCTRootView!) {
+          super.customize(rootView)
+          RNBootSplash.initWithStoryboard("BootSplash", rootView: rootView)
+        }
+      `
+        : dedent`
         - (void)customizeRootView:(RCTRootView *)rootView {
           [super customizeRootView:rootView];
           [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView];
