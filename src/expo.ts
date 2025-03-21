@@ -285,26 +285,24 @@ const withAppDelegate: Expo.ConfigPlugin<Props> = (config) =>
       );
     }
 
-    const isSwift = language === "swift";
+    const swift = language === "swift";
 
     const withHeader = mergeContents({
       src: modResults.contents,
       comment: "//",
       tag: "bootsplash-header",
       offset: 1,
-      anchor: isSwift ? /import Expo/ : /#import "AppDelegate\.h"/,
-      newSrc: isSwift ? 'import RNBootSplash' : '#import "RNBootSplash.h"',
+      anchor: swift ? /import Expo/ : /#import "AppDelegate\.h"/,
+      newSrc: swift ? "import RNBootSplash" : '#import "RNBootSplash.h"',
     });
 
     const withRootView = mergeContents({
       src: withHeader.contents,
       comment: "//",
       tag: "bootsplash-init",
-      offset: isSwift ? 1 : 0,
-      anchor: isSwift
-        ? /public class AppDelegate: ExpoAppDelegate {/
-        : /@end/,
-      newSrc: isSwift
+      offset: swift ? 1 : 0,
+      anchor: swift ? /public class AppDelegate: ExpoAppDelegate {/ : /@end/,
+      newSrc: swift
         ? dedent`
         override func customize(_ rootView: RCTRootView!) {
           super.customize(rootView)
