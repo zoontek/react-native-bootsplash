@@ -239,7 +239,7 @@ Edit your `ios/YourApp/AppDelegate.mm` file:
 #import "RNBootSplash.h" // ⬅️ add this import
 
 // …
-p
+
 @implementation AppDelegate
 
 // …
