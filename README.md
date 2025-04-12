@@ -198,6 +198,7 @@ import RNBootSplash // ⬅️ add this import
 // …
 
 class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
+
   // …
 
   // ⬇️ override this method
@@ -220,6 +221,7 @@ import RNBootSplash // ⬅️ add this import
 
 @main
 class AppDelegate: RCTAppDelegate {
+
   // …
 
   // ⬇️ override this method
@@ -230,71 +232,16 @@ class AppDelegate: RCTAppDelegate {
 }
 ```
 
-#### iOS (react-native < 0.77)
-
-Edit your `ios/YourApp/AppDelegate.mm` file:
-
-```obj-c
-#import "AppDelegate.h"
-#import "RNBootSplash.h" // ⬅️ add this import
-
-// …
-
-@implementation AppDelegate
-
-// …
-
-// ⬇️ Add this method before file @end (for react-native 0.74+)
-- (void)customizeRootView:(RCTRootView *)rootView {
-  [super customizeRootView:rootView];
-  [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView]; // ⬅️ initialize the splash screen
-}
-
-// OR
-
-// ⬇️ Add this method before file @end (for react-native < 0.74)
-- (UIView *)createRootViewWithBridge:(RCTBridge *)bridge
-                          moduleName:(NSString *)moduleName
-                           initProps:(NSDictionary *)initProps {
-  UIView *rootView = [super createRootViewWithBridge:bridge moduleName:moduleName initProps:initProps];
-  [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView]; // ⬅️ initialize the splash screen
-  return rootView;
-}
-
-@end
-```
-
 #### Android
 
-Edit your `android/app/src/main/java/com/yourapp/MainActivity.{java,kt}` file:
-
-```java
-// Java (react-native < 0.73)
-// …
-
-// add these required imports:
-import android.os.Bundle;
-import com.zoontek.rnbootsplash.RNBootSplash;
-
-public class MainActivity extends ReactActivity {
-
-  // …
-
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    RNBootSplash.init(this, R.style.BootTheme); // ⬅️ initialize the splash screen
-    super.onCreate(savedInstanceState); // super.onCreate(null) with react-native-screens
-  }
-}
-```
+Edit your `android/app/src/main/java/com/yourapp/MainActivity.kt` file:
 
 ```kotlin
-// Kotlin (react-native >= 0.73)
-// …
-
-// add these required imports:
+// ⬇️ add these required imports
 import android.os.Bundle
 import com.zoontek.rnbootsplash.RNBootSplash
+
+// …
 
 class MainActivity : ReactActivity() {
 
@@ -306,6 +253,8 @@ class MainActivity : ReactActivity() {
   }
 }
 ```
+
+_ℹ️ Refer to [previous package documentation](https://github.com/zoontek/react-native-bootsplash/tree/6.3.4?tab=readme-ov-file#with-bare-react-native) for setup steps with React Native < 0.77._
 
 ## API
 

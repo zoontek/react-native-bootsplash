@@ -2,6 +2,7 @@
     <style name="AppTheme" parent="Theme.EdgeToEdge">
         <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
         <item name="android:windowLightStatusBar">true</item>
+        <item name="enforceNavigationBarContrast">false</item>
     </style>
 
     <style name="BootTheme" parent="Theme.BootSplash.EdgeToEdge">
