@@ -3,6 +3,7 @@ import { assignColorValue } from "@expo/config-plugins/build/android/Colors";
 import { addImports } from "@expo/config-plugins/build/android/codeMod";
 import { mergeContents } from "@expo/config-plugins/build/utils/generateCode";
 import path from "path";
+import semver from "semver";
 import { dedent } from "ts-dedent";
 import { Manifest } from ".";
 import { cleanIOSAssets, getExpoConfig, hfs, log } from "./generate";
@@ -276,7 +277,7 @@ const withIOSAssets: Expo.ConfigPlugin<Props> = (config, props) =>
 
 const withAppDelegate: Expo.ConfigPlugin<Props> = (config) =>
   Expo.withAppDelegate(config, (config) => {
-    const { modResults } = config;
+    const { modResults, sdkVersion = "0.1.0" } = config;
     const { language } = modResults;
 
     if (language !== "objc" && language !== "objcpp" && language !== "swift") {
@@ -303,18 +304,25 @@ const withAppDelegate: Expo.ConfigPlugin<Props> = (config) =>
       offset: swift ? 1 : 0,
       anchor: swift ? /public class AppDelegate: ExpoAppDelegate {/ : /@end/,
       newSrc: swift
-        ? dedent`
-        override func customize(_ rootView: RCTRootView!) {
-          super.customize(rootView)
-          RNBootSplash.initWithStoryboard("BootSplash", rootView: rootView)
-        }
-      `
+        ? semver.major(sdkVersion) >= 53
+          ? dedent`
+              public override func customize(_ rootView: RCTRootView) {
+                super.customize(rootView)
+                RNBootSplash.initWithStoryboard("BootSplash", rootView: rootView)
+              }
+            `
+          : dedent`
+              override func customize(_ rootView: RCTRootView!) {
+                super.customize(rootView)
+                RNBootSplash.initWithStoryboard("BootSplash", rootView: rootView)
+              }
+            `
         : dedent`
-        - (void)customizeRootView:(RCTRootView *)rootView {
-          [super customizeRootView:rootView];
-          [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView];
-        }
-      `,
+            - (void)customizeRootView:(RCTRootView *)rootView {
+              [super customizeRootView:rootView];
+              [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView];
+            }
+          `,
     });
 
     return {
