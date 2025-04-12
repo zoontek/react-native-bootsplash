@@ -187,6 +187,27 @@ type PluginOptions = {
 
 ### With bare React Native
 
+#### iOS (react-native 0.79+)
+
+Edit your `ios/YourApp/AppDelegate.swift` file:
+
+```swift
+import ReactAppDependencyProvider
+import RNBootSplash // ⬅️ add this import
+
+// …
+
+class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
+  // …
+
+  // ⬇️ override this method
+  override func customize(_ rootView: RCTRootView) {
+    super.customize(rootView)
+    RNBootSplash.initWithStoryboard("BootSplash", rootView: rootView) // ⬅️ initialize the splash screen
+  }
+}
+```
+
 #### iOS (react-native 0.77+)
 
 Edit your `ios/YourApp/AppDelegate.swift` file:
