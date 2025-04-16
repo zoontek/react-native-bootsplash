@@ -21,6 +21,30 @@ import util from "util";
 import formatXml, { XMLFormatterOptions } from "xml-formatter";
 import { Manifest } from ".";
 
+let sharp: typeof import("sharp") | undefined;
+let shouldUninstallSharp = false;
+
+async function ensureSharp() {
+  try {
+    sharp = require("sharp");
+  } catch (error) {
+    console.log("Installing sharp temporarily for image processing...");
+    try {
+      await exec("npm install sharp --no-save");
+      sharp = require("sharp");
+      shouldUninstallSharp = true;
+    } catch (installError) {
+      log.error(
+        "Failed to install sharp. Please install it manually by running:\n" +
+        "npm install sharp\n" +
+        "or\n" +
+        "yarn add sharp"
+      );
+      process.exit(1);
+    }
+  }
+}
+
 const workingPath = process.env.INIT_CWD ?? process.env.PWD ?? process.cwd();
 const projectRoot = findProjectRoot(workingPath);
 
@@ -648,6 +672,8 @@ export const generate = async ({
   darkLogo?: string;
   darkBrand?: string;
 }) => {
+  await ensureSharp();
+
   const isExpo =
     projectType === "expo" ||
     (projectType === "detect" && getExpoConfig(workingPath).isExpo);
@@ -1261,4 +1287,11 @@ ${pc.blue("┗━━━━━━━━━━━━━━━━━━━━━━
   console.log(
     `\n💖  Thanks for using ${pc.underline("react-native-bootsplash")}`,
   );
+
+  if (shouldUninstallSharp) {
+    try {
+      await exec("npm uninstall sharp");
+    } catch (error) {
+    }
+  }
 };

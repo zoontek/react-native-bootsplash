@@ -80,9 +80,11 @@
     "picocolors": "^1.1.1",
     "prettier": "^3.5.3",
     "react-native-is-edge-to-edge": "^1.1.7",
-    "sharp": "^0.32.6",
     "ts-dedent": "^2.2.0",
     "xml-formatter": "^3.6.5"
+  },
+  "optionalDependencies": {
+    "sharp": "^0.32.6"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
