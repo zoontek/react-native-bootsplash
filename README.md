@@ -161,14 +161,18 @@ assets/bootsplash/logo@4x.png
 ```diff
 {
   "expo": {
--   "splash": {
--     "image": "./assets/splash.png",
--     "resizeMode": "contain",
--     "backgroundColor": "#ffffff"
--   },
-+   "plugins": [
+    "plugins": [
+-     [
+-       "expo-splash-screen",
+-       {
+-         "image": "./assets/images/splash-icon.png",
+-         "imageWidth": 200,
+-         "resizeMode": "contain",
+-         "backgroundColor": "#ffffff"
+-       }
+-     ],
 +     ["react-native-bootsplash", { "assetsDir": "assets/bootsplash" }]
-+   ]
+    ]
   }
 }
 ```
