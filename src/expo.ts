@@ -286,55 +286,81 @@ const withAppDelegate: Expo.ConfigPlugin<Props> = (config) =>
       );
     }
 
-    const swift = language === "swift";
+    const withRootView = ((): ReturnType<typeof mergeContents> => {
+      // SDK 53 deprecates support for Obj-C AppDelegate
+      if (semver.major(sdkVersion) >= 53) {
+        const withHeader = mergeContents({
+          src: modResults.contents,
+          comment: "//",
+          tag: "bootsplash-header",
+          offset: 1,
+          anchor: /import Expo/,
+          newSrc: "import RNBootSplash",
+        });
 
-    const withHeader = mergeContents({
-      src: modResults.contents,
-      comment: "//",
-      tag: "bootsplash-header",
-      offset: 1,
-      anchor: swift ? /import Expo/ : /#import "AppDelegate\.h"/,
-      newSrc: swift ? "import RNBootSplash" : '#import "RNBootSplash.h"',
-    });
-
-    const withRootView =
-     // SDK 53 deprecates support for Obj-C AppDelegate
-      semver.major(sdkVersion) >= 53
-        ? mergeContents({
-            src: withHeader.contents,
-            comment: "//",
-            tag: "bootsplash-init",
-            offset: 1,
-            anchor: /class ReactNativeDelegate: ExpoReactNativeFactoryDelegate {/,
-            newSrc: dedent`
-          public override func customize(_ rootView: RCTRootView) {
-            super.customize(rootView)
-            RNBootSplash.initWithStoryboard("BootSplash", rootView: rootView)
-          }
-        `,
-          })
-        : mergeContents({
-            src: withHeader.contents,
-            comment: "//",
-            tag: "bootsplash-init",
-            offset: swift ? 1 : 0,
-            anchor: swift
-              ? /public class AppDelegate: ExpoAppDelegate {/
-              : /@end/,
-            newSrc: swift
-              ? dedent`
-              override func customize(_ rootView: RCTRootView!) {
-                super.customize(rootView)
-                RNBootSplash.initWithStoryboard("BootSplash", rootView: rootView)
-              }
-            `
-              : dedent`
-            - (void)customizeRootView:(RCTRootView *)rootView {
-              [super customizeRootView:rootView];
-              [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView];
+        return mergeContents({
+          src: withHeader.contents,
+          comment: "//",
+          tag: "bootsplash-init",
+          offset: 1,
+          anchor: /class ReactNativeDelegate: ExpoReactNativeFactoryDelegate {/,
+          newSrc: dedent`
+            public override func customize(_ rootView: RCTRootView) {
+              super.customize(rootView)
+              RNBootSplash.initWithStoryboard("BootSplash", rootView: rootView)
             }
           `,
-          });
+        });
+      }
+
+      if (language === "swift") {
+        const withHeader = mergeContents({
+          src: modResults.contents,
+          comment: "//",
+          tag: "bootsplash-header",
+          offset: 1,
+          anchor: /import Expo/,
+          newSrc: "import RNBootSplash",
+        });
+
+        return mergeContents({
+          src: withHeader.contents,
+          comment: "//",
+          tag: "bootsplash-init",
+          offset: 1,
+          anchor: /public class AppDelegate: ExpoAppDelegate {/,
+          newSrc: dedent`
+            override func customize(_ rootView: RCTRootView!) {
+              super.customize(rootView)
+              RNBootSplash.initWithStoryboard("BootSplash", rootView: rootView)
+            }
+          `,
+        });
+      }
+
+      const withHeader = mergeContents({
+        src: modResults.contents,
+        comment: "//",
+        tag: "bootsplash-header",
+        offset: 1,
+        anchor: /#import "AppDelegate\.h"/,
+        newSrc: '#import "RNBootSplash.h"',
+      });
+
+      return mergeContents({
+        src: withHeader.contents,
+        comment: "//",
+        tag: "bootsplash-init",
+        offset: 0,
+        anchor: /@end/,
+        newSrc: dedent`
+          - (void)customizeRootView:(RCTRootView *)rootView {
+            [super customizeRootView:rootView];
+            [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView];
+          }
+        `,
+      });
+    })();
 
     return {
       ...config,
