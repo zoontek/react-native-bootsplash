@@ -305,7 +305,7 @@ const withAppDelegate: Expo.ConfigPlugin<Props> = (config) =>
           offset: 1,
           anchor: /class ReactNativeDelegate: ExpoReactNativeFactoryDelegate {/,
           newSrc: dedent`
-            public override func customize(_ rootView: RCTRootView) {
+            public override func customize(_ rootView: UIView) {
               super.customize(rootView)
               RNBootSplash.initWithStoryboard("BootSplash", rootView: rootView)
             }
