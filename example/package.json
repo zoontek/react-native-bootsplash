@@ -15,9 +15,9 @@
   "dependencies": {
     "react": "19.0.0",
     "react-dom": "19.0.0",
-    "react-native": "0.79.0",
+    "react-native": "0.79.2",
     "react-native-bootsplash": "link:../",
-    "react-native-edge-to-edge": "^1.5.1",
+    "react-native-edge-to-edge": "1.6.0",
     "react-native-web": "0.20.0"
   },
   "devDependencies": {
@@ -27,8 +27,8 @@
     "@react-native-community/cli": "18.0.0",
     "@react-native-community/cli-platform-android": "18.0.0",
     "@react-native-community/cli-platform-ios": "18.0.0",
-    "@react-native/babel-preset": "0.79.0",
-    "@react-native/metro-config": "0.79.0",
+    "@react-native/babel-preset": "0.79.2",
+    "@react-native/metro-config": "0.79.2",
     "@types/react": "^19.0.0",
     "babel-loader": "^9.2.1",
     "babel-plugin-module-resolver": "^5.0.2",
