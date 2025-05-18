@@ -82,28 +82,30 @@ _📍 This license key grants unlimited and unrestricted usage of the generator 
 
 ```bash
 # Without license key
-yarn react-native-bootsplash generate svgs/light-logo.svg \
-  --platforms=android,ios,web \
-  --background=F5FCFF \
-  --logo-width=100 \
-  --assets-output=assets/bootsplash \
-  --flavor=main \
-  --html=public/index.html
+yarn react-native-bootsplash generate 
+  --platforms=android,ios,web 
+  --background=F5FCFF 
+  --logo-width=100 
+  --assets-output=assets/bootsplash 
+  --flavor=main 
+  --html=public/index.html 
+  svgs/light-logo.svg
 
 # With license key 🔑
-yarn react-native-bootsplash generate svgs/light-logo.svg \
-  --platforms=android,ios,web \
-  --background=F5FCFF \
-  --logo-width=100 \
-  --assets-output=assets/bootsplash \
-  --flavor=main \
-  --html=public/index.html \
-  --license-key=xxxxx \
-  --brand=svgs/light-brand.svg \
-  --brand-width=80 \
-  --dark-background=00090A \
-  --dark-logo=svgs/dark-logo.svg \
-  --dark-brand=svgs/dark-brand.svg
+yarn react-native-bootsplash generate 
+  --platforms=android,ios,web 
+  --background=F5FCFF 
+  --logo-width=100 
+  --assets-output=assets/bootsplash 
+  --flavor=main 
+  --html=public/index.html 
+  --license-key=xxxxx 
+  --brand=svgs/light-brand.svg 
+  --brand-width=80 
+  --dark-background=00090A 
+  --dark-logo=svgs/dark-logo.svg 
+  --dark-brand=svgs/dark-brand.svg 
+  svgs/light-logo.svg
 ```
 
 This tool relies on the naming conventions that are used in the `/example` project and will therefore create the following files:
