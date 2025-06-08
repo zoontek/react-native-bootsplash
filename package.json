@@ -1,6 +1,6 @@
 {
   "name": "react-native-bootsplash",
-  "version": "6.3.8",
+  "version": "6.3.9",
   "license": "MIT",
   "description": "Display a bootsplash on your app starts. Hide it when you want.",
   "author": "Mathieu Acthernoene <zoontek@gmail.com>",
@@ -99,7 +99,7 @@
     "prettier-plugin-organize-imports": "^4.1.0",
     "react": "19.0.0",
     "react-native": "0.79.2",
-    "react-native-builder-bob": "^0.40.6",
+    "react-native-builder-bob": "^0.40.11",
     "semver": "^7.7.1",
     "typescript": "^5.8.3"
   },
