@@ -37,7 +37,7 @@ const withAndroidAssets: Expo.ConfigPlugin<Props> = (config, props) =>
       const srcDir = path.resolve(projectRoot, assetsDir, "android");
 
       if (!hfs.exists(srcDir)) {
-        const error = `"${path.relative(projectRoot, srcDir)}" doesn't exist. Did you ran the asset generation command?`;
+        const error = `"${path.relative(projectRoot, srcDir)}" doesn't exist. Did you run the asset generation command?`;
         log.error(error);
         process.exit(1);
       }
@@ -243,7 +243,7 @@ const withIOSAssets: Expo.ConfigPlugin<Props> = (config, props) =>
       const destDir = path.resolve(platformProjectRoot, projectName);
 
       if (!hfs.exists(srcDir)) {
-        const error = `"${path.relative(projectRoot, srcDir)}" doesn't exist. Did you ran the asset generation command?`;
+        const error = `"${path.relative(projectRoot, srcDir)}" doesn't exist. Did you run the asset generation command?`;
         log.error(error);
         process.exit(1);
       }
