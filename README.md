@@ -144,16 +144,12 @@ assets/bootsplash/logo@4x.png
 
 ### With Expo
 
-1. Disable `expo-splash-screen` autolinking (in your `package.json`):
+1. First, uninstall `expo-splash-screen`:
 
-```json
-"expo": {
-  "autolinking": {
-    "exclude": [
-      "expo-splash-screen"
-    ]
-  }
-}
+```bash
+$ npm uninstall expo-splash-screen
+# --- or ---
+$ yarn remove expo-splash-screen
 ```
 
 2. Add the plugin in your `app.json`:
