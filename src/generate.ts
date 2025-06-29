@@ -1,5 +1,6 @@
 import * as Expo from "@expo/config-plugins";
 import plist from "@expo/plist";
+import { Transformer } from '@napi-rs/image';
 import { projectConfig as getAndroidProjectConfig } from "@react-native-community/cli-config-android";
 import { getProjectConfig as getAppleProjectConfig } from "@react-native-community/cli-config-apple";
 import { findProjectRoot } from "@react-native-community/cli-tools";
@@ -15,7 +16,6 @@ import * as htmlPlugin from "prettier/plugins/html";
 import * as cssPlugin from "prettier/plugins/postcss";
 import * as prettier from "prettier/standalone";
 import semver from "semver";
-import sharp, { Sharp } from "sharp";
 import { dedent } from "ts-dedent";
 import util from "util";
 import formatXml, { XMLFormatterOptions } from "xml-formatter";
@@ -338,19 +338,15 @@ export const cleanIOSAssets = (dir: string) => {
 };
 
 const getImageBase64 = async (
-  image: Sharp | undefined,
+  image: Uint8Array | undefined,
   width: number,
 ): Promise<string> => {
   if (image == null) {
     return "";
   }
 
-  const buffer = await image
-    .clone()
-    .resize(width)
-    .png({ quality: 100 })
-    .toBuffer();
-
+  const decoder = new Transformer(image)
+  const buffer = await decoder.resize(width).png()
   return buffer.toString("base64");
 };
 
@@ -365,12 +361,12 @@ const getFileNameSuffix = async ({
   logoWidth,
 }: {
   background: Color;
-  brand: Sharp | undefined;
+  brand: Uint8Array | undefined;
   brandWidth: number;
   darkBackground: Color | undefined;
-  darkBrand: Sharp | undefined;
-  darkLogo: Sharp | undefined;
-  logo: Sharp;
+  darkBrand: Uint8Array | undefined;
+  darkLogo: Uint8Array | undefined;
+  logo: Uint8Array;
   logoWidth: number;
 }) => {
   const [logoHash, darkLogoHash, brandHash, darkBrandHash] = await Promise.all([
@@ -403,13 +399,14 @@ const getFileNameSuffix = async ({
 
 const ensureSupportedFormat = async (
   name: string,
-  image: Sharp | undefined,
+  image: Uint8Array | undefined,
 ) => {
   if (image == null) {
     return;
   }
 
-  const { format } = await image.metadata();
+  const decoder = new Transformer(image)
+  const { format } = await decoder.metadata(false)
 
   if (format !== "png" && format !== "svg") {
     log.error(`${name} image file format (${format}) is not supported`);
@@ -569,20 +566,18 @@ const getHtmlTemplatePath = async ({
   return htmlTemplatePath;
 };
 
-const getImageHeight = (
-  image: Sharp | undefined,
+async function getImageHeight (
+  image: Uint8Array | undefined,
   width: number,
-): Promise<number> => {
+): Promise<number> {
   if (image == null) {
     return Promise.resolve(0);
   }
 
-  return image
-    .clone()
-    .resize(width)
-    .toBuffer()
-    .then((buffer) => sharp(buffer).metadata())
-    .then(({ height = 0 }) => Math.round(height));
+  const metadata = await new Transformer(image)
+  .resize(width)
+  .metadata(false)
+  return Math.round(metadata.width)
 };
 
 export type AddonConfig = {
@@ -606,12 +601,12 @@ export type AddonConfig = {
   brandWidth: number;
 
   background: Color;
-  logo: Sharp;
-  brand: Sharp | undefined;
+  logo: Uint8Array;
+  brand: Uint8Array | undefined;
 
   darkBackground: Color | undefined;
-  darkLogo: Sharp | undefined;
-  darkBrand: Sharp | undefined;
+  darkLogo: Uint8Array | undefined;
+  darkBrand: Uint8Array | undefined;
 };
 
 const requireAddon = ():
@@ -623,6 +618,8 @@ const requireAddon = ():
     return;
   }
 };
+
+const getFileBuffer = (filePath: string) => fs.readFileSync(filePath)
 
 export const generate = async ({
   projectType,
@@ -674,10 +671,10 @@ export const generate = async ({
 
   const assetsOutputPath = path.resolve(workingPath, args.assetsOutput);
 
-  const logo = sharp(logoPath);
-  const darkLogo = darkLogoPath != null ? sharp(darkLogoPath) : undefined;
-  const brand = brandPath != null ? sharp(brandPath) : undefined;
-  const darkBrand = darkBrandPath != null ? sharp(darkBrandPath) : undefined;
+  const logo = getFileBuffer(logoPath);
+  const darkLogo = darkLogoPath != null ? getFileBuffer(darkLogoPath) : undefined;
+  const brand = brandPath != null ? getFileBuffer(brandPath) : undefined;
+  const darkBrand = darkBrandPath != null ? getFileBuffer(darkBrandPath) : undefined;
 
   const background = parseColor(args.background);
   const logoWidth = args.logoWidth - (args.logoWidth % 2);
@@ -783,7 +780,7 @@ export const generate = async ({
         { ratio: 2, suffix: "xhdpi" },
         { ratio: 3, suffix: "xxhdpi" },
         { ratio: 4, suffix: "xxxhdpi" },
-      ].map(({ ratio, suffix }) => {
+      ].map(async ({ ratio, suffix }) => {
         const drawableDirPath = path.resolve(
           androidOutputPath,
           `drawable-${suffix}`,
@@ -795,38 +792,45 @@ export const generate = async ({
         const canvasSize = 288 * ratio;
 
         // https://sharp.pixelplumbing.com/api-constructor
-        const canvas = sharp({
-          create: {
-            width: canvasSize,
-            height: canvasSize,
-            channels: 4,
-            background: {
-              r: 255,
-              g: 255,
-              b: 255,
-              alpha: 0,
-            },
-          },
-        });
+        // const canvas = sharp({
+        //   create: {
+        //     width: canvasSize,
+        //     height: canvasSize,
+        //     channels: 4,
+        //     background: {
+        //       r: 255,
+        //       g: 255,
+        //       b: 255,
+        //       alpha: 0,
+        //     },
+        //   },
+        // });
 
         const filePath = path.resolve(drawableDirPath, "bootsplash_logo.png");
+        const decoder = new Transformer(logo)
+        const resized = decoder.resize(logoWidth * ratio)
+        const buffer = await resized.png()
+        // await fs.writeFile(filePath, buffer)
+        log.write(filePath, { width: canvasSize, height: canvasSize });
 
-        return logo
-          .clone()
-          .resize(logoWidth * ratio)
-          .toBuffer()
-          .then((input) =>
-            canvas
-              .composite([{ input }])
-              .png({ quality: 100 })
-              .toFile(filePath),
-          )
-          .then(() => {
-            log.write(filePath, {
-              width: canvasSize,
-              height: canvasSize,
-            });
-          });
+        // TODO: Replace sharp composite
+
+        // return logo
+        //   .clone()
+        //   .resize(logoWidth * ratio)
+        //   .toBuffer()
+        //   .then((input) =>
+        //     canvas
+        //       .composite([{ input }])
+        //       .png({ quality: 100 })
+        //       .toFile(filePath),
+        //   )
+        //   .then(() => {
+        //     log.write(filePath, {
+        //       width: canvasSize,
+        //       height: canvasSize,
+        //     });
+        //   });
       }),
     );
 
@@ -1045,20 +1049,18 @@ export const generate = async ({
         { ratio: 1, suffix: "" },
         { ratio: 2, suffix: "@2x" },
         { ratio: 3, suffix: "@3x" },
-      ].map(({ ratio, suffix }) => {
+      ].map(async ({ ratio, suffix }) => {
         const filePath = path.resolve(
           imageSetPath,
           `${logoFileName}${suffix}.png`,
         );
 
-        return logo
-          .clone()
-          .resize(logoWidth * ratio)
-          .png({ quality: 100 })
-          .toFile(filePath)
-          .then(({ width, height }) => {
-            log.write(filePath, { width, height });
-          });
+        const decoder = new Transformer(logo)
+        const resized = decoder.resize(logoWidth * ratio)
+        const { width,height } = await resized.metadata(false)
+        const buffer = await resized.png()
+        await fs.writeFile(filePath, buffer)
+        log.write(filePath, { width, height });
       }),
     );
 
@@ -1118,17 +1120,16 @@ export const generate = async ({
     log.title("🌐", "Web");
 
     const htmlTemplate = readXmlLike(htmlTemplatePath);
-    const { format } = await logo.metadata();
+    const decoder = new Transformer(logo)
+    const { format } = await decoder.metadata(false)
     const prevStyle = htmlTemplate.root.querySelector("#bootsplash-style");
 
     const base64 = (
       format === "svg"
         ? hfs.buffer(logoPath)
-        : await logo
-            .clone()
+        : await decoder
             .resize(Math.round(logoWidth * 2))
-            .png({ quality: 100 })
-            .toBuffer()
+            .png()
     ).toString("base64");
 
     const dataURI = `data:image/${format ? "svg+xml" : "png"};base64,${base64}`;
@@ -1201,17 +1202,15 @@ export const generate = async ({
       { ratio: 2, suffix: "@2x" },
       { ratio: 3, suffix: "@3x" },
       { ratio: 4, suffix: "@4x" },
-    ].map(({ ratio, suffix }) => {
+    ].map(async ({ ratio, suffix }) => {
       const filePath = path.resolve(assetsOutputPath, `logo${suffix}.png`);
 
-      return logo
-        .clone()
-        .resize(Math.round(logoWidth * ratio))
-        .png({ quality: 100 })
-        .toFile(filePath)
-        .then(({ width, height }) => {
-          log.write(filePath, { width, height });
-        });
+      const decoder = new Transformer(logo)
+      const resized = decoder.resize(Math.round(logoWidth * ratio))
+      const { width,height } = await resized.metadata(false)
+      const buffer = await resized.png()
+      await fs.writeFile(filePath, buffer)
+      log.write(filePath, { width, height });
     }),
   );
 
