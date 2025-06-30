@@ -70,6 +70,7 @@
   },
   "dependencies": {
     "@expo/config-plugins": "^9.0.0 || ^10.0.0",
+    "@napi-rs/canvas": "^0.1.73",
     "@napi-rs/image": "^1.10.0",
     "@react-native-community/cli-config-android": "^18.0.0",
     "@react-native-community/cli-config-apple": "^18.0.0",

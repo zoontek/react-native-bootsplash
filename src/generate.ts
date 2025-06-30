@@ -1,5 +1,6 @@
 import * as Expo from "@expo/config-plugins";
 import plist from "@expo/plist";
+import { createCanvas, loadImage } from "@napi-rs/canvas";
 import { Transformer } from '@napi-rs/image';
 import { projectConfig as getAndroidProjectConfig } from "@react-native-community/cli-config-android";
 import { getProjectConfig as getAppleProjectConfig } from "@react-native-community/cli-config-apple";
@@ -791,46 +792,24 @@ export const generate = async ({
         // https://developer.android.com/develop/ui/views/launch/splash-screen#dimensions
         const canvasSize = 288 * ratio;
 
-        // https://sharp.pixelplumbing.com/api-constructor
-        // const canvas = sharp({
-        //   create: {
-        //     width: canvasSize,
-        //     height: canvasSize,
-        //     channels: 4,
-        //     background: {
-        //       r: 255,
-        //       g: 255,
-        //       b: 255,
-        //       alpha: 0,
-        //     },
-        //   },
-        // });
-
         const filePath = path.resolve(drawableDirPath, "bootsplash_logo.png");
-        const decoder = new Transformer(logo)
-        const resized = decoder.resize(logoWidth * ratio)
-        const buffer = await resized.png()
-        // await fs.writeFile(filePath, buffer)
+
+        const resizedLogo = await new Transformer(logo)
+          .resize(logoWidth * ratio)
+          .png()
+        const logoImg = await loadImage(resizedLogo);
+
+        const centeredLogoX = (canvasSize - logoImg.width) / 2;
+        const centeredLogoY = (canvasSize - logoImg.height) / 2;
+
+        const canvas = createCanvas(canvasSize, canvasSize)
+        const ctx = canvas.getContext('2d')
+        ctx.clearRect(0, 0, canvasSize, canvasSize);
+        ctx.drawImage(logoImg, centeredLogoX, centeredLogoY)
+        const canvasBuffer = canvas.toBuffer('image/png')
+
+        await fs.writeFile(filePath, canvasBuffer)
         log.write(filePath, { width: canvasSize, height: canvasSize });
-
-        // TODO: Replace sharp composite
-
-        // return logo
-        //   .clone()
-        //   .resize(logoWidth * ratio)
-        //   .toBuffer()
-        //   .then((input) =>
-        //     canvas
-        //       .composite([{ input }])
-        //       .png({ quality: 100 })
-        //       .toFile(filePath),
-        //   )
-        //   .then(() => {
-        //     log.write(filePath, {
-        //       width: canvasSize,
-        //       height: canvasSize,
-        //     });
-        //   });
       }),
     );
 
