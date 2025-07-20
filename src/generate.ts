@@ -1,7 +1,7 @@
 import * as Expo from "@expo/config-plugins";
 import plist from "@expo/plist";
 import { createCanvas, loadImage } from "@napi-rs/canvas";
-import { Transformer } from '@napi-rs/image';
+import { Transformer } from "@napi-rs/image";
 import { projectConfig as getAndroidProjectConfig } from "@react-native-community/cli-config-android";
 import { getProjectConfig as getAppleProjectConfig } from "@react-native-community/cli-config-apple";
 import { findProjectRoot } from "@react-native-community/cli-tools";
@@ -346,8 +346,8 @@ const getImageBase64 = async (
     return "";
   }
 
-  const decoder = new Transformer(image)
-  const buffer = await decoder.resize(width).png()
+  const decoder = new Transformer(image);
+  const buffer = await decoder.resize(width).png();
   return buffer.toString("base64");
 };
 
@@ -406,8 +406,8 @@ const ensureSupportedFormat = async (
     return;
   }
 
-  const decoder = new Transformer(image)
-  const { format } = await decoder.metadata(false)
+  const decoder = new Transformer(image);
+  const { format } = await decoder.metadata(false);
 
   if (format !== "png" && format !== "svg") {
     log.error(`${name} image file format (${format}) is not supported`);
@@ -567,7 +567,7 @@ const getHtmlTemplatePath = async ({
   return htmlTemplatePath;
 };
 
-async function getImageHeight (
+async function getImageHeight(
   image: Uint8Array | undefined,
   width: number,
 ): Promise<number> {
@@ -575,11 +575,9 @@ async function getImageHeight (
     return Promise.resolve(0);
   }
 
-  const metadata = await new Transformer(image)
-  .resize(width)
-  .metadata(false)
-  return Math.round(metadata.width)
-};
+  const metadata = await new Transformer(image).resize(width).metadata(false);
+  return Math.round(metadata.width);
+}
 
 export type AddonConfig = {
   licenseKey: string;
@@ -620,7 +618,7 @@ const requireAddon = ():
   }
 };
 
-const getFileBuffer = (filePath: string) => fs.readFileSync(filePath)
+const getFileBuffer = (filePath: string) => fs.readFileSync(filePath);
 
 export const generate = async ({
   projectType,
@@ -673,9 +671,11 @@ export const generate = async ({
   const assetsOutputPath = path.resolve(workingPath, args.assetsOutput);
 
   const logo = getFileBuffer(logoPath);
-  const darkLogo = darkLogoPath != null ? getFileBuffer(darkLogoPath) : undefined;
+  const darkLogo =
+    darkLogoPath != null ? getFileBuffer(darkLogoPath) : undefined;
   const brand = brandPath != null ? getFileBuffer(brandPath) : undefined;
-  const darkBrand = darkBrandPath != null ? getFileBuffer(darkBrandPath) : undefined;
+  const darkBrand =
+    darkBrandPath != null ? getFileBuffer(darkBrandPath) : undefined;
 
   const background = parseColor(args.background);
   const logoWidth = args.logoWidth - (args.logoWidth % 2);
@@ -796,19 +796,19 @@ export const generate = async ({
 
         const resizedLogo = await new Transformer(logo)
           .resize(logoWidth * ratio)
-          .png()
+          .png();
         const logoImg = await loadImage(resizedLogo);
 
         const centeredLogoX = (canvasSize - logoImg.width) / 2;
         const centeredLogoY = (canvasSize - logoImg.height) / 2;
 
-        const canvas = createCanvas(canvasSize, canvasSize)
-        const ctx = canvas.getContext('2d')
+        const canvas = createCanvas(canvasSize, canvasSize);
+        const ctx = canvas.getContext("2d");
         ctx.clearRect(0, 0, canvasSize, canvasSize);
-        ctx.drawImage(logoImg, centeredLogoX, centeredLogoY)
-        const canvasBuffer = canvas.toBuffer('image/png')
+        ctx.drawImage(logoImg, centeredLogoX, centeredLogoY);
+        const canvasBuffer = canvas.toBuffer("image/png");
 
-        await fs.writeFile(filePath, canvasBuffer)
+        await fs.writeFile(filePath, canvasBuffer);
         log.write(filePath, { width: canvasSize, height: canvasSize });
       }),
     );
@@ -1034,11 +1034,11 @@ export const generate = async ({
           `${logoFileName}${suffix}.png`,
         );
 
-        const decoder = new Transformer(logo)
-        const resized = decoder.resize(logoWidth * ratio)
-        const { width,height } = await resized.metadata(false)
-        const buffer = await resized.png()
-        await fs.writeFile(filePath, buffer)
+        const decoder = new Transformer(logo);
+        const resized = decoder.resize(logoWidth * ratio);
+        const { width, height } = await resized.metadata(false);
+        const buffer = await resized.png();
+        await fs.writeFile(filePath, buffer);
         log.write(filePath, { width, height });
       }),
     );
@@ -1099,16 +1099,14 @@ export const generate = async ({
     log.title("🌐", "Web");
 
     const htmlTemplate = readXmlLike(htmlTemplatePath);
-    const decoder = new Transformer(logo)
-    const { format } = await decoder.metadata(false)
+    const decoder = new Transformer(logo);
+    const { format } = await decoder.metadata(false);
     const prevStyle = htmlTemplate.root.querySelector("#bootsplash-style");
 
     const base64 = (
       format === "svg"
         ? hfs.buffer(logoPath)
-        : await decoder
-            .resize(Math.round(logoWidth * 2))
-            .png()
+        : await decoder.resize(Math.round(logoWidth * 2)).png()
     ).toString("base64");
 
     const dataURI = `data:image/${format ? "svg+xml" : "png"};base64,${base64}`;
@@ -1184,11 +1182,11 @@ export const generate = async ({
     ].map(async ({ ratio, suffix }) => {
       const filePath = path.resolve(assetsOutputPath, `logo${suffix}.png`);
 
-      const decoder = new Transformer(logo)
-      const resized = decoder.resize(Math.round(logoWidth * ratio))
-      const { width,height } = await resized.metadata(false)
-      const buffer = await resized.png()
-      await fs.writeFile(filePath, buffer)
+      const decoder = new Transformer(logo);
+      const resized = decoder.resize(Math.round(logoWidth * ratio));
+      const { width, height } = await resized.metadata(false);
+      const buffer = await resized.png();
+      await fs.writeFile(filePath, buffer);
       log.write(filePath, { width, height });
     }),
   );
