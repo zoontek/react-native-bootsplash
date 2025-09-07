@@ -49,6 +49,9 @@ Usage: react-native-bootsplash generate [options] <logo>
 
 Generate a launch screen using a logo file path (PNG or SVG)
 
+Arguments:
+  logo                        Logo file path (PNG or SVG)
+
 Options:
   --project-type <string>     Project type ("detect", "bare" or "expo") (default: "detect")
   --platforms <list>          Platforms to generate for, separated by a comma (default: "android,ios,web")
