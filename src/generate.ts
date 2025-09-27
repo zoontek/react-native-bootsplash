@@ -37,6 +37,8 @@ type PackageJson = {
 type ProjectType = "detect" | "bare" | "expo";
 type Platforms = ("android" | "ios" | "web")[];
 
+type ImageType = Uint8Array;
+
 export type RGBColor = {
   R: string;
   G: string;
@@ -339,7 +341,7 @@ export const cleanIOSAssets = (dir: string) => {
 };
 
 const getImageBase64 = async (
-  image: Uint8Array | undefined,
+  image: ImageType | undefined,
   width: number,
 ): Promise<string> => {
   if (image == null) {
@@ -362,12 +364,12 @@ const getFileNameSuffix = async ({
   logoWidth,
 }: {
   background: Color;
-  brand: Uint8Array | undefined;
+  brand: ImageType | undefined;
   brandWidth: number;
   darkBackground: Color | undefined;
-  darkBrand: Uint8Array | undefined;
-  darkLogo: Uint8Array | undefined;
-  logo: Uint8Array;
+  darkBrand: ImageType | undefined;
+  darkLogo: ImageType | undefined;
+  logo: ImageType;
   logoWidth: number;
 }) => {
   const [logoHash, darkLogoHash, brandHash, darkBrandHash] = await Promise.all([
@@ -400,7 +402,7 @@ const getFileNameSuffix = async ({
 
 const ensureSupportedFormat = async (
   name: string,
-  image: Uint8Array | undefined,
+  image: ImageType | undefined,
 ) => {
   if (image == null) {
     return;
@@ -568,7 +570,7 @@ const getHtmlTemplatePath = async ({
 };
 
 async function getImageHeight(
-  image: Uint8Array | undefined,
+  image: ImageType | undefined,
   width: number,
 ): Promise<number> {
   if (image == null) {
@@ -600,12 +602,12 @@ export type AddonConfig = {
   brandWidth: number;
 
   background: Color;
-  logo: Uint8Array;
-  brand: Uint8Array | undefined;
+  logo: ImageType;
+  brand: ImageType | undefined;
 
   darkBackground: Color | undefined;
-  darkLogo: Uint8Array | undefined;
-  darkBrand: Uint8Array | undefined;
+  darkLogo: ImageType | undefined;
+  darkBrand: ImageType | undefined;
 };
 
 const requireAddon = ():
@@ -620,14 +622,14 @@ const requireAddon = ():
 
 const getFileBuffer = (filePath: string) => fs.readFileSync(filePath);
 
-const transformImage = (image: Uint8Array) => {
+const transformImage = (image: ImageType) => {
   if (isSvg(image)) {
     return Transformer.fromSvg(image);
   }
   return new Transformer(image);
 }
 
-const isSvg = (image: Uint8Array) => {
+const isSvg = (image: ImageType) => {
   const decoder = new TextDecoder('utf-8');
   const startOfFile = decoder.decode(image.slice(0, 100));
   return startOfFile.trim().startsWith('<svg');
