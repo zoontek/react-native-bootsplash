@@ -5,6 +5,7 @@ import { Transformer } from "@napi-rs/image";
 import { projectConfig as getAndroidProjectConfig } from "@react-native-community/cli-config-android";
 import { getProjectConfig as getAppleProjectConfig } from "@react-native-community/cli-config-apple";
 import { findProjectRoot } from "@react-native-community/cli-tools";
+import { Resvg } from '@resvg/resvg-js';
 import childProcess from "child_process";
 import crypto from "crypto";
 import detectIndent from "detect-indent";
@@ -37,7 +38,7 @@ type PackageJson = {
 type ProjectType = "detect" | "bare" | "expo";
 type Platforms = ("android" | "ios" | "web")[];
 
-type ImageType = Uint8Array;
+type ImageType = Uint8Array | Buffer;
 
 export type RGBColor = {
   R: string;
@@ -632,12 +633,17 @@ const isSvg = (image: ImageType) => {
 }
 
 const resizeToPngBuffer = (image: ImageType, width: number) => {
-  return transformImage(image).resize({ width, fit: 1 }).png();
+  if (isSvg(image)) {
+    const resvg = new Resvg(image as Buffer, { background: 'rgba(255,255,255,0)', fitTo: { mode: "width", value: width } });
+    return resvg.render().asPng();
+  }
+  return transformImage(image).resize({ width }).png();
 }
 
 const getImageMetadata = (image: ImageType) => {
   return transformImage(image).metadata(false);
 }
+
 
 export const generate = async ({
   projectType,
