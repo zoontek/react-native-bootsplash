@@ -343,13 +343,11 @@ export const cleanIOSAssets = (dir: string) => {
 const getImageBase64 = async (
   image: ImageType | undefined,
   width: number,
-): Promise<string> => {
+) => {
   if (image == null) {
     return "";
   }
-
-  const decoder = transformImage(image);
-  const buffer = await decoder.resize(width).png();
+  const buffer = await transformImage(image).resize(width).png();
   return buffer.toString("base64");
 };
 
@@ -408,9 +406,7 @@ const ensureSupportedFormat = async (
     return;
   }
 
-  const decoder = transformImage(image);
-  const { format } = await decoder.metadata(false);
-
+  const { format } = await transformImage(image).metadata(false);
   if (format !== "png" && format !== "svg") {
     log.error(`${name} image file format (${format}) is not supported`);
     process.exit(1);
@@ -569,16 +565,15 @@ const getHtmlTemplatePath = async ({
   return htmlTemplatePath;
 };
 
-async function getImageHeight(
+ async function getImageHeight(
   image: ImageType | undefined,
   width: number,
-): Promise<number> {
+) {
   if (image == null) {
-    return Promise.resolve(0);
+    return 0;
   }
-
   const metadata = await transformImage(image).resize(width).metadata(false);
-  return Math.round(metadata.width);
+  return Math.round(metadata.height || 0);
 }
 
 export type AddonConfig = {
@@ -731,13 +726,17 @@ export const generate = async ({
     process.exit(1);
   }
 
-  await ensureSupportedFormat("Logo", logo);
-  await ensureSupportedFormat("Dark logo", darkLogo);
-  await ensureSupportedFormat("Brand", brand);
-  await ensureSupportedFormat("Dark brand", darkBrand);
+  await Promise.all([
+    ensureSupportedFormat("Logo", logo),
+    ensureSupportedFormat("Dark logo", darkLogo),
+    ensureSupportedFormat("Brand", brand),
+    ensureSupportedFormat("Dark brand", darkBrand)
+  ]);
 
-  const logoHeight = await getImageHeight(logo, logoWidth);
-  const brandHeight = await getImageHeight(brand, brandWidth);
+  const [logoHeight, brandHeight] = await Promise.all([
+    getImageHeight(logo, logoWidth),
+    getImageHeight(brand, brandWidth)
+  ])
 
   if (logoWidth < args.logoWidth) {
     log.warn(
@@ -1048,11 +1047,8 @@ export const generate = async ({
           imageSetPath,
           `${logoFileName}${suffix}.png`,
         );
-
-        const decoder = transformImage(logo);
-        const resized = decoder.resize(logoWidth * ratio);
-        const { width, height } = await resized.metadata(false);
-        const buffer = await resized.png();
+        const buffer = await transformImage(logo).resize(logoWidth * ratio).png();
+        const { width, height } = await transformImage(buffer).metadata(false);
         await fs.writeFile(filePath, buffer);
         log.write(filePath, { width, height });
       }),
@@ -1197,10 +1193,8 @@ export const generate = async ({
     ].map(async ({ ratio, suffix }) => {
       const filePath = path.resolve(assetsOutputPath, `logo${suffix}.png`);
 
-      const decoder = transformImage(logo);
-      const resized = decoder.resize(Math.round(logoWidth * ratio));
-      const { width, height } = await resized.metadata(false);
-      const buffer = await resized.png();
+      const buffer = await transformImage(logo).resize(Math.round(logoWidth * ratio)).png()
+      const { width, height } = await transformImage(buffer).metadata(false);
       await fs.writeFile(filePath, buffer);
       log.write(filePath, { width, height });
     }),
