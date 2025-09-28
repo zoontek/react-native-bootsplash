@@ -620,7 +620,7 @@ const getFileBuffer = (filePath: string) => fs.readFileSync(filePath);
 
 const transformImage = (image: ImageType) => {
   if (isSvg(image)) {
-    return Transformer.fromSvg(image);
+    return Transformer.fromSvg(image, "rgba(255,255,255,0)");
   }
   return new Transformer(image);
 }
@@ -632,7 +632,7 @@ const isSvg = (image: ImageType) => {
 }
 
 const resizeToPngBuffer = (image: ImageType, width: number) => {
-  return transformImage(image).fastResize({ width, fit: 1 }).png();
+  return transformImage(image).resize({ width, fit: 1 }).png();
 }
 
 const getImageMetadata = (image: ImageType) => {
