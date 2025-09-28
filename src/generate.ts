@@ -347,7 +347,7 @@ const getImageBase64 = async (
   if (image == null) {
     return "";
   }
-  const buffer = await transformImage(image).resize(width).png();
+  const buffer = await resizeToPngBuffer(image, width);
   return buffer.toString("base64");
 };
 
@@ -406,7 +406,7 @@ const ensureSupportedFormat = async (
     return;
   }
 
-  const { format } = await transformImage(image).metadata(false);
+  const { format } = await getImageMetadata(image);
   if (format !== "png" && format !== "svg") {
     log.error(`${name} image file format (${format}) is not supported`);
     process.exit(1);
@@ -572,7 +572,8 @@ const getHtmlTemplatePath = async ({
   if (image == null) {
     return 0;
   }
-  const metadata = await transformImage(image).resize(width).metadata(false);
+  const buffer = await resizeToPngBuffer(image, width);
+  const metadata = await getImageMetadata(buffer);
   return Math.round(metadata.height || 0);
 }
 
@@ -628,6 +629,14 @@ const isSvg = (image: ImageType) => {
   const decoder = new TextDecoder('utf-8');
   const startOfFile = decoder.decode(image.slice(0, 100));
   return startOfFile.trim().startsWith('<svg');
+}
+
+const resizeToPngBuffer = (image: ImageType, width: number) => {
+  return transformImage(image).fastResize({ width, fit: 1 }).png();
+}
+
+const getImageMetadata = (image: ImageType) => {
+  return transformImage(image).metadata(false);
 }
 
 export const generate = async ({
@@ -808,9 +817,7 @@ export const generate = async ({
 
         const filePath = path.resolve(drawableDirPath, "bootsplash_logo.png");
 
-        const resizedLogo = await transformImage(logo)
-          .resize(logoWidth * ratio)
-          .png();
+        const resizedLogo = await resizeToPngBuffer(logo, logoWidth * ratio)
         const logoImg = await loadImage(resizedLogo);
 
         const centeredLogoX = (canvasSize - logoImg.width) / 2;
@@ -1047,8 +1054,8 @@ export const generate = async ({
           imageSetPath,
           `${logoFileName}${suffix}.png`,
         );
-        const buffer = await transformImage(logo).resize(logoWidth * ratio).png();
-        const { width, height } = await transformImage(buffer).metadata(false);
+        const buffer = await resizeToPngBuffer(logo, logoWidth * ratio);
+        const { width, height } = await getImageMetadata(buffer)
         await fs.writeFile(filePath, buffer);
         log.write(filePath, { width, height });
       }),
@@ -1110,14 +1117,13 @@ export const generate = async ({
     log.title("🌐", "Web");
 
     const htmlTemplate = readXmlLike(htmlTemplatePath);
-    const decoder = transformImage(logo);
-    const { format } = await decoder.metadata(false);
+    const { format } = await getImageMetadata(logo);
     const prevStyle = htmlTemplate.root.querySelector("#bootsplash-style");
 
     const base64 = (
       format === "svg"
         ? hfs.buffer(logoPath)
-        : await decoder.resize(Math.round(logoWidth * 2)).png()
+        : await resizeToPngBuffer(logo, Math.round(logoWidth * 2))
     ).toString("base64");
 
     const dataURI = `data:image/${format ? "svg+xml" : "png"};base64,${base64}`;
@@ -1193,8 +1199,8 @@ export const generate = async ({
     ].map(async ({ ratio, suffix }) => {
       const filePath = path.resolve(assetsOutputPath, `logo${suffix}.png`);
 
-      const buffer = await transformImage(logo).resize(Math.round(logoWidth * ratio)).png()
-      const { width, height } = await transformImage(buffer).metadata(false);
+      const buffer = await resizeToPngBuffer(logo, Math.round(logoWidth * ratio));
+      const { width, height } = await getImageMetadata(buffer);
       await fs.writeFile(filePath, buffer);
       log.write(filePath, { width, height });
     }),
