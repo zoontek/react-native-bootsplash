@@ -13,15 +13,15 @@ import fs from "fs-extra";
 import { HTMLElement, parse as parseHtml } from "node-html-parser";
 import path from "path";
 import pc from "picocolors";
-import { Options as PrettierOptions } from "prettier";
+import type { Options as PrettierOptions } from "prettier";
 import * as htmlPlugin from "prettier/plugins/html";
 import * as cssPlugin from "prettier/plugins/postcss";
 import * as prettier from "prettier/standalone";
 import semver from "semver";
 import { dedent } from "ts-dedent";
 import util from "util";
-import formatXml, { XMLFormatterOptions } from "xml-formatter";
-import { Manifest } from ".";
+import formatXml, { type XMLFormatterOptions } from "xml-formatter";
+import type { Manifest } from ".";
 
 const workingPath = process.env.INIT_CWD ?? process.env.PWD ?? process.cwd();
 const projectRoot = findProjectRoot(workingPath);
@@ -438,9 +438,9 @@ const getAndroidOutputPath = ({
   }
 
   const withSizeChecks = (assetsOutputPath: string) => {
-    if (logoWidth > 288 || logoHeight > 288) {
+    if (logoWidth > 192 || logoHeight > 192) {
       return log.warn(
-        "Logo size exceeding 288x288dp will be cropped by Android. Skipping Android assets generation…",
+        "Logo size exceeding 192x192dp will be cropped by Android. Skipping Android assets generation…",
       );
     }
     if (brandWidth > 200 || brandHeight > 80) {
@@ -449,8 +449,8 @@ const getAndroidOutputPath = ({
       );
     }
 
-    if (logoWidth > 192 || logoHeight > 192) {
-      log.warn("Logo size exceeds 192x192dp. It might be cropped by Android.");
+    if (logoWidth > 134 || logoHeight > 134) {
+      log.warn("Logo size exceeds 134x134dp. It might be cropped by Android.");
     }
 
     return assetsOutputPath;

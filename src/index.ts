@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  ImageRequireSource,
-  ImageResizeMode,
-  ImageSourcePropType,
-  ImageStyle,
+  type ImageRequireSource,
+  type ImageResizeMode,
+  type ImageSourcePropType,
+  type ImageStyle,
+  type ViewStyle,
   Platform,
   StyleSheet,
-  ViewStyle,
 } from "react-native";
 import {
   controlEdgeToEdgeValues,
