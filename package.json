@@ -23,9 +23,7 @@
     "cli.js",
     "react-native.config.js"
   ],
-  "bin": {
-    "react-native-bootsplash": "./cli.js"
-  },
+  "bin": "./cli.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/zoontek/react-native-bootsplash.git"
@@ -70,9 +68,12 @@
   },
   "dependencies": {
     "@expo/config-plugins": "^9.0.0 || ^10.0.0",
+    "@napi-rs/canvas": "^0.1",
+    "@napi-rs/image": "^1.11",
     "@react-native-community/cli-config-android": "^18.0.0",
     "@react-native-community/cli-config-apple": "^18.0.0",
     "@react-native-community/cli-tools": "^18.0.0",
+    "@resvg/resvg-js": "^2.6.2",
     "commander": "^13.1.0",
     "detect-indent": "^6.1.0",
     "fs-extra": "^11.3.0",
@@ -80,7 +81,6 @@
     "picocolors": "^1.1.1",
     "prettier": "^3.5.3",
     "react-native-is-edge-to-edge": "^1.2.1",
-    "sharp": "^0.32.6",
     "ts-dedent": "^2.2.0",
     "xml-formatter": "^3.6.5"
   },
