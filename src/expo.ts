@@ -5,7 +5,7 @@ import { mergeContents } from "@expo/config-plugins/build/utils/generateCode";
 import path from "path";
 import semver from "semver";
 import { dedent } from "ts-dedent";
-import { Manifest } from ".";
+import type { Manifest } from ".";
 import { cleanIOSAssets, getExpoConfig, hfs, log } from "./generate";
 
 type Props = {

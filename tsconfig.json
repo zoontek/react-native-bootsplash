@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
-    "module": "ESNext",
-    "target": "ES2017",
+    "module": "esnext",
+    "target": "es2017",
     "lib": ["DOM", "ES2017"],
     "jsx": "react-native",
-    "moduleResolution": "Node",
+    "moduleResolution": "node",
 
     "allowJs": false,
     "strict": true,
@@ -21,7 +21,8 @@
     "noImplicitReturns": false,
     "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": true
+    "noUnusedParameters": true,
+    "verbatimModuleSyntax": true
   },
   "include": ["src", "types"],
   "exclude": ["example", "node_modules"]
