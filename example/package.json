@@ -10,6 +10,7 @@
     "preinstall": "cd .. && yarn && yarn build && cd example",
     "start": "react-native start",
     "web": "webpack serve",
+    "test-gen": "node ../cli.js generate svgs/light-logo.svg",
     "reinstall": "yarn clean && yarn install"
   },
   "dependencies": {

@@ -1,8 +1,11 @@
 import * as Expo from "@expo/config-plugins";
 import plist from "@expo/plist";
+import { createCanvas, loadImage } from "@napi-rs/canvas";
+import { Transformer } from "@napi-rs/image";
 import { projectConfig as getAndroidProjectConfig } from "@react-native-community/cli-config-android";
 import { getProjectConfig as getAppleProjectConfig } from "@react-native-community/cli-config-apple";
 import { findProjectRoot } from "@react-native-community/cli-tools";
+import { Resvg } from '@resvg/resvg-js';
 import childProcess from "child_process";
 import crypto from "crypto";
 import detectIndent from "detect-indent";
@@ -15,7 +18,6 @@ import * as htmlPlugin from "prettier/plugins/html";
 import * as cssPlugin from "prettier/plugins/postcss";
 import * as prettier from "prettier/standalone";
 import semver from "semver";
-import sharp, { type Sharp } from "sharp";
 import { dedent } from "ts-dedent";
 import util from "util";
 import formatXml, { type XMLFormatterOptions } from "xml-formatter";
@@ -35,6 +37,8 @@ type PackageJson = {
 
 type ProjectType = "detect" | "bare" | "expo";
 type Platforms = ("android" | "ios" | "web")[];
+
+type ImageType = Uint8Array | Buffer;
 
 export type RGBColor = {
   R: string;
@@ -338,19 +342,13 @@ export const cleanIOSAssets = (dir: string) => {
 };
 
 const getImageBase64 = async (
-  image: Sharp | undefined,
+  image: ImageType | undefined,
   width: number,
-): Promise<string> => {
+) => {
   if (image == null) {
     return "";
   }
-
-  const buffer = await image
-    .clone()
-    .resize(width)
-    .png({ quality: 100 })
-    .toBuffer();
-
+  const buffer = await resizeToPngBuffer(image, width);
   return buffer.toString("base64");
 };
 
@@ -365,12 +363,12 @@ const getFileNameSuffix = async ({
   logoWidth,
 }: {
   background: Color;
-  brand: Sharp | undefined;
+  brand: ImageType | undefined;
   brandWidth: number;
   darkBackground: Color | undefined;
-  darkBrand: Sharp | undefined;
-  darkLogo: Sharp | undefined;
-  logo: Sharp;
+  darkBrand: ImageType | undefined;
+  darkLogo: ImageType | undefined;
+  logo: ImageType;
   logoWidth: number;
 }) => {
   const [logoHash, darkLogoHash, brandHash, darkBrandHash] = await Promise.all([
@@ -403,14 +401,13 @@ const getFileNameSuffix = async ({
 
 const ensureSupportedFormat = async (
   name: string,
-  image: Sharp | undefined,
+  image: ImageType | undefined,
 ) => {
   if (image == null) {
     return;
   }
 
-  const { format } = await image.metadata();
-
+  const { format } = await getImageMetadata(image);
   if (format !== "png" && format !== "svg") {
     log.error(`${name} image file format (${format}) is not supported`);
     process.exit(1);
@@ -569,21 +566,17 @@ const getHtmlTemplatePath = async ({
   return htmlTemplatePath;
 };
 
-const getImageHeight = (
-  image: Sharp | undefined,
+ async function getImageHeight(
+  image: ImageType | undefined,
   width: number,
-): Promise<number> => {
+) {
   if (image == null) {
-    return Promise.resolve(0);
+    return 0;
   }
-
-  return image
-    .clone()
-    .resize(width)
-    .toBuffer()
-    .then((buffer) => sharp(buffer).metadata())
-    .then(({ height = 0 }) => Math.round(height));
-};
+  const buffer = await resizeToPngBuffer(image, width);
+  const metadata = await getImageMetadata(buffer);
+  return Math.round(metadata.height || 0);
+}
 
 export type AddonConfig = {
   licenseKey: string;
@@ -606,12 +599,12 @@ export type AddonConfig = {
   brandWidth: number;
 
   background: Color;
-  logo: Sharp;
-  brand: Sharp | undefined;
+  logo: ImageType;
+  brand: ImageType | undefined;
 
   darkBackground: Color | undefined;
-  darkLogo: Sharp | undefined;
-  darkBrand: Sharp | undefined;
+  darkLogo: ImageType | undefined;
+  darkBrand: ImageType | undefined;
 };
 
 const requireAddon = ():
@@ -623,6 +616,34 @@ const requireAddon = ():
     return;
   }
 };
+
+const getFileBuffer = (filePath: string) => fs.readFileSync(filePath);
+
+const transformImage = (image: ImageType) => {
+  if (isSvg(image)) {
+    return Transformer.fromSvg(image, "rgba(255,255,255,0)");
+  }
+  return new Transformer(image);
+}
+
+const isSvg = (image: ImageType) => {
+  const decoder = new TextDecoder('utf-8');
+  const startOfFile = decoder.decode(image.slice(0, 100));
+  return startOfFile.trim().startsWith('<svg');
+}
+
+const resizeToPngBuffer = (image: ImageType, width: number) => {
+  if (isSvg(image)) {
+    const resvg = new Resvg(image as Buffer, { background: 'rgba(255,255,255,0)', fitTo: { mode: "width", value: width } });
+    return resvg.render().asPng();
+  }
+  return transformImage(image).resize({ width }).png();
+}
+
+const getImageMetadata = (image: ImageType) => {
+  return transformImage(image).metadata(false);
+}
+
 
 export const generate = async ({
   projectType,
@@ -674,10 +695,12 @@ export const generate = async ({
 
   const assetsOutputPath = path.resolve(workingPath, args.assetsOutput);
 
-  const logo = sharp(logoPath);
-  const darkLogo = darkLogoPath != null ? sharp(darkLogoPath) : undefined;
-  const brand = brandPath != null ? sharp(brandPath) : undefined;
-  const darkBrand = darkBrandPath != null ? sharp(darkBrandPath) : undefined;
+  const logo = getFileBuffer(logoPath);
+  const darkLogo =
+    darkLogoPath != null ? getFileBuffer(darkLogoPath) : undefined;
+  const brand = brandPath != null ? getFileBuffer(brandPath) : undefined;
+  const darkBrand =
+    darkBrandPath != null ? getFileBuffer(darkBrandPath) : undefined;
 
   const background = parseColor(args.background);
   const logoWidth = args.logoWidth - (args.logoWidth % 2);
@@ -718,13 +741,17 @@ export const generate = async ({
     process.exit(1);
   }
 
-  await ensureSupportedFormat("Logo", logo);
-  await ensureSupportedFormat("Dark logo", darkLogo);
-  await ensureSupportedFormat("Brand", brand);
-  await ensureSupportedFormat("Dark brand", darkBrand);
+  await Promise.all([
+    ensureSupportedFormat("Logo", logo),
+    ensureSupportedFormat("Dark logo", darkLogo),
+    ensureSupportedFormat("Brand", brand),
+    ensureSupportedFormat("Dark brand", darkBrand)
+  ]);
 
-  const logoHeight = await getImageHeight(logo, logoWidth);
-  const brandHeight = await getImageHeight(brand, brandWidth);
+  const [logoHeight, brandHeight] = await Promise.all([
+    getImageHeight(logo, logoWidth),
+    getImageHeight(brand, brandWidth)
+  ])
 
   if (logoWidth < args.logoWidth) {
     log.warn(
@@ -783,7 +810,7 @@ export const generate = async ({
         { ratio: 2, suffix: "xhdpi" },
         { ratio: 3, suffix: "xxhdpi" },
         { ratio: 4, suffix: "xxxhdpi" },
-      ].map(({ ratio, suffix }) => {
+      ].map(async ({ ratio, suffix }) => {
         const drawableDirPath = path.resolve(
           androidOutputPath,
           `drawable-${suffix}`,
@@ -794,39 +821,22 @@ export const generate = async ({
         // https://developer.android.com/develop/ui/views/launch/splash-screen#dimensions
         const canvasSize = 288 * ratio;
 
-        // https://sharp.pixelplumbing.com/api-constructor
-        const canvas = sharp({
-          create: {
-            width: canvasSize,
-            height: canvasSize,
-            channels: 4,
-            background: {
-              r: 255,
-              g: 255,
-              b: 255,
-              alpha: 0,
-            },
-          },
-        });
-
         const filePath = path.resolve(drawableDirPath, "bootsplash_logo.png");
 
-        return logo
-          .clone()
-          .resize(logoWidth * ratio)
-          .toBuffer()
-          .then((input) =>
-            canvas
-              .composite([{ input }])
-              .png({ quality: 100 })
-              .toFile(filePath),
-          )
-          .then(() => {
-            log.write(filePath, {
-              width: canvasSize,
-              height: canvasSize,
-            });
-          });
+        const resizedLogo = await resizeToPngBuffer(logo, logoWidth * ratio)
+        const logoImg = await loadImage(resizedLogo);
+
+        const centeredLogoX = (canvasSize - logoImg.width) / 2;
+        const centeredLogoY = (canvasSize - logoImg.height) / 2;
+
+        const canvas = createCanvas(canvasSize, canvasSize);
+        const ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvasSize, canvasSize);
+        ctx.drawImage(logoImg, centeredLogoX, centeredLogoY);
+        const canvasBuffer = canvas.toBuffer("image/png");
+
+        await fs.writeFile(filePath, canvasBuffer);
+        log.write(filePath, { width: canvasSize, height: canvasSize });
       }),
     );
 
@@ -1045,20 +1055,15 @@ export const generate = async ({
         { ratio: 1, suffix: "" },
         { ratio: 2, suffix: "@2x" },
         { ratio: 3, suffix: "@3x" },
-      ].map(({ ratio, suffix }) => {
+      ].map(async ({ ratio, suffix }) => {
         const filePath = path.resolve(
           imageSetPath,
           `${logoFileName}${suffix}.png`,
         );
-
-        return logo
-          .clone()
-          .resize(logoWidth * ratio)
-          .png({ quality: 100 })
-          .toFile(filePath)
-          .then(({ width, height }) => {
-            log.write(filePath, { width, height });
-          });
+        const buffer = await resizeToPngBuffer(logo, logoWidth * ratio);
+        const { width, height } = await getImageMetadata(buffer)
+        await fs.writeFile(filePath, buffer);
+        log.write(filePath, { width, height });
       }),
     );
 
@@ -1118,17 +1123,13 @@ export const generate = async ({
     log.title("🌐", "Web");
 
     const htmlTemplate = readXmlLike(htmlTemplatePath);
-    const { format } = await logo.metadata();
+    const { format } = await getImageMetadata(logo);
     const prevStyle = htmlTemplate.root.querySelector("#bootsplash-style");
 
     const base64 = (
       format === "svg"
         ? hfs.buffer(logoPath)
-        : await logo
-            .clone()
-            .resize(Math.round(logoWidth * 2))
-            .png({ quality: 100 })
-            .toBuffer()
+        : await resizeToPngBuffer(logo, Math.round(logoWidth * 2))
     ).toString("base64");
 
     const dataURI = `data:image/${format ? "svg+xml" : "png"};base64,${base64}`;
@@ -1201,17 +1202,13 @@ export const generate = async ({
       { ratio: 2, suffix: "@2x" },
       { ratio: 3, suffix: "@3x" },
       { ratio: 4, suffix: "@4x" },
-    ].map(({ ratio, suffix }) => {
+    ].map(async ({ ratio, suffix }) => {
       const filePath = path.resolve(assetsOutputPath, `logo${suffix}.png`);
 
-      return logo
-        .clone()
-        .resize(Math.round(logoWidth * ratio))
-        .png({ quality: 100 })
-        .toFile(filePath)
-        .then(({ width, height }) => {
-          log.write(filePath, { width, height });
-        });
+      const buffer = await resizeToPngBuffer(logo, Math.round(logoWidth * ratio));
+      const { width, height } = await getImageMetadata(buffer);
+      await fs.writeFile(filePath, buffer);
+      log.write(filePath, { width, height });
     }),
   );
 
