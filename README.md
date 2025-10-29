@@ -354,7 +354,7 @@ Return the current visibility status of the native splash screen.
 #### Method type
 
 ```ts
-type isVisible = () => Promise<boolean>;
+type isVisible = () => boolean;
 ```
 
 #### Usage
@@ -362,7 +362,9 @@ type isVisible = () => Promise<boolean>;
 ```ts
 import BootSplash from "react-native-bootsplash";
 
-BootSplash.isVisible().then((value) => console.log(value));
+if (BootSplash.isVisible()) {
+  // Do something
+}
 ```
 
 ### useHideAnimation()

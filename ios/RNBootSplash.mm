@@ -159,10 +159,6 @@ RCT_EXPORT_MODULE();
   }
 }
 
-- (void)isVisibleImpl:(RCTPromiseResolveBlock)resolve {
-  resolve(@([RNBootSplash isLoadingViewVisible]));
-}
-
 #ifdef RCT_NEW_ARCH_ENABLED
 
 // New architecture
@@ -181,9 +177,8 @@ RCT_EXPORT_MODULE();
   [self hideImpl:fade resolve:resolve];
 }
 
-- (void)isVisible:(RCTPromiseResolveBlock)resolve
-           reject:(RCTPromiseRejectBlock)reject {
-  [self isVisibleImpl:resolve];
+- (nonnull NSNumber *)isVisible { 
+  return @([RNBootSplash isLoadingViewVisible]);
 }
 
 #else
@@ -196,9 +191,8 @@ RCT_EXPORT_METHOD(hide:(BOOL)fade
   [self hideImpl:fade resolve:resolve];
 }
 
-RCT_EXPORT_METHOD(isVisible:(RCTPromiseResolveBlock)resolve
-                  reject:(RCTPromiseRejectBlock)reject) {
-  [self isVisibleImpl:resolve];
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(isVisible) {
+  return @([RNBootSplash isLoadingViewVisible]);
 }
 
 #endif
