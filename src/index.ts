@@ -81,7 +81,7 @@ export function hide(config: Config = {}): Promise<void> {
   return NativeModule.hide(fade).then(() => {});
 }
 
-export function isVisible(): Promise<boolean> {
+export function isVisible(): boolean {
   return NativeModule.isVisible();
 }
 

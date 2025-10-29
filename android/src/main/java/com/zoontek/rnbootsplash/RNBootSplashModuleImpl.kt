@@ -236,7 +236,7 @@ object RNBootSplashModuleImpl {
     hideAndClearPromiseQueue(reactContext, fade)
   }
 
-  fun isVisible(promise: Promise) {
-    promise.resolve(mStatus != Status.HIDDEN)
+  fun isVisible(): Boolean {
+    return mStatus != Status.HIDDEN
   }
 }

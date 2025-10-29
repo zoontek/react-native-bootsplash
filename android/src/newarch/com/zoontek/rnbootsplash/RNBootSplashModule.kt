@@ -33,7 +33,7 @@ class RNBootSplashModule(reactContext: ReactApplicationContext) :
     RNBootSplashModuleImpl.hide(reactApplicationContext, fade, promise)
   }
 
-  override fun isVisible(promise: Promise) {
-    RNBootSplashModuleImpl.isVisible(promise)
+  override fun isVisible(): Boolean {
+    return RNBootSplashModuleImpl.isVisible()
   }
 }
