@@ -10,7 +10,7 @@ class RNBootSplashQueue<E> : Vector<E>() {
 
   @Synchronized
   fun shift(): E? {
-    if (size == 0) {
+    if (isEmpty()) {
       return null
     }
 
