@@ -182,7 +182,6 @@ _📌 The available plugins options are:_
 type PluginOptions = {
   assetsDir?: string; // optional, default is "assets/bootsplash"
   android?: {
-    parentTheme?: "TransparentStatus" | "EdgeToEdge"; // optional, default is `undefined` (`Theme.BootSplash`)
     darkContentBarsStyle?: boolean; // optional, default is `undefined`
   };
 };
@@ -466,24 +465,18 @@ const App = () => {
 
 ## FAQ
 
-### How can I have a transparent status bar, or [edge-to-edge layout](https://developer.android.com/develop/ui/views/layout/edge-to-edge)?
+### How can I enforce the splash screen system bar colors?
 
-Edit your `values/styles.xml` file to inherit from `Theme.BootSplash.TransparentStatus` / `Theme.BootSplash.EdgeToEdge` instead of `Theme.BootSplash`:
+By default, the system bars `dark-content` in light mode and `light-content` in dark mode. To enforce a specific value, edit your `values/styles.xml` file:
 
 ```xml
 <resources>
-
   <!-- … -->
 
-  <!-- make BootTheme inherit from Theme.BootSplash.TransparentStatus / Theme.BootSplash.EdgeToEdge -->
-  <style name="BootTheme" parent="Theme.BootSplash.EdgeToEdge">
-    <!-- … -->
-
-    <!-- optional, used to enforce the initial bars styles -->
-    <!-- default is true in light mode, false in dark mode -->
+  <style name="BootTheme" parent="Theme.BootSplash">
     <item name="darkContentBarsStyle">true</item>
+    <!-- … -->
   </style>
-
 </resources>
 ```
 
