@@ -10,35 +10,29 @@
         <item name="android:windowExitAnimation">@anim/bootsplash_fade_out</item>
     </style>
 
-    <style name="Theme.BootSplash.DayNight" parent="Theme.AppCompat.DayNight.NoActionBar">
-    </style>
-
-    <style name="Theme.BootSplash.Base" parent="Theme.BootSplash.DayNight">
+    <style name="Theme.BootSplash.Attr" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="darkContentBarsStyle">true</item>
     </style>
 
-    <style name="Theme.BootSplash.Common" parent="Theme.BootSplash.Base">
+    <style name="Theme.BootSplash.Base" parent="Theme.BootSplash.Attr">
         <item name="android:opacity">opaque</item>
         <item name="android:windowBackground">@drawable/compat_splash_screen</item>
         <item name="bootSplashBrand">@drawable/transparent_pixel</item>
+
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:fitsSystemWindows">false</item>
+        <item name="android:navigationBarColor">@color/navigationBarColor</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">?darkContentBarsStyle</item>
     </style>
 
-    <style name="Theme.BootSplash" parent="Theme.BootSplash.Common">
+    <style name="Theme.BootSplash.v27" parent="Theme.BootSplash.Base" />
+    <style name="Theme.BootSplash.v29" parent="Theme.BootSplash.v27" />
+    <style name="Theme.BootSplash.v30" parent="Theme.BootSplash.v29" />
+
+    <style name="Theme.BootSplash" parent="Theme.BootSplash.v30">
         <item name="bootSplashBackground">?android:colorBackground</item>
         <item name="bootSplashLogo">@android:drawable/sym_def_app_icon</item>
         <item name="postBootSplashTheme">?android:attr/theme</item>
-    </style>
-
-    <style name="Theme.BootSplash.TransparentStatus" parent="Theme.BootSplash">
-    </style>
-
-    <style name="Theme.BootSplash.EdgeToEdge.Common" parent="Theme.BootSplash">
-        <item name="android:fitsSystemWindows">false</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-    </style>
-
-    <style name="Theme.BootSplash.EdgeToEdge" parent="Theme.BootSplash.EdgeToEdge.Common">
-        <item name="android:statusBarColor">@color/systemBarDarkScrim</item>
-        <item name="android:navigationBarColor">@color/systemBarDarkScrim</item>
     </style>
 </resources>

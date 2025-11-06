@@ -11,7 +11,6 @@ import { cleanIOSAssets, getExpoConfig, hfs, log } from "./generate";
 type Props = {
   assetsDir?: string;
   android?: {
-    parentTheme?: "TransparentStatus" | "EdgeToEdge";
     darkContentBarsStyle?: boolean;
   };
 };
@@ -125,7 +124,7 @@ const withMainActivity: Expo.ConfigPlugin<Props> = (config) =>
 const withAndroidStyles: Expo.ConfigPlugin<Props> = (config, props) =>
   Expo.withAndroidStyles(config, async (config) => {
     const { assetsDir = "assets/bootsplash", android = {} } = props;
-    const { parentTheme, darkContentBarsStyle } = android;
+    const { darkContentBarsStyle } = android;
 
     const { modRequest, modResults } = config;
     const { resources } = modResults;
@@ -168,12 +167,7 @@ const withAndroidStyles: Expo.ConfigPlugin<Props> = (config, props) =>
       {
         $: {
           name: "BootTheme",
-          parent:
-            parentTheme === "TransparentStatus"
-              ? "Theme.BootSplash.TransparentStatus"
-              : parentTheme === "EdgeToEdge"
-                ? "Theme.BootSplash.EdgeToEdge"
-                : "Theme.BootSplash",
+          parent: "Theme.BootSplash",
         },
         item,
       },
