@@ -189,7 +189,7 @@ type PluginOptions = {
 
 ### With bare React Native
 
-#### iOS (react-native 0.79+)
+#### iOS
 
 Edit your `ios/YourApp/AppDelegate.swift` file:
 
@@ -205,29 +205,6 @@ class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
 
   // ⬇️ override this method
   override func customize(_ rootView: RCTRootView) {
-    super.customize(rootView)
-    RNBootSplash.initWithStoryboard("BootSplash", rootView: rootView) // ⬅️ initialize the splash screen
-  }
-}
-```
-
-#### iOS (react-native 0.77+)
-
-Edit your `ios/YourApp/AppDelegate.swift` file:
-
-```swift
-import ReactAppDependencyProvider
-import RNBootSplash // ⬅️ add this import
-
-// …
-
-@main
-class AppDelegate: RCTAppDelegate {
-
-  // …
-
-  // ⬇️ override this method
-  override func customize(_ rootView: RCTRootView!) {
     super.customize(rootView)
     RNBootSplash.initWithStoryboard("BootSplash", rootView: rootView) // ⬅️ initialize the splash screen
   }
@@ -256,7 +233,7 @@ class MainActivity : ReactActivity() {
 }
 ```
 
-_ℹ️ Refer to [previous package documentation](https://github.com/zoontek/react-native-bootsplash/tree/6.3.4?tab=readme-ov-file#with-bare-react-native) for setup steps with React Native < 0.77._
+_ℹ️ Refer to [previous package documentation](https://github.com/zoontek/react-native-bootsplash/tree/6.3.11?tab=readme-ov-file#with-bare-react-native) for setup steps with React Native < 0.79._
 
 ## API
 
