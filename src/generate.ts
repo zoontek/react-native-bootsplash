@@ -668,8 +668,8 @@ export const generate = async ({
     projectType === "expo" ||
     (projectType === "detect" && getExpoConfig(workingPath).isExpo);
 
-  if (semver.lt(process.versions.node, "18.0.0")) {
-    log.error("Requires Node 18 (or higher)");
+  if (semver.lt(process.versions.node, "20.0.0")) {
+    log.error("Requires Node 20 (or higher)");
     process.exit(1);
   }
 
