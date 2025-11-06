@@ -5,7 +5,7 @@ import { Transformer } from "@napi-rs/image";
 import { projectConfig as getAndroidProjectConfig } from "@react-native-community/cli-config-android";
 import { getProjectConfig as getAppleProjectConfig } from "@react-native-community/cli-config-apple";
 import { findProjectRoot } from "@react-native-community/cli-tools";
-import { Resvg } from '@resvg/resvg-js';
+import { Resvg } from "@resvg/resvg-js";
 import childProcess from "child_process";
 import crypto from "crypto";
 import detectIndent from "detect-indent";
@@ -222,7 +222,7 @@ export const getExpoConfig = (from: string): { isExpo: boolean } => {
         try {
           const pkg = hfs.json(pkgPath) as PackageJson;
           return pkg.dependencies?.expo != null;
-        } catch {} // eslint-disable-line no-empty
+        } catch {} // oxlint-disable-line no-empty
       }
     }) ?? false;
 
@@ -237,7 +237,7 @@ export const getExpoConfig = (from: string): { isExpo: boolean } => {
       try {
         const pkg = hfs.json(pkgPath) as PackageJson;
         return pkg.version;
-      } catch {} // eslint-disable-line no-empty
+      } catch {} // oxlint-disable-line no-empty
     }
   });
 
@@ -341,10 +341,7 @@ export const cleanIOSAssets = (dir: string) => {
     });
 };
 
-const getImageBase64 = async (
-  image: ImageType | undefined,
-  width: number,
-) => {
+const getImageBase64 = async (image: ImageType | undefined, width: number) => {
   if (image == null) {
     return "";
   }
@@ -566,10 +563,7 @@ const getHtmlTemplatePath = async ({
   return htmlTemplatePath;
 };
 
- async function getImageHeight(
-  image: ImageType | undefined,
-  width: number,
-) {
+async function getImageHeight(image: ImageType | undefined, width: number) {
   if (image == null) {
     return 0;
   }
@@ -611,7 +605,7 @@ const requireAddon = ():
   | { execute: (config: AddonConfig) => Promise<void> }
   | undefined => {
   try {
-    return require("./addon"); // eslint-disable-line
+    return require("./addon");
   } catch {
     return;
   }
@@ -624,26 +618,28 @@ const transformImage = (image: ImageType) => {
     return Transformer.fromSvg(image, "rgba(255,255,255,0)");
   }
   return new Transformer(image);
-}
+};
 
 const isSvg = (image: ImageType) => {
-  const decoder = new TextDecoder('utf-8');
+  const decoder = new TextDecoder("utf-8");
   const startOfFile = decoder.decode(image.slice(0, 100));
-  return startOfFile.trim().startsWith('<svg');
-}
+  return startOfFile.trim().startsWith("<svg");
+};
 
 const resizeToPngBuffer = (image: ImageType, width: number) => {
   if (isSvg(image)) {
-    const resvg = new Resvg(image as Buffer, { background: 'rgba(255,255,255,0)', fitTo: { mode: "width", value: width } });
+    const resvg = new Resvg(image as Buffer, {
+      background: "rgba(255,255,255,0)",
+      fitTo: { mode: "width", value: width },
+    });
     return resvg.render().asPng();
   }
   return transformImage(image).resize({ width }).png();
-}
+};
 
 const getImageMetadata = (image: ImageType) => {
   return transformImage(image).metadata(false);
-}
-
+};
 
 export const generate = async ({
   projectType,
@@ -745,13 +741,13 @@ export const generate = async ({
     ensureSupportedFormat("Logo", logo),
     ensureSupportedFormat("Dark logo", darkLogo),
     ensureSupportedFormat("Brand", brand),
-    ensureSupportedFormat("Dark brand", darkBrand)
+    ensureSupportedFormat("Dark brand", darkBrand),
   ]);
 
   const [logoHeight, brandHeight] = await Promise.all([
     getImageHeight(logo, logoWidth),
-    getImageHeight(brand, brandWidth)
-  ])
+    getImageHeight(brand, brandWidth),
+  ]);
 
   if (logoWidth < args.logoWidth) {
     log.warn(
@@ -823,7 +819,7 @@ export const generate = async ({
 
         const filePath = path.resolve(drawableDirPath, "bootsplash_logo.png");
 
-        const resizedLogo = await resizeToPngBuffer(logo, logoWidth * ratio)
+        const resizedLogo = await resizeToPngBuffer(logo, logoWidth * ratio);
         const logoImg = await loadImage(resizedLogo);
 
         const centeredLogoX = (canvasSize - logoImg.width) / 2;
@@ -1061,7 +1057,7 @@ export const generate = async ({
           `${logoFileName}${suffix}.png`,
         );
         const buffer = await resizeToPngBuffer(logo, logoWidth * ratio);
-        const { width, height } = await getImageMetadata(buffer)
+        const { width, height } = await getImageMetadata(buffer);
         await fs.writeFile(filePath, buffer);
         log.write(filePath, { width, height });
       }),
@@ -1205,7 +1201,11 @@ export const generate = async ({
     ].map(async ({ ratio, suffix }) => {
       const filePath = path.resolve(assetsOutputPath, `logo${suffix}.png`);
 
-      const buffer = await resizeToPngBuffer(logo, Math.round(logoWidth * ratio));
+      const buffer = await resizeToPngBuffer(
+        logo,
+        Math.round(logoWidth * ratio),
+      );
+
       const { width, height } = await getImageMetadata(buffer);
       await fs.writeFile(filePath, buffer);
       log.write(filePath, { width, height });
