@@ -240,8 +240,8 @@ export const getExpoConfig = (from: string): { isExpo: boolean } => {
     }
   });
 
-  if (version == null || semver.lt(version, "51.0.20")) {
-    log.error("Requires Expo 51.0.20 (or higher)");
+  if (version == null || semver.lt(version, "53.0.0")) {
+    log.error("Requires Expo 53.0.0 (or higher)");
     process.exit(1);
   }
 

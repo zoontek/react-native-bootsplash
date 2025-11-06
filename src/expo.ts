@@ -21,7 +21,7 @@ const withExpoVersionCheck =
     Expo.withDangerousMod(config, [
       platform,
       (config) => {
-        getExpoConfig(config.modRequest.projectRoot); // will exit process if expo < 51.0.20
+        getExpoConfig(config.modRequest.projectRoot); // will exit process if expo < 53.0.0
         return config;
       },
     ]);
