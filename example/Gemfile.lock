@@ -69,8 +69,9 @@ GEM
     connection_pool (2.5.4)
     drb (2.2.3)
     escape (0.0.4)
-    ethon (0.17.0)
+    ethon (0.18.0)
       ffi (>= 1.15.0)
+      logger
     ffi (1.17.2)
     fourflusher (2.3.1)
     fuzzy_match (2.0.4)
