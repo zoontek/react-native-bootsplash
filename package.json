@@ -102,7 +102,7 @@
   "codegenConfig": {
     "name": "RNBootSplashSpec",
     "type": "modules",
-    "jsSrcsDir": "./src",
+    "jsSrcsDir": "./src/specs",
     "android": {
       "javaPackageName": "com.zoontek.rnbootsplash"
     }
