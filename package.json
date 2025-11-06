@@ -43,7 +43,7 @@
   "scripts": {
     "clean": "rm -rf dist",
     "format": "prettier '**/*' -u -w",
-    "lint": "eslint --ext ts,tsx ./src",
+    "lint": "oxlint",
     "typecheck": "tsc --noEmit",
     "build": "yarn clean && bob build && rm -rf dist/*/package.json",
     "prepack": "prettier '**/*' -u -c && yarn lint && yarn typecheck && yarn build && node ../obfuscator"
@@ -92,10 +92,7 @@
     "@types/node": "^20.17.30",
     "@types/react": "^19.0.0",
     "@types/semver": "^7.7.0",
-    "@typescript-eslint/eslint-plugin": "^8.29.1",
-    "@typescript-eslint/parser": "^8.29.1",
-    "eslint": "^8.57.1",
-    "eslint-plugin-react-hooks": "^4.6.2",
+    "oxlint": "^1.26.0",
     "prettier-plugin-organize-imports": "^4.1.0",
     "react": "19.0.0",
     "react-native": "0.79.2",
