@@ -60,6 +60,7 @@ Options:
   --assets-output <string>    Assets output directory path (default: "assets/bootsplash")
   --flavor <string>           Android flavor build variant (where your resource directory is) (default: "main")
   --html <string>             HTML template file path (your web app entry point) (default: "public/index.html")
+  --plist <string>            Custom Info.plist file path
   --license-key <string>      License key to enable brand and dark mode assets generation
   --brand <string>            Brand file path (PNG or SVG)
   --brand-width <number>      Brand width at @1x (in dp - we recommend approximately ~80) (default: 80)

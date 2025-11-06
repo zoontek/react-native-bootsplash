@@ -1,5 +1,5 @@
 import * as Expo from "@expo/config-plugins";
-import plist from "@expo/plist";
+import ExpoPlist from "@expo/plist";
 import { createCanvas, loadImage } from "@napi-rs/canvas";
 import { Transformer } from "@napi-rs/image";
 import { projectConfig as getAndroidProjectConfig } from "@react-native-community/cli-config-android";
@@ -63,7 +63,7 @@ export const log = {
     console.log(`\n${emoji}  ${pc.underline(pc.bold(text))}`);
   },
   warn: (text: string) => {
-    console.log(pc.yellow(`⚠️   ${text}`));
+    console.log(pc.yellow(`⚠️  ${text}`));
   },
   write: (filePath: string, dimensions?: { width: number; height: number }) => {
     console.log(
@@ -555,11 +555,31 @@ const getHtmlTemplatePath = async ({
       `No ${path.relative(
         workingPath,
         htmlTemplatePath,
-      )} file found. Skipping HTML + CSS generation…`,
+      )} found. Skipping HTML + CSS generation…`,
     );
   }
 
   return htmlTemplatePath;
+};
+
+const getInfoPlistPath = ({
+  iosOutputPath,
+  plist,
+}: {
+  iosOutputPath: string;
+  plist: string | undefined;
+}) => {
+  if (plist != null) {
+    const infoPlistPath = path.resolve(workingPath, plist);
+
+    if (!hfs.exists(infoPlistPath)) {
+      return log.warn(`No ${path.relative(workingPath, infoPlistPath)} found`);
+    }
+
+    return infoPlistPath;
+  }
+
+  return path.resolve(iosOutputPath, "Info.plist");
 };
 
 async function getImageHeight(image: ImageType | undefined, width: number) {
@@ -645,6 +665,7 @@ export const generate = async ({
   platforms,
   html,
   flavor,
+  plist,
   licenseKey,
   ...args
 }: {
@@ -656,6 +677,7 @@ export const generate = async ({
   assetsOutput: string;
   html: string;
   flavor: string;
+  plist?: string;
 
   licenseKey?: string;
   brand?: string;
@@ -860,7 +882,7 @@ export const generate = async ({
           singleAttributePerLine: true,
         });
       } else {
-        log.warn("No AndroidManifest.xml found. Skipping…");
+        log.warn("No AndroidManifest.xml found");
       }
 
       const valuesPath = path.resolve(androidOutputPath, "values");
@@ -956,7 +978,7 @@ export const generate = async ({
           htmlWhitespaceSensitivity: "ignore",
         });
       } else {
-        log.warn("No styles.xml found. Skipping…");
+        log.warn("No styles.xml found");
       }
     }
   }
@@ -1063,27 +1085,29 @@ export const generate = async ({
     );
 
     if (!isExpo) {
-      const infoPlistPath = path.resolve(iosOutputPath, "Info.plist");
+      const infoPlistPath = getInfoPlistPath({ iosOutputPath, plist });
 
-      const infoPlist = plist.parse(hfs.text(infoPlistPath)) as Record<
-        string,
-        unknown
-      >;
+      if (infoPlistPath != null) {
+        const infoPlist = ExpoPlist.parse(hfs.text(infoPlistPath)) as Record<
+          string,
+          unknown
+        >;
 
-      infoPlist["UILaunchStoryboardName"] = "BootSplash";
+        infoPlist["UILaunchStoryboardName"] = "BootSplash";
 
-      const formatted = formatXml(plist.build(infoPlist), {
-        collapseContent: true,
-        forceSelfClosingEmptyTag: false,
-        indentation: "\t",
-        lineSeparator: "\n",
-        whiteSpaceAtEndOfSelfclosingTag: false,
-      })
-        .replace(/<string\/>/gm, "<string></string>")
-        .replace(/^\t/gm, "");
+        const formatted = formatXml(ExpoPlist.build(infoPlist), {
+          collapseContent: true,
+          forceSelfClosingEmptyTag: false,
+          indentation: "\t",
+          lineSeparator: "\n",
+          whiteSpaceAtEndOfSelfclosingTag: false,
+        })
+          .replace(/<string\/>/gm, "<string></string>")
+          .replace(/^\t/gm, "");
 
-      hfs.write(infoPlistPath, formatted);
-      log.write(infoPlistPath);
+        hfs.write(infoPlistPath, formatted);
+        log.write(infoPlistPath);
+      }
 
       const pbxprojectPath =
         Expo.IOSConfig.Paths.getPBXProjectPath(projectRoot);

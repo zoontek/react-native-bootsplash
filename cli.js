@@ -50,6 +50,7 @@ program
     "HTML template file path (your web app entry point)",
     "public/index.html",
   )
+  .option("--plist <string>", "Custom Info.plist file path")
   .option(
     "--license-key <string>",
     "License key to enable brand and dark mode assets generation",
