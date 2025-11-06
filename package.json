@@ -68,12 +68,9 @@
   },
   "dependencies": {
     "@expo/config-plugins": "*",
-    "@napi-rs/canvas": "^0.1.81",
-    "@napi-rs/image": "^1.11.2",
     "@react-native-community/cli-config-android": "^20.0.0",
     "@react-native-community/cli-config-apple": "^20.0.0",
     "@react-native-community/cli-tools": "^20.0.0",
-    "@resvg/resvg-js": "^2.6.2",
     "commander": "^14.0.2",
     "detect-indent": "^6.1.0",
     "fs-extra": "^11.3.2",
@@ -81,6 +78,7 @@
     "picocolors": "^1.1.1",
     "prettier": "^3.6.2",
     "react-native-is-edge-to-edge": "^1.2.1",
+    "sharp": "^0.34.4",
     "ts-dedent": "^2.2.0",
     "xml-formatter": "^3.6.7"
   },
