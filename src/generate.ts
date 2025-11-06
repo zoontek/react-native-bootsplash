@@ -8,7 +8,7 @@ import { findProjectRoot } from "@react-native-community/cli-tools";
 import { Resvg } from "@resvg/resvg-js";
 import childProcess from "child_process";
 import crypto from "crypto";
-import detectIndent from "detect-indent";
+import detectIndent, { type Indent } from "detect-indent";
 import fs from "fs-extra";
 import { HTMLElement, parse as parseHtml } from "node-html-parser";
 import path from "path";
@@ -26,8 +26,7 @@ import type { Manifest } from ".";
 const workingPath = process.env.INIT_CWD ?? process.env.PWD ?? process.cwd();
 const projectRoot = findProjectRoot(workingPath);
 
-const getIOSProjectConfig = getAppleProjectConfig({ platformName: "ios" });
-const ios = getIOSProjectConfig(projectRoot, {});
+const ios = getAppleProjectConfig({ platformName: "ios" })(projectRoot, {});
 const android = getAndroidProjectConfig(projectRoot);
 
 type PackageJson = {
@@ -254,7 +253,7 @@ export const writeJson = (filePath: string, content: object) => {
   log.write(filePath);
 };
 
-type FormatOptions = { indent?: detectIndent.Indent } & (
+type FormatOptions = { indent?: Indent } & (
   | {
       formatter: "prettier";
       selfClosingTags?: boolean;
