@@ -5,7 +5,7 @@
         <item name="enforceNavigationBarContrast">false</item>
     </style>
 
-    <style name="BootTheme" parent="Theme.BootSplash.EdgeToEdge">
+    <style name="BootTheme" parent="Theme.BootSplash">
         <!-- enforce status bar style as the example app doesn't support dark mode -->
         <item name="darkContentBarsStyle">true</item>
 

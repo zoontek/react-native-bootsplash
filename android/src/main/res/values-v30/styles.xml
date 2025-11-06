@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.BootSplash.EdgeToEdge" parent="Theme.BootSplash.EdgeToEdge.Common">
+    <style name="Theme.BootSplash.v30" parent="Theme.BootSplash.v29">
         <item name="android:windowLayoutInDisplayCutoutMode">always</item>
-
-        <item name="android:enforceStatusBarContrast">false</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:windowLightStatusBar">?darkContentBarsStyle</item>
-
-        <item name="android:enforceNavigationBarContrast">false</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:windowLightNavigationBar">?darkContentBarsStyle</item>
     </style>
 </resources>
