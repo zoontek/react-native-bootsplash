@@ -170,7 +170,7 @@ $ yarn remove expo-splash-screen
 -         "backgroundColor": "#ffffff"
 -       }
 -     ],
-+     ["react-native-bootsplash", { "assetsDir": "assets/bootsplash" }]
++     ["react-native-bootsplash", { "assetsOutput": "assets/bootsplash" }]
     ]
   }
 }
@@ -180,7 +180,7 @@ _📌 The available plugins options are:_
 
 ```ts
 type PluginOptions = {
-  assetsDir?: string; // optional, default is "assets/bootsplash"
+  assetsOutput?: string; // optional, default is "assets/bootsplash"
   android?: {
     darkContentBarsStyle?: boolean; // optional, default is `undefined`
   };
