@@ -85,6 +85,7 @@
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@babel/preset-env": "^7.25.3",
+    "@react-native-community/cli-types": "^20.0.0",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^20.19.24",
     "@types/react": "^19.1.1",

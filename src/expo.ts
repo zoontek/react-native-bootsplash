@@ -2,17 +2,78 @@ import * as Expo from "@expo/config-plugins";
 import { assignColorValue } from "@expo/config-plugins/build/android/Colors";
 import { addImports } from "@expo/config-plugins/build/android/codeMod";
 import { mergeContents } from "@expo/config-plugins/build/utils/generateCode";
+import fs from "fs-extra";
 import path from "path";
 import semver from "semver";
 import { dedent } from "ts-dedent";
 import type { Manifest } from ".";
-import { cleanIOSAssets, getExpoConfig, hfs, log } from "./generate";
+import { cleanIOSAssets, hfs, log } from "./generate";
+
+const PACKAGE_NAME = "react-native-bootsplash";
+
+type PackageJson = {
+  version?: string;
+  dependencies?: Record<string, string>;
+};
 
 type Props = {
   assetsDir?: string;
   android?: {
     darkContentBarsStyle?: boolean;
   };
+};
+
+// Adapted from https://github.com/square/find-yarn-workspace-root
+const findUp = <T>(from: string, matcher: (dir: string) => T | undefined) => {
+  let previous: string | undefined;
+  let current = path.normalize(from);
+
+  do {
+    const found = matcher(current);
+
+    if (typeof found !== "undefined") {
+      return found;
+    }
+
+    previous = current;
+    current = path.dirname(current);
+  } while (current !== previous);
+};
+
+const getExpoConfig = (from: string): { isExpo: boolean } => {
+  const hasDependency =
+    findUp(from, (dir) => {
+      const pkgPath = path.resolve(dir, "package.json");
+
+      if (fs.existsSync(pkgPath)) {
+        try {
+          const pkg = hfs.json(pkgPath) as PackageJson;
+          return pkg.dependencies?.expo != null;
+        } catch {} // oxlint-disable-line no-empty
+      }
+    }) ?? false;
+
+  if (!hasDependency) {
+    return { isExpo: false };
+  }
+
+  const version = findUp(from, (dir) => {
+    const pkgPath = path.resolve(dir, "node_modules", "expo", "package.json");
+
+    if (fs.existsSync(pkgPath)) {
+      try {
+        const pkg = hfs.json(pkgPath) as PackageJson;
+        return pkg.version;
+      } catch {} // oxlint-disable-line no-empty
+    }
+  });
+
+  if (version == null || semver.lt(version, "53.0.0")) {
+    log.error("Requires Expo 53.0.0 (or higher)");
+    process.exit(1);
+  }
+
+  return { isExpo: true };
 };
 
 const withExpoVersionCheck =
@@ -395,7 +456,7 @@ const withXcodeProject: Expo.ConfigPlugin<Props> = (config) =>
 const withoutExpoSplashScreen: Expo.ConfigPlugin<Props> =
   Expo.createRunOncePlugin((config) => config, "expo-splash-screen", "skip");
 
-export const withBootSplash: Expo.ConfigPlugin<Props | undefined> = (
+const withBootSplash: Expo.ConfigPlugin<Props | undefined> = (
   config,
   props = {},
 ) => {
@@ -431,3 +492,5 @@ export const withBootSplash: Expo.ConfigPlugin<Props | undefined> = (
     plugins.map((plugin) => [plugin, props]),
   );
 };
+
+export default Expo.createRunOncePlugin(withBootSplash, PACKAGE_NAME);
