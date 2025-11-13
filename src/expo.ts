@@ -17,22 +17,8 @@ type Props = {
   };
 };
 
-const withExpoVersionCheck =
-  (platform: "android" | "ios"): Expo.ConfigPlugin<Props> =>
-  (config) =>
-    Expo.withDangerousMod(config, [
-      platform,
-      (config) => {
-        const { sdkVersion } = config;
-
-        if (sdkVersion == null || semver.lt(sdkVersion, "53.0.0")) {
-          log.error("Requires Expo 53.0.0 (or higher)");
-          process.exit(1);
-        }
-
-        return config;
-      },
-    ]);
+const withoutExpoSplashScreen: Expo.ConfigPlugin<Props> =
+  Expo.createRunOncePlugin((config) => config, "expo-splash-screen", "skip");
 
 const withAndroidAssets: Expo.ConfigPlugin<Props> = (config, props) =>
   Expo.withDangerousMod(config, [
@@ -400,21 +386,22 @@ const withXcodeProject: Expo.ConfigPlugin<Props> = (config) =>
     return config;
   });
 
-const withoutExpoSplashScreen: Expo.ConfigPlugin<Props> =
-  Expo.createRunOncePlugin((config) => config, "expo-splash-screen", "skip");
-
 const withBootSplash: Expo.ConfigPlugin<Props | undefined> = (
   config,
   props = {},
 ) => {
   const plugins: Expo.ConfigPlugin<Props>[] = [];
-  const { platforms = [] } = config;
+  const { platforms = [], sdkVersion } = config;
+
+  if (sdkVersion == null || semver.lt(sdkVersion, "53.0.0")) {
+    log.error("Requires Expo 53.0.0 (or higher)");
+    process.exit(1);
+  }
 
   plugins.push(withoutExpoSplashScreen);
 
   if (platforms.includes("android")) {
     plugins.push(
-      withExpoVersionCheck("android"),
       withAndroidAssets,
       withAndroidManifest,
       withMainActivity,
@@ -426,7 +413,6 @@ const withBootSplash: Expo.ConfigPlugin<Props | undefined> = (
 
   if (platforms.includes("ios")) {
     plugins.push(
-      withExpoVersionCheck("ios"),
       withIOSAssets,
       withAppDelegate,
       withInfoPlist,
