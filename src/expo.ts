@@ -11,7 +11,7 @@ import { cleanIOSAssets, hfs, log } from "./generate";
 const PACKAGE_NAME = "react-native-bootsplash";
 
 type Props = {
-  assetsDir?: string;
+  assetsOutput?: string;
   android?: {
     darkContentBarsStyle?: boolean;
   };
@@ -24,10 +24,10 @@ const withAndroidAssets: Expo.ConfigPlugin<Props> = (config, props) =>
   Expo.withDangerousMod(config, [
     "android",
     (config) => {
-      const { assetsDir = "assets/bootsplash" } = props;
+      const { assetsOutput = "assets/bootsplash" } = props;
       const { projectRoot, platformProjectRoot } = config.modRequest;
 
-      const srcDir = path.resolve(projectRoot, assetsDir, "android");
+      const srcDir = path.resolve(projectRoot, assetsOutput, "android");
 
       if (!hfs.exists(srcDir)) {
         const error = `"${path.relative(projectRoot, srcDir)}" doesn't exist. Did you run the asset generation command?`;
@@ -117,7 +117,7 @@ const withMainActivity: Expo.ConfigPlugin<Props> = (config) =>
 
 const withAndroidStyles: Expo.ConfigPlugin<Props> = (config, props) =>
   Expo.withAndroidStyles(config, async (config) => {
-    const { assetsDir = "assets/bootsplash", android = {} } = props;
+    const { assetsOutput = "assets/bootsplash", android = {} } = props;
     const { darkContentBarsStyle } = android;
 
     const { modRequest, modResults } = config;
@@ -125,7 +125,7 @@ const withAndroidStyles: Expo.ConfigPlugin<Props> = (config, props) =>
     const { style = [] } = resources;
 
     const manifest = (await hfs.json(
-      path.resolve(modRequest.projectRoot, assetsDir, "manifest.json"),
+      path.resolve(modRequest.projectRoot, assetsOutput, "manifest.json"),
     )) as Manifest;
 
     const item = [
@@ -181,11 +181,11 @@ const withAndroidStyles: Expo.ConfigPlugin<Props> = (config, props) =>
 
 const withAndroidColors: Expo.ConfigPlugin<Props> = (config, props) =>
   Expo.withAndroidColors(config, async (config) => {
-    const { assetsDir = "assets/bootsplash" } = props;
+    const { assetsOutput = "assets/bootsplash" } = props;
     const { projectRoot } = config.modRequest;
 
     const manifest = (await hfs.json(
-      path.resolve(projectRoot, assetsDir, "manifest.json"),
+      path.resolve(projectRoot, assetsOutput, "manifest.json"),
     )) as Manifest;
 
     config.modResults = assignColorValue(config.modResults, {
@@ -198,11 +198,11 @@ const withAndroidColors: Expo.ConfigPlugin<Props> = (config, props) =>
 
 const withAndroidColorsNight: Expo.ConfigPlugin<Props> = (config, props) =>
   Expo.withAndroidColorsNight(config, async (config) => {
-    const { assetsDir = "assets/bootsplash" } = props;
+    const { assetsOutput = "assets/bootsplash" } = props;
     const { projectRoot } = config.modRequest;
 
     const manifest = (await hfs.json(
-      path.resolve(projectRoot, assetsDir, "manifest.json"),
+      path.resolve(projectRoot, assetsOutput, "manifest.json"),
     )) as Manifest;
 
     if (manifest.darkBackground != null) {
@@ -219,7 +219,7 @@ const withIOSAssets: Expo.ConfigPlugin<Props> = (config, props) =>
   Expo.withDangerousMod(config, [
     "ios",
     (config) => {
-      const { assetsDir = "assets/bootsplash" } = props;
+      const { assetsOutput = "assets/bootsplash" } = props;
 
       const {
         projectRoot,
@@ -227,7 +227,7 @@ const withIOSAssets: Expo.ConfigPlugin<Props> = (config, props) =>
         projectName = "",
       } = config.modRequest;
 
-      const srcDir = path.resolve(projectRoot, assetsDir, "ios");
+      const srcDir = path.resolve(projectRoot, assetsOutput, "ios");
       const destDir = path.resolve(platformProjectRoot, projectName);
 
       if (!hfs.exists(srcDir)) {
