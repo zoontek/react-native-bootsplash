@@ -3,7 +3,6 @@ import ExpoPlist from "@expo/plist";
 import { projectConfig as getAndroidProjectConfig } from "@react-native-community/cli-config-android";
 import { getProjectConfig as getAppleProjectConfig } from "@react-native-community/cli-config-apple";
 import { findProjectRoot } from "@react-native-community/cli-tools";
-import childProcess from "child_process";
 import crypto from "crypto";
 import detectIndent, { type Indent } from "detect-indent";
 import fs from "fs-extra";
@@ -17,7 +16,6 @@ import * as prettier from "prettier/standalone";
 import semver from "semver";
 import sharp, { type Sharp } from "sharp";
 import { dedent } from "ts-dedent";
-import util from "util";
 import formatXml, { type XMLFormatterOptions } from "xml-formatter";
 import type { Manifest } from ".";
 
@@ -27,12 +25,6 @@ const projectRoot = findProjectRoot(workingPath);
 const ios = getAppleProjectConfig({ platformName: "ios" })(projectRoot, {});
 const android = getAndroidProjectConfig(projectRoot);
 
-type PackageJson = {
-  version?: string;
-  dependencies?: Record<string, string>;
-};
-
-type ProjectType = "detect" | "bare" | "expo";
 type Platforms = ("android" | "ios" | "web")[];
 
 export type RGBColor = {
@@ -45,11 +37,6 @@ type Color = {
   hex: string;
   rgb: RGBColor;
 };
-
-const promisifiedExec = util.promisify(childProcess.exec);
-
-const exec = (cmd: string) =>
-  promisifiedExec(cmd).then(({ stdout, stderr }) => stdout || stderr);
 
 export const log = {
   error: (text: string) => {
@@ -189,59 +176,6 @@ export const hfs = {
     const trimmed = content.trim();
     fs.writeFileSync(path, trimmed === "" ? trimmed : trimmed + "\n", "utf-8");
   },
-};
-
-// Adapted from https://github.com/square/find-yarn-workspace-root
-const findUp = <T>(from: string, matcher: (dir: string) => T | undefined) => {
-  let previous: string | undefined;
-  let current = path.normalize(from);
-
-  do {
-    const found = matcher(current);
-
-    if (typeof found !== "undefined") {
-      return found;
-    }
-
-    previous = current;
-    current = path.dirname(current);
-  } while (current !== previous);
-};
-
-export const getExpoConfig = (from: string): { isExpo: boolean } => {
-  const hasDependency =
-    findUp(from, (dir) => {
-      const pkgPath = path.resolve(dir, "package.json");
-
-      if (fs.existsSync(pkgPath)) {
-        try {
-          const pkg = hfs.json(pkgPath) as PackageJson;
-          return pkg.dependencies?.expo != null;
-        } catch {} // oxlint-disable-line no-empty
-      }
-    }) ?? false;
-
-  if (!hasDependency) {
-    return { isExpo: false };
-  }
-
-  const version = findUp(from, (dir) => {
-    const pkgPath = path.resolve(dir, "node_modules", "expo", "package.json");
-
-    if (fs.existsSync(pkgPath)) {
-      try {
-        const pkg = hfs.json(pkgPath) as PackageJson;
-        return pkg.version;
-      } catch {} // oxlint-disable-line no-empty
-    }
-  });
-
-  if (version == null || semver.lt(version, "53.0.0")) {
-    log.error("Requires Expo 53.0.0 (or higher)");
-    process.exit(1);
-  }
-
-  return { isExpo: true };
 };
 
 export const writeJson = (filePath: string, content: object) => {
@@ -417,51 +351,21 @@ const ensureSupportedFormat = async (
 };
 
 const getAndroidOutputPath = ({
-  assetsOutputPath,
   brandHeight,
   brandWidth,
   flavor,
-  isExpo,
   logoHeight,
   logoWidth,
   platforms,
 }: {
-  assetsOutputPath: string;
   brandHeight: number;
   brandWidth: number;
   flavor: string;
-  isExpo: boolean;
   logoHeight: number;
   logoWidth: number;
   platforms: Platforms;
 }) => {
-  if (!platforms.includes("android")) {
-    return;
-  }
-
-  const withSizeChecks = (assetsOutputPath: string) => {
-    if (logoWidth > 192 || logoHeight > 192) {
-      return log.warn(
-        "Logo size exceeding 192x192dp will be cropped by Android. Skipping Android assets generation…",
-      );
-    }
-    if (brandWidth > 200 || brandHeight > 80) {
-      return log.warn(
-        "Brand size exceeding 200x80dp will be cropped by Android. Skipping Android assets generation…",
-      );
-    }
-
-    if (logoWidth > 134 || logoHeight > 134) {
-      log.warn("Logo size exceeds 134x134dp. It might be cropped by Android.");
-    }
-
-    return assetsOutputPath;
-  };
-
-  if (isExpo) {
-    return withSizeChecks(path.resolve(assetsOutputPath, "android"));
-  }
-  if (android == null) {
+  if (!platforms.includes("android") || android == null) {
     return;
   }
 
@@ -482,25 +386,26 @@ const getAndroidOutputPath = ({
     );
   }
 
-  return withSizeChecks(androidOutputPath);
+  if (logoWidth > 192 || logoHeight > 192) {
+    return log.warn(
+      "Logo size exceeding 192x192dp will be cropped by Android. Skipping Android assets generation…",
+    );
+  }
+  if (brandWidth > 200 || brandHeight > 80) {
+    return log.warn(
+      "Brand size exceeding 200x80dp will be cropped by Android. Skipping Android assets generation…",
+    );
+  }
+
+  if (logoWidth > 134 || logoHeight > 134) {
+    log.warn("Logo size exceeds 134x134dp. It might be cropped by Android.");
+  }
+
+  return androidOutputPath;
 };
 
-const getIOSOutputPath = ({
-  assetsOutputPath,
-  isExpo,
-  platforms,
-}: {
-  assetsOutputPath: string;
-  isExpo: boolean;
-  platforms: Platforms;
-}) => {
-  if (!platforms.includes("ios")) {
-    return;
-  }
-  if (isExpo) {
-    return path.resolve(assetsOutputPath, "ios");
-  }
-  if (ios == null) {
+const getIOSOutputPath = ({ platforms }: { platforms: Platforms }) => {
+  if (!platforms.includes("ios") || ios == null) {
     return;
   }
   if (ios.xcodeProject == null) {
@@ -524,34 +429,14 @@ const getIOSOutputPath = ({
 };
 
 const getHtmlTemplatePath = async ({
-  isExpo,
   html,
   platforms,
 }: {
-  isExpo: boolean;
   html: string;
   platforms: Platforms;
 }) => {
   if (!platforms.includes("web")) {
     return;
-  }
-
-  if (isExpo) {
-    const htmlTemplatePath = path.resolve(workingPath, html);
-
-    const htmlTemplateRelativePath = path.relative(
-      workingPath,
-      htmlTemplatePath,
-    );
-
-    if (
-      htmlTemplateRelativePath === "public/index.html" &&
-      !hfs.exists(htmlTemplatePath)
-    ) {
-      const cmd = `npx expo customize ${htmlTemplateRelativePath}`;
-      console.log(pc.dim(`Running ${cmd}`));
-      await exec(cmd);
-    }
   }
 
   const htmlTemplatePath = path.resolve(workingPath, html);
@@ -606,7 +491,6 @@ const getImageHeight = (
 
 export type AddonConfig = {
   licenseKey: string;
-  isExpo: boolean;
   fileNameSuffix: string;
 
   androidOutputPath: string | void;
@@ -644,7 +528,6 @@ const requireAddon = ():
 };
 
 export const generate = async ({
-  projectType,
   platforms,
   html,
   flavor,
@@ -653,7 +536,6 @@ export const generate = async ({
   ...args
 }: {
   logo: string;
-  projectType: ProjectType;
   platforms: Platforms;
   background: string;
   logoWidth: number;
@@ -669,10 +551,6 @@ export const generate = async ({
   darkLogo?: string;
   darkBrand?: string;
 }) => {
-  const isExpo =
-    projectType === "expo" ||
-    (projectType === "detect" && getExpoConfig(workingPath).isExpo);
-
   if (semver.lt(process.versions.node, "20.0.0")) {
     log.error("Requires Node 20 (or higher)");
     process.exit(1);
@@ -774,24 +652,19 @@ export const generate = async ({
   });
 
   const androidOutputPath = getAndroidOutputPath({
-    assetsOutputPath,
     brandHeight,
     brandWidth,
     flavor,
-    isExpo,
     logoHeight,
     logoWidth,
     platforms,
   });
 
   const iosOutputPath = getIOSOutputPath({
-    assetsOutputPath,
-    isExpo,
     platforms,
   });
 
   const htmlTemplatePath = await getHtmlTemplatePath({
-    isExpo,
     html,
     platforms,
   });
@@ -855,129 +728,123 @@ export const generate = async ({
       }),
     );
 
-    if (!isExpo) {
-      const manifestXmlPath = path.resolve(
-        androidOutputPath,
-        "..",
-        "AndroidManifest.xml",
+    const manifestXmlPath = path.resolve(
+      androidOutputPath,
+      "..",
+      "AndroidManifest.xml",
+    );
+
+    if (hfs.exists(manifestXmlPath)) {
+      const manifestXml = readXmlLike(manifestXmlPath);
+      const activities = manifestXml.root.querySelectorAll("activity");
+
+      for (const activity of activities) {
+        if (activity.getAttribute("android:name") === ".MainActivity") {
+          activity.setAttribute("android:theme", "@style/BootTheme");
+        }
+      }
+
+      await writeXmlLike(manifestXmlPath, manifestXml.root.toString(), {
+        ...manifestXml.formatOptions,
+        formatter: "prettier",
+        htmlWhitespaceSensitivity: "ignore",
+        selfClosingTags: true,
+        singleAttributePerLine: true,
+      });
+    } else {
+      log.warn("No AndroidManifest.xml found");
+    }
+
+    const valuesPath = path.resolve(androidOutputPath, "values");
+    hfs.ensureDir(valuesPath);
+
+    const colorsXmlPath = path.resolve(valuesPath, "colors.xml");
+    const colorsXmlEntry = `<color name="bootsplash_background">${background.hex}</color>`;
+
+    if (hfs.exists(colorsXmlPath)) {
+      const colorsXml = readXmlLike(colorsXmlPath);
+      const nextColor = parseHtml(colorsXmlEntry);
+
+      const prevColor = colorsXml.root.querySelector(
+        'color[name="bootsplash_background"]',
       );
 
-      if (hfs.exists(manifestXmlPath)) {
-        const manifestXml = readXmlLike(manifestXmlPath);
-        const activities = manifestXml.root.querySelectorAll("activity");
+      if (prevColor != null) {
+        prevColor.replaceWith(nextColor);
+      } else {
+        colorsXml.root.querySelector("resources")?.appendChild(nextColor);
+      }
 
-        for (const activity of activities) {
-          if (activity.getAttribute("android:name") === ".MainActivity") {
-            activity.setAttribute("android:theme", "@style/BootTheme");
+      await writeXmlLike(colorsXmlPath, colorsXml.root.toString(), {
+        ...colorsXml.formatOptions,
+        formatter: "xmlFormatter",
+      });
+    } else {
+      await writeXmlLike(
+        colorsXmlPath,
+        `<resources>${colorsXmlEntry}</resources>`,
+        { formatter: "xmlFormatter" },
+      );
+    }
+
+    const stylesXmlPath = path.resolve(valuesPath, "styles.xml");
+
+    if (hfs.exists(stylesXmlPath)) {
+      const stylesXml = readXmlLike(stylesXmlPath);
+      const prevStyle = stylesXml.root.querySelector('style[name="BootTheme"]');
+      const parent = prevStyle?.getAttribute("parent") ?? "Theme.BootSplash";
+
+      const extraItems = parseHtml(
+        prevStyle?.text
+          .split("\n")
+          .map((line) => line.trim())
+          .join("") ?? "",
+      )
+        .childNodes.filter((node) => {
+          if (!(node instanceof HTMLElement)) {
+            return true;
           }
-        }
 
-        await writeXmlLike(manifestXmlPath, manifestXml.root.toString(), {
-          ...manifestXml.formatOptions,
-          formatter: "prettier",
-          htmlWhitespaceSensitivity: "ignore",
-          selfClosingTags: true,
-          singleAttributePerLine: true,
-        });
-      } else {
-        log.warn("No AndroidManifest.xml found");
-      }
+          const name = node.getAttribute("name");
 
-      const valuesPath = path.resolve(androidOutputPath, "values");
-      hfs.ensureDir(valuesPath);
+          return (
+            name !== "bootSplashBackground" &&
+            name !== "bootSplashLogo" &&
+            name !== "bootSplashBrand" &&
+            name !== "postBootSplashTheme"
+          );
+        })
+        .map((node) => node.toString());
 
-      const colorsXmlPath = path.resolve(valuesPath, "colors.xml");
-      const colorsXmlEntry = `<color name="bootsplash_background">${background.hex}</color>`;
+      const styleItems: string[] = [
+        ...(extraItems.length > 0 ? [...extraItems, ""] : []),
 
-      if (hfs.exists(colorsXmlPath)) {
-        const colorsXml = readXmlLike(colorsXmlPath);
-        const nextColor = parseHtml(colorsXmlEntry);
+        '<item name="bootSplashBackground">@color/bootsplash_background</item>',
+        '<item name="bootSplashLogo">@drawable/bootsplash_logo</item>',
 
-        const prevColor = colorsXml.root.querySelector(
-          'color[name="bootsplash_background"]',
-        );
+        ...(brand != null && brandPath != null
+          ? ['<item name="bootSplashBrand">@drawable/bootsplash_brand</item>']
+          : []),
 
-        if (prevColor != null) {
-          prevColor.replaceWith(nextColor);
-        } else {
-          colorsXml.root.querySelector("resources")?.appendChild(nextColor);
-        }
+        '<item name="postBootSplashTheme">@style/AppTheme</item>',
+      ];
 
-        await writeXmlLike(colorsXmlPath, colorsXml.root.toString(), {
-          ...colorsXml.formatOptions,
-          formatter: "xmlFormatter",
-        });
-      } else {
-        await writeXmlLike(
-          colorsXmlPath,
-          `<resources>${colorsXmlEntry}</resources>`,
-          { formatter: "xmlFormatter" },
-        );
-      }
-
-      const stylesXmlPath = path.resolve(valuesPath, "styles.xml");
-
-      if (hfs.exists(stylesXmlPath)) {
-        const stylesXml = readXmlLike(stylesXmlPath);
-
-        const prevStyle = stylesXml.root.querySelector(
-          'style[name="BootTheme"]',
-        );
-
-        const parent = prevStyle?.getAttribute("parent") ?? "Theme.BootSplash";
-
-        const extraItems = parseHtml(
-          prevStyle?.text
-            .split("\n")
-            .map((line) => line.trim())
-            .join("") ?? "",
-        )
-          .childNodes.filter((node) => {
-            if (!(node instanceof HTMLElement)) {
-              return true;
-            }
-
-            const name = node.getAttribute("name");
-
-            return (
-              name !== "bootSplashBackground" &&
-              name !== "bootSplashLogo" &&
-              name !== "bootSplashBrand" &&
-              name !== "postBootSplashTheme"
-            );
-          })
-          .map((node) => node.toString());
-
-        const styleItems: string[] = [
-          ...(extraItems.length > 0 ? [...extraItems, ""] : []),
-
-          '<item name="bootSplashBackground">@color/bootsplash_background</item>',
-          '<item name="bootSplashLogo">@drawable/bootsplash_logo</item>',
-
-          ...(brand != null && brandPath != null
-            ? ['<item name="bootSplashBrand">@drawable/bootsplash_brand</item>']
-            : []),
-
-          '<item name="postBootSplashTheme">@style/AppTheme</item>',
-        ];
-
-        const nextStyle = parseHtml(dedent`
+      const nextStyle = parseHtml(dedent`
           <style name="BootTheme" parent="${parent}">
             ${styleItems.join("\n")}
           </style>
         `);
 
-        prevStyle?.remove(); // remove the existing style
-        stylesXml.root.querySelector("resources")?.appendChild(nextStyle);
+      prevStyle?.remove(); // remove the existing style
+      stylesXml.root.querySelector("resources")?.appendChild(nextStyle);
 
-        await writeXmlLike(stylesXmlPath, stylesXml.root.toString(), {
-          ...stylesXml.formatOptions,
-          formatter: "prettier",
-          htmlWhitespaceSensitivity: "ignore",
-        });
-      } else {
-        log.warn("No styles.xml found");
-      }
+      await writeXmlLike(stylesXmlPath, stylesXml.root.toString(), {
+        ...stylesXml.formatOptions,
+        formatter: "prettier",
+        htmlWhitespaceSensitivity: "ignore",
+      });
+    } else {
+      log.warn("No styles.xml found");
     }
   }
 
@@ -1087,58 +954,55 @@ export const generate = async ({
       }),
     );
 
-    if (!isExpo) {
-      const infoPlistPath = getInfoPlistPath({ iosOutputPath, plist });
+    const infoPlistPath = getInfoPlistPath({ iosOutputPath, plist });
 
-      if (infoPlistPath != null) {
-        const infoPlist = ExpoPlist.parse(hfs.text(infoPlistPath)) as Record<
-          string,
-          unknown
-        >;
+    if (infoPlistPath != null) {
+      const infoPlist = ExpoPlist.parse(hfs.text(infoPlistPath)) as Record<
+        string,
+        unknown
+      >;
 
-        infoPlist["UILaunchStoryboardName"] = "BootSplash";
+      infoPlist["UILaunchStoryboardName"] = "BootSplash";
 
-        const formatted = formatXml(ExpoPlist.build(infoPlist), {
-          collapseContent: true,
-          forceSelfClosingEmptyTag: false,
-          indentation: "\t",
-          lineSeparator: "\n",
-          whiteSpaceAtEndOfSelfclosingTag: false,
-        })
-          .replace(/<string\/>/gm, "<string></string>")
-          .replace(/^\t/gm, "");
+      const formatted = formatXml(ExpoPlist.build(infoPlist), {
+        collapseContent: true,
+        forceSelfClosingEmptyTag: false,
+        indentation: "\t",
+        lineSeparator: "\n",
+        whiteSpaceAtEndOfSelfclosingTag: false,
+      })
+        .replace(/<string\/>/gm, "<string></string>")
+        .replace(/^\t/gm, "");
 
-        hfs.write(infoPlistPath, formatted);
-        log.write(infoPlistPath);
-      }
-
-      const pbxprojectPath =
-        Expo.IOSConfig.Paths.getPBXProjectPath(projectRoot);
-
-      const xcodeProjectPath =
-        Expo.IOSConfig.Paths.getXcodeProjectPath(projectRoot);
-
-      const project = Expo.IOSConfig.XcodeUtils.getPbxproj(projectRoot);
-      const projectName = path.basename(iosOutputPath);
-      const groupName = path.parse(xcodeProjectPath).name;
-
-      Expo.IOSConfig.XcodeUtils.addResourceFileToGroup({
-        project,
-        filepath: path.join(projectName, "BootSplash.storyboard"),
-        groupName,
-        isBuildFile: true,
-      });
-
-      Expo.IOSConfig.XcodeUtils.addResourceFileToGroup({
-        project,
-        filepath: path.join(projectName, "Colors.xcassets"),
-        groupName,
-        isBuildFile: true,
-      });
-
-      hfs.write(pbxprojectPath, project.writeSync());
-      log.write(pbxprojectPath);
+      hfs.write(infoPlistPath, formatted);
+      log.write(infoPlistPath);
     }
+
+    const pbxprojectPath = Expo.IOSConfig.Paths.getPBXProjectPath(projectRoot);
+
+    const xcodeProjectPath =
+      Expo.IOSConfig.Paths.getXcodeProjectPath(projectRoot);
+
+    const project = Expo.IOSConfig.XcodeUtils.getPbxproj(projectRoot);
+    const projectName = path.basename(iosOutputPath);
+    const groupName = path.parse(xcodeProjectPath).name;
+
+    Expo.IOSConfig.XcodeUtils.addResourceFileToGroup({
+      project,
+      filepath: path.join(projectName, "BootSplash.storyboard"),
+      groupName,
+      isBuildFile: true,
+    });
+
+    Expo.IOSConfig.XcodeUtils.addResourceFileToGroup({
+      project,
+      filepath: path.join(projectName, "Colors.xcassets"),
+      groupName,
+      isBuildFile: true,
+    });
+
+    hfs.write(pbxprojectPath, project.writeSync());
+    log.write(pbxprojectPath);
   }
 
   if (htmlTemplatePath != null) {
@@ -1247,7 +1111,6 @@ export const generate = async ({
 
     await addon?.execute({
       licenseKey,
-      isExpo,
       fileNameSuffix,
 
       androidOutputPath,

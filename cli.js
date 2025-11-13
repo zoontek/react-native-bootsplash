@@ -5,7 +5,6 @@ const { Command } = require("commander");
 const program = new Command();
 const pkg = require("./package.json");
 
-const validProjectTypes = ["detect", "bare", "expo"];
 const validPlatforms = ["android", "ios", "web"];
 
 program
@@ -15,11 +14,6 @@ program
   .command("generate", { isDefault: true })
   .description("Generate a launch screen using a logo file path (PNG or SVG)")
   .argument("<logo>", "Logo file path (PNG or SVG)")
-  .option(
-    "--project-type <string>",
-    'Project type ("detect", "bare" or "expo")',
-    "detect",
-  )
   .option(
     "--platforms <list>",
     "Platforms to generate for, separated by a comma",
@@ -68,14 +62,10 @@ program
   .option("--dark-logo <string>", "[dark mode] Logo file path (PNG or SVG)")
   .option("--dark-brand <string>", "[dark mode] Brand file path (PNG or SVG)")
   .action((logo, options) => {
-    const { projectType, platforms, logoWidth, brandWidth, ...rest } = options;
+    const { platforms, logoWidth, brandWidth, ...rest } = options;
 
     const args = {
       ...rest,
-
-      projectType: validProjectTypes.includes(projectType.toLowerCase())
-        ? projectType.toLowerCase()
-        : "detect",
 
       platforms: [
         ...new Set(

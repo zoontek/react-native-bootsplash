@@ -53,7 +53,6 @@ Arguments:
   logo                        Logo file path (PNG or SVG)
 
 Options:
-  --project-type <string>     Project type ("detect", "bare" or "expo") (default: "detect")
   --platforms <list>          Platforms to generate for, separated by a comma (default: "android,ios,web")
   --background <string>       Background color (in hexadecimal format) (default: "#fff")
   --logo-width <number>       Logo width at @1x (in dp - we recommend approximately ~100) (default: 100)
