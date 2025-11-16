@@ -78,7 +78,7 @@
     "picocolors": "^1.1.1",
     "prettier": "^3.6.2",
     "react-native-is-edge-to-edge": "^1.2.1",
-    "sharp": "^0.34.4",
+    "sharp": "^0.34.5",
     "ts-dedent": "^2.2.0",
     "xml-formatter": "^3.6.7"
   },
@@ -90,11 +90,11 @@
     "@types/node": "^20.19.24",
     "@types/react": "^19.1.1",
     "@types/semver": "^7.7.1",
-    "oxlint": "^1.26.0",
+    "oxlint": "^1.28.0",
     "prettier-plugin-organize-imports": "^4.3.0",
     "react": "19.1.1",
     "react-native": "0.82.1",
-    "react-native-builder-bob": "^0.40.14",
+    "react-native-builder-bob": "^0.40.15",
     "semver": "^7.7.3",
     "typescript": "^5.9.3"
   },
