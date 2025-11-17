@@ -1354,7 +1354,7 @@ const withAppDelegate: Expo.ConfigPlugin<Props> = (config) =>
     const { modResults } = config;
     const { language } = modResults;
 
-    if (language !== "objc" && language !== "objcpp" && language !== "swift") {
+    if (language !== "swift") {
       throw new Error(
         `Cannot modify the project AppDelegate as it's not in a supported language: ${language}`,
       );
