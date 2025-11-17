@@ -391,7 +391,7 @@ const App = () => {
 
 ### How can I enforce the splash screen system bar colors?
 
-By default, the system bars `dark-content` in light mode and `light-content` in dark mode. To enforce a specific value, edit your `values/styles.xml` file:
+By default, the system bars uses `dark-content` in light mode and `light-content` in dark mode. To enforce a specific value, edit your `values/styles.xml` file:
 
 ```xml
 <resources>
