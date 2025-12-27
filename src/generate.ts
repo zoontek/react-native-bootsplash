@@ -1446,32 +1446,33 @@ const withGenericAssets: Expo.ConfigPlugin<Props> = (config, props) =>
     },
   ]);
 
+type ExpoPluginConfig = {
+  logo: string;
+  background?: string;
+  logoWidth?: number;
+  assetsOutput?: string;
+
+  licenseKey?: string;
+  brand?: string;
+  brandWidth?: number;
+  darkBackground?: string;
+  darkLogo?: string;
+  darkBrand?: string;
+
+  android?: {
+    darkContentBarsStyle?: boolean;
+  };
+};
+
 export const withBootSplash = Expo.createRunOncePlugin<
-  | {
-      logo: string;
-      background?: string;
-      logoWidth?: number;
-      assetsOutput?: string;
-
-      licenseKey?: string;
-      brand?: string;
-      brandWidth?: number;
-      darkBackground?: string;
-      darkLogo?: string;
-      darkBrand?: string;
-
-      android?: {
-        darkContentBarsStyle?: boolean;
-      };
-    }
-  | undefined
+  ExpoPluginConfig | undefined
 >((config, baseProps) => {
   const { platforms = [], sdkVersion = "0.1.0" } = config;
 
   isExpo = true;
 
-  if (semver.lt(sdkVersion, "53.0.0")) {
-    log.error("Requires Expo 53.0.0 (or higher)");
+  if (semver.lt(sdkVersion, "54.0.0")) {
+    log.error("Requires Expo 54.0.0 (or higher)");
     process.exit(1);
   }
 
