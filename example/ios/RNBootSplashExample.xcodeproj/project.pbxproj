@@ -9,10 +9,10 @@
 /* Begin PBXBuildFile section */
 		0C80B921A6F3F58F76C31292 /* libPods-RNBootSplashExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-RNBootSplashExample.a */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		58CA62F13D8A4FC5B8D0EC94 /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9606E3AD6F0E4A06B27CC2E3 /* BootSplash.storyboard */; };
-		8348E5A1EB36C351DD9D6654 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
-		896B798CBF1B4BE49C470768 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C8B78429C105431082FBA2D4 /* Colors.xcassets */; };
-		DDFDB38A2D401F2E00BABB04 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDFDB3882D401F2E00BABB04 /* AppDelegate.swift */; };
+		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
+		829ECFEA5A50027EF62ADF06 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
+		8F6C634AF4204B94B4FBAF5A /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6A1CB49E68A04B60B219BFFE /* BootSplash.storyboard */; };
+		DACFB8E8C6DD4739BC8E46BE /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6E65A8E6D0D84E04BCD38E49 /* Colors.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,9 +23,9 @@
 		3B4392A12AC88292D35C810B /* Pods-RNBootSplashExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RNBootSplashExample.debug.xcconfig"; path = "Target Support Files/Pods-RNBootSplashExample/Pods-RNBootSplashExample.debug.xcconfig"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-RNBootSplashExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RNBootSplashExample.release.xcconfig"; path = "Target Support Files/Pods-RNBootSplashExample/Pods-RNBootSplashExample.release.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-RNBootSplashExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RNBootSplashExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		9606E3AD6F0E4A06B27CC2E3 /* BootSplash.storyboard */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = BootSplash.storyboard; path = RNBootSplashExample/BootSplash.storyboard; sourceTree = "<group>"; };
-		C8B78429C105431082FBA2D4 /* Colors.xcassets */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = folder.assetcatalog; name = Colors.xcassets; path = RNBootSplashExample/Colors.xcassets; sourceTree = "<group>"; };
-		DDFDB3882D401F2E00BABB04 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = RNBootSplashExample/AppDelegate.swift; sourceTree = "<group>"; };
+		6A1CB49E68A04B60B219BFFE /* BootSplash.storyboard */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = BootSplash.storyboard; path = RNBootSplashExample/BootSplash.storyboard; sourceTree = "<group>"; };
+		6E65A8E6D0D84E04BCD38E49 /* Colors.xcassets */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = folder.assetcatalog; name = Colors.xcassets; path = RNBootSplashExample/Colors.xcassets; sourceTree = "<group>"; };
+		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = RNBootSplashExample/AppDelegate.swift; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -44,12 +44,12 @@
 		13B07FAE1A68108700A75B9A /* RNBootSplashExample */ = {
 			isa = PBXGroup;
 			children = (
-				C8B78429C105431082FBA2D4 /* Colors.xcassets */,
+				6E65A8E6D0D84E04BCD38E49 /* Colors.xcassets */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
-				9606E3AD6F0E4A06B27CC2E3 /* BootSplash.storyboard */,
+				6A1CB49E68A04B60B219BFFE /* BootSplash.storyboard */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
-				DDFDB3882D401F2E00BABB04 /* AppDelegate.swift */,
+				761780EC2CA45674006654EE /* AppDelegate.swift */,
 			);
 			name = RNBootSplashExample;
 			sourceTree = "<group>";
@@ -134,7 +134,7 @@
 				LastUpgradeCheck = 1210;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
-						LastSwiftMigration = 1540;
+						LastSwiftMigration = 1120;
 					};
 				};
 			};
@@ -162,9 +162,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				58CA62F13D8A4FC5B8D0EC94 /* BootSplash.storyboard in Resources */,
-				896B798CBF1B4BE49C470768 /* Colors.xcassets in Resources */,
-				8348E5A1EB36C351DD9D6654 /* PrivacyInfo.xcprivacy in Resources */,
+				8F6C634AF4204B94B4FBAF5A /* BootSplash.storyboard in Resources */,
+				DACFB8E8C6DD4739BC8E46BE /* Colors.xcassets in Resources */,
+				829ECFEA5A50027EF62ADF06 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -185,7 +185,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
+			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"\\\"$WITH_ENVIRONMENT\\\" \\\"$REACT_NATIVE_XCODE\\\"\"\n";
 		};
 		00EEFC60759A1932668264C0 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -250,7 +250,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DDFDB38A2D401F2E00BABB04 /* AppDelegate.swift in Sources */,
+				761780ED2CA45674006654EE /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -278,7 +278,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.zoontek.bootsplashexample;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zoontek.rnbootsplashexample;
 				PRODUCT_NAME = RNBootSplashExample;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -306,7 +306,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.zoontek.bootsplashexample;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zoontek.rnbootsplashexample;
 				PRODUCT_NAME = RNBootSplashExample;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -374,6 +374,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "$(inherited)";
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-DFOLLY_NO_CONFIG",
@@ -382,7 +383,6 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = "$(inherited)";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
@@ -443,6 +443,7 @@
 					"\"$(inherited)\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = "$(inherited)";
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-DFOLLY_NO_CONFIG",
@@ -451,7 +452,6 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = "$(inherited)";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;

@@ -42,6 +42,6 @@ export default {
 
   isVisible: () => {
     const container = document.getElementById("bootsplash");
-    return Promise.resolve(container != null);
+    return container != null;
   },
 } satisfies Spec;

@@ -9,7 +9,7 @@ export interface Spec extends TurboModule {
     statusBarHeight?: number;
   };
   hide(fade: boolean): Promise<void>;
-  isVisible(): Promise<boolean>;
+  isVisible(): boolean;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>("RNBootSplash");
