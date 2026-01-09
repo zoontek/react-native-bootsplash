@@ -12,6 +12,7 @@
     "builtin": true
   },
   "rules": {
+    "complexity": "off",
     "no-await-in-loop": "off",
     "no-empty-function": "off",
     "no-eq-null": "off",
