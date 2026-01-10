@@ -28,9 +28,7 @@ const PACKAGE_NAME = "react-native-bootsplash";
 
 let isExpo = false;
 
-export const workingPath =
-  process.env.INIT_CWD ?? process.env.PWD ?? process.cwd();
-
+const workingPath = process.env.INIT_CWD ?? process.env.PWD ?? process.cwd();
 const projectRoot = findProjectRoot(workingPath);
 
 export type Platforms = ("android" | "ios" | "web")[];
@@ -101,9 +99,8 @@ const parseColor = (value: string): Color => {
   return { hex: hex.toLowerCase(), rgb };
 };
 
-const getStoryboard = ({ props, extras }: { props: Props; extras: Extras }) => {
-  const { background, logo } = props;
-  const { fileNameSuffix, logoHeight } = extras;
+const getStoryboard = (props: Props) => {
+  const { background, logo, fileNameSuffix } = props;
 
   const { R, G, B } = background.rgb;
   const frameWidth = 375;
@@ -130,7 +127,7 @@ const getStoryboard = ({ props, extras }: { props: Props; extras: Extras }) => {
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="BootSplashLogo-${fileNameSuffix}" translatesAutoresizingMaskIntoConstraints="NO" id="3lX-Ut-9ad">
-                                <rect key="frame" x="${(frameWidth - logo.width) / 2}" y="${(frameHeight - logoHeight) / 2}" width="${logo.width}" height="${logoHeight}"/>
+                                <rect key="frame" x="${(frameWidth - logo.width) / 2}" y="${(frameHeight - logo.height) / 2}" width="${logo.width}" height="${logo.height}"/>
                                 <accessibility key="accessibilityConfiguration">
                                     <accessibilityTraits key="traits" image="YES" notEnabled="YES"/>
                                 </accessibility>
@@ -150,7 +147,7 @@ const getStoryboard = ({ props, extras }: { props: Props; extras: Extras }) => {
         </scene>
     </scenes>
     <resources>
-        <image name="BootSplashLogo-${fileNameSuffix}" width="${logo.width}" height="${logoHeight}"/>
+        <image name="BootSplashLogo-${fileNameSuffix}" width="${logo.width}" height="${logo.height}"/>
         <namedColor name="BootSplashBackground-${fileNameSuffix}">
             <color red="${R}" green="${G}" blue="${B}" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
@@ -253,37 +250,6 @@ export const writeXmlLike = async (
     hfs.write(filePath, formatted);
     log.write(filePath);
   }
-};
-
-export type Asset = {
-  path: string;
-  image: Sharp;
-  width: number;
-};
-
-const getAssetBase64 = async (
-  name: string,
-  asset: Asset | undefined,
-): Promise<string> => {
-  if (asset == null) {
-    return "";
-  }
-
-  const { image, width } = asset;
-  const { format } = await image.metadata();
-
-  if (format !== "png" && format !== "svg") {
-    log.error(`${name} image file format (${format}) is not supported`);
-    process.exit(1);
-  }
-
-  const buffer = await image
-    .clone()
-    .resize(width)
-    .png({ quality: 100 })
-    .toBuffer();
-
-  return buffer.toString("base64");
 };
 
 const getAndroidOutputPath = ({
@@ -390,20 +356,7 @@ const getInfoPlistPath = ({
   return path.resolve(iosOutputPath, "Info.plist");
 };
 
-const getAssetHeight = (asset: Asset | undefined): Promise<number> => {
-  if (asset == null) {
-    return Promise.resolve(0);
-  }
-
-  return asset.image
-    .clone()
-    .resize(asset.width)
-    .toBuffer()
-    .then((buffer) => sharp(buffer).metadata())
-    .then(({ height = 0 }) => Math.round(height));
-};
-
-type Config = {
+type RawProps = {
   logo: string;
   background: string;
   logoWidth: number;
@@ -421,57 +374,90 @@ type Config = {
   };
 };
 
-const getProps = ({ android = {}, licenseKey, ...config }: Config) => {
+export type Asset = {
+  path: string;
+  image: Sharp;
+  hash: string;
+  height: number;
+  width: number;
+};
+
+const toAsset = async (filePath: string, width: number): Promise<Asset> => {
+  const image = sharp(filePath);
+  const { format } = await image.metadata();
+
+  if (format !== "png" && format !== "svg") {
+    log.error(
+      `${path.basename(filePath)} image file format (${format}) is not supported`,
+    );
+    process.exit(1);
+  }
+
+  const [height, hash] = await Promise.all([
+    image
+      .clone()
+      .resize(width)
+      .toBuffer()
+      .then((buffer) => sharp(buffer).metadata())
+      .then(({ height = 0 }) => Math.round(height)),
+
+    image
+      .clone()
+      .resize(width)
+      .png({ quality: 100 })
+      .toBuffer()
+      .then((buffer) => buffer.toString("base64")),
+  ]);
+
+  return {
+    path: filePath,
+    image,
+    hash,
+    height,
+    width,
+  };
+};
+
+const transformProps = async (
+  rootPath: string,
+  { android = {}, licenseKey, ...rawProps }: RawProps,
+) => {
   if (semver.lt(process.versions.node, "20.0.0")) {
     log.error("Requires Node 20 (or higher)");
     process.exit(1);
   }
 
-  const assetsOutputPath = path.resolve(workingPath, config.assetsOutput);
-  const logoPath = path.resolve(workingPath, config.logo);
+  const assetsOutputPath = path.resolve(rootPath, rawProps.assetsOutput);
+  const logoPath = path.resolve(rootPath, rawProps.logo);
 
   const darkLogoPath =
-    config.darkLogo != null
-      ? path.resolve(workingPath, config.darkLogo)
+    rawProps.darkLogo != null
+      ? path.resolve(rootPath, rawProps.darkLogo)
       : undefined;
 
   const brandPath =
-    config.brand != null ? path.resolve(workingPath, config.brand) : undefined;
+    rawProps.brand != null ? path.resolve(rootPath, rawProps.brand) : undefined;
 
   const darkBrandPath =
-    config.darkBrand != null
-      ? path.resolve(workingPath, config.darkBrand)
+    rawProps.darkBrand != null
+      ? path.resolve(rootPath, rawProps.darkBrand)
       : undefined;
 
-  const logoWidth = config.logoWidth - (config.logoWidth % 2);
-  const brandWidth = config.brandWidth - (config.brandWidth % 2);
+  const logoWidth = rawProps.logoWidth - (rawProps.logoWidth % 2);
+  const brandWidth = rawProps.brandWidth - (rawProps.brandWidth % 2);
 
-  const logo: Asset = {
-    path: logoPath,
-    image: sharp(logoPath),
-    width: logoWidth,
-  };
+  const [logo, darkLogo, brand, darkBrand] = await Promise.all([
+    toAsset(logoPath, logoWidth),
+    darkLogoPath != null ? toAsset(darkLogoPath, logoWidth) : undefined,
+    brandPath != null ? toAsset(brandPath, brandWidth) : undefined,
+    darkBrandPath != null ? toAsset(darkBrandPath, brandWidth) : undefined,
+  ]);
 
-  const darkLogo: Asset | undefined =
-    darkLogoPath != null
-      ? { path: darkLogoPath, image: sharp(darkLogoPath), width: logoWidth }
-      : undefined;
-
-  const brand: Asset | undefined =
-    brandPath != null
-      ? { path: brandPath, image: sharp(brandPath), width: brandWidth }
-      : undefined;
-
-  const darkBrand: Asset | undefined =
-    darkBrandPath != null
-      ? { path: darkBrandPath, image: sharp(darkBrandPath), width: brandWidth }
-      : undefined;
-
-  const background = parseColor(config.background);
+  const background = parseColor(rawProps.background);
 
   const darkBackground =
-    config.darkBackground != null
-      ? parseColor(config.darkBackground)
+    rawProps.darkBackground != null
+      ? parseColor(rawProps.darkBackground)
       : undefined;
 
   const executeAddon =
@@ -515,66 +501,24 @@ const getProps = ({ android = {}, licenseKey, ...config }: Config) => {
     process.exit(1);
   }
 
-  if (logoWidth < config.logoWidth) {
+  if (logoWidth < rawProps.logoWidth) {
     log.warn(
       `Logo width must be a multiple of 2. It has been rounded to ${logoWidth}dp.`,
     );
   }
-  if (brandWidth < config.brandWidth) {
+  if (brandWidth < rawProps.brandWidth) {
     log.warn(
       `Brand width must be a multiple of 2. It has been rounded to ${brandWidth}dp.`,
     );
   }
 
-  return {
-    android,
-    assetsOutputPath,
-    licenseKey,
-    executeAddon,
-    background,
-    darkBackground,
-    logo,
-    darkLogo,
-    brand,
-    darkBrand,
-  };
-};
-
-export type Props = ReturnType<typeof getProps>;
-
-export const getExtras = async ({
-  background,
-  darkBackground,
-  logo,
-  darkLogo,
-  brand,
-  darkBrand,
-}: Props) => {
-  const [
-    logoHash,
-    darkLogoHash,
-    brandHash,
-    darkBrandHash,
-
-    logoHeight,
-    brandHeight,
-  ] = await Promise.all([
-    getAssetBase64("Logo", logo),
-    getAssetBase64("Dark logo", darkLogo),
-    getAssetBase64("Brand", brand),
-    getAssetBase64("Dark brand", darkBrand),
-
-    getAssetHeight(logo),
-    getAssetHeight(brand),
-  ]);
-
   const record: Record<string, string> = {
     background: background.hex,
     darkBackground: darkBackground?.hex ?? "",
-    logo: logoHash,
-    darkLogo: darkLogoHash,
-    brand: brandHash,
-    darkBrand: darkBrandHash,
+    logo: logo.hash,
+    darkLogo: darkLogo?.hash ?? "",
+    brand: brand?.hash ?? "",
+    darkBrand: darkBrand?.hash ?? "",
   };
 
   const stableKey = Object.keys(record)
@@ -589,38 +533,44 @@ export const getExtras = async ({
     .toLowerCase();
 
   return {
+    android,
+    assetsOutputPath,
+    licenseKey,
+    executeAddon,
+    background,
+    darkBackground,
+    logo,
+    darkLogo,
+    brand,
+    darkBrand,
     fileNameSuffix,
-    logoHeight,
-    brandHeight,
   };
 };
 
-export type Extras = Awaited<ReturnType<typeof getExtras>>;
+export type Props = Awaited<ReturnType<typeof transformProps>>;
 
-export const writeAndroidAssets = async ({
+const writeAndroidAssets = async ({
   androidOutputPath,
   props,
-  extras,
 }: {
   androidOutputPath: string;
   props: Props;
-  extras: Extras;
 }) => {
   const { logo, brand } = props;
 
-  if (logo.width > 192 || extras.logoHeight > 192) {
+  if (logo.width > 192 || logo.height > 192) {
     return log.warn(
       "Logo size exceeding 192x192dp will be cropped by Android. Skipping Android assets generation…",
     );
   }
 
-  if (brand != null && (brand.width > 200 || extras.brandHeight > 80)) {
+  if (brand != null && (brand.width > 200 || brand.height > 80)) {
     return log.warn(
       "Brand size exceeding 200x80dp will be cropped by Android. Skipping Android assets generation…",
     );
   }
 
-  if (logo.width > 134 || extras.logoHeight > 134) {
+  if (logo.width > 134 || logo.height > 134) {
     log.warn("Logo size exceeds 134x134dp. It might be cropped by Android.");
   }
 
@@ -679,16 +629,14 @@ export const writeAndroidAssets = async ({
   );
 };
 
-export const writeIOSAssets = async ({
+const writeIOSAssets = async ({
   iosOutputPath,
   props,
-  extras,
 }: {
   iosOutputPath: string;
   props: Props;
-  extras: Extras;
 }) => {
-  const { background, logo } = props;
+  const { background, logo, fileNameSuffix } = props;
 
   log.title("🍏", "iOS");
   hfs.ensureDir(iosOutputPath);
@@ -710,7 +658,7 @@ export const writeIOSAssets = async ({
 
   const storyboardPath = path.resolve(iosOutputPath, "BootSplash.storyboard");
 
-  await writeXmlLike(storyboardPath, getStoryboard({ props, extras }), {
+  await writeXmlLike(storyboardPath, getStoryboard(props), {
     formatter: "xmlFormatter",
     whiteSpaceAtEndOfSelfclosingTag: false,
   });
@@ -718,7 +666,7 @@ export const writeIOSAssets = async ({
   const colorsSetPath = path.resolve(
     iosOutputPath,
     "Colors.xcassets",
-    `BootSplashBackground-${extras.fileNameSuffix}.colorset`,
+    `BootSplashBackground-${fileNameSuffix}.colorset`,
   );
 
   hfs.ensureDir(colorsSetPath);
@@ -744,12 +692,12 @@ export const writeIOSAssets = async ({
     },
   });
 
-  const logoFileName = `logo-${extras.fileNameSuffix}`;
+  const logoFileName = `logo-${fileNameSuffix}`;
 
   const imagesSetPath = path.resolve(
     iosOutputPath,
     "Images.xcassets",
-    `BootSplashLogo-${extras.fileNameSuffix}.imageset`,
+    `BootSplashLogo-${fileNameSuffix}.imageset`,
   );
 
   hfs.ensureDir(imagesSetPath);
@@ -801,14 +749,12 @@ export const writeIOSAssets = async ({
   );
 };
 
-export const writeWebAssets = async ({
+const writeWebAssets = async ({
   htmlTemplatePath,
   props,
-  extras,
 }: {
   htmlTemplatePath: string;
   props: Props;
-  extras: Extras;
 }) => {
   const { background, logo } = props;
 
@@ -847,7 +793,7 @@ export const writeWebAssets = async ({
       #bootsplash-logo {
         content: url("${dataURI}");
         width: ${logo.width}px;
-        height: ${extras.logoHeight}px;
+        height: ${logo.height}px;
       }
     </style>
   `);
@@ -879,13 +825,7 @@ export const writeWebAssets = async ({
   });
 };
 
-export const writeGenericAssets = async ({
-  props,
-  extras,
-}: {
-  props: Props;
-  extras: Extras;
-}) => {
+const writeGenericAssets = async ({ props }: { props: Props }) => {
   const { assetsOutputPath, background, logo } = props;
 
   log.title("📄", "Assets");
@@ -895,7 +835,7 @@ export const writeGenericAssets = async ({
     background: background.hex,
     logo: {
       width: logo.width,
-      height: extras.logoHeight,
+      height: logo.height,
     },
   } satisfies Manifest);
 
@@ -923,28 +863,47 @@ export const writeGenericAssets = async ({
 
 export type AddonConfig = {
   props: Props;
-  extras: Extras;
-
   androidOutputPath: string | void;
   iosOutputPath: string | void;
   htmlTemplatePath: string | void;
 };
 
-const requireAddon = ():
+const requireAddon = ({
+  executeAddon,
+  licenseKey,
+}: Props):
   | {
       execute: (config: AddonConfig) => Promise<void>;
 
-      withAndroidAssets: Expo.ConfigPlugin<Props>;
-      withAndroidColorsNight: Expo.ConfigPlugin<Props>;
-      withIOSAssets: Expo.ConfigPlugin<Props>;
-      withWebAssets: Expo.ConfigPlugin<Props>;
-      withGenericAssets: Expo.ConfigPlugin<Props>;
+      writeAndroidAssets: (_: {
+        androidOutputPath: string;
+        props: Props;
+      }) => Promise<void>;
+
+      writeIOSAssets: (_: {
+        iosOutputPath: string;
+        props: Props;
+      }) => Promise<void>;
+
+      writeWebAssets: (_: {
+        htmlTemplatePath: string;
+        props: Props;
+      }) => Promise<void>;
+
+      writeGenericAssets: (_: { props: Props }) => Promise<void>;
+
+      withAndroidColorsNight: (_: {
+        config: Expo.ExportedConfigWithProps;
+        props: Props;
+      }) => Promise<Expo.ExportedConfigWithProps>;
     }
   | undefined => {
-  try {
-    return require("./addon");
-  } catch {
-    return;
+  if (licenseKey != null && executeAddon) {
+    try {
+      return require("./addon");
+    } catch {
+      return;
+    }
   }
 };
 
@@ -953,7 +912,7 @@ export const generate = async ({
   html,
   flavor,
   plist,
-  ...config
+  ...rawProps
 }: {
   platforms: Platforms;
   html: string;
@@ -971,16 +930,17 @@ export const generate = async ({
   darkLogo?: string;
   darkBrand?: string;
 }) => {
-  const props = getProps(config);
-  const { background, brand, licenseKey, executeAddon } = props;
-  const extras = await getExtras(props);
+  const props = await transformProps(workingPath, rawProps);
+  const addon = requireAddon(props);
+
+  const { background, brand } = props;
 
   const androidOutputPath = getAndroidOutputPath({ flavor, platforms });
   const iosOutputPath = getIOSOutputPath({ platforms });
   const htmlTemplatePath = getHtmlTemplatePath({ html, platforms });
 
   if (androidOutputPath != null) {
-    await writeAndroidAssets({ androidOutputPath, props, extras });
+    await writeAndroidAssets({ androidOutputPath, props });
 
     const manifestXmlPath = path.resolve(
       androidOutputPath,
@@ -1103,7 +1063,7 @@ export const generate = async ({
   }
 
   if (iosOutputPath != null) {
-    await writeIOSAssets({ iosOutputPath, props, extras });
+    await writeIOSAssets({ iosOutputPath, props });
 
     const infoPlistPath = getInfoPlistPath({ iosOutputPath, plist });
 
@@ -1157,18 +1117,14 @@ export const generate = async ({
   }
 
   if (htmlTemplatePath != null) {
-    await writeWebAssets({ htmlTemplatePath, props, extras });
+    await writeWebAssets({ htmlTemplatePath, props });
   }
 
-  await writeGenericAssets({ props, extras });
+  await writeGenericAssets({ props });
 
-  if (licenseKey != null && executeAddon) {
-    const addon = requireAddon();
-
-    await addon?.execute({
+  if (addon != null) {
+    await addon.execute({
       props,
-      extras,
-
       androidOutputPath,
       iosOutputPath,
       htmlTemplatePath,
@@ -1192,15 +1148,20 @@ ${pc.blue("┗━━━━━━━━━━━━━━━━━━━━━━
 
 // Expo plugin
 
-const withoutExpoSplashScreen: Expo.ConfigPlugin<Props> =
-  Expo.createRunOncePlugin((config) => config, "expo-splash-screen", "skip");
+const withoutExpoSplashScreen: Expo.ConfigPlugin<RawProps> =
+  Expo.createRunOncePlugin(
+    (expoConfig) => expoConfig,
+    "expo-splash-screen",
+    "skip",
+  );
 
-const withAndroidAssets: Expo.ConfigPlugin<Props> = (config, props) =>
-  Expo.withDangerousMod(config, [
+const withAndroidAssets: Expo.ConfigPlugin<RawProps> = (expoConfig, rawProps) =>
+  Expo.withDangerousMod(expoConfig, [
     "android",
     async (config) => {
-      const { platformProjectRoot } = config.modRequest;
-      const extras = await getExtras(props);
+      const { platformProjectRoot, projectRoot } = config.modRequest;
+      const props = await transformProps(projectRoot, rawProps);
+      const addon = requireAddon(props);
 
       const androidOutputPath = path.resolve(
         platformProjectRoot,
@@ -1210,13 +1171,15 @@ const withAndroidAssets: Expo.ConfigPlugin<Props> = (config, props) =>
         "res",
       );
 
-      await writeAndroidAssets({ androidOutputPath, props, extras });
+      await writeAndroidAssets({ androidOutputPath, props });
+      await addon?.writeAndroidAssets({ androidOutputPath, props });
+
       return config;
     },
   ]);
 
-const withAndroidManifest: Expo.ConfigPlugin<Props> = (config) =>
-  Expo.withAndroidManifest(config, (config) => {
+const withAndroidManifest: Expo.ConfigPlugin<RawProps> = (expoConfig) =>
+  Expo.withAndroidManifest(expoConfig, (config) => {
     config.modResults.manifest.application?.forEach((application) => {
       if (application.$["android:name"] === ".MainApplication") {
         const { activity } = application;
@@ -1232,8 +1195,8 @@ const withAndroidManifest: Expo.ConfigPlugin<Props> = (config) =>
     return config;
   });
 
-const withMainActivity: Expo.ConfigPlugin<Props> = (config) =>
-  Expo.withMainActivity(config, (config) => {
+const withMainActivity: Expo.ConfigPlugin<RawProps> = (expoConfig) =>
+  Expo.withMainActivity(expoConfig, (config) => {
     const { modResults } = config;
 
     const withImports = addImports(
@@ -1264,9 +1227,10 @@ const withMainActivity: Expo.ConfigPlugin<Props> = (config) =>
     };
   });
 
-const withAndroidStyles: Expo.ConfigPlugin<Props> = (config, props) =>
-  Expo.withAndroidStyles(config, (config) => {
-    const { android, brand } = props;
+const withAndroidStyles: Expo.ConfigPlugin<RawProps> = (expoConfig, rawProps) =>
+  Expo.withAndroidStyles(expoConfig, async (config) => {
+    const { projectRoot } = config.modRequest;
+    const { android, brand } = await transformProps(projectRoot, rawProps);
     const { darkContentBarsStyle } = android;
 
     const { modResults } = config;
@@ -1324,9 +1288,10 @@ const withAndroidStyles: Expo.ConfigPlugin<Props> = (config, props) =>
     };
   });
 
-const withAndroidColors: Expo.ConfigPlugin<Props> = (config, props) =>
-  Expo.withAndroidColors(config, (config) => {
-    const { background } = props;
+const withAndroidColors: Expo.ConfigPlugin<RawProps> = (expoConfig, rawProps) =>
+  Expo.withAndroidColors(expoConfig, async (config) => {
+    const { projectRoot } = config.modRequest;
+    const { background } = await transformProps(projectRoot, rawProps);
 
     config.modResults = assignColorValue(config.modResults, {
       name: "bootsplash_background",
@@ -1336,21 +1301,43 @@ const withAndroidColors: Expo.ConfigPlugin<Props> = (config, props) =>
     return config;
   });
 
-const withIOSAssets: Expo.ConfigPlugin<Props> = (config, props) =>
-  Expo.withDangerousMod(config, [
+const withAndroidColorsNight: Expo.ConfigPlugin<RawProps> = (
+  expoConfig,
+  rawProps,
+) =>
+  Expo.withAndroidColorsNight(expoConfig, async (config) => {
+    const { projectRoot } = config.modRequest;
+    const props = await transformProps(projectRoot, rawProps);
+    const addon = requireAddon(props);
+
+    return addon != null
+      ? await addon.withAndroidColorsNight({ config, props })
+      : config;
+  });
+
+const withIOSAssets: Expo.ConfigPlugin<RawProps> = (expoConfig, rawProps) =>
+  Expo.withDangerousMod(expoConfig, [
     "ios",
     async (config) => {
-      const { platformProjectRoot, projectName = "" } = config.modRequest;
-      const extras = await getExtras(props);
+      const {
+        platformProjectRoot,
+        projectName = "",
+        projectRoot,
+      } = config.modRequest;
+
+      const props = await transformProps(projectRoot, rawProps);
+      const addon = requireAddon(props);
       const iosOutputPath = path.resolve(platformProjectRoot, projectName);
 
-      await writeIOSAssets({ iosOutputPath, props, extras });
+      await writeIOSAssets({ iosOutputPath, props });
+      await addon?.writeIOSAssets({ iosOutputPath, props });
+
       return config;
     },
   ]);
 
-const withAppDelegate: Expo.ConfigPlugin<Props> = (config) =>
-  Expo.withAppDelegate(config, (config) => {
+const withAppDelegate: Expo.ConfigPlugin<RawProps> = (expoConfig) =>
+  Expo.withAppDelegate(expoConfig, (config) => {
     const { modResults } = config;
     const { language } = modResults;
 
@@ -1392,14 +1379,14 @@ const withAppDelegate: Expo.ConfigPlugin<Props> = (config) =>
     };
   });
 
-const withInfoPlist: Expo.ConfigPlugin<Props> = (config) =>
-  Expo.withInfoPlist(config, (config) => {
+const withInfoPlist: Expo.ConfigPlugin<RawProps> = (expoConfig) =>
+  Expo.withInfoPlist(expoConfig, (config) => {
     config.modResults["UILaunchStoryboardName"] = "BootSplash";
     return config;
   });
 
-const withXcodeProject: Expo.ConfigPlugin<Props> = (config) =>
-  Expo.withXcodeProject(config, (config) => {
+const withXcodeProject: Expo.ConfigPlugin<RawProps> = (expoConfig) =>
+  Expo.withXcodeProject(expoConfig, (config) => {
     const { projectName = "" } = config.modRequest;
 
     Expo.IOSConfig.XcodeUtils.addResourceFileToGroup({
@@ -1419,53 +1406,45 @@ const withXcodeProject: Expo.ConfigPlugin<Props> = (config) =>
     return config;
   });
 
-const withWebAssets: Expo.ConfigPlugin<Props> = (config, props) =>
-  Expo.withDangerousMod(config, [
-    config.platforms?.includes("ios") ? "ios" : "android",
+const withWebAssets: Expo.ConfigPlugin<RawProps> = (expoConfig, rawProps) =>
+  Expo.withDangerousMod(expoConfig, [
+    expoConfig.platforms?.includes("ios") ? "ios" : "android",
     async (config) => {
-      const extras = await getExtras(props);
+      const { projectRoot } = config.modRequest;
+      const props = await transformProps(projectRoot, rawProps);
+      const addon = requireAddon(props);
+
       const fileName = "public/index.html";
-      const htmlTemplatePath = path.resolve(workingPath, fileName);
+      const htmlTemplatePath = path.resolve(projectRoot, fileName);
 
       if (!hfs.exists(htmlTemplatePath)) {
         await exec(`npx expo customize ${fileName}`);
       }
 
-      await writeWebAssets({ htmlTemplatePath, props, extras });
+      await writeWebAssets({ htmlTemplatePath, props });
+      await addon?.writeWebAssets({ htmlTemplatePath, props });
+
       return config;
     },
   ]);
 
-const withGenericAssets: Expo.ConfigPlugin<Props> = (config, props) =>
-  Expo.withDangerousMod(config, [
-    config.platforms?.includes("ios") ? "ios" : "android",
+const withGenericAssets: Expo.ConfigPlugin<RawProps> = (expoConfig, rawProps) =>
+  Expo.withDangerousMod(expoConfig, [
+    expoConfig.platforms?.includes("ios") ? "ios" : "android",
     async (config) => {
-      const extras = await getExtras(props);
-      await writeGenericAssets({ props, extras });
+      const { projectRoot } = config.modRequest;
+      const props = await transformProps(projectRoot, rawProps);
+      const addon = requireAddon(props);
+
+      await writeGenericAssets({ props });
+      await addon?.writeGenericAssets({ props });
+
       return config;
     },
   ]);
-
-type ExpoPluginConfig = {
-  logo: string;
-  background?: string;
-  logoWidth?: number;
-  assetsOutput?: string;
-
-  licenseKey?: string;
-  brand?: string;
-  brandWidth?: number;
-  darkBackground?: string;
-  darkLogo?: string;
-  darkBrand?: string;
-
-  android?: {
-    darkContentBarsStyle?: boolean;
-  };
-};
 
 export const withBootSplash = Expo.createRunOncePlugin<
-  ExpoPluginConfig | undefined
+  (Partial<RawProps> & { logo: string }) | undefined
 >((config, baseProps) => {
   const { platforms = [], sdkVersion = "0.1.0" } = config;
 
@@ -1481,39 +1460,33 @@ export const withBootSplash = Expo.createRunOncePlugin<
     process.exit(1);
   }
 
-  const props = getProps({
+  const rawProps: RawProps = {
     assetsOutput: "assets/bootsplash",
     background: "#fff",
     brandWidth: 80,
     logoWidth: 100,
     ...baseProps,
-  });
+  };
 
-  const { executeAddon } = props;
-  const addon = executeAddon ? requireAddon() : undefined;
-
-  const plugins: Expo.ConfigPlugin<Props>[] = [
+  const plugins: Expo.ConfigPlugin<RawProps>[] = [
     withoutExpoSplashScreen,
-    addon?.withGenericAssets ?? withGenericAssets,
+    withGenericAssets,
   ];
 
   if (platforms.includes("android")) {
     plugins.push(
-      addon?.withAndroidAssets ?? withAndroidAssets,
+      withAndroidAssets,
       withAndroidManifest,
       withMainActivity,
       withAndroidStyles,
       withAndroidColors,
+      withAndroidColorsNight,
     );
-
-    if (addon != null) {
-      plugins.push(addon.withAndroidColorsNight);
-    }
   }
 
   if (platforms.includes("ios")) {
     plugins.push(
-      addon?.withIOSAssets ?? withIOSAssets,
+      withIOSAssets,
       withAppDelegate,
       withInfoPlist,
       withXcodeProject,
@@ -1521,11 +1494,11 @@ export const withBootSplash = Expo.createRunOncePlugin<
   }
 
   if (platforms.includes("web")) {
-    plugins.push(addon?.withWebAssets ?? withWebAssets);
+    plugins.push(withWebAssets);
   }
 
   return Expo.withPlugins(
     config,
-    plugins.map((plugin) => [plugin, props]),
+    plugins.map((plugin) => [plugin, rawProps]),
   );
 }, PACKAGE_NAME);
