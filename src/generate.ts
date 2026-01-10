@@ -1065,30 +1065,6 @@ export const generate = async ({
   if (iosOutputPath != null) {
     await writeIOSAssets({ iosOutputPath, props });
 
-    const infoPlistPath = getInfoPlistPath({ iosOutputPath, plist });
-
-    if (infoPlistPath != null) {
-      const infoPlist = ExpoPlist.parse(hfs.text(infoPlistPath)) as Record<
-        string,
-        unknown
-      >;
-
-      infoPlist["UILaunchStoryboardName"] = "BootSplash";
-
-      const formatted = formatXml(ExpoPlist.build(infoPlist), {
-        collapseContent: true,
-        forceSelfClosingEmptyTag: false,
-        indentation: "\t",
-        lineSeparator: "\n",
-        whiteSpaceAtEndOfSelfclosingTag: false,
-      })
-        .replace(/<string\/>/gm, "<string></string>")
-        .replace(/^\t/gm, "");
-
-      hfs.write(infoPlistPath, formatted);
-      log.write(infoPlistPath);
-    }
-
     const pbxprojectPath = Expo.IOSConfig.Paths.getPBXProjectPath(projectRoot);
 
     const xcodeProjectPath =
@@ -1114,6 +1090,30 @@ export const generate = async ({
 
     hfs.write(pbxprojectPath, project.writeSync());
     log.write(pbxprojectPath);
+
+    const infoPlistPath = getInfoPlistPath({ iosOutputPath, plist });
+
+    if (infoPlistPath != null) {
+      const infoPlist = ExpoPlist.parse(hfs.text(infoPlistPath)) as Record<
+        string,
+        unknown
+      >;
+
+      infoPlist["UILaunchStoryboardName"] = "BootSplash";
+
+      const formatted = formatXml(ExpoPlist.build(infoPlist), {
+        collapseContent: true,
+        forceSelfClosingEmptyTag: false,
+        indentation: "\t",
+        lineSeparator: "\n",
+        whiteSpaceAtEndOfSelfclosingTag: false,
+      })
+        .replace(/<string\/>/gm, "<string></string>")
+        .replace(/^\t/gm, "");
+
+      hfs.write(infoPlistPath, formatted);
+      log.write(infoPlistPath);
+    }
   }
 
   if (htmlTemplatePath != null) {
