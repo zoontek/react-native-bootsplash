@@ -312,36 +312,6 @@ class MainActivity : ReactActivity() {
 
 _ℹ️ Refer to [previous package documentation](https://github.com/zoontek/react-native-bootsplash/tree/6.3.4?tab=readme-ov-file#with-bare-react-native) for setup steps with React Native < 0.77._
 
-#### Android setup with react-native-screens (>= v4.16.0)
-
-Edit your `android/app/src/main/java/com/yourapp/MainActivity.kt` file:
-
-```kotlin
-// ⬇️ add these required imports
-import android.os.Bundle
-import com.zoontek.rnbootsplash.RNBootSplash
-
-// react-native-screens setup
-import com.swmansion.rnscreens.fragment.restoration.RNScreensFragmentFactory
-
-// …
-
-class MainActivity : ReactActivity() {
-
-  // …
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    // react-native-screens setup (v4.16.0+)
-    supportFragmentManager.fragmentFactory = RNScreensFragmentFactory()
-
-    // react-native-bootsplash initialization
-    RNBootSplash.init(this, R.style.BootTheme) // ⬅️ initialize the splash screen
-
-    super.onCreate(savedInstanceState)
-  }
-}
-```
-
 ## API
 
 ### hide()
