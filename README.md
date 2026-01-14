@@ -53,13 +53,13 @@ Arguments:
   logo                        Logo file path (PNG or SVG)
 
 Options:
-  --project-type <string>     Project type ("detect", "bare" or "expo") (default: "detect")
   --platforms <list>          Platforms to generate for, separated by a comma (default: "android,ios,web")
   --background <string>       Background color (in hexadecimal format) (default: "#fff")
   --logo-width <number>       Logo width at @1x (in dp - we recommend approximately ~100) (default: 100)
   --assets-output <string>    Assets output directory path (default: "assets/bootsplash")
   --flavor <string>           Android flavor build variant (where your resource directory is) (default: "main")
   --html <string>             HTML template file path (your web app entry point) (default: "public/index.html")
+  --plist <string>            Custom Info.plist file path
   --license-key <string>      License key to enable brand and dark mode assets generation
   --brand <string>            Brand file path (PNG or SVG)
   --brand-width <number>      Brand width at @1x (in dp - we recommend approximately ~80) (default: 80)
@@ -170,7 +170,7 @@ $ yarn remove expo-splash-screen
 -         "backgroundColor": "#ffffff"
 -       }
 -     ],
-+     ["react-native-bootsplash", { "assetsDir": "assets/bootsplash" }]
++     ["react-native-bootsplash", { "assetsOutput": "assets/bootsplash" }]
     ]
   }
 }
@@ -180,9 +180,8 @@ _📌 The available plugins options are:_
 
 ```ts
 type PluginOptions = {
-  assetsDir?: string; // optional, default is "assets/bootsplash"
+  assetsOutput?: string; // optional, default is "assets/bootsplash"
   android?: {
-    parentTheme?: "TransparentStatus" | "EdgeToEdge"; // optional, default is `undefined` (`Theme.BootSplash`)
     darkContentBarsStyle?: boolean; // optional, default is `undefined`
   };
 };
@@ -190,7 +189,7 @@ type PluginOptions = {
 
 ### With bare React Native
 
-#### iOS (react-native 0.79+)
+#### iOS
 
 Edit your `ios/YourApp/AppDelegate.swift` file:
 
@@ -212,36 +211,10 @@ class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
 }
 ```
 
-#### iOS (react-native 0.77+)
-
-Edit your `ios/YourApp/AppDelegate.swift` file:
-
-```swift
-import ReactAppDependencyProvider
-import RNBootSplash // ⬅️ add this import
-
-// …
-
-@main
-class AppDelegate: RCTAppDelegate {
-
-  // …
-
-  // ⬇️ override this method
-  override func customize(_ rootView: RCTRootView!) {
-    super.customize(rootView)
-    RNBootSplash.initWithStoryboard("BootSplash", rootView: rootView) // ⬅️ initialize the splash screen
-  }
-}
-```
-
 #### Android
 
 Edit your `android/app/src/main/java/com/yourapp/MainActivity.kt` file:
 
-<details open>
-<summary><strong>Without react-native-screens</strong></summary>
-
 ```kotlin
 // ⬇️ add these required imports
 import android.os.Bundle
@@ -255,62 +228,12 @@ class MainActivity : ReactActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     RNBootSplash.init(this, R.style.BootTheme) // ⬅️ initialize the splash screen
-    super.onCreate(savedInstanceState)
+    super.onCreate(savedInstanceState) // super.onCreate(null) with react-native-screens
   }
 }
 ```
 
-</details>
-
-<details>
-<summary><strong>With react-native-screens >= v4.16.0</strong></summary>
-
-```kotlin
-// ⬇️ add these required imports
-import android.os.Bundle
-import com.swmansion.rnscreens.fragment.restoration.RNScreensFragmentFactory
-import com.zoontek.rnbootsplash.RNBootSplash
-
-// …
-
-class MainActivity : ReactActivity() {
-
-  // …
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    supportFragmentManager.fragmentFactory = RNScreensFragmentFactory()
-    RNBootSplash.init(this, R.style.BootTheme) // ⬅️ initialize the splash screen
-    super.onCreate(savedInstanceState)
-  }
-}
-```
-
-</details>
-
-<details>
-<summary><strong>With react-native-screens < v4.16.0</strong></summary>
-
-```kotlin
-// ⬇️ add these required imports
-import android.os.Bundle
-import com.zoontek.rnbootsplash.RNBootSplash
-
-// …
-
-class MainActivity : ReactActivity() {
-
-  // …
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    RNBootSplash.init(this, R.style.BootTheme) // ⬅️ initialize the splash screen
-    super.onCreate(null)
-  }
-}
-```
-
-</details>
-
-_ℹ️ Refer to [previous package documentation](https://github.com/zoontek/react-native-bootsplash/tree/6.3.4?tab=readme-ov-file#with-bare-react-native) for setup steps with React Native < 0.77._
+_ℹ️ Refer to [previous package documentation](https://github.com/zoontek/react-native-bootsplash/tree/6.3.11?tab=readme-ov-file#with-bare-react-native) for setup steps with React Native < 0.79._
 
 ## API
 
@@ -354,7 +277,7 @@ Return the current visibility status of the native splash screen.
 #### Method type
 
 ```ts
-type isVisible = () => Promise<boolean>;
+type isVisible = () => boolean;
 ```
 
 #### Usage
@@ -362,7 +285,9 @@ type isVisible = () => Promise<boolean>;
 ```ts
 import BootSplash from "react-native-bootsplash";
 
-BootSplash.isVisible().then((value) => console.log(value));
+if (BootSplash.isVisible()) {
+  // Do something
+}
 ```
 
 ### useHideAnimation()
@@ -464,24 +389,18 @@ const App = () => {
 
 ## FAQ
 
-### How can I have a transparent status bar, or [edge-to-edge layout](https://developer.android.com/develop/ui/views/layout/edge-to-edge)?
+### How can I enforce the splash screen system bar colors?
 
-Edit your `values/styles.xml` file to inherit from `Theme.BootSplash.TransparentStatus` / `Theme.BootSplash.EdgeToEdge` instead of `Theme.BootSplash`:
+By default, the system bars uses `dark-content` in light mode and `light-content` in dark mode. To enforce a specific value, edit your `values/styles.xml` file:
 
 ```xml
 <resources>
-
   <!-- … -->
 
-  <!-- make BootTheme inherit from Theme.BootSplash.TransparentStatus / Theme.BootSplash.EdgeToEdge -->
-  <style name="BootTheme" parent="Theme.BootSplash.EdgeToEdge">
-    <!-- … -->
-
-    <!-- optional, used to enforce the initial bars styles -->
-    <!-- default is true in light mode, false in dark mode -->
+  <style name="BootTheme" parent="Theme.BootSplash">
     <item name="darkContentBarsStyle">true</item>
+    <!-- … -->
   </style>
-
 </resources>
 ```
 
