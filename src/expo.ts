@@ -107,7 +107,7 @@ const withMainActivity: Expo.ConfigPlugin<Props> = (config) =>
       comment: "    //",
       tag: "bootsplash-init",
       offset: 0,
-      anchor: /super\.onCreate\(null\)/,
+      anchor: /super\.onCreate\((null|savedInstanceState)\)/,
       newSrc:
         "    RNBootSplash.init(this, R.style.BootTheme)" +
         (language === "java" ? ";" : ""),
