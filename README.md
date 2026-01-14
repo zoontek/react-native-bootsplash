@@ -240,7 +240,7 @@ class AppDelegate: RCTAppDelegate {
 Edit your `android/app/src/main/java/com/yourapp/MainActivity.kt` file:
 
 <details open>
-<summary>Without react-native-screens</summary>
+<summary><strong>Without react-native-screens</strong></summary>
 
 ```kotlin
 // ⬇️ add these required imports
@@ -263,7 +263,7 @@ class MainActivity : ReactActivity() {
 </details>
 
 <details>
-<summary>With react-native-screens >= v4.16.0</summary>
+<summary><strong>With react-native-screens >= v4.16.0</strong></summary>
 
 ```kotlin
 // ⬇️ add these required imports
@@ -288,7 +288,7 @@ class MainActivity : ReactActivity() {
 </details>
 
 <details>
-<summary>With react-native-screens < v4.16.0</summary>
+<summary><strong>With react-native-screens < v4.16.0</strong></summary>
 
 ```kotlin
 // ⬇️ add these required imports
