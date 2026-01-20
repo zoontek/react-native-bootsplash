@@ -98,9 +98,8 @@ The `isVisible()` method is now synchronous:
 
 ## How to update
 
-1. Update your `package.json` to use `react-native-bootsplash@^7.0.0`
-2. If using Expo, update your plugin config accordingly
-3. If you were using `Theme.BootSplash.TransparentStatus` or `Theme.BootSplash.EdgeToEdge`, switch to `Theme.BootSplash`
-4. Update any `isVisible()` calls to use the new synchronous API
-5. Replace `npx react-native generate-bootsplash` with `npx react-native-bootsplash generate` in your scripts
-6. Run the CLI to regenerate assets
+1. If using Expo, update your plugin config accordingly
+2. If you were using `Theme.BootSplash.TransparentStatus` or `Theme.BootSplash.EdgeToEdge`, switch to `Theme.BootSplash`
+3. Update any `isVisible()` calls to use the new synchronous API
+4. Replace `npx react-native generate-bootsplash` with `npx react-native-bootsplash generate` in your scripts
+5. Run the CLI to regenerate assets
