@@ -11,9 +11,9 @@
 
 ### Requirements
 
-- Node.js **20+** is now required
-- React Native **0.80+** is now required
-- Expo SDK **54+** is now required
+- React Native **0.80+**
+- Node.js **20+**
+- Expo SDK **54+**
 
 ### CLI changes
 
