@@ -1,19 +1,106 @@
-# Migration from v5
+# Migration from v6
 
 ## What's new
 
-- An expo plugin 🧩
-- A `ready` option in `useHideAnimation` config in order to delay your animation, if you want to wait for something else than just layout rendering + images loading 🚦
-- A new Android theme: `Theme.BootSplash.TransparentStatus` (for transparent status bar + opaque navigation bar) 🫥
+- The library is now edge-to-edge by default on Android
+- The Expo plugin now generates assets at prebuild (no need to run the CLI first)
+- `isVisible()` is now synchronous
+- A new `--plist` CLI option to specify a custom `Info.plist` file path
 
-## What else?
+## Breaking changes
 
-- `--assets-output` now has a default value, which is `assets/bootsplash`. These assets will always be generated, as it's required for expo or the `useHideAnimation` hook (`assets/bootsplash_logo.png` become `assets/bootsplash/logo.png`, etc.)
-- **All** iOS assets are now suffixed with a short hash of the different splash screen items to prevent [caching issues](https://stackoverflow.com/questions/33002829/ios-keeping-old-launch-screen-and-app-icon-after-update) (before, it was only the logo).
-- iOS implementation now always uses a `colorset` for background color, even if you choose not to support dark mode (before it was inlined in the `.storyboard` file in such case).
+### Requirements
+
+- Node.js **20+** is now required
+- React Native **0.80+** is now required
+- Expo SDK **54+** is now required
+
+### CLI changes
+
+- The `--project-type` option has been removed
+- The `npx react-native generate-bootsplash` command has been removed. Use `npx react-native-bootsplash generate` instead
+
+### Expo plugin changes
+
+- The plugin now generates assets at prebuild (no need to run the CLI first)
+- The `assetsDir` option has been renamed to `assetsOutput`
+- The `android.parentTheme` option has been removed (the default theme is now edge-to-edge)
+
+New plugin options for asset generation:
+
+```ts
+type PluginOptions = {
+  android?: {
+    darkContentBarsStyle?: boolean; // Enforce system bars style (default: undefined)
+  };
+
+  logo: string; // Logo file path (PNG or SVG) - required
+  background?: string; // Background color (in hexadecimal format) (default: "#fff")
+  logoWidth?: number; // Logo width at @1x (in dp - we recommend approximately ~100) (default: 100)
+  assetsOutput?: string; // Assets output directory path (default: "assets/bootsplash")
+
+  // Addon options
+  licenseKey?: string; // License key to enable brand and dark mode assets generation
+  brand?: string; // Brand file path (PNG or SVG)
+  brandWidth?: number; // Brand width at @1x (in dp - we recommend approximately ~80) (default: 80)
+  darkBackground?: string; // [dark mode] Background color (in hexadecimal format)
+  darkLogo?: string; // [dark mode] Logo file path (PNG or SVG)
+  darkBrand?: string; // [dark mode] Brand file path (PNG or SVG)
+};
+```
+
+```diff
+// app.json
+{
+  "expo": {
++   "platforms": ["android", "ios", "web"], // must be explicit
+    "plugins": [
+-     ["react-native-bootsplash", { "assetsDir": "./assets/bootsplash" }],
++     [
++       "react-native-bootsplash",
++       {
++         "logo": "./assets/logo.png",
++         "background": "#f5fcff",
++         "logoWidth": 100,
++         "assetsOutput": "./assets/bootsplash"
++         // …
++       }
++     ]
+    ]
+  }
+}
+```
+
+### Android theme changes
+
+- `Theme.BootSplash` is now edge-to-edge by default
+- `Theme.BootSplash.EdgeToEdge` and `Theme.BootSplash.TransparentStatus` have been removed
+
+If you were using `Theme.BootSplash.EdgeToEdge` or `Theme.BootSplash.TransparentStatus`, simply switch to `Theme.BootSplash`:
+
+```diff
+<!-- values/styles.xml -->
+- <style name="BootTheme" parent="Theme.BootSplash.EdgeToEdge">
++ <style name="BootTheme" parent="Theme.BootSplash">
+```
+
+### API changes
+
+The `isVisible()` method is now synchronous:
+
+```diff
+- BootSplash.isVisible().then((value) => console.log(value));
+
++ if (BootSplash.isVisible()) {
++   // Do something
++ }
+```
 
 ## How to update
 
-- Delete your previously generated assets directory.
-- Run the CLI to generate assets in updated locations.
-- That's all! ✨
+1. Update your `package.json` to use `react-native-bootsplash@^7.0.0`
+2. If using Expo, update your plugin config accordingly
+3. If you were using `Theme.BootSplash.TransparentStatus` or `Theme.BootSplash.EdgeToEdge`, switch to `Theme.BootSplash`
+4. Update any `isVisible()` calls to use the new synchronous API
+5. Replace `npx react-native generate-bootsplash` with `npx react-native-bootsplash generate` in your scripts
+6. Run the CLI to regenerate assets

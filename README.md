@@ -171,7 +171,15 @@ $ yarn remove expo-splash-screen
 -         "backgroundColor": "#ffffff"
 -       }
 -     ],
-+     ["react-native-bootsplash", { "assetsOutput": "assets/bootsplash" }]
++     [
++       "react-native-bootsplash",
++       {
++         "logo": "./assets/logo.png",
++         "logoWidth": 100,
++         "background": "#f5fcff"
++         // …
++       }
++     ]
     ]
   }
 }
@@ -228,6 +236,9 @@ class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
 
 Edit your `android/app/src/main/java/com/yourapp/MainActivity.kt` file:
 
+<details open>
+<summary><strong>Without react-native-screens</strong></summary>
+
 ```kotlin
 // ⬇️ add these required imports
 import android.os.Bundle
@@ -241,12 +252,62 @@ class MainActivity : ReactActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     RNBootSplash.init(this, R.style.BootTheme) // ⬅️ initialize the splash screen
-    super.onCreate(savedInstanceState) // super.onCreate(null) with react-native-screens
+    super.onCreate(savedInstanceState)
   }
 }
 ```
 
-_ℹ️ Refer to [previous package documentation](https://github.com/zoontek/react-native-bootsplash/tree/6.3.11?tab=readme-ov-file#with-bare-react-native) for setup steps with React Native < 0.79._
+</details>
+
+<details>
+<summary><strong>With react-native-screens >= v4.16.0</strong></summary>
+
+```kotlin
+// ⬇️ add these required imports
+import android.os.Bundle
+import com.swmansion.rnscreens.fragment.restoration.RNScreensFragmentFactory
+import com.zoontek.rnbootsplash.RNBootSplash
+
+// …
+
+class MainActivity : ReactActivity() {
+
+  // …
+
+  override fun onCreate(savedInstanceState: Bundle?) {
+    supportFragmentManager.fragmentFactory = RNScreensFragmentFactory()
+    RNBootSplash.init(this, R.style.BootTheme) // ⬅️ initialize the splash screen
+    super.onCreate(savedInstanceState)
+  }
+}
+```
+
+</details>
+
+<details>
+<summary><strong>With react-native-screens < v4.16.0</strong></summary>
+
+```kotlin
+// ⬇️ add these required imports
+import android.os.Bundle
+import com.zoontek.rnbootsplash.RNBootSplash
+
+// …
+
+class MainActivity : ReactActivity() {
+
+  // …
+
+  override fun onCreate(savedInstanceState: Bundle?) {
+    RNBootSplash.init(this, R.style.BootTheme) // ⬅️ initialize the splash screen
+    super.onCreate(null)
+  }
+}
+```
+
+</details>
+
+_ℹ️ Refer to [previous package documentation](https://github.com/zoontek/react-native-bootsplash/tree/6.3.12?tab=readme-ov-file#with-bare-react-native) for setup steps with React Native < 0.80._
 
 ## API
 
