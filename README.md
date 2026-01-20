@@ -160,6 +160,7 @@ $ yarn remove expo-splash-screen
 ```diff
 {
   "expo": {
++   "platforms": ["android", "ios", "web"], // must be explicit
     "plugins": [
 -     [
 -       "expo-splash-screen",
@@ -180,10 +181,22 @@ _📌 The available plugins options are:_
 
 ```ts
 type PluginOptions = {
-  assetsOutput?: string; // optional, default is "assets/bootsplash"
   android?: {
-    darkContentBarsStyle?: boolean; // optional, default is `undefined`
+    darkContentBarsStyle?: boolean; // Enforce system bars style (default: undefined)
   };
+
+  logo: string; // Logo file path (PNG or SVG) - required
+  background?: string; // Background color (in hexadecimal format) (default: "#fff")
+  logoWidth?: number; // Logo width at @1x (in dp - we recommend approximately ~100) (default: 100)
+  assetsOutput?: string; // Assets output directory path (default: "assets/bootsplash")
+
+  // Addon options
+  licenseKey?: string; // License key to enable brand and dark mode assets generation
+  brand?: string; // Brand file path (PNG or SVG)
+  brandWidth?: number; // Brand width at @1x (in dp - we recommend approximately ~80) (default: 80)
+  darkBackground?: string; // [dark mode] Background color (in hexadecimal format)
+  darkLogo?: string; // [dark mode] Logo file path (PNG or SVG)
+  darkBrand?: string; // [dark mode] Brand file path (PNG or SVG)
 };
 ```
 
@@ -342,9 +355,6 @@ const AnimatedBootSplash = ({ onAnimationEnd }: Props) => {
     // brand: require("../assets/bootsplash/brand.png"),
     // darkBrand: require("../assets/bootsplash/dark-brand.png"),
 
-    statusBarTranslucent: true,
-    navigationBarTranslucent: false,
-
     animate: () => {
       // Perform animations and call onAnimationEnd
       Animated.timing(opacity, {
@@ -437,7 +447,7 @@ To add the mocks, create a file `jest/setup.js` (or any other file name) contain
 jest.mock("react-native-bootsplash", () => {
   return {
     hide: jest.fn().mockResolvedValue(),
-    isVisible: jest.fn().mockResolvedValue(false),
+    isVisible: jest.fn(),
     useHideAnimation: jest.fn().mockReturnValue({
       container: {},
       logo: { source: 0 },
