@@ -34,7 +34,7 @@ _⚠️  Don't forget going into the `ios` directory to execute a `pod install
 
 ### Assets generation
 
-In order to speed up the setup, we provide a **CLI** to generate assets, create the Android Drawable XML file and the iOS Storyboard file automatically ✨.
+In order to speed up the setup, we provide a **CLI** to generate assets, update config files, create the Android Drawable XML file and the iOS Storyboard file automatically ✨.
 
 ```bash
 $ npx react-native-bootsplash generate --help
@@ -109,7 +109,7 @@ yarn react-native-bootsplash generate svgs/light-logo.svg \
   --dark-brand=svgs/dark-brand.svg
 ```
 
-This tool relies on the naming conventions that are used in the `/example` project and will therefore create the following files:
+This tool relies on the naming conventions that are used in the `/example` project and will therefore create / update the following files:
 
 ```bash
 # Without license key
