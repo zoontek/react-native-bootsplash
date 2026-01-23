@@ -1,11 +1,11 @@
-// https://necolas.github.io/react-native-web/docs/multi-platform/#compiling-and-bundling
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 const fromRoot = (_) => path.resolve(__dirname, _);
+const nodeModules = fromRoot("node_modules");
 
 module.exports = {
-  mode: "development",
+  mode: process.env.NODE_ENV === "production" ? "production" : "development",
   entry: fromRoot("index.js"),
   output: {
     path: fromRoot("dist"),
@@ -42,7 +42,11 @@ module.exports = {
     ],
   },
   resolve: {
-    alias: { "react-native$": "react-native-web" },
+    alias: {
+      react: path.join(nodeModules, "react"),
+      "react-dom": path.join(nodeModules, "react-dom"),
+      "react-native$": "react-native-web",
+    },
     extensions: [".ts", ".tsx", ".js", ".jsx", ".json"]
       .map((extension) => [".web" + extension, extension])
       .flat(),

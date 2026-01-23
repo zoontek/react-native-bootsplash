@@ -3,9 +3,10 @@
   "version": "0.0.1",
   "private": true,
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "scripts": {
+    "react-native-bootsplash": "node ../cli.js",
     "clean": "rm -rf ./node_modules",
     "preinstall": "cd .. && yarn && yarn build && cd example",
     "start": "react-native start",
@@ -13,31 +14,31 @@
     "reinstall": "yarn clean && yarn install"
   },
   "dependencies": {
-    "react": "19.0.0",
-    "react-dom": "19.0.0",
-    "react-native": "0.79.2",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "react-native": "0.83.1",
     "react-native-bootsplash": "link:../",
-    "react-native-edge-to-edge": "1.6.0",
-    "react-native-web": "0.20.0"
+    "react-native-edge-to-edge": "1.7.0",
+    "react-native-web": "0.21.2"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@babel/preset-env": "^7.25.3",
     "@babel/runtime": "^7.25.0",
-    "@react-native-community/cli": "18.0.1",
-    "@react-native-community/cli-platform-android": "18.0.0",
-    "@react-native-community/cli-platform-ios": "18.0.0",
-    "@react-native/babel-preset": "0.79.2",
-    "@react-native/metro-config": "0.79.2",
-    "@types/react": "^19.0.0",
-    "babel-loader": "^9.2.1",
+    "@react-native-community/cli": "20.0.0",
+    "@react-native-community/cli-platform-android": "20.0.0",
+    "@react-native-community/cli-platform-ios": "20.0.0",
+    "@react-native/babel-preset": "0.83.1",
+    "@react-native/metro-config": "0.83.1",
+    "@types/react": "^19.2.0",
+    "babel-loader": "^10.0.0",
     "babel-plugin-module-resolver": "^5.0.2",
-    "html-webpack-plugin": "^5.6.3",
+    "html-webpack-plugin": "^5.6.6",
     "react-native-web-image-loader": "^0.1.1",
-    "typescript": "^5.8.3",
+    "typescript": "^5.9.3",
     "url-loader": "^4.1.1",
-    "webpack": "^5.99.5",
-    "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^5.2.1"
+    "webpack": "^5.104.1",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.3"
   }
 }

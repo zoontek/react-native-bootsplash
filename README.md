@@ -1,7 +1,7 @@
 # 🚀 react-native-bootsplash
 
 Show a splash screen during app startup. Hide it when you are ready.<br>
-**For migration from the v5, check the [`MIGRATION.md` guide](./MIGRATION.md).**
+**For migration from the v6, check the [`MIGRATION.md` guide](./MIGRATION.md).**
 
 [![mit licence](https://img.shields.io/dub/l/vibe-d.svg?style=for-the-badge)](https://github.com/zoontek/react-native-bootsplash/blob/main/LICENSE)
 [![npm version](https://img.shields.io/npm/v/react-native-bootsplash?style=for-the-badge)](https://www.npmjs.org/package/react-native-bootsplash)
@@ -34,7 +34,7 @@ _⚠️  Don't forget going into the `ios` directory to execute a `pod install
 
 ### Assets generation
 
-In order to speed up the setup, we provide a **CLI** to generate assets, create the Android Drawable XML file and the iOS Storyboard file automatically ✨.
+In order to speed up the setup, we provide a **CLI** to generate assets, update config files, create the Android Drawable XML file and the iOS Storyboard file automatically ✨.
 
 ```bash
 $ npx react-native-bootsplash generate --help
@@ -53,13 +53,13 @@ Arguments:
   logo                        Logo file path (PNG or SVG)
 
 Options:
-  --project-type <string>     Project type ("detect", "bare" or "expo") (default: "detect")
   --platforms <list>          Platforms to generate for, separated by a comma (default: "android,ios,web")
   --background <string>       Background color (in hexadecimal format) (default: "#fff")
   --logo-width <number>       Logo width at @1x (in dp - we recommend approximately ~100) (default: 100)
   --assets-output <string>    Assets output directory path (default: "assets/bootsplash")
   --flavor <string>           Android flavor build variant (where your resource directory is) (default: "main")
   --html <string>             HTML template file path (your web app entry point) (default: "public/index.html")
+  --plist <string>            Custom Info.plist file path
   --license-key <string>      License key to enable brand and dark mode assets generation
   --brand <string>            Brand file path (PNG or SVG)
   --brand-width <number>      Brand width at @1x (in dp - we recommend approximately ~80) (default: 80)
@@ -109,7 +109,7 @@ yarn react-native-bootsplash generate svgs/light-logo.svg \
   --dark-brand=svgs/dark-brand.svg
 ```
 
-This tool relies on the naming conventions that are used in the `/example` project and will therefore create the following files:
+This tool relies on the naming conventions that are used in the `/example` project and will therefore create / update the following files:
 
 ```bash
 # Without license key
@@ -160,6 +160,7 @@ $ yarn remove expo-splash-screen
 ```diff
 {
   "expo": {
++   "platforms": ["android", "ios", "web"], // must be explicit
     "plugins": [
 -     [
 -       "expo-splash-screen",
@@ -170,7 +171,15 @@ $ yarn remove expo-splash-screen
 -         "backgroundColor": "#ffffff"
 -       }
 -     ],
-+     ["react-native-bootsplash", { "assetsDir": "assets/bootsplash" }]
++     [
++       "react-native-bootsplash",
++       {
++         "logo": "./assets/logo.png",
++         "logoWidth": 100,
++         "background": "#f5fcff"
++         // …
++       }
++     ]
     ]
   }
 }
@@ -180,17 +189,28 @@ _📌 The available plugins options are:_
 
 ```ts
 type PluginOptions = {
-  assetsDir?: string; // optional, default is "assets/bootsplash"
   android?: {
-    parentTheme?: "TransparentStatus" | "EdgeToEdge"; // optional, default is `undefined` (`Theme.BootSplash`)
-    darkContentBarsStyle?: boolean; // optional, default is `undefined`
+    darkContentBarsStyle?: boolean; // Enforce system bars style (default: undefined)
   };
+
+  logo: string; // Logo file path (PNG or SVG) - required
+  background?: string; // Background color (in hexadecimal format) (default: "#fff")
+  logoWidth?: number; // Logo width at @1x (in dp - we recommend approximately ~100) (default: 100)
+  assetsOutput?: string; // Assets output directory path (default: "assets/bootsplash")
+
+  // Addon options
+  licenseKey?: string; // License key to enable brand and dark mode assets generation
+  brand?: string; // Brand file path (PNG or SVG)
+  brandWidth?: number; // Brand width at @1x (in dp - we recommend approximately ~80) (default: 80)
+  darkBackground?: string; // [dark mode] Background color (in hexadecimal format)
+  darkLogo?: string; // [dark mode] Logo file path (PNG or SVG)
+  darkBrand?: string; // [dark mode] Brand file path (PNG or SVG)
 };
 ```
 
 ### With bare React Native
 
-#### iOS (react-native 0.79+)
+#### iOS
 
 Edit your `ios/YourApp/AppDelegate.swift` file:
 
@@ -206,29 +226,6 @@ class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
 
   // ⬇️ override this method
   override func customize(_ rootView: RCTRootView) {
-    super.customize(rootView)
-    RNBootSplash.initWithStoryboard("BootSplash", rootView: rootView) // ⬅️ initialize the splash screen
-  }
-}
-```
-
-#### iOS (react-native 0.77+)
-
-Edit your `ios/YourApp/AppDelegate.swift` file:
-
-```swift
-import ReactAppDependencyProvider
-import RNBootSplash // ⬅️ add this import
-
-// …
-
-@main
-class AppDelegate: RCTAppDelegate {
-
-  // …
-
-  // ⬇️ override this method
-  override func customize(_ rootView: RCTRootView!) {
     super.customize(rootView)
     RNBootSplash.initWithStoryboard("BootSplash", rootView: rootView) // ⬅️ initialize the splash screen
   }
@@ -310,7 +307,7 @@ class MainActivity : ReactActivity() {
 
 </details>
 
-_ℹ️ Refer to [previous package documentation](https://github.com/zoontek/react-native-bootsplash/tree/6.3.4?tab=readme-ov-file#with-bare-react-native) for setup steps with React Native < 0.77._
+_ℹ️ Refer to [previous package documentation](https://github.com/zoontek/react-native-bootsplash/tree/6.3.12?tab=readme-ov-file#with-bare-react-native) for setup steps with React Native < 0.80._
 
 ## API
 
@@ -354,7 +351,7 @@ Return the current visibility status of the native splash screen.
 #### Method type
 
 ```ts
-type isVisible = () => Promise<boolean>;
+type isVisible = () => boolean;
 ```
 
 #### Usage
@@ -362,7 +359,9 @@ type isVisible = () => Promise<boolean>;
 ```ts
 import BootSplash from "react-native-bootsplash";
 
-BootSplash.isVisible().then((value) => console.log(value));
+if (BootSplash.isVisible()) {
+  // Do something
+}
 ```
 
 ### useHideAnimation()
@@ -417,9 +416,6 @@ const AnimatedBootSplash = ({ onAnimationEnd }: Props) => {
     // brand: require("../assets/bootsplash/brand.png"),
     // darkBrand: require("../assets/bootsplash/dark-brand.png"),
 
-    statusBarTranslucent: true,
-    navigationBarTranslucent: false,
-
     animate: () => {
       // Perform animations and call onAnimationEnd
       Animated.timing(opacity, {
@@ -464,24 +460,18 @@ const App = () => {
 
 ## FAQ
 
-### How can I have a transparent status bar, or [edge-to-edge layout](https://developer.android.com/develop/ui/views/layout/edge-to-edge)?
+### How can I enforce the splash screen system bar colors?
 
-Edit your `values/styles.xml` file to inherit from `Theme.BootSplash.TransparentStatus` / `Theme.BootSplash.EdgeToEdge` instead of `Theme.BootSplash`:
+By default, the system bars uses `dark-content` in light mode and `light-content` in dark mode. To enforce a specific value, edit your `values/styles.xml` file:
 
 ```xml
 <resources>
-
   <!-- … -->
 
-  <!-- make BootTheme inherit from Theme.BootSplash.TransparentStatus / Theme.BootSplash.EdgeToEdge -->
-  <style name="BootTheme" parent="Theme.BootSplash.EdgeToEdge">
-    <!-- … -->
-
-    <!-- optional, used to enforce the initial bars styles -->
-    <!-- default is true in light mode, false in dark mode -->
+  <style name="BootTheme" parent="Theme.BootSplash">
     <item name="darkContentBarsStyle">true</item>
+    <!-- … -->
   </style>
-
 </resources>
 ```
 
@@ -518,7 +508,7 @@ To add the mocks, create a file `jest/setup.js` (or any other file name) contain
 jest.mock("react-native-bootsplash", () => {
   return {
     hide: jest.fn().mockResolvedValue(),
-    isVisible: jest.fn().mockResolvedValue(false),
+    isVisible: jest.fn(),
     useHideAnimation: jest.fn().mockReturnValue({
       container: {},
       logo: { source: 0 },

@@ -4,11 +4,16 @@
         <color android:color="?attr/bootSplashBackground" />
     </item>
 
-    <item android:gravity="fill">
-        <bitmap android:src="?bootSplashLogo" android:gravity="center" />
-    </item>
+    <item
+        android:drawable="?bootSplashLogo"
+        android:gravity="center"
+        android:width="288dp"
+        android:height="288dp" />
 
-    <item android:gravity="fill" android:bottom="60dp">
-        <bitmap android:src="?bootSplashBrand" android:gravity="bottom|center_horizontal" />
-    </item>
+    <item
+        android:drawable="?bootSplashBrand"
+        android:gravity="bottom|center_horizontal"
+        android:width="200dp"
+        android:height="80dp"
+        android:bottom="60dp" />
 </layer-list>

@@ -25,7 +25,6 @@ class RNBootSplashPackage : TurboReactPackage() {
         RNBootSplashModuleImpl.NAME,
         false,
         false,
-        true,
         false,
         isTurboModule
       )

@@ -1,6 +1,6 @@
 {
   "name": "react-native-bootsplash",
-  "version": "6.3.12",
+  "version": "7.0.0",
   "license": "MIT",
   "description": "Display a bootsplash on your app starts. Hide it when you want.",
   "author": "Mathieu Acthernoene <zoontek@gmail.com>",
@@ -23,9 +23,7 @@
     "cli.js",
     "react-native.config.js"
   ],
-  "bin": {
-    "react-native-bootsplash": "./cli.js"
-  },
+  "bin": "./cli.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/zoontek/react-native-bootsplash.git"
@@ -45,7 +43,7 @@
   "scripts": {
     "clean": "rm -rf dist",
     "format": "prettier '**/*' -u -w",
-    "lint": "eslint --ext ts,tsx ./src",
+    "lint": "oxlint",
     "typecheck": "tsc --noEmit",
     "build": "yarn clean && bob build && rm -rf dist/*/package.json",
     "prepack": "prettier '**/*' -u -c && yarn lint && yarn typecheck && yarn build && node ../obfuscator"
@@ -69,44 +67,41 @@
     "react-native": "*"
   },
   "dependencies": {
-    "@expo/config-plugins": "^9.0.0 || ^10.0.0",
-    "@react-native-community/cli-config-android": "^18.0.0",
-    "@react-native-community/cli-config-apple": "^18.0.0",
-    "@react-native-community/cli-tools": "^18.0.0",
-    "commander": "^13.1.0",
+    "@expo/config-plugins": "*",
+    "@react-native-community/cli-config-android": "^20.0.0",
+    "@react-native-community/cli-config-apple": "^20.0.0",
+    "@react-native-community/cli-tools": "^20.0.0",
+    "commander": "^14.0.2",
     "detect-indent": "^6.1.0",
-    "fs-extra": "^11.3.0",
-    "node-html-parser": "^7.0.1",
+    "fs-extra": "^11.3.3",
+    "node-html-parser": "^7.0.2",
     "picocolors": "^1.1.1",
-    "prettier": "^3.5.3",
+    "prettier": "^3.8.1",
     "react-native-is-edge-to-edge": "^1.2.1",
-    "sharp": "^0.32.6",
+    "sharp": "^0.34.5",
     "ts-dedent": "^2.2.0",
-    "xml-formatter": "^3.6.5"
+    "xml-formatter": "^3.6.7"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@babel/preset-env": "^7.25.3",
-    "@react-native-community/cli-types": "^18.0.0",
+    "@react-native-community/cli-types": "^20.0.0",
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^20.17.30",
-    "@types/react": "^19.0.0",
-    "@types/semver": "^7.7.0",
-    "@typescript-eslint/eslint-plugin": "^8.29.1",
-    "@typescript-eslint/parser": "^8.29.1",
-    "eslint": "^8.57.1",
-    "eslint-plugin-react-hooks": "^4.6.2",
-    "prettier-plugin-organize-imports": "^4.1.0",
-    "react": "19.0.0",
-    "react-native": "0.79.2",
-    "react-native-builder-bob": "^0.40.11",
-    "semver": "^7.7.1",
-    "typescript": "^5.8.3"
+    "@types/node": "^20.19.27",
+    "@types/react": "^19.2.0",
+    "@types/semver": "^7.7.1",
+    "oxlint": "^1.41.0",
+    "prettier-plugin-organize-imports": "^4.3.0",
+    "react": "19.2.0",
+    "react-native": "0.83.1",
+    "react-native-builder-bob": "^0.40.17",
+    "semver": "^7.7.3",
+    "typescript": "^5.9.3"
   },
   "codegenConfig": {
     "name": "RNBootSplashSpec",
     "type": "modules",
-    "jsSrcsDir": "./src",
+    "jsSrcsDir": "./src/specs",
     "android": {
       "javaPackageName": "com.zoontek.rnbootsplash"
     }

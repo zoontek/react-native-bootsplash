@@ -12,7 +12,7 @@ import {
   controlEdgeToEdgeValues,
   isEdgeToEdge,
 } from "react-native-is-edge-to-edge";
-import NativeModule from "./NativeRNBootSplash";
+import NativeModule from "./specs/NativeRNBootSplash";
 
 const EDGE_TO_EDGE = isEdgeToEdge();
 
@@ -81,7 +81,7 @@ export function hide(config: Config = {}): Promise<void> {
   return NativeModule.hide(fade).then(() => {});
 }
 
-export function isVisible(): Promise<boolean> {
+export function isVisible(): boolean {
   return NativeModule.isVisible();
 }
 
