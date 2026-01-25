@@ -891,7 +891,7 @@ export const requireAddon = ({
   | undefined => {
   if (licenseKey != null && executeAddon) {
     try {
-      const addon = require("./dist/commonjs/addon");
+      const addon = require("./addon");
       return "default" in addon ? addon.default : addon;
     } catch {
       return;
