@@ -1246,9 +1246,9 @@
   integrity sha512-yzMTt9lEb8Gv7zRioUilSglI0c0smZ9k5D65677DLWLtWJaXIS3CqcGyUFByYKlnUj6TkjLVs54fBl6+TiGQDQ==
 
 "@isaacs/brace-expansion@^5.0.0":
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/@isaacs/brace-expansion/-/brace-expansion-5.0.0.tgz#4b3dabab7d8e75a429414a96bd67bf4c1d13e0f3"
-  integrity sha512-ZT55BDLV0yv0RBm2czMiZ+SqCGO7AvmOM3G/w2xhVPH+te0aKgFjmBvGlL1dH+ql2tgGO3MVrbb3jCKyvpgnxA==
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/@isaacs/brace-expansion/-/brace-expansion-5.0.1.tgz#0ef5a92d91f2fff2a37646ce54da9e5f599f6eff"
+  integrity sha512-WMz71T1JS624nWj2n2fnYAuPovhv7EUhk69R6i9dsVyzxt5eM3bjwvgk9L+APE1TRscGysAVMANkB0jh0LQZrQ==
   dependencies:
     "@isaacs/balanced-match" "^4.0.1"
 
@@ -5626,8 +5626,21 @@ react-is@^18.0.0:
   integrity sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==
 
 "react-native-bootsplash@link:..":
-  version "0.0.0"
-  uid ""
+  version "7.0.2"
+  dependencies:
+    "@expo/config-plugins" "*"
+    commander "^14.0.3"
+    detect-indent "^6.1.0"
+    fast-glob "^3.3.3"
+    find-up "^5.0.0"
+    fs-extra "^11.3.3"
+    node-html-parser "^7.0.2"
+    picocolors "^1.1.1"
+    prettier "^3.8.1"
+    react-native-is-edge-to-edge "^1.2.1"
+    sharp "^0.34.5"
+    ts-dedent "^2.2.0"
+    xml-formatter "^3.6.7"
 
 react-native-edge-to-edge@1.7.0:
   version "1.7.0"
