@@ -2449,7 +2449,7 @@ PODS:
     - React-perflogger (= 0.83.1)
     - React-utils (= 0.83.1)
     - SocketRocket
-  - RNBootSplash (7.0.1):
+  - RNBootSplash (7.0.2):
     - boost
     - DoubleConversion
     - fast_float
@@ -2802,7 +2802,7 @@ SPEC CHECKSUMS:
   ReactAppDependencyProvider: 0eb286cc274abb059ee601b862ebddac2e681d01
   ReactCodegen: 3d48510bcef445f6403c0004047d4d9cbb915435
   ReactCommon: ac934cb340aee91282ecd6f273a26d24d4c55cae
-  RNBootSplash: 343fb3d5f8233c877ad11247dd883cd1f21733d7
+  RNBootSplash: 107f43917da7b0ff0d2a85182faee53e8acc70d8
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: 5456bb010373068fc92221140921b09d126b116e
 

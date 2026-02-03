@@ -11,7 +11,7 @@ import {
   type RawProps,
   hfs,
   log,
-  packageName,
+  PACKAGE_NAME,
   requireAddon,
   setIsExpo,
   transformProps,
@@ -379,4 +379,4 @@ export const withBootSplash = Expo.createRunOncePlugin<
     expoConfig,
     plugins.map((plugin) => [plugin, rawProps]),
   );
-}, packageName);
+}, PACKAGE_NAME);

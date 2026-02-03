@@ -77,7 +77,7 @@ GEM
       mutex_m
     i18n (1.14.8)
       concurrent-ruby (~> 1.0)
-    json (2.18.0)
+    json (2.18.1)
     logger (1.7.0)
     minitest (6.0.1)
       prism (~> 1.5)
@@ -87,7 +87,7 @@ GEM
     nap (1.1.0)
     netrc (0.11.0)
     nkf (0.2.0)
-    prism (1.8.0)
+    prism (1.9.0)
     public_suffix (4.0.7)
     rexml (3.4.4)
     ruby-macho (2.5.1)

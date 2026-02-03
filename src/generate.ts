@@ -1,10 +1,9 @@
 import * as Expo from "@expo/config-plugins";
 import ExpoPlist from "@expo/plist";
-import { projectConfig as getAndroidProjectConfig } from "@react-native-community/cli-config-android";
-import { getProjectConfig as getAppleProjectConfig } from "@react-native-community/cli-config-apple";
-import { findProjectRoot } from "@react-native-community/cli-tools";
 import crypto from "crypto";
 import detectIndent, { type Indent } from "detect-indent";
+import glob from "fast-glob";
+import findUp from "find-up";
 import fs from "fs-extra";
 import { HTMLElement, parse as parseHtml } from "node-html-parser";
 import path from "path";
@@ -19,22 +18,7 @@ import { dedent } from "ts-dedent";
 import formatXml, { type XMLFormatterOptions } from "xml-formatter";
 import type { Manifest } from ".";
 
-type Platforms = ("android" | "ios" | "web")[];
-
-type RGBColor = {
-  R: string;
-  G: string;
-  B: string;
-};
-
-type Color = {
-  hex: string;
-  rgb: RGBColor;
-};
-
-export const packageName = "react-native-bootsplash";
-const workingPath = process.env.INIT_CWD ?? process.env.PWD ?? process.cwd();
-const projectRoot = findProjectRoot(workingPath);
+export const PACKAGE_NAME = "react-native-bootsplash";
 
 let isExpo = false;
 
@@ -44,7 +28,9 @@ export const setIsExpo = (value: boolean) => {
 
 export const log = {
   error: (text: string) => {
-    console.log(pc.red(isExpo ? `❌ [${packageName}] ${text}` : `❌  ${text}`));
+    console.log(
+      pc.red(isExpo ? `❌ [${PACKAGE_NAME}] ${text}` : `❌  ${text}`),
+    );
   },
   title: (emoji: string, text: string) => {
     if (!isExpo) {
@@ -53,7 +39,7 @@ export const log = {
   },
   warn: (text: string) => {
     console.log(
-      pc.yellow(isExpo ? `⚠️  [${packageName}] ${text}` : `⚠️  ${text}`),
+      pc.yellow(isExpo ? `⚠️  [${PACKAGE_NAME}] ${text}` : `⚠️  ${text}`),
     );
   },
   write: (filePath: string, dimensions?: { width: number; height: number }) => {
@@ -68,7 +54,17 @@ export const log = {
   },
 };
 
-const parseColor = (value: string): Color => {
+const workingPath = process.env.INIT_CWD ?? process.env.PWD ?? process.cwd();
+const packagePath = findUp.sync("package.json", { cwd: workingPath });
+
+if (!packagePath) {
+  log.error("We couldn't find a package.json in your project.");
+  process.exit(1);
+}
+
+const projectRoot = path.dirname(packagePath);
+
+const parseColor = (value: string) => {
   const up = value.toUpperCase().replace(/[^0-9A-F]/g, "");
 
   if (up.length !== 3 && up.length !== 6) {
@@ -81,7 +77,7 @@ const parseColor = (value: string): Color => {
       ? "#" + up[0] + up[0] + up[1] + up[1] + up[2] + up[2]
       : "#" + up;
 
-  const rgb: Color["rgb"] = {
+  const rgb = {
     R: (Number.parseInt("" + hex[1] + hex[2], 16) / 255).toPrecision(15),
     G: (Number.parseInt("" + hex[3] + hex[4], 16) / 255).toPrecision(15),
     B: (Number.parseInt("" + hex[5] + hex[6], 16) / 255).toPrecision(15),
@@ -243,88 +239,95 @@ export const writeXmlLike = async (
   }
 };
 
-const getAndroidOutputPath = ({
-  flavor,
-  platforms,
-}: {
-  flavor: string;
-  platforms: Platforms;
-}) => {
-  const android = getAndroidProjectConfig(projectRoot);
+const getAndroidOutputPath = ({ flavor }: { flavor: string }) => {
+  const sourceDir = path.join(projectRoot, "android");
 
-  if (!platforms.includes("android") || android == null) {
+  if (!fs.existsSync(sourceDir)) {
     return;
   }
 
+  const appDir = path.join(sourceDir, "app");
+
   const androidOutputPath = path.resolve(
-    android.sourceDir,
-    android.appName,
+    sourceDir,
+    fs.existsSync(appDir) ? "app" : "",
     "src",
     flavor,
     "res",
   );
 
-  if (!hfs.exists(androidOutputPath)) {
-    return log.warn(
-      `No ${path.relative(
-        workingPath,
-        androidOutputPath,
-      )} directory found. Skipping Android assets generation…`,
-    );
+  if (hfs.exists(androidOutputPath)) {
+    return androidOutputPath;
   }
 
-  return androidOutputPath;
+  log.warn(
+    `No ${path.relative(
+      workingPath,
+      androidOutputPath,
+    )} directory found. Skipping Android assets generation…`,
+  );
 };
 
-const getIOSOutputPath = ({ platforms }: { platforms: Platforms }) => {
-  const ios = getAppleProjectConfig({ platformName: "ios" })(projectRoot, {});
+const getIOSOutputPath = () => {
+  const podfile = glob
+    .sync("**/Podfile", {
+      cwd: projectRoot.replace(/^([a-zA-Z]+:|\.\/)/, ""),
+      deep: 10,
+      ignore: ["**/@(Pods|node_modules|Carthage|vendor|android)/**"],
+    })
+    .find((project) => {
+      return path.dirname(project) === "ios";
+    });
 
-  if (!platforms.includes("ios") || ios == null) {
+  if (!podfile) {
     return;
   }
-  if (ios.xcodeProject == null) {
-    return log.warn("No Xcode project found. Skipping iOS assets generation…");
+
+  const sourceDir = path.dirname(path.join(projectRoot, podfile));
+
+  const xcodeProjectName = fs
+    .readdirSync(sourceDir)
+    .sort()
+    .reverse()
+    .find((fileName) => {
+      const ext = path.extname(fileName);
+      return ext === ".xcworkspace" || ext === ".xcodeproj";
+    });
+
+  if (xcodeProjectName == null) {
+    log.warn("No Xcode project found. Skipping iOS assets generation…");
+    return;
   }
 
   const iosOutputPath = path
-    .resolve(ios.sourceDir, ios.xcodeProject.name)
+    .resolve(sourceDir, xcodeProjectName)
     .replace(/\.(xcodeproj|xcworkspace)$/, "");
 
-  if (!hfs.exists(iosOutputPath)) {
-    return log.warn(
-      `No ${path.relative(
-        workingPath,
-        iosOutputPath,
-      )} directory found. Skipping iOS assets generation…`,
-    );
+  if (hfs.exists(iosOutputPath)) {
+    return iosOutputPath;
   }
 
-  return iosOutputPath;
+  log.warn(
+    `No ${path.relative(
+      workingPath,
+      iosOutputPath,
+    )} directory found. Skipping iOS assets generation…`,
+  );
 };
 
-const getHtmlTemplatePath = ({
-  html,
-  platforms,
-}: {
-  html: string;
-  platforms: Platforms;
-}) => {
-  if (!platforms.includes("web")) {
-    return;
-  }
-
+const getHtmlTemplatePath = ({ html }: { html: string }) => {
   const htmlTemplatePath = path.resolve(workingPath, html);
 
-  if (!hfs.exists(htmlTemplatePath)) {
-    return log.warn(
-      `No ${path.relative(
-        workingPath,
-        htmlTemplatePath,
-      )} found. Skipping HTML + CSS generation…`,
-    );
+  if (hfs.exists(htmlTemplatePath)) {
+    return htmlTemplatePath;
   }
 
-  return htmlTemplatePath;
+  log.warn(
+    `No ${path.relative(
+      workingPath,
+      htmlTemplatePath,
+    )} found. Skipping HTML + CSS generation…`,
+  );
 };
 
 const getInfoPlistPath = ({
@@ -854,9 +857,9 @@ export const writeGenericAssets = async ({ props }: { props: Props }) => {
 
 export type AddonConfig = {
   props: Props;
-  androidOutputPath: string | void;
-  iosOutputPath: string | void;
-  htmlTemplatePath: string | void;
+  androidOutputPath: string | undefined;
+  iosOutputPath: string | undefined;
+  htmlTemplatePath: string | undefined;
 };
 
 export const requireAddon = ({
@@ -906,7 +909,7 @@ export const generate = async ({
   plist,
   ...rawProps
 }: {
-  platforms: Platforms;
+  platforms: Array<"android" | "ios" | "web">;
   html: string;
   flavor: string;
   plist?: string;
@@ -927,9 +930,17 @@ export const generate = async ({
 
   const { background, brand } = props;
 
-  const androidOutputPath = getAndroidOutputPath({ flavor, platforms });
-  const iosOutputPath = getIOSOutputPath({ platforms });
-  const htmlTemplatePath = getHtmlTemplatePath({ html, platforms });
+  const androidOutputPath = platforms.includes("android")
+    ? getAndroidOutputPath({ flavor })
+    : undefined;
+
+  const iosOutputPath = platforms.includes("ios")
+    ? getIOSOutputPath()
+    : undefined;
+
+  const htmlTemplatePath = platforms.includes("web")
+    ? getHtmlTemplatePath({ html })
+    : undefined;
 
   if (androidOutputPath != null) {
     await writeAndroidAssets({ androidOutputPath, props });
