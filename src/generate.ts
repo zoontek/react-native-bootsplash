@@ -291,7 +291,7 @@ const getIOSOutputPath = () => {
     .reverse()
     .find((fileName) => {
       const ext = path.extname(fileName);
-      return ext === ".xcworkspace" || ext === ".xcodeproj";
+      return ext === ".xcodeproj" || ext === ".xcworkspace";
     });
 
   if (xcodeProjectName == null) {
