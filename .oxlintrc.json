@@ -1,6 +1,5 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "ignorePatterns": ["fetchWindowsCapabilites.js"],
   "plugins": ["typescript", "react"],
   "categories": {
     "correctness": "error",
