@@ -4,7 +4,7 @@ import crypto from "crypto";
 import detectIndent, { type Indent } from "detect-indent";
 import glob from "fast-glob";
 import findUp from "find-up";
-import fs from "fs-extra";
+import fs from "fs";
 import { HTMLElement, parse as parseHtml } from "node-html-parser";
 import path from "path";
 import pc from "picocolors";
