@@ -8,7 +8,7 @@ import semver from "semver";
 import { dedent } from "ts-dedent";
 import util from "util";
 import {
-  type RawProps,
+  type BootSplashPluginConfig,
   hfs,
   log,
   PACKAGE_NAME,
@@ -26,14 +26,15 @@ const promisifiedExec = util.promisify(childProcess.exec);
 const exec = (cmd: string) =>
   promisifiedExec(cmd).then(({ stdout, stderr }) => stdout || stderr);
 
-const withoutExpoSplashScreen: Expo.ConfigPlugin<RawProps> =
-  Expo.createRunOncePlugin(
-    (expoConfig) => expoConfig,
-    "expo-splash-screen",
-    "skip",
-  );
+type ConfigPlugin = Expo.ConfigPlugin<BootSplashPluginConfig>;
 
-const withAndroidAssets: Expo.ConfigPlugin<RawProps> = (expoConfig, rawProps) =>
+const withoutExpoSplashScreen: ConfigPlugin = Expo.createRunOncePlugin(
+  (expoConfig) => expoConfig,
+  "expo-splash-screen",
+  "skip",
+);
+
+const withAndroidAssets: ConfigPlugin = (expoConfig, rawProps) =>
   Expo.withDangerousMod(expoConfig, [
     "android",
     async (config) => {
@@ -56,7 +57,7 @@ const withAndroidAssets: Expo.ConfigPlugin<RawProps> = (expoConfig, rawProps) =>
     },
   ]);
 
-const withAndroidManifest: Expo.ConfigPlugin<RawProps> = (expoConfig) =>
+const withAndroidManifest: ConfigPlugin = (expoConfig) =>
   Expo.withAndroidManifest(expoConfig, (config) => {
     config.modResults.manifest.application?.forEach((application) => {
       if (application.$["android:name"] === ".MainApplication") {
@@ -73,7 +74,7 @@ const withAndroidManifest: Expo.ConfigPlugin<RawProps> = (expoConfig) =>
     return config;
   });
 
-const withMainActivity: Expo.ConfigPlugin<RawProps> = (expoConfig) =>
+const withMainActivity: ConfigPlugin = (expoConfig) =>
   Expo.withMainActivity(expoConfig, (config) => {
     const { modResults } = config;
 
@@ -105,7 +106,7 @@ const withMainActivity: Expo.ConfigPlugin<RawProps> = (expoConfig) =>
     };
   });
 
-const withAndroidStyles: Expo.ConfigPlugin<RawProps> = (expoConfig, rawProps) =>
+const withAndroidStyles: ConfigPlugin = (expoConfig, rawProps) =>
   Expo.withAndroidStyles(expoConfig, async (config) => {
     const { projectRoot } = config.modRequest;
     const { android, brand } = await transformProps(projectRoot, rawProps);
@@ -166,7 +167,7 @@ const withAndroidStyles: Expo.ConfigPlugin<RawProps> = (expoConfig, rawProps) =>
     };
   });
 
-const withAndroidColors: Expo.ConfigPlugin<RawProps> = (expoConfig, rawProps) =>
+const withAndroidColors: ConfigPlugin = (expoConfig, rawProps) =>
   Expo.withAndroidColors(expoConfig, async (config) => {
     const { projectRoot } = config.modRequest;
     const { background } = await transformProps(projectRoot, rawProps);
@@ -179,10 +180,7 @@ const withAndroidColors: Expo.ConfigPlugin<RawProps> = (expoConfig, rawProps) =>
     return config;
   });
 
-const withAndroidColorsNight: Expo.ConfigPlugin<RawProps> = (
-  expoConfig,
-  rawProps,
-) =>
+const withAndroidColorsNight: ConfigPlugin = (expoConfig, rawProps) =>
   Expo.withAndroidColorsNight(expoConfig, async (config) => {
     const { projectRoot } = config.modRequest;
     const props = await transformProps(projectRoot, rawProps);
@@ -193,7 +191,7 @@ const withAndroidColorsNight: Expo.ConfigPlugin<RawProps> = (
       : config;
   });
 
-const withIOSAssets: Expo.ConfigPlugin<RawProps> = (expoConfig, rawProps) =>
+const withIOSAssets: ConfigPlugin = (expoConfig, rawProps) =>
   Expo.withDangerousMod(expoConfig, [
     "ios",
     async (config) => {
@@ -214,7 +212,7 @@ const withIOSAssets: Expo.ConfigPlugin<RawProps> = (expoConfig, rawProps) =>
     },
   ]);
 
-const withAppDelegate: Expo.ConfigPlugin<RawProps> = (expoConfig) =>
+const withAppDelegate: ConfigPlugin = (expoConfig) =>
   Expo.withAppDelegate(expoConfig, (config) => {
     const { modResults } = config;
     const { language } = modResults;
@@ -257,13 +255,13 @@ const withAppDelegate: Expo.ConfigPlugin<RawProps> = (expoConfig) =>
     };
   });
 
-const withInfoPlist: Expo.ConfigPlugin<RawProps> = (expoConfig) =>
+const withInfoPlist: ConfigPlugin = (expoConfig) =>
   Expo.withInfoPlist(expoConfig, (config) => {
     config.modResults["UILaunchStoryboardName"] = "BootSplash";
     return config;
   });
 
-const withXcodeProject: Expo.ConfigPlugin<RawProps> = (expoConfig) =>
+const withXcodeProject: ConfigPlugin = (expoConfig) =>
   Expo.withXcodeProject(expoConfig, (config) => {
     const { projectName = "" } = config.modRequest;
 
@@ -284,7 +282,7 @@ const withXcodeProject: Expo.ConfigPlugin<RawProps> = (expoConfig) =>
     return config;
   });
 
-const withWebAssets: Expo.ConfigPlugin<RawProps> = (expoConfig, rawProps) =>
+const withWebAssets: ConfigPlugin = (expoConfig, rawProps) =>
   Expo.withDangerousMod(expoConfig, [
     expoConfig.platforms?.includes("ios") ? "ios" : "android",
     async (config) => {
@@ -306,7 +304,7 @@ const withWebAssets: Expo.ConfigPlugin<RawProps> = (expoConfig, rawProps) =>
     },
   ]);
 
-const withGenericAssets: Expo.ConfigPlugin<RawProps> = (expoConfig, rawProps) =>
+const withGenericAssets: ConfigPlugin = (expoConfig, rawProps) =>
   Expo.withDangerousMod(expoConfig, [
     expoConfig.platforms?.includes("ios") ? "ios" : "android",
     async (config) => {
@@ -322,7 +320,7 @@ const withGenericAssets: Expo.ConfigPlugin<RawProps> = (expoConfig, rawProps) =>
   ]);
 
 export const withBootSplash = Expo.createRunOncePlugin<
-  (Partial<RawProps> & { logo: string }) | undefined
+  (Partial<BootSplashPluginConfig> & { logo: string }) | undefined
 >((expoConfig, baseProps) => {
   const { platforms = [], sdkVersion = "0.1.0" } = expoConfig;
 
@@ -338,7 +336,7 @@ export const withBootSplash = Expo.createRunOncePlugin<
     process.exit(1);
   }
 
-  const rawProps: RawProps = {
+  const rawProps: BootSplashPluginConfig = {
     assetsOutput: "assets/bootsplash",
     background: "#fff",
     brandWidth: 80,
@@ -346,10 +344,7 @@ export const withBootSplash = Expo.createRunOncePlugin<
     ...baseProps,
   };
 
-  const plugins: Expo.ConfigPlugin<RawProps>[] = [
-    withoutExpoSplashScreen,
-    withGenericAssets,
-  ];
+  const plugins: ConfigPlugin[] = [withoutExpoSplashScreen, withGenericAssets];
 
   if (platforms.includes("android")) {
     plugins.push(
@@ -380,3 +375,7 @@ export const withBootSplash = Expo.createRunOncePlugin<
     plugins.map((plugin) => [plugin, rawProps]),
   );
 }, PACKAGE_NAME);
+
+export default (
+  config: BootSplashPluginConfig,
+): [typeof PACKAGE_NAME, BootSplashPluginConfig] => [PACKAGE_NAME, config];

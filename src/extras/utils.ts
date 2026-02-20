@@ -200,7 +200,7 @@ const toAsset = async (filePath: string, width: number): Promise<Asset> => {
   };
 };
 
-export type RawProps = {
+export type BootSplashPluginConfig = {
   logo: string;
   background: string;
   logoWidth: number;
@@ -242,7 +242,7 @@ const parseColor = (value: string) => {
 
 export const transformProps = async (
   rootPath: string,
-  { android = {}, licenseKey, ...rawProps }: RawProps,
+  { android = {}, licenseKey, ...rawProps }: BootSplashPluginConfig,
 ) => {
   if (semver.lt(process.versions.node, "20.0.0")) {
     log.error("Requires Node 20 (or higher)");
