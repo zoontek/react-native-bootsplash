@@ -8,7 +8,6 @@ import pc from "picocolors";
 import { dedent } from "ts-dedent";
 import formatXml from "xml-formatter";
 import {
-  findPackageUp,
   hfs,
   log,
   readXmlLike,
@@ -23,16 +22,34 @@ import {
 } from "./utils";
 
 const cwd = process.env.INIT_CWD ?? process.env.PWD ?? process.cwd();
-const packagePath = findPackageUp(cwd);
+setLoggerMode({ type: "cli", cwd });
 
-if (!packagePath) {
+const projectRoot = (() => {
+  let directory = path.resolve(cwd);
+
+  const { root } = path.parse(directory);
+  const ends = new Set([root, path.resolve(directory, root)]);
+
+  while (directory) {
+    const pkgPath = path.join(directory, "package.json");
+    const stats = fs.statSync(pkgPath, { throwIfNoEntry: false });
+
+    if (stats != null && stats.isFile()) {
+      return path.dirname(pkgPath);
+    }
+
+    if (ends.has(directory)) {
+      break;
+    } else {
+      directory = path.dirname(directory);
+    }
+  }
+})();
+
+if (!projectRoot) {
   log.error("We couldn't find a package.json in your project.");
   process.exit(1);
 }
-
-setLoggerMode({ type: "cli", cwd });
-
-const projectRoot = path.dirname(packagePath);
 
 const getAndroidOutputPath = ({ flavor }: { flavor: string }) => {
   const sourceDir = path.join(projectRoot, "android");

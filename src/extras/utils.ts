@@ -80,28 +80,6 @@ export const hfs = {
   },
 };
 
-export const findPackageUp = (cwd: string) => {
-  let directory = path.resolve(cwd);
-
-  const { root } = path.parse(directory);
-  const stopAt = new Set([root, path.resolve(directory, root)]);
-
-  while (directory) {
-    const filePath = path.join(directory, "package.json");
-    const stats = fs.statSync(filePath, { throwIfNoEntry: false });
-
-    if (stats != null && stats.isFile()) {
-      return filePath;
-    }
-
-    if (!stopAt.has(directory)) {
-      directory = path.dirname(directory);
-    } else {
-      break;
-    }
-  }
-};
-
 export const writeJson = (filePath: string, content: object) => {
   hfs.write(filePath, JSON.stringify(content, null, 2));
   log.write(filePath);
