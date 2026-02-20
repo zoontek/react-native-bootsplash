@@ -1,0 +1,790 @@
+import * as Expo from "@expo/config-plugins";
+import crypto from "crypto";
+import detectIndent, { type Indent } from "detect-indent";
+import fs from "fs";
+import { parse as parseHtml } from "node-html-parser";
+import path from "path";
+import pc from "picocolors";
+import type { Options as PrettierOptions } from "prettier";
+import * as htmlPlugin from "prettier/plugins/html";
+import * as cssPlugin from "prettier/plugins/postcss";
+import * as prettier from "prettier/standalone";
+import semver from "semver";
+import sharp, { type Sharp } from "sharp";
+import { dedent } from "ts-dedent";
+import formatXml, { type XMLFormatterOptions } from "xml-formatter";
+import type { Manifest } from "..";
+
+export const PACKAGE_NAME = "react-native-bootsplash";
+
+type LoggerMode = { type: "plugin" } | { type: "cli"; workingPath: string };
+let loggerMode: LoggerMode = { type: "plugin" };
+
+export const setLoggerMode = (value: LoggerMode) => {
+  loggerMode = value;
+};
+
+export const log = {
+  error: (text: string) => {
+    console.log(
+      pc.red(
+        loggerMode.type === "plugin"
+          ? `❌ [${PACKAGE_NAME}] ${text}`
+          : `❌  ${text}`,
+      ),
+    );
+  },
+  title: (emoji: string, text: string) => {
+    if (loggerMode.type === "cli") {
+      console.log(`\n${emoji}  ${pc.underline(pc.bold(text))}`);
+    }
+  },
+  warn: (text: string) => {
+    console.log(
+      pc.yellow(
+        loggerMode.type === "plugin"
+          ? `⚠️  [${PACKAGE_NAME}] ${text}`
+          : `⚠️  ${text}`,
+      ),
+    );
+  },
+  write: (filePath: string, dimensions?: { width: number; height: number }) => {
+    if (loggerMode.type === "cli") {
+      console.log(
+        `    ${path.relative(loggerMode.workingPath, filePath)}` +
+          (dimensions != null
+            ? ` (${dimensions.width}x${dimensions.height})`
+            : ""),
+      );
+    }
+  },
+};
+
+// Freely inspired by https://github.com/humanwhocodes/humanfs
+export const hfs = {
+  buffer: (path: string) => fs.readFileSync(path),
+  exists: (path: string) => fs.existsSync(path),
+  isDir: (path: string) => fs.lstatSync(path).isDirectory(),
+  json: (path: string) => JSON.parse(fs.readFileSync(path, "utf-8")) as unknown,
+  readDir: (path: string) => fs.readdirSync(path, "utf-8"),
+  realPath: (path: string) => fs.realpathSync(path, "utf-8"),
+  rm: (path: string) => fs.rmSync(path, { force: true, recursive: true }),
+  text: (path: string) => fs.readFileSync(path, "utf-8"),
+
+  ensureDir: (dir: string) => {
+    fs.mkdirSync(dir, { recursive: true });
+  },
+  write: (path: string, content: string) => {
+    const trimmed = content.trim();
+    fs.writeFileSync(path, trimmed === "" ? trimmed : trimmed + "\n", "utf-8");
+  },
+};
+
+export const writeJson = (filePath: string, content: object) => {
+  hfs.write(filePath, JSON.stringify(content, null, 2));
+  log.write(filePath);
+};
+
+type FormatOptions = { indent?: Indent } & (
+  | {
+      formatter: "prettier";
+      selfClosingTags?: boolean;
+      useCssPlugin?: boolean;
+      htmlWhitespaceSensitivity?: PrettierOptions["htmlWhitespaceSensitivity"];
+      singleAttributePerLine?: PrettierOptions["singleAttributePerLine"];
+    }
+  | {
+      formatter: "xmlFormatter";
+      whiteSpaceAtEndOfSelfclosingTag?: XMLFormatterOptions["whiteSpaceAtEndOfSelfclosingTag"];
+    }
+);
+
+export const readXmlLike = (filePath: string) => {
+  const content = hfs.text(filePath);
+
+  return {
+    root: parseHtml(content),
+    formatOptions: { indent: detectIndent(content) },
+  };
+};
+
+export const writeXmlLike = async (
+  filePath: string,
+  content: string,
+  { indent, ...formatOptions }: FormatOptions,
+) => {
+  if (formatOptions.formatter === "prettier") {
+    const {
+      formatter,
+      useCssPlugin = false,
+      selfClosingTags = false,
+      ...options
+    } = formatOptions;
+
+    const formatted = await prettier.format(content, {
+      parser: "html",
+      bracketSameLine: true,
+      printWidth: 10000,
+      plugins: [htmlPlugin, ...(useCssPlugin ? [cssPlugin] : [])],
+      useTabs: indent?.type === "tab",
+      tabWidth: (indent?.amount ?? 0) || 2,
+      ...options,
+    });
+
+    hfs.write(
+      filePath,
+      selfClosingTags
+        ? formatted.replace(/><\/[a-z-0-9]+>/gi, " />")
+        : formatted,
+    );
+
+    log.write(filePath);
+  } else {
+    const { formatter, ...options } = formatOptions;
+
+    const formatted = formatXml(content, {
+      collapseContent: true,
+      forceSelfClosingEmptyTag: true,
+      lineSeparator: "\n",
+      whiteSpaceAtEndOfSelfclosingTag: true,
+      indentation: (indent?.indent ?? "") || "    ",
+      ...options,
+    });
+
+    hfs.write(filePath, formatted);
+    log.write(filePath);
+  }
+};
+
+export type Asset = {
+  path: string;
+  image: Sharp;
+  hash: string;
+  height: number;
+  width: number;
+};
+
+const toAsset = async (filePath: string, width: number): Promise<Asset> => {
+  const image = sharp(filePath);
+  const { format } = await image.metadata();
+
+  if (format !== "png" && format !== "svg") {
+    log.error(
+      `${path.basename(filePath)} image file format (${format}) is not supported`,
+    );
+    process.exit(1);
+  }
+
+  const [height, hash] = await Promise.all([
+    image
+      .clone()
+      .resize(width)
+      .toBuffer()
+      .then((buffer) => sharp(buffer).metadata())
+      .then(({ height = 0 }) => Math.round(height)),
+
+    image
+      .clone()
+      .resize(width)
+      .png({ quality: 100 })
+      .toBuffer()
+      .then((buffer) => buffer.toString("base64")),
+  ]);
+
+  return {
+    path: filePath,
+    image,
+    hash,
+    height,
+    width,
+  };
+};
+
+export type RawProps = {
+  logo: string;
+  background: string;
+  logoWidth: number;
+  assetsOutput: string;
+
+  licenseKey?: string;
+  brand?: string;
+  brandWidth: number;
+  darkBackground?: string;
+  darkLogo?: string;
+  darkBrand?: string;
+
+  android?: {
+    darkContentBarsStyle?: boolean;
+  };
+};
+
+const parseColor = (value: string) => {
+  const up = value.toUpperCase().replace(/[^0-9A-F]/g, "");
+
+  if (up.length !== 3 && up.length !== 6) {
+    log.error(`"${value}" value is not a valid hexadecimal color.`);
+    process.exit(1);
+  }
+
+  const hex =
+    up.length === 3
+      ? "#" + up[0] + up[0] + up[1] + up[1] + up[2] + up[2]
+      : "#" + up;
+
+  const rgb = {
+    R: (Number.parseInt("" + hex[1] + hex[2], 16) / 255).toPrecision(15),
+    G: (Number.parseInt("" + hex[3] + hex[4], 16) / 255).toPrecision(15),
+    B: (Number.parseInt("" + hex[5] + hex[6], 16) / 255).toPrecision(15),
+  };
+
+  return { hex: hex.toLowerCase(), rgb };
+};
+
+export const transformProps = async (
+  rootPath: string,
+  { android = {}, licenseKey, ...rawProps }: RawProps,
+) => {
+  if (semver.lt(process.versions.node, "20.0.0")) {
+    log.error("Requires Node 20 (or higher)");
+    process.exit(1);
+  }
+
+  const assetsOutputPath = path.resolve(rootPath, rawProps.assetsOutput);
+  const logoPath = path.resolve(rootPath, rawProps.logo);
+
+  const darkLogoPath =
+    rawProps.darkLogo != null
+      ? path.resolve(rootPath, rawProps.darkLogo)
+      : undefined;
+
+  const brandPath =
+    rawProps.brand != null ? path.resolve(rootPath, rawProps.brand) : undefined;
+
+  const darkBrandPath =
+    rawProps.darkBrand != null
+      ? path.resolve(rootPath, rawProps.darkBrand)
+      : undefined;
+
+  const logoWidth = rawProps.logoWidth - (rawProps.logoWidth % 2);
+  const brandWidth = rawProps.brandWidth - (rawProps.brandWidth % 2);
+
+  const [logo, darkLogo, brand, darkBrand] = await Promise.all([
+    toAsset(logoPath, logoWidth),
+    darkLogoPath != null ? toAsset(darkLogoPath, logoWidth) : undefined,
+    brandPath != null ? toAsset(brandPath, brandWidth) : undefined,
+    darkBrandPath != null ? toAsset(darkBrandPath, brandWidth) : undefined,
+  ]);
+
+  const background = parseColor(rawProps.background);
+
+  const darkBackground =
+    rawProps.darkBackground != null
+      ? parseColor(rawProps.darkBackground)
+      : undefined;
+
+  const executeAddon =
+    brand != null ||
+    darkBackground != null ||
+    darkLogo != null ||
+    darkBrand != null;
+
+  if (licenseKey != null && !executeAddon) {
+    log.warn(
+      "You specified a license key but none of the options that requires it.",
+    );
+  }
+
+  const isPluginLoggerMode = loggerMode.type === "plugin";
+
+  const optionNames = {
+    brand: isPluginLoggerMode ? "brand" : "--brand",
+    darkBackground: isPluginLoggerMode ? "darkBackground" : "--dark-background",
+    darkLogo: isPluginLoggerMode ? "darkLogo" : "--dark-logo",
+    darkBrand: isPluginLoggerMode ? "darkBrand" : "--dark-brand",
+  };
+
+  if (licenseKey == null && executeAddon) {
+    const options = [
+      brand != null ? optionNames.brand : "",
+      darkBackground != null ? optionNames.darkBackground : "",
+      darkLogo != null ? optionNames.darkLogo : "",
+      darkBrand != null ? optionNames.darkBrand : "",
+    ]
+      .filter((option) => option !== "")
+      .join(", ");
+
+    log.error(`You need to specify a license key in order to use ${options}.`);
+    process.exit(1);
+  }
+
+  if (brand == null && darkBrand != null) {
+    log.error(
+      `${optionNames.darkBrand} option couldn't be used without ${optionNames.brand}.`,
+    );
+
+    process.exit(1);
+  }
+
+  if (logoWidth < rawProps.logoWidth) {
+    log.warn(
+      `Logo width must be a multiple of 2. It has been rounded to ${logoWidth}dp.`,
+    );
+  }
+  if (brandWidth < rawProps.brandWidth) {
+    log.warn(
+      `Brand width must be a multiple of 2. It has been rounded to ${brandWidth}dp.`,
+    );
+  }
+
+  const record: Record<string, string> = {
+    background: background.hex,
+    darkBackground: darkBackground?.hex ?? "",
+    logo: logo.hash,
+    darkLogo: darkLogo?.hash ?? "",
+    brand: brand?.hash ?? "",
+    darkBrand: darkBrand?.hash ?? "",
+  };
+
+  const stableKey = Object.keys(record)
+    .sort()
+    .map((key) => record[key])
+    .join();
+
+  const fileNameSuffix = crypto
+    .createHash("shake256", { outputLength: 3 })
+    .update(stableKey)
+    .digest("hex")
+    .toLowerCase();
+
+  return {
+    android,
+    assetsOutputPath,
+    licenseKey,
+    executeAddon,
+    background,
+    darkBackground,
+    logo,
+    darkLogo,
+    brand,
+    darkBrand,
+    fileNameSuffix,
+  };
+};
+
+export type Props = Awaited<ReturnType<typeof transformProps>>;
+
+export const writeAndroidAssets = async ({
+  androidOutputPath,
+  props,
+}: {
+  androidOutputPath: string;
+  props: Props;
+}) => {
+  const { logo, brand } = props;
+
+  if (logo.width > 192 || logo.height > 192) {
+    return log.warn(
+      "Logo size exceeding 192x192dp will be cropped by Android. Skipping Android assets generation…",
+    );
+  }
+
+  if (brand != null && (brand.width > 200 || brand.height > 80)) {
+    return log.warn(
+      "Brand size exceeding 200x80dp will be cropped by Android. Skipping Android assets generation…",
+    );
+  }
+
+  if (logo.width > 134 || logo.height > 134) {
+    log.warn("Logo size exceeds 134x134dp. It might be cropped by Android.");
+  }
+
+  log.title("🤖", "Android");
+  hfs.ensureDir(androidOutputPath);
+
+  await Promise.all(
+    [
+      { ratio: 1, suffix: "mdpi" },
+      { ratio: 1.5, suffix: "hdpi" },
+      { ratio: 2, suffix: "xhdpi" },
+      { ratio: 3, suffix: "xxhdpi" },
+      { ratio: 4, suffix: "xxxhdpi" },
+    ].map(({ ratio, suffix }) => {
+      const drawableDirPath = path.resolve(
+        androidOutputPath,
+        `drawable-${suffix}`,
+      );
+
+      hfs.ensureDir(drawableDirPath);
+
+      // https://developer.android.com/develop/ui/views/launch/splash-screen#dimensions
+      const canvasSize = 288 * ratio;
+
+      // https://sharp.pixelplumbing.com/api-constructor
+      const canvas = sharp({
+        create: {
+          width: canvasSize,
+          height: canvasSize,
+          channels: 4,
+          background: {
+            r: 255,
+            g: 255,
+            b: 255,
+            alpha: 0,
+          },
+        },
+      });
+
+      const filePath = path.resolve(drawableDirPath, "bootsplash_logo.png");
+
+      return logo.image
+        .clone()
+        .resize(logo.width * ratio)
+        .toBuffer()
+        .then((input) =>
+          canvas.composite([{ input }]).png({ quality: 100 }).toFile(filePath),
+        )
+        .then(() => {
+          log.write(filePath, {
+            width: canvasSize,
+            height: canvasSize,
+          });
+        });
+    }),
+  );
+};
+
+const getStoryboard = (props: Props) => {
+  const { background, logo, fileNameSuffix } = props;
+
+  const { R, G, B } = background.rgb;
+  const frameWidth = 375;
+  const frameHeight = 667;
+
+  return dedent`
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21678"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="EHf-IW-A2E">
+            <objects>
+                <viewController modalTransitionStyle="crossDissolve" id="01J-lp-oVM" sceneMemberID="viewController">
+                    <view key="view" autoresizesSubviews="NO" contentMode="scaleToFill" id="Ze5-6b-2t3">
+                        <rect key="frame" x="0.0" y="0.0" width="${frameWidth}" height="${frameHeight}"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="BootSplashLogo-${fileNameSuffix}" translatesAutoresizingMaskIntoConstraints="NO" id="3lX-Ut-9ad">
+                                <rect key="frame" x="${(frameWidth - logo.width) / 2}" y="${(frameHeight - logo.height) / 2}" width="${logo.width}" height="${logo.height}"/>
+                                <accessibility key="accessibilityConfiguration">
+                                    <accessibilityTraits key="traits" image="YES" notEnabled="YES"/>
+                                </accessibility>
+                            </imageView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="Bcu-3y-fUS"/>
+                        <color key="backgroundColor" name="BootSplashBackground-${fileNameSuffix}"/>
+                        <constraints>
+                            <constraint firstItem="3lX-Ut-9ad" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="Fh9-Fy-1nT"/>
+                            <constraint firstItem="3lX-Ut-9ad" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="nvB-Ic-PnI"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="0.0" y="0.0"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="BootSplashLogo-${fileNameSuffix}" width="${logo.width}" height="${logo.height}"/>
+        <namedColor name="BootSplashBackground-${fileNameSuffix}">
+            <color red="${R}" green="${G}" blue="${B}" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+    </resources>
+</document>
+`;
+};
+
+export const writeIOSAssets = async ({
+  iosOutputPath,
+  props,
+}: {
+  iosOutputPath: string;
+  props: Props;
+}) => {
+  const { background, logo, fileNameSuffix } = props;
+
+  log.title("🍏", "iOS");
+  hfs.ensureDir(iosOutputPath);
+
+  // clean existing assets
+  hfs
+    .readDir(iosOutputPath)
+    .filter((file) => file === "Colors.xcassets" || file === "Images.xcassets")
+    .map((file) => path.join(iosOutputPath, file))
+    .flatMap((dir) =>
+      hfs
+        .readDir(dir)
+        .filter((file) => file.startsWith("BootSplash"))
+        .map((file) => path.join(dir, file)),
+    )
+    .forEach((file) => {
+      hfs.rm(file);
+    });
+
+  const storyboardPath = path.resolve(iosOutputPath, "BootSplash.storyboard");
+
+  await writeXmlLike(storyboardPath, getStoryboard(props), {
+    formatter: "xmlFormatter",
+    whiteSpaceAtEndOfSelfclosingTag: false,
+  });
+
+  const colorsSetPath = path.resolve(
+    iosOutputPath,
+    "Colors.xcassets",
+    `BootSplashBackground-${fileNameSuffix}.colorset`,
+  );
+
+  hfs.ensureDir(colorsSetPath);
+
+  writeJson(path.resolve(colorsSetPath, "Contents.json"), {
+    colors: [
+      {
+        idiom: "universal",
+        color: {
+          "color-space": "srgb",
+          components: {
+            blue: background.rgb.B,
+            green: background.rgb.G,
+            red: background.rgb.R,
+            alpha: "1.000",
+          },
+        },
+      },
+    ],
+    info: {
+      author: "xcode",
+      version: 1,
+    },
+  });
+
+  const logoFileName = `logo-${fileNameSuffix}`;
+
+  const imagesSetPath = path.resolve(
+    iosOutputPath,
+    "Images.xcassets",
+    `BootSplashLogo-${fileNameSuffix}.imageset`,
+  );
+
+  hfs.ensureDir(imagesSetPath);
+
+  writeJson(path.resolve(imagesSetPath, "Contents.json"), {
+    images: [
+      {
+        idiom: "universal",
+        filename: `${logoFileName}.png`,
+        scale: "1x",
+      },
+      {
+        idiom: "universal",
+        filename: `${logoFileName}@2x.png`,
+        scale: "2x",
+      },
+      {
+        idiom: "universal",
+        filename: `${logoFileName}@3x.png`,
+        scale: "3x",
+      },
+    ],
+    info: {
+      author: "xcode",
+      version: 1,
+    },
+  });
+
+  await Promise.all(
+    [
+      { ratio: 1, suffix: "" },
+      { ratio: 2, suffix: "@2x" },
+      { ratio: 3, suffix: "@3x" },
+    ].map(({ ratio, suffix }) => {
+      const filePath = path.resolve(
+        imagesSetPath,
+        `${logoFileName}${suffix}.png`,
+      );
+
+      return logo.image
+        .clone()
+        .resize(logo.width * ratio)
+        .png({ quality: 100 })
+        .toFile(filePath)
+        .then(({ width, height }) => {
+          log.write(filePath, { width, height });
+        });
+    }),
+  );
+};
+
+export const writeWebAssets = async ({
+  htmlTemplatePath,
+  props,
+}: {
+  htmlTemplatePath: string;
+  props: Props;
+}) => {
+  const { background, logo } = props;
+
+  log.title("🌐", "Web");
+
+  const htmlTemplate = readXmlLike(htmlTemplatePath);
+  const { format } = await logo.image.metadata();
+  const prevStyle = htmlTemplate.root.querySelector("#bootsplash-style");
+
+  const base64 = (
+    format === "svg"
+      ? hfs.buffer(logo.path)
+      : await logo.image
+          .clone()
+          .resize(Math.round(logo.width * 2))
+          .png({ quality: 100 })
+          .toBuffer()
+  ).toString("base64");
+
+  const dataURI = `data:image/${format ? "svg+xml" : "png"};base64,${base64}`;
+
+  const nextStyle = parseHtml(dedent`
+    <style id="bootsplash-style">
+      #bootsplash {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: ${background.hex};
+      }
+      #bootsplash-logo {
+        content: url("${dataURI}");
+        width: ${logo.width}px;
+        height: ${logo.height}px;
+      }
+    </style>
+  `);
+
+  if (prevStyle != null) {
+    prevStyle.replaceWith(nextStyle);
+  } else {
+    htmlTemplate.root.querySelector("head")?.appendChild(nextStyle);
+  }
+
+  const prevDiv = htmlTemplate.root.querySelector("#bootsplash");
+
+  const nextDiv = parseHtml(dedent`
+    <div id="bootsplash">
+      <div id="bootsplash-logo"></div>
+    </div>
+  `);
+
+  if (prevDiv != null) {
+    prevDiv.replaceWith(nextDiv);
+  } else {
+    htmlTemplate.root.querySelector("body")?.appendChild(nextDiv);
+  }
+
+  await writeXmlLike(htmlTemplatePath, htmlTemplate.root.toString(), {
+    ...htmlTemplate.formatOptions,
+    formatter: "prettier",
+    useCssPlugin: true,
+  });
+};
+
+export const writeGenericAssets = async ({ props }: { props: Props }) => {
+  const { assetsOutputPath, background, logo } = props;
+
+  log.title("📄", "Assets");
+  hfs.ensureDir(assetsOutputPath);
+
+  writeJson(path.resolve(assetsOutputPath, "manifest.json"), {
+    background: background.hex,
+    logo: {
+      width: logo.width,
+      height: logo.height,
+    },
+  } satisfies Manifest);
+
+  await Promise.all(
+    [
+      { ratio: 1, suffix: "" },
+      { ratio: 1.5, suffix: "@1,5x" },
+      { ratio: 2, suffix: "@2x" },
+      { ratio: 3, suffix: "@3x" },
+      { ratio: 4, suffix: "@4x" },
+    ].map(({ ratio, suffix }) => {
+      const filePath = path.resolve(assetsOutputPath, `logo${suffix}.png`);
+
+      return logo.image
+        .clone()
+        .resize(Math.round(logo.width * ratio))
+        .png({ quality: 100 })
+        .toFile(filePath)
+        .then(({ width, height }) => {
+          log.write(filePath, { width, height });
+        });
+    }),
+  );
+};
+
+export type AddonConfig = {
+  props: Props;
+  androidOutputPath: string | undefined;
+  iosOutputPath: string | undefined;
+  htmlTemplatePath: string | undefined;
+};
+
+export const requireAddon = ({
+  executeAddon,
+  licenseKey,
+}: Props):
+  | {
+      execute: (config: AddonConfig) => Promise<void>;
+
+      writeAndroidAssets: (_: {
+        androidOutputPath: string;
+        props: Props;
+      }) => Promise<void>;
+
+      writeIOSAssets: (_: {
+        iosOutputPath: string;
+        props: Props;
+      }) => Promise<void>;
+
+      writeWebAssets: (_: {
+        htmlTemplatePath: string;
+        props: Props;
+      }) => Promise<void>;
+
+      writeGenericAssets: (_: { props: Props }) => Promise<void>;
+
+      withAndroidColorsNight: (_: {
+        config: Expo.ExportedConfigWithProps;
+        props: Props;
+      }) => Promise<Expo.ExportedConfigWithProps>;
+    }
+  | undefined => {
+  if (licenseKey != null && executeAddon) {
+    try {
+      const addon = require("./addon");
+      return "default" in addon ? addon.default : addon;
+    } catch {
+      return;
+    }
+  }
+};

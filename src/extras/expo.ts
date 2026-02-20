@@ -19,7 +19,7 @@ import {
   writeGenericAssets,
   writeIOSAssets,
   writeWebAssets,
-} from "./generate";
+} from "./utils";
 
 const promisifiedExec = util.promisify(childProcess.exec);
 
