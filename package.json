@@ -87,10 +87,10 @@
     "@types/semver": "^7.7.1",
     "oxlint": "^1.49.0",
     "prettier-plugin-organize-imports": "^4.3.0",
-    "react": "19.2.0",
-    "react-native": "0.83.1",
-    "react-native-builder-bob": "^0.40.17",
-    "semver": "^7.7.3",
+    "react": "19.2.3",
+    "react-native": "0.84.0",
+    "react-native-builder-bob": "^0.40.18",
+    "semver": "^7.7.4",
     "typescript": "^5.9.3"
   },
   "codegenConfig": {

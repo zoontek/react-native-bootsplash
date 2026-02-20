@@ -30,10 +30,10 @@
     "react/rules-of-hooks": "error",
     "react/exhaustive-deps": "error",
 
-    "@typescript-eslint/explicit-function-return-type": "off",
-    "@typescript-eslint/explicit-module-boundary-types": "off",
-    "@typescript-eslint/no-var-requires": "off",
-    "@typescript-eslint/no-require-imports": "off"
+    "typescript/explicit-function-return-type": "off",
+    "typescript/explicit-module-boundary-types": "off",
+    "typescript/no-var-requires": "off",
+    "typescript/no-require-imports": "off"
   },
   "overrides": [
     {

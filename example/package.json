@@ -3,9 +3,11 @@
   "version": "0.0.1",
   "private": true,
   "engines": {
-    "node": ">=20"
+    "node": ">= 22.11.0"
   },
   "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
     "react-native-bootsplash": "node ../cli.js",
     "clean": "rm -rf ./node_modules",
     "preinstall": "cd .. && yarn && yarn build && cd example",
@@ -14,9 +16,9 @@
     "reinstall": "yarn clean && yarn install"
   },
   "dependencies": {
-    "react": "19.2.0",
-    "react-dom": "19.2.0",
-    "react-native": "0.83.1",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-native": "0.84.0",
     "react-native-bootsplash": "link:../",
     "react-native-edge-to-edge": "1.7.0",
     "react-native-web": "0.21.2"
@@ -25,9 +27,9 @@
     "@babel/core": "^7.25.2",
     "@babel/preset-env": "^7.25.3",
     "@babel/runtime": "^7.25.0",
-    "@react-native-community/cli": "20.0.0",
-    "@react-native-community/cli-platform-android": "20.0.0",
-    "@react-native-community/cli-platform-ios": "20.0.0",
+    "@react-native-community/cli": "20.1.0",
+    "@react-native-community/cli-platform-android": "20.1.0",
+    "@react-native-community/cli-platform-ios": "20.1.0",
     "@react-native/babel-preset": "0.83.1",
     "@react-native/metro-config": "0.83.1",
     "@types/react": "^19.2.0",
