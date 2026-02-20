@@ -1,7 +1,6 @@
 import * as Expo from "@expo/config-plugins";
 import ExpoPlist from "@expo/plist";
 import glob from "fast-glob";
-import findUp from "find-up";
 import fs from "fs";
 import { HTMLElement, parse as parseHtml } from "node-html-parser";
 import path from "path";
@@ -9,6 +8,7 @@ import pc from "picocolors";
 import { dedent } from "ts-dedent";
 import formatXml from "xml-formatter";
 import {
+  findPackageUp,
   hfs,
   log,
   readXmlLike,
@@ -23,7 +23,7 @@ import {
 } from "./utils";
 
 const cwd = process.env.INIT_CWD ?? process.env.PWD ?? process.cwd();
-const packagePath = findUp.sync("package.json", { cwd });
+const packagePath = findPackageUp(cwd);
 
 if (!packagePath) {
   log.error("We couldn't find a package.json in your project.");
