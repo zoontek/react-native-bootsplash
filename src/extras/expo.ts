@@ -13,7 +13,7 @@ import {
   log,
   PACKAGE_NAME,
   requireAddon,
-  setIsExpo,
+  setLoggerMode,
   transformProps,
   writeAndroidAssets,
   writeGenericAssets,
@@ -326,7 +326,7 @@ export const withBootSplash = Expo.createRunOncePlugin<
 >((expoConfig, baseProps) => {
   const { platforms = [], sdkVersion = "0.1.0" } = expoConfig;
 
-  setIsExpo(true);
+  setLoggerMode({ type: "plugin" });
 
   if (semver.lt(sdkVersion, "54.0.0")) {
     log.error("Requires Expo 54.0.0 (or higher)");

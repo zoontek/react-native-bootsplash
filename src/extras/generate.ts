@@ -20,35 +20,41 @@ import type { Manifest } from "..";
 
 export const PACKAGE_NAME = "react-native-bootsplash";
 
-let isExpo = false;
+type LoggerMode = { type: "plugin" } | { type: "cli"; workingPath: string };
+let loggerMode: LoggerMode = { type: "plugin" };
 
-export const setIsExpo = (value: boolean) => {
-  isExpo = value;
+export const setLoggerMode = (value: LoggerMode) => {
+  loggerMode = value;
 };
-
-const workingPath = process.env.INIT_CWD ?? process.env.PWD ?? process.cwd();
-const packagePath = findUp.sync("package.json", { cwd: workingPath });
 
 export const log = {
   error: (text: string) => {
     console.log(
-      pc.red(isExpo ? `❌ [${PACKAGE_NAME}] ${text}` : `❌  ${text}`),
+      pc.red(
+        loggerMode.type === "plugin"
+          ? `❌ [${PACKAGE_NAME}] ${text}`
+          : `❌  ${text}`,
+      ),
     );
   },
   title: (emoji: string, text: string) => {
-    if (!isExpo) {
+    if (loggerMode.type === "cli") {
       console.log(`\n${emoji}  ${pc.underline(pc.bold(text))}`);
     }
   },
   warn: (text: string) => {
     console.log(
-      pc.yellow(isExpo ? `⚠️  [${PACKAGE_NAME}] ${text}` : `⚠️  ${text}`),
+      pc.yellow(
+        loggerMode.type === "plugin"
+          ? `⚠️  [${PACKAGE_NAME}] ${text}`
+          : `⚠️  ${text}`,
+      ),
     );
   },
   write: (filePath: string, dimensions?: { width: number; height: number }) => {
-    if (!isExpo) {
+    if (loggerMode.type === "cli") {
       console.log(
-        `    ${path.relative(workingPath, filePath)}` +
+        `    ${path.relative(loggerMode.workingPath, filePath)}` +
           (dimensions != null
             ? ` (${dimensions.width}x${dimensions.height})`
             : ""),
@@ -57,11 +63,15 @@ export const log = {
   },
 };
 
+const workingPath = process.env.INIT_CWD ?? process.env.PWD ?? process.cwd();
+const packagePath = findUp.sync("package.json", { cwd: workingPath });
+
 if (!packagePath) {
   log.error("We couldn't find a package.json in your project.");
   process.exit(1);
 }
 
+setLoggerMode({ type: "cli", workingPath });
 const projectRoot = path.dirname(packagePath);
 
 const parseColor = (value: string) => {
@@ -466,11 +476,13 @@ export const transformProps = async (
     );
   }
 
+  const isPluginLoggerMode = loggerMode.type === "plugin";
+
   const optionNames = {
-    brand: isExpo ? "brand" : "--brand",
-    darkBackground: isExpo ? "darkBackground" : "--dark-background",
-    darkLogo: isExpo ? "darkLogo" : "--dark-logo",
-    darkBrand: isExpo ? "darkBrand" : "--dark-brand",
+    brand: isPluginLoggerMode ? "brand" : "--brand",
+    darkBackground: isPluginLoggerMode ? "darkBackground" : "--dark-background",
+    darkLogo: isPluginLoggerMode ? "darkLogo" : "--dark-logo",
+    darkBrand: isPluginLoggerMode ? "darkBrand" : "--dark-brand",
   };
 
   if (licenseKey == null && executeAddon) {

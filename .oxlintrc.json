@@ -37,7 +37,7 @@
   },
   "overrides": [
     {
-      "files": ["example/**", "src/extras/generate.ts", "cli.js"],
+      "files": ["example/**", "src/extras/**", "cli.js"],
       "rules": {
         "no-console": "off"
       }
