@@ -81,7 +81,7 @@ program
       brandWidth: Number.parseInt(brandWidth, 10),
     };
 
-    const { generate } = require("./dist/commonjs/generate");
+    const { generate } = require("./dist/commonjs/extras/generate");
 
     generate({ logo, ...args }).catch((error) => {
       console.error(error);

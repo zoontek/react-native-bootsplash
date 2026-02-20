@@ -16,7 +16,7 @@ import semver from "semver";
 import sharp, { type Sharp } from "sharp";
 import { dedent } from "ts-dedent";
 import formatXml, { type XMLFormatterOptions } from "xml-formatter";
-import type { Manifest } from ".";
+import type { Manifest } from "..";
 
 export const PACKAGE_NAME = "react-native-bootsplash";
 
@@ -25,6 +25,9 @@ let isExpo = false;
 export const setIsExpo = (value: boolean) => {
   isExpo = value;
 };
+
+const workingPath = process.env.INIT_CWD ?? process.env.PWD ?? process.cwd();
+const packagePath = findUp.sync("package.json", { cwd: workingPath });
 
 export const log = {
   error: (text: string) => {
@@ -53,9 +56,6 @@ export const log = {
     }
   },
 };
-
-const workingPath = process.env.INIT_CWD ?? process.env.PWD ?? process.cwd();
-const packagePath = findUp.sync("package.json", { cwd: workingPath });
 
 if (!packagePath) {
   log.error("We couldn't find a package.json in your project.");

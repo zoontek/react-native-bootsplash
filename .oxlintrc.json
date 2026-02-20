@@ -12,9 +12,9 @@
   },
   "rules": {
     "complexity": "off",
-    "no-await-in-loop": "off",
     "no-empty-function": "off",
     "no-eq-null": "off",
+    "no-shadow": "off",
     "no-undefined": "off",
 
     "no-unused-vars": [
@@ -27,22 +27,17 @@
 
     "react/jsx-filename-extension": "off",
     "react/react-in-jsx-scope": "off",
+    "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "error",
 
-    "@typescript-eslint/ban-ts-comment": "off",
-    "@typescript-eslint/ban-types": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
-    "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/no-require-imports": "off",
     "@typescript-eslint/no-var-requires": "off",
-    "@typescript-eslint/no-wrapper-object-types": "off",
-
-    "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "error"
+    "@typescript-eslint/no-require-imports": "off"
   },
   "overrides": [
     {
-      "files": ["example/**", "src/generate.ts", "cli.js"],
+      "files": ["example/**", "src/extras/generate.ts", "cli.js"],
       "rules": {
         "no-console": "off"
       }

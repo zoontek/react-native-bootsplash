@@ -17,11 +17,10 @@
     "!android/.cxx",
     "!android/.gradle",
     "!ios/build",
-    "!src/addon",
+    "!src/extras/addon",
     "RNBootSplash.podspec",
-    "app.plugin.js",
     "cli.js",
-    "react-native.config.js"
+    "app.plugin.js"
   ],
   "bin": "./cli.js",
   "repository": {
@@ -86,7 +85,7 @@
     "@types/node": "^20.19.31",
     "@types/react": "^19.2.0",
     "@types/semver": "^7.7.1",
-    "oxlint": "^1.43.0",
+    "oxlint": "^1.49.0",
     "prettier-plugin-organize-imports": "^4.3.0",
     "react": "19.2.0",
     "react-native": "0.83.1",
