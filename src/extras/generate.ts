@@ -22,15 +22,16 @@ import {
   writeXmlLike,
 } from "./utils";
 
-const workingPath = process.env.INIT_CWD ?? process.env.PWD ?? process.cwd();
-const packagePath = findUp.sync("package.json", { cwd: workingPath });
+const cwd = process.env.INIT_CWD ?? process.env.PWD ?? process.cwd();
+const packagePath = findUp.sync("package.json", { cwd });
 
 if (!packagePath) {
   log.error("We couldn't find a package.json in your project.");
   process.exit(1);
 }
 
-setLoggerMode({ type: "cli", workingPath });
+setLoggerMode({ type: "cli", cwd });
+
 const projectRoot = path.dirname(packagePath);
 
 const getAndroidOutputPath = ({ flavor }: { flavor: string }) => {
@@ -56,7 +57,7 @@ const getAndroidOutputPath = ({ flavor }: { flavor: string }) => {
 
   log.warn(
     `No ${path.relative(
-      workingPath,
+      cwd,
       androidOutputPath,
     )} directory found. Skipping Android assets generation…`,
   );
@@ -103,14 +104,14 @@ const getIOSOutputPath = () => {
 
   log.warn(
     `No ${path.relative(
-      workingPath,
+      cwd,
       iosOutputPath,
     )} directory found. Skipping iOS assets generation…`,
   );
 };
 
 const getHtmlTemplatePath = ({ html }: { html: string }) => {
-  const htmlTemplatePath = path.resolve(workingPath, html);
+  const htmlTemplatePath = path.resolve(cwd, html);
 
   if (hfs.exists(htmlTemplatePath)) {
     return htmlTemplatePath;
@@ -118,7 +119,7 @@ const getHtmlTemplatePath = ({ html }: { html: string }) => {
 
   log.warn(
     `No ${path.relative(
-      workingPath,
+      cwd,
       htmlTemplatePath,
     )} found. Skipping HTML + CSS generation…`,
   );
@@ -132,10 +133,10 @@ const getInfoPlistPath = ({
   plist: string | undefined;
 }) => {
   if (plist != null) {
-    const infoPlistPath = path.resolve(workingPath, plist);
+    const infoPlistPath = path.resolve(cwd, plist);
 
     if (!hfs.exists(infoPlistPath)) {
-      return log.warn(`No ${path.relative(workingPath, infoPlistPath)} found`);
+      return log.warn(`No ${path.relative(cwd, infoPlistPath)} found`);
     }
 
     return infoPlistPath;
@@ -167,7 +168,7 @@ export const generate = async ({
   darkLogo?: string;
   darkBrand?: string;
 }) => {
-  const props = await transformProps(workingPath, rawProps);
+  const props = await transformProps(cwd, rawProps);
   const addon = requireAddon(props);
 
   const { background, brand } = props;

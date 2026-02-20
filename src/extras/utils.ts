@@ -17,7 +17,7 @@ import type { Manifest } from "..";
 
 export const PACKAGE_NAME = "react-native-bootsplash";
 
-type LoggerMode = { type: "plugin" } | { type: "cli"; workingPath: string };
+type LoggerMode = { type: "plugin" } | { type: "cli"; cwd: string };
 let loggerMode: LoggerMode = { type: "plugin" };
 
 export const setLoggerMode = (value: LoggerMode) => {
@@ -51,7 +51,7 @@ export const log = {
   write: (filePath: string, dimensions?: { width: number; height: number }) => {
     if (loggerMode.type === "cli") {
       console.log(
-        `    ${path.relative(loggerMode.workingPath, filePath)}` +
+        `    ${path.relative(loggerMode.cwd, filePath)}` +
           (dimensions != null
             ? ` (${dimensions.width}x${dimensions.height})`
             : ""),
