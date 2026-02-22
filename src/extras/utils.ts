@@ -26,17 +26,17 @@ export type BootSplashPluginConfig = {
    * Background color (in hexadecimal format)
    * @default #fff
    */
-  background: string;
+  background?: string;
   /**
    * Logo width at @1x (in dp - we recommend approximately ~100)
    * @default 100
    */
-  logoWidth: number;
+  logoWidth?: number;
   /**
    * Assets output directory path
    * @default assets/bootsplash
    */
-  assetsOutput: string;
+  assetsOutput?: string;
   /**
    * License key to enable brand and dark mode assets generation
    */
@@ -49,7 +49,7 @@ export type BootSplashPluginConfig = {
    * Brand width at @1x (in dp - we recommend approximately ~80)
    * @default 80
    */
-  brandWidth: number;
+  brandWidth?: number;
   /**
    * [dark mode] Background color (in hexadecimal format)
    */
@@ -119,7 +119,6 @@ export const log = {
 export const hfs = {
   buffer: (path: string) => fs.readFileSync(path),
   exists: (path: string) => fs.existsSync(path),
-  isDir: (path: string) => fs.lstatSync(path).isDirectory(),
   json: (path: string) => JSON.parse(fs.readFileSync(path, "utf-8")) as unknown,
   readDir: (path: string) => fs.readdirSync(path, "utf-8"),
   realPath: (path: string) => fs.realpathSync(path, "utf-8"),
@@ -286,24 +285,34 @@ export const transformProps = async (
     process.exit(1);
   }
 
-  const assetsOutputPath = path.resolve(rootPath, rawProps.assetsOutput);
-  const logoPath = path.resolve(rootPath, rawProps.logo);
+  const withDefaults = {
+    assetsOutput: "assets/bootsplash",
+    background: "#fff",
+    brandWidth: 80,
+    logoWidth: 100,
+    ...rawProps,
+  };
+
+  const assetsOutputPath = path.resolve(rootPath, withDefaults.assetsOutput);
+  const logoPath = path.resolve(rootPath, withDefaults.logo);
 
   const darkLogoPath =
-    rawProps.darkLogo != null
-      ? path.resolve(rootPath, rawProps.darkLogo)
+    withDefaults.darkLogo != null
+      ? path.resolve(rootPath, withDefaults.darkLogo)
       : undefined;
 
   const brandPath =
-    rawProps.brand != null ? path.resolve(rootPath, rawProps.brand) : undefined;
-
-  const darkBrandPath =
-    rawProps.darkBrand != null
-      ? path.resolve(rootPath, rawProps.darkBrand)
+    withDefaults.brand != null
+      ? path.resolve(rootPath, withDefaults.brand)
       : undefined;
 
-  const logoWidth = rawProps.logoWidth - (rawProps.logoWidth % 2);
-  const brandWidth = rawProps.brandWidth - (rawProps.brandWidth % 2);
+  const darkBrandPath =
+    withDefaults.darkBrand != null
+      ? path.resolve(rootPath, withDefaults.darkBrand)
+      : undefined;
+
+  const logoWidth = withDefaults.logoWidth - (withDefaults.logoWidth % 2);
+  const brandWidth = withDefaults.brandWidth - (withDefaults.brandWidth % 2);
 
   const [logo, darkLogo, brand, darkBrand] = await Promise.all([
     toAsset(logoPath, logoWidth),
@@ -312,11 +321,11 @@ export const transformProps = async (
     darkBrandPath != null ? toAsset(darkBrandPath, brandWidth) : undefined,
   ]);
 
-  const background = parseColor(rawProps.background);
+  const background = parseColor(withDefaults.background);
 
   const darkBackground =
-    rawProps.darkBackground != null
-      ? parseColor(rawProps.darkBackground)
+    withDefaults.darkBackground != null
+      ? parseColor(withDefaults.darkBackground)
       : undefined;
 
   const executeAddon =
@@ -362,12 +371,12 @@ export const transformProps = async (
     process.exit(1);
   }
 
-  if (logoWidth < rawProps.logoWidth) {
+  if (logoWidth < withDefaults.logoWidth) {
     log.warn(
       `Logo width must be a multiple of 2. It has been rounded to ${logoWidth}dp.`,
     );
   }
-  if (brandWidth < rawProps.brandWidth) {
+  if (brandWidth < withDefaults.brandWidth) {
     log.warn(
       `Brand width must be a multiple of 2. It has been rounded to ${brandWidth}dp.`,
     );

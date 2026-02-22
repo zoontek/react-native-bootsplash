@@ -321,7 +321,7 @@ const withGenericAssets: ConfigPlugin = (expoConfig, rawProps) =>
 
 export const withBootSplash = Expo.createRunOncePlugin<
   (Partial<BootSplashPluginConfig> & { logo: string }) | undefined
->((expoConfig, baseProps) => {
+>((expoConfig, rawProps) => {
   const { platforms = [], sdkVersion = "0.1.0" } = expoConfig;
 
   setLoggerMode({ type: "plugin" });
@@ -331,18 +331,10 @@ export const withBootSplash = Expo.createRunOncePlugin<
     process.exit(1);
   }
 
-  if (!baseProps?.logo) {
+  if (!rawProps?.logo) {
     log.error("Missing required parameter 'logo'");
     process.exit(1);
   }
-
-  const rawProps: BootSplashPluginConfig = {
-    assetsOutput: "assets/bootsplash",
-    background: "#fff",
-    brandWidth: 80,
-    logoWidth: 100,
-    ...baseProps,
-  };
 
   const plugins: ConfigPlugin[] = [withoutExpoSplashScreen, withGenericAssets];
 
