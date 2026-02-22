@@ -185,7 +185,6 @@ import bootsplash from "react-native-bootsplash/expo"; // use `require` with app
 export default ({ config }: ConfigContext): ExpoConfig => ({
   // …
   platforms: ["android", "ios", "web"], // must be explicit
-
   plugins: [
     bootsplash({
       logo: "./assets/logo.png",
@@ -207,7 +206,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   "expo": {
     // …
     "platforms": ["android", "ios", "web"], // must be explicit
-
     "plugins": [
       [
         "react-native-bootsplash",
