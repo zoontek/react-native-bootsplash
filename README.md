@@ -155,12 +155,9 @@ $ npm uninstall expo-splash-screen
 $ yarn remove expo-splash-screen
 ```
 
-2. Add the plugin in your `app.json`:
-
 ```diff
 {
   "expo": {
-+   "platforms": ["android", "ios", "web"], // must be explicit
     "plugins": [
 -     [
 -       "expo-splash-screen",
@@ -171,19 +168,62 @@ $ yarn remove expo-splash-screen
 -         "backgroundColor": "#ffffff"
 -       }
 -     ],
-+     [
-+       "react-native-bootsplash",
-+       {
-+         "logo": "./assets/logo.png",
-+         "logoWidth": 100,
-+         "background": "#f5fcff"
-+         // …
-+       }
-+     ]
     ]
   }
 }
 ```
+
+2. Add the plugin in your app config:
+
+<details open>
+<summary><strong>With dynamic configuration (app.config.js, app.config.ts)</strong></summary>
+
+```ts
+import type { ConfigContext, ExpoConfig } from "expo/config";
+import bootsplash from "react-native-bootsplash/expo"; // use `require` with app.config.js
+
+export default ({ config }: ConfigContext): ExpoConfig => ({
+  // …
+  platforms: ["android", "ios", "web"], // must be explicit
+
+  plugins: [
+    bootsplash({
+      logo: "./assets/logo.png",
+      logoWidth: 100,
+      background: "#f5fcff",
+      // …
+    }),
+  ],
+});
+```
+
+</details>
+
+<details>
+<summary><strong>With static configuration (app.json)</strong></summary>
+
+```jsonc
+{
+  "expo": {
+    // …
+    "platforms": ["android", "ios", "web"], // must be explicit
+
+    "plugins": [
+      [
+        "react-native-bootsplash",
+        {
+          "logo": "./assets/logo.png",
+          "logoWidth": 100,
+          "background": "#f5fcff",
+          // …
+        },
+      ],
+    ],
+  },
+}
+```
+
+</details>
 
 _📌 The available plugins options are:_
 
