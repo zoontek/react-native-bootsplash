@@ -180,7 +180,7 @@ $ yarn remove expo-splash-screen
 
 ```ts
 import type { ConfigContext, ExpoConfig } from "expo/config";
-import bootsplash from "react-native-bootsplash/expo"; // use `require` with app.config.js
+import bootsplash from "react-native-bootsplash/expo"; // use `require` in app.config.js
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   // …
