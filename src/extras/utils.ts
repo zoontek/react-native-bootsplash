@@ -17,6 +17,61 @@ import type { Manifest } from "..";
 
 export const PACKAGE_NAME = "react-native-bootsplash";
 
+export type BootSplashPluginConfig = {
+  /**
+   * Logo file path (PNG or SVG)
+   */
+  logo: string;
+  /**
+   * Background color (in hexadecimal format)
+   * @default #fff
+   */
+  background: string;
+  /**
+   * Logo width at @1x (in dp - we recommend approximately ~100)
+   * @default 100
+   */
+  logoWidth: number;
+  /**
+   * Assets output directory path
+   * @default assets/bootsplash
+   */
+  assetsOutput: string;
+  /**
+   * License key to enable brand and dark mode assets generation
+   */
+  licenseKey?: string;
+  /**
+   * Brand file path (PNG or SVG)
+   */
+  brand?: string;
+  /**
+   * Brand width at @1x (in dp - we recommend approximately ~80)
+   * @default 80
+   */
+  brandWidth: number;
+  /**
+   * [dark mode] Background color (in hexadecimal format)
+   */
+  darkBackground?: string;
+  /**
+   * [dark mode] Logo file path (PNG or SVG)
+   */
+  darkLogo?: string;
+  /**
+   * [dark mode] Brand file path (PNG or SVG)
+   */
+  darkBrand?: string;
+
+  android?: {
+    /**
+     * Enforce system bars style
+     * @default `undefined`
+     */
+    darkContentBarsStyle?: boolean;
+  };
+};
+
 type LoggerMode = { type: "plugin" } | { type: "cli"; cwd: string };
 let loggerMode: LoggerMode = { type: "plugin" };
 
@@ -197,24 +252,6 @@ const toAsset = async (filePath: string, width: number): Promise<Asset> => {
     hash,
     height,
     width,
-  };
-};
-
-export type BootSplashPluginConfig = {
-  logo: string;
-  background: string;
-  logoWidth: number;
-  assetsOutput: string;
-
-  licenseKey?: string;
-  brand?: string;
-  brandWidth: number;
-  darkBackground?: string;
-  darkLogo?: string;
-  darkBrand?: string;
-
-  android?: {
-    darkContentBarsStyle?: boolean;
   };
 };
 
