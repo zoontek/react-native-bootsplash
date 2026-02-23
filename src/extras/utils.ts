@@ -24,7 +24,7 @@ export type BootSplashPluginConfig = {
   logo: string;
   /**
    * Background color (in hexadecimal format)
-   * @default #fff
+   * @default "#fff"
    */
   background?: string;
   /**
@@ -34,7 +34,7 @@ export type BootSplashPluginConfig = {
   logoWidth?: number;
   /**
    * Assets output directory path
-   * @default assets/bootsplash
+   * @default "assets/bootsplash"
    */
   assetsOutput?: string;
   /**
@@ -66,7 +66,6 @@ export type BootSplashPluginConfig = {
   android?: {
     /**
      * Enforce system bars style
-     * @default `undefined`
      */
     darkContentBarsStyle?: boolean;
   };
