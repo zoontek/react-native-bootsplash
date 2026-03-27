@@ -109,40 +109,6 @@ yarn react-native-bootsplash generate svgs/light-logo.svg \
   --dark-brand=svgs/dark-brand.svg
 ```
 
-This tool relies on the naming conventions that are used in the `/example` project and will therefore create / update the following files:
-
-```bash
-# Without license key
-android/app/src/main/res/drawable-mdpi/bootsplash_logo.png
-android/app/src/main/res/drawable-hdpi/bootsplash_logo.png
-android/app/src/main/res/drawable-xhdpi/bootsplash_logo.png
-android/app/src/main/res/drawable-xxhdpi/bootsplash_logo.png
-android/app/src/main/res/drawable-xxxhdpi/bootsplash_logo.png
-android/app/src/main/AndroidManifest.xml
-android/app/src/main/res/values/colors.xml
-android/app/src/main/res/values/styles.xml
-
-ios/YourApp/BootSplash.storyboard
-ios/YourApp/Colors.xcassets/BootSplashBackground-<hash>.colorset/Contents.json
-ios/YourApp/Images.xcassets/BootSplashLogo-<hash>.imageset/Contents.json
-ios/YourApp/Images.xcassets/BootSplashLogo-<hash>.imageset/logo-<hash>.png
-ios/YourApp/Images.xcassets/BootSplashLogo-<hash>.imageset/logo-<hash>@2x.png
-ios/YourApp/Images.xcassets/BootSplashLogo-<hash>.imageset/logo-<hash>@3x.png
-ios/YourApp/Info.plist
-ios/YourApp.xcodeproj/project.pbxproj
-
-public/index.html
-
-assets/bootsplash/manifest.json
-assets/bootsplash/logo.png
-assets/bootsplash/logo@1,5x.png
-assets/bootsplash/logo@2x.png
-assets/bootsplash/logo@3x.png
-assets/bootsplash/logo@4x.png
-
-# + Over 40 files with license key 🔑 (brand images, dark mode versions…)
-```
-
 ![](./docs/cli_generator.png)
 
 ### With Expo
@@ -173,7 +139,7 @@ $ yarn remove expo-splash-screen
 }
 ```
 
-2. Add the plugin in your app config:
+2. Add the plugin in your app config (_if you have a license key, pass it via the `BOOTSPLASH_LICENSE_KEY` environment variable_):
 
 <details open>
 <summary><strong>Dynamic configuration (app.config.js, app.config.ts)</strong></summary>
@@ -237,7 +203,6 @@ type PluginOptions = {
   assetsOutput?: string; // Assets output directory path (default: "assets/bootsplash")
 
   // Addon options
-  licenseKey?: string; // License key to enable brand and dark mode assets generation
   brand?: string; // Brand file path (PNG or SVG)
   brandWidth?: number; // Brand width at @1x (in dp - we recommend approximately ~80) (default: 80)
   darkBackground?: string; // [dark mode] Background color (in hexadecimal format)

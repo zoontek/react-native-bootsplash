@@ -39,6 +39,7 @@ export type BootSplashPluginConfig = {
   assetsOutput?: string;
   /**
    * License key to enable brand and dark mode assets generation
+   * @deprecated Passing `licenseKey` directly in plugin config is deprecated as it could be leaked by `expo-constants`. Use the `BOOTSPLASH_LICENSE_KEY` environment variable instead.
    */
   licenseKey?: string;
   /**

@@ -362,9 +362,22 @@ export const withBootSplash = Expo.createRunOncePlugin<
     plugins.push(withWebAssets);
   }
 
+  const licenseKey = process.env["BOOTSPLASH_LICENSE_KEY"];
+
+  if ("licenseKey" in rawProps) {
+    log.warn(
+      "Passing licenseKey directly in plugin config is deprecated as it could be leaked by expo-constants. Use the BOOTSPLASH_LICENSE_KEY environment variable instead.",
+    );
+  }
+
+  const rawPropsWithEnvVariable = {
+    ...rawProps,
+    ...(licenseKey != null && { licenseKey }),
+  };
+
   return Expo.withPlugins(
     expoConfig,
-    plugins.map((plugin) => [plugin, rawProps]),
+    plugins.map((plugin) => [plugin, rawPropsWithEnvVariable]),
   );
 }, PACKAGE_NAME);
 
