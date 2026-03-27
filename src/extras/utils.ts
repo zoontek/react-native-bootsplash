@@ -79,29 +79,38 @@ export const setLoggerMode = (value: LoggerMode) => {
   loggerMode = value;
 };
 
+const warningMessages = new Set<string>();
+const errorMessages = new Set<string>();
+
 export const log = {
+  warn: (text: string) => {
+    if (loggerMode.type === "cli") {
+      console.log(pc.yellow(`⚠️  ${text}`));
+    } else {
+      const message = `⚠️  [${PACKAGE_NAME}] ${text}`;
+
+      if (!warningMessages.has(message)) {
+        warningMessages.add(message);
+        console.log(pc.yellow(message));
+      }
+    }
+  },
   error: (text: string) => {
-    console.log(
-      pc.red(
-        loggerMode.type === "plugin"
-          ? `❌ [${PACKAGE_NAME}] ${text}`
-          : `❌  ${text}`,
-      ),
-    );
+    if (loggerMode.type === "cli") {
+      console.log(pc.red(`❌  ${text}`));
+    } else {
+      const message = `❌ [${PACKAGE_NAME}] ${text}`;
+
+      if (!errorMessages.has(message)) {
+        errorMessages.add(message);
+        console.log(pc.red(message));
+      }
+    }
   },
   title: (emoji: string, text: string) => {
     if (loggerMode.type === "cli") {
       console.log(`\n${emoji}  ${pc.underline(pc.bold(text))}`);
     }
-  },
-  warn: (text: string) => {
-    console.log(
-      pc.yellow(
-        loggerMode.type === "plugin"
-          ? `⚠️  [${PACKAGE_NAME}] ${text}`
-          : `⚠️  ${text}`,
-      ),
-    );
   },
   write: (filePath: string, dimensions?: { width: number; height: number }) => {
     if (loggerMode.type === "cli") {
