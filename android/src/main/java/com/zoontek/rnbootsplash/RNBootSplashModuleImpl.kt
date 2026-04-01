@@ -95,7 +95,7 @@ object RNBootSplashModuleImpl {
       activity
         .splashScreen
         .setOnExitAnimationListener { view ->
-          view.remove() // Remove it immediately, without animation
+          runCatching { view.remove() } // Remove it immediately, without animation
 
           activity
             .splashScreen
