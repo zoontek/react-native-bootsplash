@@ -174,7 +174,7 @@ object RNBootSplashModuleImpl {
 
     mSplashView?.let { view ->
       view.animate().cancel()
-      (view.parent as? ViewGroup)?.removeView(view)
+      view.remove(false)
       mSplashView = null
     }
   }

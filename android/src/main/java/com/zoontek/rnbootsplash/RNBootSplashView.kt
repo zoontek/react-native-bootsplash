@@ -27,7 +27,7 @@ class RNBootSplashView(activity: Activity, @StyleRes themeResId: Int) :
     decorView?.addView(this)
   }
 
-  fun remove(fade: Boolean, callback: () -> Unit) {
+  fun remove(fade: Boolean, callback: () -> Unit = {}) {
     val parent = parent as? ViewGroup
 
     if (parent == null) {
