@@ -13,8 +13,6 @@ class RNBootSplashView(activity: Activity, @StyleRes themeResId: Int) :
   View(ContextThemeWrapper(activity, themeResId)) {
 
   init {
-    val decorView = activity.window.decorView as ViewGroup
-
     setBackgroundResource(
       if (RNBootSplashModuleImpl.isSamsungOneUI4) R.drawable.compat_splash_screen_oneui_4
       else R.drawable.compat_splash_screen
@@ -25,7 +23,8 @@ class RNBootSplashView(activity: Activity, @StyleRes themeResId: Int) :
       ViewGroup.LayoutParams.MATCH_PARENT
     )
 
-    decorView.addView(this)
+    val decorView = activity.window.decorView as? ViewGroup
+    decorView?.addView(this)
   }
 
   fun remove(fade: Boolean, callback: () -> Unit) {
