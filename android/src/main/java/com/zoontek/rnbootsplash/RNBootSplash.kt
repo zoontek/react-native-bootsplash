@@ -1,7 +1,6 @@
 package com.zoontek.rnbootsplash
 
 import android.app.Activity
-
 import androidx.annotation.StyleRes
 
 object RNBootSplash {

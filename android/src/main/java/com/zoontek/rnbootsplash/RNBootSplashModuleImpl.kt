@@ -6,22 +6,19 @@ import android.app.Application
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewConfiguration
 import android.view.ViewTreeObserver.OnPreDrawListener
-
 import androidx.annotation.StyleRes
-
 import com.facebook.common.logging.FLog
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.UiThreadUtil
 import com.facebook.react.common.ReactConstants
 import com.facebook.react.uimanager.PixelUtil
-
-import java.util.Timer
-import java.util.TimerTask
 
 object RNBootSplashModuleImpl {
   const val NAME = "RNBootSplash"
@@ -33,12 +30,9 @@ object RNBootSplashModuleImpl {
     VISIBLE,
   }
 
+  @StyleRes private var mThemeResId = -1
   private val mPromiseQueue = RNBootSplashQueue<Promise>()
   private var mStatus = Status.HIDDEN
-
-  @StyleRes
-  private var mThemeResId = -1
-
   private var mInitialDialog: RNBootSplashDialog? = null
   private var mFadeOutDialog: RNBootSplashDialog? = null
 
@@ -101,7 +95,7 @@ object RNBootSplashModuleImpl {
         splashScreen.clearOnExitAnimationListener()
       }
 
-      // Mitigates race where splash exit listener may fire after activity stop by clearing it early (not a full fix)
+      // Mitigates race where splash exit listener may fire after activity stop (not a full fix)
       if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.TIRAMISU) {
         val application = mainActivity.application
 
@@ -126,36 +120,25 @@ object RNBootSplashModuleImpl {
     }
 
     mInitialDialog = RNBootSplashDialog(mainActivity, mThemeResId, false)
-
-    UiThreadUtil.runOnUiThread {
-      mInitialDialog?.show { mStatus = Status.VISIBLE }
-    }
+    UiThreadUtil.runOnUiThread { mInitialDialog?.show { mStatus = Status.VISIBLE } }
   }
 
   private fun clearPromiseQueue() {
-    while (!mPromiseQueue.isEmpty()) {
-      mPromiseQueue.shift()?.resolve(true)
-    }
+    generateSequence { mPromiseQueue.shift() }.forEach { it.resolve(true) }
   }
 
   private fun hideAndClearPromiseQueue(reactContext: ReactApplicationContext, fade: Boolean) {
     UiThreadUtil.runOnUiThread {
       val activity = reactContext.currentActivity
 
-      if (mStatus == Status.INITIALIZING
-        || activity == null
-        || activity.isFinishing
-        || activity.isDestroyed
+      if (
+        mStatus == Status.INITIALIZING ||
+          activity == null ||
+          activity.isFinishing ||
+          activity.isDestroyed
       ) {
-        val timer = Timer()
-
-        timer.schedule(object : TimerTask() {
-          override fun run() {
-            timer.cancel()
-            hideAndClearPromiseQueue(reactContext, fade)
-          }
-        }, 100)
-
+        Handler(Looper.getMainLooper())
+          .postDelayed({ hideAndClearPromiseQueue(reactContext, fade) }, 100)
         return@runOnUiThread
       }
 
@@ -222,15 +205,14 @@ object RNBootSplashModuleImpl {
 
   fun getConstants(reactContext: ReactApplicationContext): Map<String, Any> {
     val resources = reactContext.resources
-    val constants = HashMap<String, Any>()
+    val uiMode = reactContext.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
 
-    val uiMode =
-      reactContext.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-
-    @SuppressLint("InternalInsetResource", "DiscouragedApi") val statusBarHeightResId =
+    @SuppressLint("InternalInsetResource", "DiscouragedApi")
+    val statusBarHeightResId =
       resources.getIdentifier("status_bar_height", "dimen", "android")
 
-    @SuppressLint("InternalInsetResource", "DiscouragedApi") val navigationBarHeightResId =
+    @SuppressLint("InternalInsetResource", "DiscouragedApi")
+    val navigationBarHeightResId =
       resources.getIdentifier("navigation_bar_height", "dimen", "android")
 
     val statusBarHeight = when {
@@ -245,12 +227,12 @@ object RNBootSplashModuleImpl {
       else -> 0f
     }
 
-    constants["darkModeEnabled"] = uiMode == Configuration.UI_MODE_NIGHT_YES
-    constants["logoSizeRatio"] = if (isSamsungOneUI4()) 0.5 else 1.0
-    constants["navigationBarHeight"] = navigationBarHeight
-    constants["statusBarHeight"] = statusBarHeight
-
-    return constants
+    return buildMap {
+      put("darkModeEnabled", uiMode == Configuration.UI_MODE_NIGHT_YES)
+      put("logoSizeRatio", if (isSamsungOneUI4()) 0.5 else 1.0)
+      put("navigationBarHeight", navigationBarHeight)
+      put("statusBarHeight", statusBarHeight)
+    }
   }
 
   fun hide(reactContext: ReactApplicationContext, fade: Boolean, promise: Promise) {

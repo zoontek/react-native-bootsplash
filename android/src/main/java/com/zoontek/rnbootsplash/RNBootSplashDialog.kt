@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.Dialog
 import android.os.Bundle
 import android.view.WindowManager
-
 import androidx.annotation.StyleRes
 
 class RNBootSplashDialog(
@@ -63,10 +62,7 @@ class RNBootSplashDialog(
       )
 
       setWindowAnimations(
-        when {
-          fade -> R.style.BootSplashFadeOutAnimation
-          else -> R.style.BootSplashNoAnimation
-        }
+        if (fade) R.style.BootSplashFadeOutAnimation else R.style.BootSplashNoAnimation
       )
 
       if (RNBootSplashModuleImpl.isSamsungOneUI4()) {
