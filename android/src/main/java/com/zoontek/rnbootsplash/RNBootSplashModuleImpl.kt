@@ -113,10 +113,7 @@ object RNBootSplashModuleImpl {
     }
 
     UiThreadUtil.runOnUiThread {
-      val view = RNBootSplashView(mainActivity, mThemeResId)
-      view.addTo(mainActivity)
-
-      mSplashView = view
+      mSplashView = RNBootSplashView(mainActivity, mThemeResId)
       mStatus = Status.VISIBLE
     }
   }
