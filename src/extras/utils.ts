@@ -391,6 +391,10 @@ export const transformProps = async (
     );
   }
 
+  const logoSizeExceeded = logo.width > 192 || logo.height > 192;
+  const brandSizeExceeded =
+    brand != null && (brand.width > 200 || brand.height > 80);
+
   const record: Record<string, string> = {
     background: background.hex,
     darkBackground: darkBackground?.hex ?? "",
@@ -422,6 +426,8 @@ export const transformProps = async (
     darkLogo,
     brand,
     darkBrand,
+    logoSizeExceeded,
+    brandSizeExceeded,
     fileNameSuffix,
   };
 };
@@ -435,15 +441,18 @@ export const writeAndroidAssets = async ({
   androidOutputPath: string;
   props: Props;
 }) => {
-  const { logo, brand } = props;
+  const { logo, logoSizeExceeded, brandSizeExceeded } = props;
 
-  if (logo.width > 192 || logo.height > 192) {
+  log.title("🤖", "Android");
+  hfs.ensureDir(androidOutputPath);
+
+  if (logoSizeExceeded) {
     return log.warn(
       "Logo size exceeding 192x192dp will be cropped by Android. Skipping Android assets generation…",
     );
   }
 
-  if (brand != null && (brand.width > 200 || brand.height > 80)) {
+  if (brandSizeExceeded) {
     return log.warn(
       "Brand size exceeding 200x80dp will be cropped by Android. Skipping Android assets generation…",
     );
@@ -452,9 +461,6 @@ export const writeAndroidAssets = async ({
   if (logo.width > 134 || logo.height > 134) {
     log.warn("Logo size exceeds 134x134dp. It might be cropped by Android.");
   }
-
-  log.title("🤖", "Android");
-  hfs.ensureDir(androidOutputPath);
 
   await Promise.all(
     [
