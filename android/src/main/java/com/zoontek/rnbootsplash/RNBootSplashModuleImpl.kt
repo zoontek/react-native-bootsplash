@@ -2,7 +2,7 @@ package com.zoontek.rnbootsplash
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.Application
+import android.app.Application.ActivityLifecycleCallbacks
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
@@ -99,23 +99,21 @@ object RNBootSplashModuleImpl {
       if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.TIRAMISU) {
         val application = mainActivity.application
 
-        application.registerActivityLifecycleCallbacks(
-          object : Application.ActivityLifecycleCallbacks {
-            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
-            override fun onActivityDestroyed(activity: Activity) {}
-            override fun onActivityPaused(activity: Activity) {}
-            override fun onActivityResumed(activity: Activity) {}
-            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
-            override fun onActivityStarted(activity: Activity) {}
+        application.registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
+          override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
+          override fun onActivityDestroyed(activity: Activity) {}
+          override fun onActivityPaused(activity: Activity) {}
+          override fun onActivityResumed(activity: Activity) {}
+          override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
+          override fun onActivityStarted(activity: Activity) {}
 
-            override fun onActivityStopped(activity: Activity) {
-              if (activity == mainActivity) {
-                runCatching { splashScreen.clearOnExitAnimationListener() }
-                application.unregisterActivityLifecycleCallbacks(this)
-              }
+          override fun onActivityStopped(activity: Activity) {
+            if (activity == mainActivity) {
+              runCatching { splashScreen.clearOnExitAnimationListener() }
+              application.unregisterActivityLifecycleCallbacks(this)
             }
           }
-        )
+        })
       }
     }
 
