@@ -23,8 +23,8 @@ class RNBootSplashView(activity: Activity, @StyleRes themeResId: Int) :
       ViewGroup.LayoutParams.MATCH_PARENT
     )
 
-    val decorView = activity.window.decorView as? ViewGroup
-    decorView?.addView(this)
+    val decorView = activity.window.decorView as ViewGroup
+    decorView.addView(this)
   }
 
   fun remove(fade: Boolean, callback: () -> Unit = {}) {
