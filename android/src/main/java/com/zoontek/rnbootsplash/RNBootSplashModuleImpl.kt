@@ -11,7 +11,6 @@ import android.os.Looper
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewConfiguration
-import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnPreDrawListener
 import androidx.annotation.StyleRes
 import com.facebook.common.logging.FLog
@@ -66,16 +65,16 @@ object RNBootSplashModuleImpl {
     }
 
     // Keep the splash screen on-screen until View is shown
-    val contentView = mainActivity.findViewById<View>(android.R.id.content)
+    val observer = mainActivity.findViewById<View>(android.R.id.content).viewTreeObserver
     mStatus = Status.INITIALIZING
 
-    contentView.viewTreeObserver.addOnPreDrawListener(object : OnPreDrawListener {
+    observer.addOnPreDrawListener(object : OnPreDrawListener {
       override fun onPreDraw(): Boolean {
         if (mStatus == Status.INITIALIZING) {
           return false
         }
 
-        contentView.viewTreeObserver.removeOnPreDrawListener(this)
+        observer.removeOnPreDrawListener(this)
         return true
       }
     })
