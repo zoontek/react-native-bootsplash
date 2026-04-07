@@ -2,8 +2,10 @@ package com.zoontek.rnbootsplash
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.Application
 import android.content.res.Configuration
 import android.os.Build
+import android.os.Bundle
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewConfiguration
@@ -40,7 +42,7 @@ object RNBootSplashModuleImpl {
   private var mInitialDialog: RNBootSplashDialog? = null
   private var mFadeOutDialog: RNBootSplashDialog? = null
 
-  internal fun init(activity: Activity?, @StyleRes themeResId: Int) {
+  internal fun init(mainActivity: Activity?, @StyleRes themeResId: Int) {
     if (mThemeResId != -1) {
       return FLog.w(
         ReactConstants.TAG,
@@ -50,7 +52,7 @@ object RNBootSplashModuleImpl {
 
     mThemeResId = themeResId
 
-    if (activity == null) {
+    if (mainActivity == null) {
       return FLog.w(
         ReactConstants.TAG,
         "$NAME: Ignored initialization, current activity is null."
@@ -59,18 +61,18 @@ object RNBootSplashModuleImpl {
 
     // Apply postBootSplashTheme
     val typedValue = TypedValue()
-    val currentTheme = activity.theme
+    val currentTheme = mainActivity.theme
 
     if (currentTheme.resolveAttribute(R.attr.postBootSplashTheme, typedValue, true)) {
       val finalThemeId = typedValue.resourceId
 
       if (finalThemeId != 0) {
-        activity.setTheme(finalThemeId)
+        mainActivity.setTheme(finalThemeId)
       }
     }
 
     // Keep the splash screen on-screen until Dialog is shown
-    val contentView = activity.findViewById<View>(android.R.id.content)
+    val contentView = mainActivity.findViewById<View>(android.R.id.content)
     mStatus = Status.INITIALIZING
 
     contentView
@@ -92,18 +94,38 @@ object RNBootSplashModuleImpl {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
       // This is not called on Android 12 when activity is started using intent
       // (Android studio / CLI / notification / widget…)
-      activity
-        .splashScreen
-        .setOnExitAnimationListener { view ->
-          view.remove() // Remove it immediately, without animation
+      val splashScreen = mainActivity.splashScreen
 
-          activity
-            .splashScreen
-            .clearOnExitAnimationListener()
-        }
+      splashScreen.setOnExitAnimationListener { view ->
+        view.remove() // Remove it immediately, without animation
+        splashScreen.clearOnExitAnimationListener()
+      }
+
+      // Mitigates race where splash exit listener may fire after activity stop by clearing it early (not a full fix)
+      if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.TIRAMISU) {
+        val application = mainActivity.application
+
+        application.registerActivityLifecycleCallbacks(
+          object : Application.ActivityLifecycleCallbacks {
+            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
+            override fun onActivityDestroyed(activity: Activity) {}
+            override fun onActivityPaused(activity: Activity) {}
+            override fun onActivityResumed(activity: Activity) {}
+            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
+            override fun onActivityStarted(activity: Activity) {}
+
+            override fun onActivityStopped(activity: Activity) {
+              if (activity == mainActivity) {
+                runCatching { splashScreen.clearOnExitAnimationListener() }
+                application.unregisterActivityLifecycleCallbacks(this)
+              }
+            }
+          }
+        )
+      }
     }
 
-    mInitialDialog = RNBootSplashDialog(activity, mThemeResId, false)
+    mInitialDialog = RNBootSplashDialog(mainActivity, mThemeResId, false)
 
     UiThreadUtil.runOnUiThread {
       mInitialDialog?.show { mStatus = Status.VISIBLE }
