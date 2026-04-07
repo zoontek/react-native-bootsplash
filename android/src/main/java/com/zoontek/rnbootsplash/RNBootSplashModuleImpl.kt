@@ -65,16 +65,16 @@ object RNBootSplashModuleImpl {
     }
 
     // Keep the splash screen on-screen until View is shown
-    val observer = mainActivity.findViewById<View>(android.R.id.content).viewTreeObserver
+    val contentView = mainActivity.findViewById<View>(android.R.id.content)
     mStatus = Status.INITIALIZING
 
-    observer.addOnPreDrawListener(object : OnPreDrawListener {
+    contentView.viewTreeObserver.addOnPreDrawListener(object : OnPreDrawListener {
       override fun onPreDraw(): Boolean {
         if (mStatus == Status.INITIALIZING) {
           return false
         }
 
-        observer.removeOnPreDrawListener(this)
+        contentView.viewTreeObserver.removeOnPreDrawListener(this)
         return true
       }
     })
