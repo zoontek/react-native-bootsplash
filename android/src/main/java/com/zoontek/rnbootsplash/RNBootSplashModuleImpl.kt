@@ -69,21 +69,16 @@ object RNBootSplashModuleImpl {
     val contentView = mainActivity.findViewById<View>(android.R.id.content)
     mStatus = Status.INITIALIZING
 
-    contentView
-      .viewTreeObserver
-      .addOnPreDrawListener(object : OnPreDrawListener {
-        override fun onPreDraw(): Boolean {
-          if (mStatus == Status.INITIALIZING) {
-            return false
-          }
-
-          contentView
-            .viewTreeObserver
-            .removeOnPreDrawListener(this)
-
-          return true
+    contentView.viewTreeObserver.addOnPreDrawListener(object : OnPreDrawListener {
+      override fun onPreDraw(): Boolean {
+        if (mStatus == Status.INITIALIZING) {
+          return false
         }
-      })
+
+        contentView.viewTreeObserver.removeOnPreDrawListener(this)
+        return true
+      }
+    })
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
       // This is not called on Android 12 when activity is started using intent
