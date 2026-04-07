@@ -441,25 +441,19 @@ export const writeAndroidAssets = async ({
   androidOutputPath: string;
   props: Props;
 }) => {
-  const { logo, logoSizeExceeded, brandSizeExceeded } = props;
+  const { logo, logoSizeExceeded } = props;
 
   log.title("🤖", "Android");
   hfs.ensureDir(androidOutputPath);
 
   if (logoSizeExceeded) {
     return log.warn(
-      "Logo size exceeding 192x192dp will be cropped by Android. Skipping Android assets generation…",
-    );
-  }
-
-  if (brandSizeExceeded) {
-    return log.warn(
-      "Brand size exceeding 200x80dp will be cropped by Android. Skipping Android assets generation…",
+      "Logo exceeds 192x192dp and will be cropped by Android. Skipping its generation.",
     );
   }
 
   if (logo.width > 134 || logo.height > 134) {
-    log.warn("Logo size exceeds 134x134dp. It might be cropped by Android.");
+    log.warn("Logo exceeds 134x134dp. It might be cropped by Android.");
   }
 
   await Promise.all(
