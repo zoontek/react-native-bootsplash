@@ -1785,7 +1785,7 @@ PODS:
     - React-utils (= 0.84.1)
     - ReactNativeDependencies
   - ReactNativeDependencies (0.84.1)
-  - RNBootSplash (7.3.0):
+  - RNBootSplash (7.3.1):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2110,7 +2110,7 @@ SPEC CHECKSUMS:
   ReactCodegen: 797de5178718324c6eba3327b07f9a423fbd5787
   ReactCommon: 07572bf9e687c8a52fbe4a3641e9e3a1a477c78e
   ReactNativeDependencies: 9e5968e9a2547f548b9575c5587ce9a48b1d7dd8
-  RNBootSplash: 50ba7bfaff0f3eeda60cc6b83314a3fdfa351e2f
+  RNBootSplash: c0d86dded541a26441dd35d927fae3f0855af499
   Yoga: c0b3f2c7e8d3e327e450223a2414ca3fa296b9a2
 
 PODFILE CHECKSUM: d82740d9525ef9ae8a53e5462dc04d440a4a2ae6
