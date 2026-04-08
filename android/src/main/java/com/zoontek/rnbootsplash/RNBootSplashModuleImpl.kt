@@ -2,7 +2,7 @@ package com.zoontek.rnbootsplash
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.Application
+import android.app.Application.ActivityLifecycleCallbacks
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
@@ -33,8 +33,7 @@ object RNBootSplashModuleImpl {
   @StyleRes private var mThemeResId = -1
   private val mPromiseQueue = RNBootSplashQueue<Promise>()
   private var mStatus = Status.HIDDEN
-  private var mInitialDialog: RNBootSplashDialog? = null
-  private var mFadeOutDialog: RNBootSplashDialog? = null
+  private var mSplashView: RNBootSplashView? = null
 
   internal fun init(mainActivity: Activity?, @StyleRes themeResId: Int) {
     if (mThemeResId != -1) {
@@ -65,25 +64,20 @@ object RNBootSplashModuleImpl {
       }
     }
 
-    // Keep the splash screen on-screen until Dialog is shown
+    // Keep the splash screen on-screen until View is shown
     val contentView = mainActivity.findViewById<View>(android.R.id.content)
     mStatus = Status.INITIALIZING
 
-    contentView
-      .viewTreeObserver
-      .addOnPreDrawListener(object : OnPreDrawListener {
-        override fun onPreDraw(): Boolean {
-          if (mStatus == Status.INITIALIZING) {
-            return false
-          }
-
-          contentView
-            .viewTreeObserver
-            .removeOnPreDrawListener(this)
-
-          return true
+    contentView.viewTreeObserver.addOnPreDrawListener(object : OnPreDrawListener {
+      override fun onPreDraw(): Boolean {
+        if (mStatus == Status.INITIALIZING) {
+          return false
         }
-      })
+
+        contentView.viewTreeObserver.removeOnPreDrawListener(this)
+        return true
+      }
+    })
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
       // This is not called on Android 12 when activity is started using intent
@@ -99,28 +93,28 @@ object RNBootSplashModuleImpl {
       if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.TIRAMISU) {
         val application = mainActivity.application
 
-        application.registerActivityLifecycleCallbacks(
-          object : Application.ActivityLifecycleCallbacks {
-            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
-            override fun onActivityDestroyed(activity: Activity) {}
-            override fun onActivityPaused(activity: Activity) {}
-            override fun onActivityResumed(activity: Activity) {}
-            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
-            override fun onActivityStarted(activity: Activity) {}
+        application.registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
+          override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
+          override fun onActivityDestroyed(activity: Activity) {}
+          override fun onActivityPaused(activity: Activity) {}
+          override fun onActivityResumed(activity: Activity) {}
+          override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
+          override fun onActivityStarted(activity: Activity) {}
 
-            override fun onActivityStopped(activity: Activity) {
-              if (activity == mainActivity) {
-                runCatching { splashScreen.clearOnExitAnimationListener() }
-                application.unregisterActivityLifecycleCallbacks(this)
-              }
+          override fun onActivityStopped(activity: Activity) {
+            if (activity == mainActivity) {
+              runCatching { splashScreen.clearOnExitAnimationListener() }
+              application.unregisterActivityLifecycleCallbacks(this)
             }
           }
-        )
+        })
       }
     }
 
-    mInitialDialog = RNBootSplashDialog(mainActivity, mThemeResId, false)
-    UiThreadUtil.runOnUiThread { mInitialDialog?.show { mStatus = Status.VISIBLE } }
+    UiThreadUtil.runOnUiThread {
+      mSplashView = RNBootSplashView(mainActivity, mThemeResId)
+      mStatus = Status.VISIBLE
+    }
   }
 
   private fun clearPromiseQueue() {
@@ -148,39 +142,24 @@ object RNBootSplashModuleImpl {
 
       if (mStatus == Status.HIDDEN) {
         clearPromiseQueue()
-        return@runOnUiThread // both initial and fade out dialog are hidden
+        return@runOnUiThread // view is hidden
       }
 
       mStatus = Status.HIDING
 
-      val hideSequence = {
-        val fadeOutDialogDismiss = {
-          mFadeOutDialog = null
-          mStatus = Status.HIDDEN
-          clearPromiseQueue()
-        }
-
-        val initialDialogDismiss = {
-          mInitialDialog = null
-          mFadeOutDialog?.dismiss(fadeOutDialogDismiss) ?: fadeOutDialogDismiss()
-        }
-
-        mInitialDialog?.dismiss(initialDialogDismiss) ?: initialDialogDismiss()
+      val callback = {
+        mSplashView = null
+        mStatus = Status.HIDDEN
+        clearPromiseQueue()
       }
 
-      if (fade) {
-        // Create a new Dialog instance with fade out animation
-        mFadeOutDialog = RNBootSplashDialog(activity, mThemeResId, true)
-        mFadeOutDialog?.show(hideSequence)
-      } else {
-        mInitialDialog?.dismiss(hideSequence) ?: hideSequence()
-      }
+      mSplashView?.remove(fade, callback) ?: callback()
     }
   }
 
   // From https://stackoverflow.com/a/61062773
-  fun isSamsungOneUI4(): Boolean {
-    return runCatching {
+  val isSamsungOneUI4: Boolean by lazy {
+    runCatching {
       val field = Build.VERSION::class.java.getDeclaredField("SEM_PLATFORM_INT")
       val version = (field.getInt(null) - 90000) / 10000
       version == 4
@@ -192,14 +171,10 @@ object RNBootSplashModuleImpl {
     mThemeResId = -1
     clearPromiseQueue()
 
-    mInitialDialog?.apply {
-      dismiss()
-      mInitialDialog = null
-    }
-
-    mFadeOutDialog?.apply {
-      dismiss()
-      mFadeOutDialog = null
+    mSplashView?.let { view ->
+      view.animate().cancel()
+      view.remove(false)
+      mSplashView = null
     }
   }
 
@@ -229,7 +204,7 @@ object RNBootSplashModuleImpl {
 
     return buildMap {
       put("darkModeEnabled", uiMode == Configuration.UI_MODE_NIGHT_YES)
-      put("logoSizeRatio", if (isSamsungOneUI4()) 0.5 else 1.0)
+      put("logoSizeRatio", if (isSamsungOneUI4) 0.5 else 1.0)
       put("navigationBarHeight", navigationBarHeight)
       put("statusBarHeight", statusBarHeight)
     }
