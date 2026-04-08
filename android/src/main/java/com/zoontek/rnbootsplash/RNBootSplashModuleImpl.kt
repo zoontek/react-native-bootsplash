@@ -19,6 +19,7 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.UiThreadUtil
 import com.facebook.react.common.ReactConstants
 import com.facebook.react.uimanager.PixelUtil
+import java.util.concurrent.ConcurrentLinkedQueue
 
 object RNBootSplashModuleImpl {
   const val NAME = "RNBootSplash"
@@ -31,7 +32,7 @@ object RNBootSplashModuleImpl {
   }
 
   @StyleRes private var mThemeResId = -1
-  private val mPromiseQueue = RNBootSplashQueue<Promise>()
+  private val mPromiseQueue = ConcurrentLinkedQueue<Promise>()
   private var mStatus = Status.HIDDEN
   private var mSplashView: RNBootSplashView? = null
 
@@ -118,7 +119,7 @@ object RNBootSplashModuleImpl {
   }
 
   private fun clearPromiseQueue() {
-    generateSequence { mPromiseQueue.shift() }.forEach { it.resolve(true) }
+    generateSequence { mPromiseQueue.poll() }.forEach { it.resolve(true) }
   }
 
   private fun hideAndClearPromiseQueue(reactContext: ReactApplicationContext, fade: Boolean) {
@@ -211,7 +212,7 @@ object RNBootSplashModuleImpl {
   }
 
   fun hide(reactContext: ReactApplicationContext, fade: Boolean, promise: Promise) {
-    mPromiseQueue.push(promise)
+    mPromiseQueue.add(promise)
     hideAndClearPromiseQueue(reactContext, fade)
   }
 
