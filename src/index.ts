@@ -6,7 +6,6 @@ import {
   type ImageStyle,
   type ViewStyle,
   Platform,
-  StyleSheet,
 } from "react-native";
 import {
   controlEdgeToEdgeValues,
@@ -176,10 +175,14 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
 
   return useMemo<UseHideAnimation>(() => {
     const containerStyle: ViewStyle = {
-      ...StyleSheet.absoluteFillObject,
-      backgroundColor,
       alignItems: "center",
+      backgroundColor,
       justifyContent: "center",
+      position: "absolute",
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0,
     };
 
     const container: ContainerProps = {
