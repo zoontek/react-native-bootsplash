@@ -20,6 +20,11 @@ program
     validPlatforms.join(","),
   )
   .option(
+    "--is-tv",
+    'Build for TV (setting EXPO_TV to "true" or "1" will override this value)',
+    false,
+  )
+  .option(
     "--background <string>",
     "Background color (in hexadecimal format)",
     "#fff",
