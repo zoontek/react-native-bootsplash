@@ -171,7 +171,7 @@ export const generate = async ({
   ...rawProps
 }: {
   platforms: Array<"android" | "ios" | "web">;
-  isTv?: boolean;
+  isTv: boolean;
   html: string;
   flavor: string;
   plist?: string;

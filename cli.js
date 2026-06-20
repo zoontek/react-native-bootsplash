@@ -19,11 +19,7 @@ program
     "Platforms to generate for, separated by a comma",
     validPlatforms.join(","),
   )
-  .option(
-    "--is-tv",
-    'Build for TV (setting EXPO_TV to "true" or "1" will override this value)',
-    false,
-  )
+  .option("--is-tv", "Generate for TV", false)
   .option(
     "--background <string>",
     "Background color (in hexadecimal format)",

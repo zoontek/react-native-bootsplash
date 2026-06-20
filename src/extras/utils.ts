@@ -508,7 +508,7 @@ export const writeAndroidAssets = async ({
   );
 };
 
-const getStoryboard = (props: Props, isTV?: boolean) => {
+const getStoryboard = (props: Props, isTv: boolean) => {
   const { background, logo, fileNameSuffix } = props;
 
   const { R, G, B } = background.rgb;
@@ -517,10 +517,10 @@ const getStoryboard = (props: Props, isTV?: boolean) => {
 
   return dedent`
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="${!isTV ? "com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" : "com.apple.InterfaceBuilder.AppleTV.Storyboard"}" version="3.0" toolsVersion="21701" targetRuntime="${!isTV ? "iOS.CocoaTouch" : "AppleTV"}" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+<document type="${!isTv ? "com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" : "com.apple.InterfaceBuilder.AppleTV.Storyboard"}" version="3.0" toolsVersion="21701" targetRuntime="${!isTv ? "iOS.CocoaTouch" : "AppleTV"}" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment identifier="${!isTV ? "iOS" : "tvOS"}"/>
+        <deployment identifier="${!isTv ? "iOS" : "tvOS"}"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21678"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -572,7 +572,7 @@ export const writeIOSAssets = async ({
 }: {
   iosOutputPath: string;
   props: Props;
-  isTv?: boolean;
+  isTv: boolean;
 }) => {
   const { background, logo, fileNameSuffix } = props;
 
@@ -596,10 +596,7 @@ export const writeIOSAssets = async ({
 
   const storyboardPath = path.resolve(iosOutputPath, "BootSplash.storyboard");
 
-  const isTV =
-    process.env.EXPO_TV === "1" || process.env.EXPO_TV === "true" || isTv;
-
-  await writeXmlLike(storyboardPath, getStoryboard(props, isTV), {
+  await writeXmlLike(storyboardPath, getStoryboard(props, isTv), {
     formatter: "xmlFormatter",
     whiteSpaceAtEndOfSelfclosingTag: false,
   });
@@ -824,6 +821,7 @@ export const requireAddon = ({
       writeIOSAssets: (_: {
         iosOutputPath: string;
         props: Props;
+        isTv: boolean;
       }) => Promise<void>;
 
       writeWebAssets: (_: {

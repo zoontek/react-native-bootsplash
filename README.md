@@ -54,7 +54,7 @@ Arguments:
 
 Options:
   --platforms <list>          Platforms to generate for, separated by a comma (default: "android,ios,web")
-  --is-tv                     Build for TV (setting EXPO_TV to "true" or "1" will override this value) (default: false)
+  --is-tv                     Generate for TV (default: false)
   --background <string>       Background color (in hexadecimal format) (default: "#fff")
   --logo-width <number>       Logo width at @1x (in dp - we recommend approximately ~100) (default: 100)
   --assets-output <string>    Assets output directory path (default: "assets/bootsplash")
