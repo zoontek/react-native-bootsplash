@@ -164,12 +164,14 @@ const getInfoPlistPath = ({
 
 export const generate = async ({
   platforms,
+  isTv,
   html,
   flavor,
   plist,
   ...rawProps
 }: {
   platforms: Array<"android" | "ios" | "web">;
+  isTv: boolean;
   html: string;
   flavor: string;
   plist?: string;
@@ -326,7 +328,7 @@ export const generate = async ({
   }
 
   if (iosOutputPath != null) {
-    await writeIOSAssets({ iosOutputPath, props });
+    await writeIOSAssets({ iosOutputPath, props, isTv });
 
     const pbxprojectPath = Expo.IOSConfig.Paths.getPBXProjectPath(projectRoot);
 
