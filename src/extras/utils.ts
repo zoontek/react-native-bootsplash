@@ -508,7 +508,7 @@ export const writeAndroidAssets = async ({
   );
 };
 
-const getStoryboard = (props: Props) => {
+const getStoryboard = (props: Props, isTv: boolean) => {
   const { background, logo, fileNameSuffix } = props;
 
   const { R, G, B } = background.rgb;
@@ -517,10 +517,10 @@ const getStoryboard = (props: Props) => {
 
   return dedent`
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+<document type="${!isTv ? "com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" : "com.apple.InterfaceBuilder.AppleTV.Storyboard"}" version="3.0" toolsVersion="21701" targetRuntime="${!isTv ? "iOS.CocoaTouch" : "AppleTV"}" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
+        <deployment identifier="${!isTv ? "iOS" : "tvOS"}"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21678"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -568,9 +568,11 @@ const getStoryboard = (props: Props) => {
 export const writeIOSAssets = async ({
   iosOutputPath,
   props,
+  isTv,
 }: {
   iosOutputPath: string;
   props: Props;
+  isTv: boolean;
 }) => {
   const { background, logo, fileNameSuffix } = props;
 
@@ -594,7 +596,7 @@ export const writeIOSAssets = async ({
 
   const storyboardPath = path.resolve(iosOutputPath, "BootSplash.storyboard");
 
-  await writeXmlLike(storyboardPath, getStoryboard(props), {
+  await writeXmlLike(storyboardPath, getStoryboard(props, isTv), {
     formatter: "xmlFormatter",
     whiteSpaceAtEndOfSelfclosingTag: false,
   });
@@ -819,6 +821,7 @@ export const requireAddon = ({
       writeIOSAssets: (_: {
         iosOutputPath: string;
         props: Props;
+        isTv: boolean;
       }) => Promise<void>;
 
       writeWebAssets: (_: {

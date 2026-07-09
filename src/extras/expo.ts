@@ -3,6 +3,7 @@ import { assignColorValue } from "@expo/config-plugins/build/android/Colors";
 import { addImports } from "@expo/config-plugins/build/android/codeMod";
 import { mergeContents } from "@expo/config-plugins/build/utils/generateCode";
 import childProcess from "child_process";
+import { boolish } from "getenv";
 import path from "path";
 import semver from "semver";
 import { dedent } from "ts-dedent";
@@ -204,9 +205,10 @@ const withIOSAssets: ConfigPlugin = (expoConfig, rawProps) =>
       const props = await transformProps(projectRoot, rawProps);
       const addon = requireAddon(props);
       const iosOutputPath = path.resolve(platformProjectRoot, projectName);
+      const isTv = boolish("EXPO_TV", false);
 
-      await writeIOSAssets({ iosOutputPath, props });
-      await addon?.writeIOSAssets({ iosOutputPath, props });
+      await writeIOSAssets({ iosOutputPath, props, isTv });
+      await addon?.writeIOSAssets({ iosOutputPath, props, isTv });
 
       return config;
     },

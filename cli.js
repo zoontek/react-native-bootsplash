@@ -19,6 +19,7 @@ program
     "Platforms to generate for, separated by a comma",
     validPlatforms.join(","),
   )
+  .option("--is-tv", "Generate for TV", false)
   .option(
     "--background <string>",
     "Background color (in hexadecimal format)",
