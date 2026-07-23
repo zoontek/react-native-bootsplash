@@ -4,7 +4,8 @@
     "target": "es2017",
     "lib": ["DOM", "ES2017"],
     "jsx": "react-native",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
+    "types": ["node"],
 
     "allowJs": false,
     "strict": true,

@@ -1,12 +1,11 @@
 import * as Expo from "@expo/config-plugins";
 import { assignColorValue } from "@expo/config-plugins/build/android/Colors";
 import { addImports } from "@expo/config-plugins/build/android/codeMod";
-import { mergeContents } from "@expo/config-plugins/build/utils/generateCode";
-import childProcess from "child_process";
-import path from "path";
+import childProcess from "node:child_process";
+import path from "node:path";
+import util from "node:util";
 import semver from "semver";
 import { dedent } from "ts-dedent";
-import util from "util";
 import {
   type BootSplashPluginConfig,
   hfs,
@@ -88,7 +87,7 @@ const withMainActivity: ConfigPlugin = (expoConfig) =>
     );
 
     // indented with 4 spaces
-    const withInit = mergeContents({
+    const withInit = Expo.CodeGenerator.mergeContents({
       src: withImports,
       comment: "    //",
       tag: "bootsplash-init",
@@ -223,7 +222,7 @@ const withAppDelegate: ConfigPlugin = (expoConfig) =>
       );
     }
 
-    const withHeader = mergeContents({
+    const withHeader = Expo.CodeGenerator.mergeContents({
       src: modResults.contents,
       comment: "//",
       tag: "bootsplash-header",
@@ -232,7 +231,7 @@ const withAppDelegate: ConfigPlugin = (expoConfig) =>
       newSrc: "import RNBootSplash",
     });
 
-    const withRootView = mergeContents({
+    const withRootView = Expo.CodeGenerator.mergeContents({
       src: withHeader.contents,
       comment: "//",
       tag: "bootsplash-init",

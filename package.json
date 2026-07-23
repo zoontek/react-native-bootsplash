@@ -115,7 +115,7 @@
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@babel/preset-env": "^7.25.3",
-    "@types/node": "^20.19.39",
+    "@types/node": "^24.13.3",
     "@types/react": "^19.2.0",
     "@types/semver": "^7.7.1",
     "oxlint": "^1.59.0",
