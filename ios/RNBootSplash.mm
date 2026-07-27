@@ -71,6 +71,16 @@ RCT_EXPORT_MODULE();
   }
 }
 
++ (void)hideWithFade:(BOOL)fade {
+  // Used by RNBootSplashDrawMarker, which hides from the native side, with a fake promise to resolve
+  [_resolveQueue addObject:^(__unused id result) {}];
+  _fade = fade;
+
+  if (_nativeHidden) {
+    [self hideAndClearPromiseQueue];
+  }
+}
+
 + (void)initWithStoryboard:(NSString * _Nonnull)storyboardName
                   rootView:(UIView * _Nullable)rootView {
   if (RCTRunningInAppExtension()) {

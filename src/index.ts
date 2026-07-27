@@ -11,9 +11,13 @@ import {
   controlEdgeToEdgeValues,
   isEdgeToEdge,
 } from "react-native-is-edge-to-edge";
+import { HideOnDraw } from "./HideOnDraw";
 import NativeModule from "./specs/NativeRNBootSplash";
 
 const EDGE_TO_EDGE = isEdgeToEdge();
+
+export { HideOnDraw };
+export type { HideOnDrawProps } from "./HideOnDraw";
 
 export type Config = {
   fade?: boolean;
@@ -281,6 +285,7 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
 
 export default {
   hide,
+  HideOnDraw,
   isVisible,
   useHideAnimation,
 };
