@@ -1,4 +1,12 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  type ReactElement,
+  createElement,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   type ImageRequireSource,
   type ImageResizeMode,
@@ -11,6 +19,7 @@ import {
   controlEdgeToEdgeValues,
   isEdgeToEdge,
 } from "react-native-is-edge-to-edge";
+import { DrawMarker } from "./DrawMarker";
 import { HideOnDraw } from "./HideOnDraw";
 import NativeModule from "./specs/NativeRNBootSplash";
 
@@ -54,7 +63,6 @@ export type UseHideAnimationConfig = {
 
 export type ContainerProps = {
   style: ViewStyle;
-  onLayout: () => void;
 };
 
 export type LogoProps = {
@@ -77,6 +85,7 @@ export type UseHideAnimation = {
   container: ContainerProps;
   logo: LogoProps;
   brand: BrandProps;
+  marker: ReactElement;
 };
 
 export function hide(config: Config = {}): Promise<void> {
@@ -145,7 +154,7 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
       : brandSrc;
 
   const ref = useRef({
-    layoutReady: false,
+    drawReady: false,
     logoReady: skipLogo,
     brandReady: skipBrand,
     userReady: ready,
@@ -156,7 +165,7 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
 
   const maybeRunAnimate = useCallback(() => {
     if (
-      ref.current.layoutReady &&
+      ref.current.drawReady &&
       ref.current.logoReady &&
       ref.current.brandReady &&
       ref.current.userReady &&
@@ -169,6 +178,11 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
         .catch(() => {});
     }
   }, []);
+
+  const onDrawn = useCallback(() => {
+    ref.current.drawReady = true;
+    maybeRunAnimate();
+  }, [maybeRunAnimate]);
 
   useEffect(() => {
     ref.current.animate = animate;
@@ -191,11 +205,11 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
 
     const container: ContainerProps = {
       style: containerStyle,
-      onLayout: () => {
-        ref.current.layoutReady = true;
-        maybeRunAnimate();
-      },
     };
+
+    // The marker does not hide the splash screen itself here: the animation can
+    // only start once the logo and brand images are loaded too
+    const marker = createElement(DrawMarker, { autoHide: false, onDrawn });
 
     const logo: LogoProps =
       logoFinalSrc == null
@@ -234,7 +248,7 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
           };
 
     if (Platform.OS !== "android") {
-      return { container, logo, brand };
+      return { container, logo, brand, marker };
     }
 
     return {
@@ -260,6 +274,7 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
         },
       },
       brand,
+      marker,
     };
   }, [
     logoSizeRatio,
@@ -267,6 +282,7 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
     statusBarHeight,
 
     maybeRunAnimate,
+    onDrawn,
 
     logoWidth,
     logoHeight,

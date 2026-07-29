@@ -13,7 +13,9 @@ class RNBootSplashDrawMarkerView(
   private val reactContext: ReactApplicationContext,
 ) : View(context) {
 
+  var autoHide: Boolean = true
   var fade: Boolean = false
+  var onDrawn: (() -> Unit)? = null
 
   private var hasDrawn = false
 
@@ -34,17 +36,23 @@ class RNBootSplashDrawMarkerView(
     }
 
     hasDrawn = true
-    scheduleBootSplashHide()
+    scheduleDrawn()
   }
 
-  private fun scheduleBootSplashHide() {
-    val hide = Runnable { RNBootSplashModuleImpl.hide(reactContext, fade) }
+  private fun scheduleDrawn() {
+    val drawn = Runnable {
+      if (autoHide) {
+        RNBootSplashModuleImpl.hide(reactContext, fade)
+      }
 
-    // Hide once the frame holding this marker has been submitted, or on the next loop iteration
+      onDrawn?.invoke()
+    }
+
+    // Run once the frame holding this marker has been submitted, or on the next loop iteration
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-      viewTreeObserver.registerFrameCommitCallback(hide)
+      viewTreeObserver.registerFrameCommitCallback(drawn)
     } else {
-      post(hide)
+      post(drawn)
     }
   }
 }

@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Platform, StatusBar, StyleSheet, Text, View } from "react-native";
-import BootSplash from "react-native-bootsplash";
+import { AnimatedBootSplash } from "./AnimatedBootSplash";
 
 const styles = StyleSheet.create({
   container: {
@@ -20,6 +20,8 @@ const styles = StyleSheet.create({
 });
 
 export const App = () => {
+  const [visible, setVisible] = useState(true);
+
   useEffect(() => {
     // set transparent status bar
     StatusBar.setBarStyle("dark-content");
@@ -34,7 +36,13 @@ export const App = () => {
     <View style={styles.container}>
       <Text style={styles.text}>Hello, Dave.</Text>
 
-      <BootSplash.HideOnDraw fade />
+      {visible && (
+        <AnimatedBootSplash
+          onAnimationEnd={() => {
+            setVisible(false);
+          }}
+        />
+      )}
     </View>
   );
 };

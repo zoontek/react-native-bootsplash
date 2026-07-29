@@ -1,8 +1,10 @@
 import { useEffect } from "react";
 import NativeModule from "./specs/NativeRNBootSplash";
 
-export type HideOnDrawProps = {
+export type DrawMarkerProps = {
+  autoHide?: boolean;
   fade?: boolean;
+  onDrawn?: () => void;
 };
 
 /**
@@ -10,10 +12,18 @@ export type HideOnDrawProps = {
  * so the closest equivalent is an effect, which runs after the browser has
  * painted the commit that mounted this component.
  */
-export function HideOnDraw({ fade = false }: HideOnDrawProps) {
+export function DrawMarker({
+  autoHide = true,
+  fade = false,
+  onDrawn,
+}: DrawMarkerProps) {
   useEffect(() => {
-    NativeModule.hide(fade).catch(() => {});
-  }, [fade]);
+    if (autoHide) {
+      NativeModule.hide(fade).catch(() => {});
+    }
+
+    onDrawn?.();
+  }, [autoHide, fade, onDrawn]);
 
   return null;
 }

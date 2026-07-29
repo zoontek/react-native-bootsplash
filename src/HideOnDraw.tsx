@@ -1,21 +1,8 @@
-import { StyleSheet } from "react-native";
-import RNBootSplashDrawMarker from "./specs/RNBootSplashDrawMarkerNativeComponent";
+import { DrawMarker } from "./DrawMarker";
 
 export type HideOnDrawProps = {
   fade?: boolean;
 };
-
-const styles = StyleSheet.create({
-  // The marker only needs to be drawn, not seen. Its size cannot be zero, as a
-  // view with no area is never asked to draw itself
-  marker: {
-    height: 1,
-    left: 0,
-    position: "absolute",
-    top: 0,
-    width: 1,
-  },
-});
 
 /**
  * Hides the splash screen from the native side, as soon as this marker has been
@@ -31,11 +18,5 @@ const styles = StyleSheet.create({
  * involved in the dismissal itself, so a busy JS thread cannot delay it.
  */
 export function HideOnDraw({ fade = false }: HideOnDrawProps) {
-  return (
-    <RNBootSplashDrawMarker
-      fade={fade}
-      pointerEvents="none"
-      style={styles.marker}
-    />
-  );
+  return <DrawMarker fade={fade} />;
 }
