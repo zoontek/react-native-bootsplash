@@ -20,13 +20,12 @@ import {
   isEdgeToEdge,
 } from "react-native-is-edge-to-edge";
 import { DrawMarker } from "./DrawMarker";
-import { HideOnDraw } from "./HideOnDraw";
 import NativeModule from "./specs/NativeRNBootSplash";
 
 const EDGE_TO_EDGE = isEdgeToEdge();
 
-export { HideOnDraw };
-export type { HideOnDrawProps } from "./HideOnDraw";
+export { DrawMarker };
+export type { DrawMarkerProps } from "./DrawMarker";
 
 export type Config = {
   fade?: boolean;
@@ -300,8 +299,8 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
 }
 
 export default {
+  DrawMarker,
   hide,
-  HideOnDraw,
   isVisible,
   useHideAnimation,
 };
