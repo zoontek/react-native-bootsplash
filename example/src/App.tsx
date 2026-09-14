@@ -36,6 +36,9 @@ export const App = () => {
     <View style={styles.container}>
       <Text style={styles.text}>Hello, Dave.</Text>
 
+      {/* Without a custom animation, this is all you need:
+      <BootSplash.DrawMarker fade /> */}
+
       {visible && (
         <AnimatedBootSplash
           onAnimationEnd={() => {

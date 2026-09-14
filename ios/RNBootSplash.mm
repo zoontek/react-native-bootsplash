@@ -17,6 +17,7 @@ static UIView *_loadingView = nil;
 static NSMutableArray<RCTPromiseResolveBlock> *_resolveQueue = [[NSMutableArray alloc] init];
 static bool _fade = false;
 static bool _nativeHidden = false;
+static bool _pendingHide = false;
 
 @implementation RNBootSplash
 
@@ -71,6 +72,17 @@ RCT_EXPORT_MODULE();
   }
 }
 
+// Used by RNBootSplashDrawMarker, which hides from the native side, without a promise to resolve
++ (void)hideWithFade:(BOOL)fade {
+  _fade = fade;
+
+  if (_nativeHidden) {
+    [self hideAndClearPromiseQueue];
+  } else {
+    _pendingHide = true;
+  }
+}
+
 + (void)initWithStoryboard:(NSString * _Nonnull)storyboardName
                   rootView:(UIView * _Nullable)rootView {
   if (RCTRunningInAppExtension()) {
@@ -84,7 +96,7 @@ RCT_EXPORT_MODULE();
     _nativeHidden = true;
 
     // hide has been called before native launch screen fade out
-    if ([_resolveQueue count] > 0) {
+    if (_pendingHide || [_resolveQueue count] > 0) {
       [self hideAndClearPromiseQueue];
     }
   }];

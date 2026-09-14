@@ -13,4 +13,6 @@
 + (void)initWithStoryboard:(NSString * _Nonnull)storyboardName
                   rootView:(UIView * _Nullable)rootView;
 
++ (void)hideWithFade:(BOOL)fade;
+
 @end

@@ -216,6 +216,11 @@ object RNBootSplashModuleImpl {
     hideAndClearPromiseQueue(reactContext, fade)
   }
 
+  // Used by RNBootSplashDrawMarkerView, which hides from the native side, without a promise to resolve
+  internal fun hide(reactContext: ReactApplicationContext, fade: Boolean) {
+    hideAndClearPromiseQueue(reactContext, fade)
+  }
+
   fun isVisible(): Boolean {
     return mStatus != Status.HIDDEN
   }
