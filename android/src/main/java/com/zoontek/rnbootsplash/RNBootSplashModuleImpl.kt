@@ -2,10 +2,8 @@ package com.zoontek.rnbootsplash
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.Application.ActivityLifecycleCallbacks
 import android.content.res.Configuration
 import android.os.Build
-import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.TypedValue
@@ -85,30 +83,12 @@ object RNBootSplashModuleImpl {
       // (Android studio / CLI / notification / widget…)
       val splashScreen = mainActivity.splashScreen
 
+      // Remove it immediately, without animation. Never clear this listener on activity stop:
+      // the view would never be removed and the splash screen would stay visible forever.
+      // Running no animation also avoids https://issuetracker.google.com/issues/242118185
       splashScreen.setOnExitAnimationListener { view ->
-        view.remove() // Remove it immediately, without animation
+        view.remove()
         splashScreen.clearOnExitAnimationListener()
-      }
-
-      // Mitigates race where splash exit listener may fire after activity stop (not a full fix)
-      if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.TIRAMISU) {
-        val application = mainActivity.application
-
-        application.registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
-          override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
-          override fun onActivityDestroyed(activity: Activity) {}
-          override fun onActivityPaused(activity: Activity) {}
-          override fun onActivityResumed(activity: Activity) {}
-          override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
-          override fun onActivityStarted(activity: Activity) {}
-
-          override fun onActivityStopped(activity: Activity) {
-            if (activity == mainActivity) {
-              runCatching { splashScreen.clearOnExitAnimationListener() }
-              application.unregisterActivityLifecycleCallbacks(this)
-            }
-          }
-        })
       }
     }
 
