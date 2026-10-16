@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Platform, StatusBar, StyleSheet, Text, View } from "react-native";
+import { StatusBar, StyleSheet, Text, View } from "react-native";
 import { AnimatedBootSplash } from "./AnimatedBootSplash";
 
 const styles = StyleSheet.create({
@@ -23,13 +23,7 @@ export const App = () => {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    // set transparent status bar
     StatusBar.setBarStyle("dark-content");
-
-    if (Platform.OS === "android") {
-      StatusBar.setBackgroundColor("transparent");
-      StatusBar.setTranslucent(true);
-    }
   }, []);
 
   return (
