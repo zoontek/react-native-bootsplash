@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
+    "rootDir": "./src",
+
     "module": "esnext",
-    "target": "es2017",
     "lib": ["DOM", "ES2017"],
     "jsx": "react-native",
     "moduleResolution": "bundler",
