@@ -128,10 +128,17 @@
   },
   "codegenConfig": {
     "name": "RNBootSplashSpec",
-    "type": "modules",
+    "type": "all",
     "jsSrcsDir": "./src/specs",
     "android": {
       "javaPackageName": "com.zoontek.rnbootsplash"
+    },
+    "ios": {
+      "components": {
+        "RNBootSplashDrawMarker": {
+          "className": "RNBootSplashDrawMarker"
+        }
+      }
     }
   }
 }

@@ -5,12 +5,17 @@ import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.model.ReactModuleInfo
 import com.facebook.react.module.model.ReactModuleInfoProvider
+import com.facebook.react.uimanager.ViewManager
 
 class RNBootSplashPackage : TurboReactPackage() {
 
   override fun getModule(name: String, reactContext: ReactApplicationContext): NativeModule? {
     return if (name == RNBootSplashModuleImpl.NAME) RNBootSplashModule(reactContext) else null
   }
+
+  override fun createViewManagers(
+    reactContext: ReactApplicationContext
+  ): List<ViewManager<*, *>> = listOf(RNBootSplashDrawMarkerManager())
 
   override fun getReactModuleInfoProvider() = ReactModuleInfoProvider {
     mapOf(
