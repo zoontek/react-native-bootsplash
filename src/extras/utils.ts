@@ -14,6 +14,7 @@ import sharp, { type Sharp } from "sharp";
 import { dedent } from "ts-dedent";
 import formatXml, { type XMLFormatterOptions } from "xml-formatter";
 import type { Manifest } from "..";
+import { createVegaSplashZip } from "./vega";
 
 export const PACKAGE_NAME = "react-native-bootsplash";
 
@@ -759,6 +760,30 @@ export const writeWebAssets = async ({
     formatter: "prettier",
     useCssPlugin: true,
   });
+};
+
+export const writeVegaAssets = async ({
+  vegaOutputPath,
+  props,
+}: {
+  vegaOutputPath: string;
+  props: Props;
+}) => {
+  const { background, logo } = props;
+
+  log.title("📺", "Vega");
+  hfs.ensureDir(vegaOutputPath);
+
+  const filePath = path.resolve(vegaOutputPath, "SplashScreenImages.zip");
+
+  const zip = await createVegaSplashZip({
+    background: background.hex,
+    logo: logo.image,
+    logoWidth: logo.width,
+  });
+
+  fs.writeFileSync(filePath, zip);
+  log.write(filePath, { width: 1920, height: 1080 });
 };
 
 export const writeGenericAssets = async ({ props }: { props: Props }) => {

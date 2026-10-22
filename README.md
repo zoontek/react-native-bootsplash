@@ -342,6 +342,25 @@ class MainActivity : ReactActivity() {
 
 _ℹ️ Refer to [previous package documentation](https://github.com/zoontek/react-native-bootsplash/tree/6.3.12?tab=readme-ov-file#with-bare-react-native) for setup steps with React Native < 0.80._
 
+#### Vega (Amazon Fire TV)
+
+[React Native for Vega](https://developer.amazon.com/docs/react-native-vega/0.83/splashscreenmanager.html) shows the splash screen stored in `assets/raw/SplashScreenImages.zip`, next to your `manifest.toml`. Generate it with the `vega` platform:
+
+```bash
+$ npx react-native-bootsplash generate svgs/light-logo.svg \
+  --platforms=vega \
+  --background=F5FCFF \
+  --logo-width=100
+```
+
+There is no native code to edit: `BootSplash.hide()` and `BootSplash.isVisible()` work as on the other platforms.
+
+_ℹ️ The logo keeps its size in dp. A Fire TV draws 1 dp as 2 px on its 1920x1080 screen._
+
+_ℹ️ Vega has no fade out for its splash screen, so `hide({ fade: true })` hides it at once. The Vega Virtual Device shows no splash screen, test it on a Fire TV._
+
+_ℹ️ To keep the splash screen until `hide()`, the library reads the root tag of your app with `AppRegistry.setWrapperComponentProvider`. If your app sets its own wrapper component provider, the last call wins. When yours comes last, Vega hides the splash screen on the first frame._
+
 ## API
 
 ### hide()
