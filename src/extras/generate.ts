@@ -17,6 +17,7 @@ import {
   writeAndroidAssets,
   writeGenericAssets,
   writeIOSAssets,
+  writeVegaAssets,
   writeWebAssets,
   writeXmlLike,
 } from "./utils";
@@ -162,6 +163,15 @@ const getInfoPlistPath = ({
   return path.resolve(iosOutputPath, "Info.plist");
 };
 
+// React Native for Vega reads the splash screen from assets/raw, next to manifest.toml
+const getVegaOutputPath = () => {
+  if (!hfs.exists(path.join(projectRoot, "manifest.toml"))) {
+    log.warn("No manifest.toml found");
+  }
+
+  return path.resolve(projectRoot, "assets", "raw");
+};
+
 export const generate = async ({
   platforms,
   html,
@@ -169,7 +179,7 @@ export const generate = async ({
   plist,
   ...rawProps
 }: {
-  platforms: Array<"android" | "ios" | "web">;
+  platforms: Array<"android" | "ios" | "web" | "vega">;
   html: string;
   flavor: string;
   plist?: string;
@@ -200,6 +210,10 @@ export const generate = async ({
 
   const htmlTemplatePath = platforms.includes("web")
     ? getHtmlTemplatePath({ html })
+    : undefined;
+
+  const vegaOutputPath = platforms.includes("vega")
+    ? getVegaOutputPath()
     : undefined;
 
   if (androidOutputPath != null) {
@@ -381,6 +395,10 @@ export const generate = async ({
 
   if (htmlTemplatePath != null) {
     await writeWebAssets({ htmlTemplatePath, props });
+  }
+
+  if (vegaOutputPath != null) {
+    await writeVegaAssets({ vegaOutputPath, props });
   }
 
   await writeGenericAssets({ props });
