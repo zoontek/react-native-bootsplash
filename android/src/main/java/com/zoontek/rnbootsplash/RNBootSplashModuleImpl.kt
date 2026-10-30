@@ -81,15 +81,10 @@ object RNBootSplashModuleImpl {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
       // This is not called on Android 12 when activity is started using intent
       // (Android studio / CLI / notification / widget…)
-      val splashScreen = mainActivity.splashScreen
-
-      // Remove it immediately, without animation. Never clear this listener on activity stop:
-      // the view would never be removed and the splash screen would stay visible forever.
+      // Remove it immediately, without animation. Never clear this listener, or the splash screen
+      // can stay visible forever (https://github.com/zoontek/react-native-bootsplash/issues/809)
       // Running no animation also avoids https://issuetracker.google.com/issues/242118185
-      splashScreen.setOnExitAnimationListener { view ->
-        view.remove()
-        splashScreen.clearOnExitAnimationListener()
-      }
+      mainActivity.splashScreen.setOnExitAnimationListener { view -> view.remove() }
     }
 
     UiThreadUtil.runOnUiThread {
