@@ -377,6 +377,49 @@ const App = () => {
 };
 ```
 
+### DrawMarker
+
+An invisible component that knows when it has been drawn, so you can hide the splash screen once that happens.
+
+`onLayout` and effects tell you that layout was computed or that React is done, both of which happen before anything is painted. This one is drawn like any other view, so it can only report a draw that really happened.
+
+Mount it when your content is ready.
+
+#### Props
+
+```ts
+type DrawMarkerProps = {
+  onDrawn: () => void; // called once the marker has been drawn
+};
+```
+
+#### Usage
+
+```tsx
+import { Text, View } from "react-native";
+import BootSplash from "react-native-bootsplash";
+
+const App = () => (
+  <View style={{ flex: 1 }}>
+    <Text>My awesome app</Text>
+
+    <BootSplash.DrawMarker onDrawn={() => BootSplash.hide({ fade: true })} />
+  </View>
+);
+```
+
+To wait for your own data before hiding, mount it when you are ready:
+
+```tsx
+{
+  hasInitialData && (
+    <BootSplash.DrawMarker onDrawn={() => BootSplash.hide({ fade: true })} />
+  );
+}
+```
+
+**This component requires the new architecture. `hide()` and `useHideAnimation()` work on both.**
+
 ### isVisible()
 
 Return the current visibility status of the native splash screen.
@@ -424,6 +467,7 @@ type useHideAnimation = (config: {
   container: ContainerProps;
   logo: LogoProps;
   brand: BrandProps;
+  marker: ReactElement; // render it inside your splash screen, it tells the hook when the UI has been drawn
 };
 ```
 
@@ -441,7 +485,7 @@ type Props = {
 const AnimatedBootSplash = ({ onAnimationEnd }: Props) => {
   const [opacity] = useState(() => new Animated.Value(1));
 
-  const { container, logo /*, brand */ } = BootSplash.useHideAnimation({
+  const { container, logo, marker /*, brand */ } = BootSplash.useHideAnimation({
     manifest: require("../assets/bootsplash/manifest.json"),
 
     logo: require("../assets/bootsplash/logo.png"),
@@ -463,6 +507,8 @@ const AnimatedBootSplash = ({ onAnimationEnd }: Props) => {
 
   return (
     <Animated.View {...container} style={[container.style, { opacity }]}>
+      {marker}
+
       <Image {...logo} />
       {/* <Image {...brand} /> */}
     </Animated.View>
