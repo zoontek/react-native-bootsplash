@@ -5,7 +5,8 @@ const { Command } = require("commander");
 const program = new Command();
 const pkg = require("./package.json");
 
-const validPlatforms = ["android", "ios", "web"];
+const defaultPlatforms = ["android", "ios", "web"];
+const validPlatforms = [...defaultPlatforms, "vega"];
 
 program
   .name(pkg.name)
@@ -17,7 +18,7 @@ program
   .option(
     "--platforms <list>",
     "Platforms to generate for, separated by a comma",
-    validPlatforms.join(","),
+    defaultPlatforms.join(","),
   )
   .option(
     "--background <string>",

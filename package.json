@@ -68,6 +68,7 @@
     "format": "prettier '**/*' -u -w",
     "lint": "oxlint",
     "typecheck": "tsc --noEmit",
+    "test": "node --experimental-strip-types --test \"test/**/*.test.ts\"",
     "build": "yarn clean && bob build",
     "prepack": "prettier '**/*' -u -c && yarn lint && yarn typecheck && yarn build && node ../obfuscator"
   },
