@@ -31,10 +31,7 @@ let package = Package(
             ],
             path: ".",
             exclude: ["ios/RNBootSplash.xcodeproj"] + unusedRootEntries,
-            sources: [
-                "ios/RNBootSplash.h",
-                "ios/RNBootSplash.mm",
-            ],
+            sources: ["ios"],
             publicHeadersPath: "include",
             cSettings: [
                 .headerSearchPath("ios"),
