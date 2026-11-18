@@ -44,7 +44,9 @@
     "!src/extras/addon",
     "RNBootSplash.podspec",
     "cli.js",
-    "app.plugin.js"
+    "app.plugin.js",
+    "Package.swift",
+    "include"
   ],
   "bin": "./cli.js",
   "repository": {
@@ -133,5 +135,8 @@
     "android": {
       "javaPackageName": "com.zoontek.rnbootsplash"
     }
+  },
+  "swiftpmConfig": {
+    "name": "RNBootSplash"
   }
 }
