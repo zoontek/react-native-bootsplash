@@ -1,14 +1,6 @@
 // swift-tools-version: 6.0
 
-import Foundation
 import PackageDescription
-
-// React Native autolinks this package under ios/build/generated/autolinking/libs/.
-// Exclude unused checkout and npm entries from SwiftPM resource discovery.
-let usedRootEntries: Set<String> = ["ios", "Package.swift"]
-let unusedRootEntries = try! FileManager.default.contentsOfDirectory(atPath: Context.packageDirectory)
-    .filter { !usedRootEntries.contains($0) }
-    .sorted()
 
 let package = Package(
     name: "RNBootSplash",
@@ -29,16 +21,12 @@ let package = Package(
                 .product(name: "ReactNativeDependenciesHeaders", package: "ReactNative"),
                 .product(name: "ReactAppHeaders", package: "React-GeneratedCode"),
             ],
-            path: ".",
-            exclude: unusedRootEntries,
-            sources: ["ios"],
-            publicHeadersPath: "ios",
+            path: "ios",
+            publicHeadersPath: ".",
             cSettings: [
-                .headerSearchPath("ios"),
                 .define("RCT_NEW_ARCH_ENABLED", to: "1"),
             ],
             cxxSettings: [
-                .headerSearchPath("ios"),
                 .define("RCT_NEW_ARCH_ENABLED", to: "1"),
                 .define("DEBUG", .when(configuration: .debug)),
                 .define("NDEBUG", .when(configuration: .release)),
