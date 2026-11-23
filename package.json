@@ -45,8 +45,7 @@
     "RNBootSplash.podspec",
     "cli.js",
     "app.plugin.js",
-    "Package.swift",
-    "include"
+    "Package.swift"
   ],
   "bin": "./cli.js",
   "repository": {
