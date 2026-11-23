@@ -1,7 +1,8 @@
 // swift-tools-version: 6.0
-
 import PackageDescription
 
+// The React Native packages are resolved by the autolinker relative to
+// build/generated/autolinking/libs/RNBootSplash in the app.
 let package = Package(
     name: "RNBootSplash",
     platforms: [.iOS("15.1")],
