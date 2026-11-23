@@ -1,0 +1,4 @@
+module RNBootSplash {
+  header "RNBootSplash.h"
+  export *
+}
