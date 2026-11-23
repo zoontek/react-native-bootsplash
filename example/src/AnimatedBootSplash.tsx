@@ -12,7 +12,7 @@ export const AnimatedBootSplash = ({ onAnimationEnd }: Props) => {
   const [opacity] = useState(() => new Animated.Value(1));
   const [translateY] = useState(() => new Animated.Value(0));
 
-  const { container, logo /*, brand */ } = BootSplash.useHideAnimation({
+  const { container, logo, marker /*, brand */ } = BootSplash.useHideAnimation({
     manifest: require("../assets/bootsplash/manifest.json"),
 
     logo: require("../assets/bootsplash/logo.png"),
@@ -50,6 +50,8 @@ export const AnimatedBootSplash = ({ onAnimationEnd }: Props) => {
 
   return (
     <Animated.View {...container} style={[container.style, { opacity }]}>
+      {marker}
+
       <Animated.Image
         {...logo}
         style={[logo.style, { transform: [{ translateY }] }]}
